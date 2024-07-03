@@ -1,0 +1,45 @@
+# General
+*.log
+*.tmp
+*.swp
+*.bak
+.DS_Store
+.vscode/
+.idea/
+.env
+
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.venv/
+env/
+venv/
+
+# Java (Spring Boot)
+target/
+*.jar
+*.war
+*.ear
+
+# Node.js (React and Mobile)
+node_modules/
+dist/
+build/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Docker
+*.dockerfile
+*.dockerignore
+docker-compose.yaml
+
+# Specific folders (adjust paths as necessary)
+ml/models/
+db_seeding/seed_data.csv
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
