@@ -2,14 +2,14 @@ name: React CI
 
 on:
   push:
-    branches:
-      - master
+    branches-ignore:
+        - 'release/v[0-9]+.[0-9]+'
     paths:
         - 'front/react/**'
         - '.github/workflows/ci_react.yml'
   pull_request:
-    branches:
-      - master
+    branches-ignore:
+        - 'release/v[0-9]+.[0-9]+'
     paths:
       - 'front/react/**'
       - '.github/workflows/ci_react.yml'
