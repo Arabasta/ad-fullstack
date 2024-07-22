@@ -3,13 +3,13 @@ name: Java CI with Maven
 on:
   push:
     branches-ignore:
-        - 'release/v[0-9]+.[0-9]+'
+      - 'release/v[0-9]+.[0-9]+'
     paths:
       - 'back/spring/**'
       - '.github/workflows/ci_spring.yml'
   pull_request:
     branches-ignore:
-        - 'release/v[0-9]+.[0-9]+'
+      - 'release/v[0-9]+.[0-9]+'
     paths:
       - 'back/spring/**'
       - '.github/workflows/ci_spring.yml'
