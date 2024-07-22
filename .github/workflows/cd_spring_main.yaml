@@ -1,0 +1,57 @@
+name: CD Spring Main App
+
+on:
+  push:
+    branches:
+      - 'release/v[0-9]+.[0-9]+'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        working-directory: ./back/spring
+        run: mvn -B package --file pom.xml -DskipTests
+
+      - name: Set up Docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: login to docker hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.KEI_DOCKER_USERNAME }}
+          password: ${{ secrets.KEI_DOCKER_PASSWORD }}
+
+      - name: build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./back/spring
+          push: true
+          tags: ${{ secrets.KEI_DOCKER_USERNAME }}/robo_main_spring:${{ github.sha }}
+
+      - name: Deploy to EC2
+        env:
+          MAIN_EC2_SSH_KEY: ${{ secrets.MAIN_EC2_SSH_KEY }}
+          MAIN_EC2_PUBLIC_IPV4: ${{ secrets.MAIN_EC2_PUBLIC_IPV4 }}
+        run: |
+          echo "${MAIN_EC2_SSH_KEY}" > /tmp/key.pem
+          chmod 600 /tmp/key.pem
+          ssh -o StrictHostKeyChecking=no -i /tmp/key.pem ec2-user@${{ env.MAIN_EC2_PUBLIC_IPV4 }} << 'EOF'
+          docker pull ${{ secrets.KEI_DOCKER_USERNAME }}/robo_main_spring:${{ github.sha }}
+          docker stop robo_main_spring || true
+          docker rm robo_main_spring || true
+          docker run -d \
+            --name robo_main_spring \
+            -p 8080:8080 \
+            ${{ secrets.KEI_DOCKER_USERNAME }}/robo_main_spring:${{ github.sha }}
+          docker logs robo_main_spring
+          EOF
