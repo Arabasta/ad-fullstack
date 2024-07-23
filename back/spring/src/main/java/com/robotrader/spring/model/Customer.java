@@ -31,13 +31,13 @@ public class Customer {
     @JoinColumn(name = "portfolio_id")
     private List<Portfolio> portfolios;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
     @Length(min=7, max=15, message = "Please input a valid mobile number")
     @Column(nullable = false, length = 15)
     private String mobileNumber;
-
-    @Length(min=1, max=50, message = "Address cannot be more than 50 characters")
-    @Column(nullable = false, length = 50)
-    private String address;
 
     @Length(min=1, max=50, message = "First Name cannot be more than 50 characters")
     @Column(nullable = false, length = 50)
@@ -55,7 +55,7 @@ public class Customer {
     public Customer() {}
 
     public Customer(FinancialProfile financialProfile, InvestorProfile investorProfile, Wallet wallet,
-                    String mobileNumber, String address, String firstName, String lastName, String nationality) {
+                    String mobileNumber, Address address, String firstName, String lastName, String nationality) {
         this.financialProfile = financialProfile;
         this.investorProfile = investorProfile;
         this.wallet = wallet;
