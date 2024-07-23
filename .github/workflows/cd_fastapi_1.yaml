@@ -22,7 +22,7 @@ jobs:
       - name: build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./back/fastApi
+          context: ./back/fastApi/price_predictor
           push: true
           tags: ${{ secrets.KEI_DOCKER_USERNAME }}/robo_fastapi_1:${{ github.sha }}
 
