@@ -8,7 +8,7 @@
 		<version>3.2.8-SNAPSHOT</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.robotrader</groupId>
+	<groupId>com.robotrader.spring</groupId>
 	<artifactId>spring</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>spring</name>
