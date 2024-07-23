@@ -2,13 +2,17 @@ package com.robotrader.spring.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class FinancialProfile {
     @Id
@@ -34,15 +38,4 @@ public class FinancialProfile {
     @Column(nullable = false, length = 50)
     private String investmentExperience;
 
-    public FinancialProfile() {}
-
-    public FinancialProfile(String employmentStatus, BigDecimal annualIncome, BigDecimal netWorth,
-                            String sourceOfWealth, String investmentObjective, String investmentExperience) {
-        this.employmentStatus = employmentStatus;
-        this.annualIncome = annualIncome;
-        this.netWorth = netWorth;
-        this.sourceOfWealth = sourceOfWealth;
-        this.investmentObjective = investmentObjective;
-        this.investmentExperience = investmentExperience;
-    }
 }

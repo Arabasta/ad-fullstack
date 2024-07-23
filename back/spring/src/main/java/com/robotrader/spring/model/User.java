@@ -4,7 +4,9 @@ import com.robotrader.spring.model.enums.RoleEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +19,8 @@ import java.util.Collections;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class User implements UserDetails {
     @Id
@@ -45,15 +49,6 @@ public class User implements UserDetails {
 
     private LocalDateTime createDateTime;
     private LocalDateTime updateDateTime;
-
-    public User() {}
-
-    public User(RoleEnum role, String username, String password, String email) {
-        this.role = role;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-    }
 
     @PrePersist
     protected void onCreate() {

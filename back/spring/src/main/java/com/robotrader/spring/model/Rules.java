@@ -3,13 +3,17 @@ package com.robotrader.spring.model;
 import com.robotrader.spring.model.enums.RecurringFrequencyEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Rules {
     @Id
@@ -38,5 +42,4 @@ public class Rules {
     @Max(value = 28, message = "Recurring allocation day cannot exceed 28")
     private Integer recurringAllocationDay;
 
-    public Rules() {}
 }

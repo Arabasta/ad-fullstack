@@ -1,11 +1,15 @@
 package com.robotrader.spring.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class InvestorProfile {
     @Id
@@ -26,16 +30,4 @@ public class InvestorProfile {
 
     private Integer chartScore;
 
-    public InvestorProfile() {}
-
-    public InvestorProfile(Integer withdrawalScore, Integer expenditureScore, Integer knowledgeScore,
-                           Integer riskScore, Integer experienceScore, Integer scenarioScore, Integer chartScore) {
-        this.withdrawalScore = withdrawalScore;
-        this.expenditureScore = expenditureScore;
-        this.knowledgeScore = knowledgeScore;
-        this.riskScore = riskScore;
-        this.experienceScore = experienceScore;
-        this.scenarioScore = scenarioScore;
-        this.chartScore = chartScore;
-    }
 }
