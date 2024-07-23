@@ -15,7 +15,6 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "pool")
 public class Pool {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
