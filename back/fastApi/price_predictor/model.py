@@ -1,5 +1,6 @@
 # Original file is located at https://colab.research.google.com/drive/19SELttKfrgxTbk92fajE13qT93tZPbBT
 import math
+import json
 from datetime import timedelta
 from time import time
 # import matplotlib.pyplot as plt
@@ -7,11 +8,8 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
-from src.utils import get_project_root
-from src.utils import get_repo_root
+import src.utils as util
 
-from pandas_datareader import data as pdr
-import yfinance as yf
 
 output_predictions = []
 
@@ -22,8 +20,9 @@ def predictions():
 
 def main():
     """# Data Preprocessing"""
-    PARENT_DIRECTORY_PATH = str(get_project_root())
-    REPO_DIRECTORY_PATH = str(get_repo_root())
+    PARENT_DIRECTORY_PATH = str(util.get_project_root())
+    REPO_ROOT_PATH = str(util.get_repo_root())
+    PREDICTIONS_JSON_TEXT = "predictions_json.txt"
     STOCK_NAME = 'SPY'
 
     # read from local file
@@ -142,11 +141,11 @@ def main():
     predictions = scaler.inverse_transform([predictions])[0]
     print("predictions: ", predictions)
 
-    dicts = []
-    curr_date = data.index[-1]
-    for i in range(X_FUTURE):
-        curr_date = curr_date + timedelta(days=1)
-        dicts.append({'Predictions': predictions[i], "Date": curr_date})
+    # dicts = []
+    # curr_date = data.index[-1]
+    # for i in range(X_FUTURE):
+    #     curr_date = curr_date + timedelta(days=1)
+    #     dicts.append({'Predictions': predictions[i], "Date": curr_date})
 
     # new_data = pd.DataFrame(dicts).set_index("Date")
 
@@ -165,5 +164,19 @@ def main():
     # # uncomment to save currently trained model as .keras file in colab folder
     # # filename: [timestamp]_[model]_[model_accuracy]
     linux_timestamp = int(time())  # linux timestamp
-    model.save(f'{REPO_DIRECTORY_PATH}/ml/price_predictor/models/{STOCK_NAME}-{linux_timestamp}-model-rmse_{rmse:.0f}.keras')
-    return predictions
+    model.save(f'{REPO_ROOT_PATH}/ml/price_predictor/models/{STOCK_NAME}-{linux_timestamp}-model-rmse_{rmse:.0f}.keras')
+
+    f = open(f'{REPO_ROOT_PATH}/back/fastApi/price_predictor/{PREDICTIONS_JSON_TEXT}', "w")
+    output = {
+        STOCK_NAME: {
+        },
+    }
+    curr_date = data.index[-1]
+    for i in range(len(predictions)):
+        curr_date = curr_date + timedelta(days=1)
+        output[STOCK_NAME].update({
+            str(curr_date)[:10]: {
+                "adj_close": predictions[i]
+            },
+        })
+    f.write(json.dumps(output, cls=util.NumpyEncoder))
