@@ -32,7 +32,7 @@ public class Portfolio {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal allocatedBalance;
 
-    private Integer unit;
+    private Integer allocatedUnitQty;
 
     public Portfolio() {}
 }
