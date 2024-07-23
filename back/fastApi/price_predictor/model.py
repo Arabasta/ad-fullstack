@@ -8,7 +8,8 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
-import src.utils as util
+import src.utils as utils
+import yfinance as yf
 
 
 output_predictions = []
@@ -18,10 +19,10 @@ def predictions():
     return output_predictions
 
 
-def main():
+async def train():
     """# Data Preprocessing"""
-    PARENT_DIRECTORY_PATH = str(util.get_project_root())
-    REPO_ROOT_PATH = str(util.get_repo_root())
+    PARENT_DIRECTORY_PATH = str(utils.get_project_root())
+    REPO_ROOT_PATH = str(utils.get_repo_root())
     PREDICTIONS_JSON_TEXT = "predictions_json.txt"
     STOCK_NAME = 'SPY'
 
@@ -166,7 +167,7 @@ def main():
     linux_timestamp = int(time())  # linux timestamp
     model.save(f'{REPO_ROOT_PATH}/ml/price_predictor/models/{STOCK_NAME}-{linux_timestamp}-model-rmse_{rmse:.0f}.keras')
 
-    f = open(f'{REPO_ROOT_PATH}/back/fastApi/price_predictor/{PREDICTIONS_JSON_TEXT}', "w")
+    f = open(f'{REPO_ROOT_PATH}/back/fastApi/price_predictor/predictions/{STOCK_NAME}.txt', "w")
     output = {
         STOCK_NAME: {
         },
@@ -179,4 +180,4 @@ def main():
                 "adj_close": predictions[i]
             },
         })
-    f.write(json.dumps(output, cls=util.NumpyEncoder))
+    f.write(json.dumps(output, cls=utils.NumpyEncoder))
