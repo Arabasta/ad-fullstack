@@ -6,7 +6,9 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -14,6 +16,8 @@ import java.time.ZonedDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Pool {
     @Id
@@ -42,5 +46,4 @@ public class Pool {
     @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime tradeDateTime;
 
-    public Pool() {}
 }

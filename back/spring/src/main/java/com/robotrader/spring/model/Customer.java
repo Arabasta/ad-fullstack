@@ -1,7 +1,9 @@
 package com.robotrader.spring.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
@@ -9,6 +11,8 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Customer {
     @Id
@@ -52,18 +56,4 @@ public class Customer {
 
     private boolean isDeleted;
 
-    public Customer() {}
-
-    public Customer(FinancialProfile financialProfile, InvestorProfile investorProfile, Wallet wallet,
-                    String mobileNumber, Address address, String firstName, String lastName, String nationality) {
-        this.financialProfile = financialProfile;
-        this.investorProfile = investorProfile;
-        this.wallet = wallet;
-        this.mobileNumber = mobileNumber;
-        this.address = address;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.nationality = nationality;
-        isDeleted = false;
-    }
 }
