@@ -1,0 +1,50 @@
+name: fastapi CI
+
+on:
+  push:
+    branches-ignore:
+      - 'release/v[0-9]+.[0-9]+'
+    paths:
+      - 'back/fastapi/**'
+  pull_request:
+    branches-ignore:
+      - 'release/v[0-9]+.[0-9]+'
+    paths:
+      - 'back/fastapi/**'
+
+jobs:
+    build:
+    
+      runs-on: ubuntu-latest
+
+      steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install flake8
+        run: python -m pip install flake8
+
+      - name: Lint with flake8
+        run: flake8 back/fastapi --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Install black
+        run: python -m pip install black
+
+      - name: Check code formatting with black
+        run: black --check back/fastapi
+
+    #   - name: Install dependencies
+    #     working-directory: ./back/fastapi
+    #     run: |
+    #       python -m pip install --upgrade pip
+    #       pip install -r requirements.txt
+
+    #   - name: Run tests
+    #     working-directory: ./back/fastapi
+    #     run: |
+    #       pytest
