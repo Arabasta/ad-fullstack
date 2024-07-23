@@ -31,7 +31,7 @@ public class Customer {
     @JoinColumn(name = "portfolio_id")
     private List<Portfolio> portfolios;
 
-    @Length(min=8, max=8, message = "Username must be 3-20 characters")
+    @Length(min=7, max=15, message = "Please input a valid mobile number")
     @Column(nullable = false, length = 15)
     private String mobileNumber;
 
