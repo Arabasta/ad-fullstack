@@ -5,7 +5,7 @@ from typing import Annotated
 # import tensorflow as tf
 import json
 import src.utils as utils
-import model  # this is to import the .py model file. Change filepath as needed.
+import model_lstm  # this is to import the .py model file. Change filepath as needed.
 
 app = FastAPI(docs_url="/documentation", redoc_url=None)
 
@@ -26,7 +26,7 @@ async def redirect_to_documentation():
 
 @app.get("/train/")
 async def train():
-    await model.train()
+    await model_lstm.train()
     return {"Message": "Training Started"}
 
 
