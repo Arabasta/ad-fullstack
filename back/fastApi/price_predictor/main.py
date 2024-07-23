@@ -32,6 +32,8 @@ predictions = []
 @app.get("/train/")
 async def train():
     predictions.append(model.main())
+    f = open(f'{PARENT_DIRECTORY_PATH}/predictions_json.txt', "w")
+    f.write(json.dumps(predictions, cls=NumpyEncoder))
     return {"Message": "Training Completed"}
 
 
@@ -42,6 +44,7 @@ async def index():
 
 @app.post("/predict/")
 async def predict():
-    return {"prediction": json.dumps(predictions, cls=NumpyEncoder)}  # test implementation with postman
+    f = open("predictions_json.txt", "r")
+    return {"prediction": f.read()}  # test implementation with postman
 
 # to run server: `fastapi run`
