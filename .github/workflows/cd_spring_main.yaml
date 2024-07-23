@@ -42,6 +42,9 @@ jobs:
         env:
           MAIN_EC2_SSH_KEY: ${{ secrets.MAIN_EC2_SSH_KEY }}
           MAIN_EC2_PUBLIC_IPV4: ${{ secrets.MAIN_EC2_PUBLIC_IPV4 }}
+          RDS_ENDPOINT: ${{ secrets.MAIN_RDS_ENDPOINT }}
+          RDS_USERNAME: ${{ secrets.MAIN_RDS_USERNAME }}
+          RDS_PASSWORD: ${{ secrets.MAIN_RDS_PASSWORD }}
         run: |
           echo "${MAIN_EC2_SSH_KEY}" > /tmp/key.pem
           chmod 600 /tmp/key.pem
@@ -52,6 +55,9 @@ jobs:
           docker run -d \
             --name robo_main_spring \
             -p 8080:8080 \
+            -e RDS_ENDPOINT=${RDS_ENDPOINT} \
+            -e RDS_USERNAME=${RDS_USERNAME} \
+            -e RDS_PASSWORD=${RDS_PASSWORD} \
             ${{ secrets.KEI_DOCKER_USERNAME }}/robo_main_spring:${{ github.sha }}
           docker logs robo_main_spring
           EOF
