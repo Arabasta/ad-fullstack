@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthenticationResponse loginUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    public AuthenticationResponse loginUser(@RequestBody AuthenticationRequest authenticationRequest) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(),
