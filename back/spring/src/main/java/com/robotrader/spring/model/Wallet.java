@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotNull(message = "Amount cannot be null")
     @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")

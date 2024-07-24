@@ -15,7 +15,7 @@ import org.hibernate.validator.constraints.Length;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Length(min=1, max=50, message = "Block, street, building, etc. cannot be more than 50 characters")
     @Column(nullable = false, length = 50)

@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 public class FinancialProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotNull(message = "Amount cannot be null")
     @Column(nullable = false, length = 50)

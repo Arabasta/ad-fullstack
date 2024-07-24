@@ -18,7 +18,7 @@ import java.math.BigDecimal;
 public class Rules {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @DecimalMin(value = "0.0", message = "Stop loss percentage must be greater than or equal to 0")
     private Double stopLoss;
