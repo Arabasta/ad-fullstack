@@ -1,4 +1,4 @@
-package com.robotrader.spring.dto.security;
+package com.robotrader.spring.dto.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

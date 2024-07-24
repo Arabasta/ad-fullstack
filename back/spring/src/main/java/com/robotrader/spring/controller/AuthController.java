@@ -1,7 +1,8 @@
 package com.robotrader.spring.controller;
 
+import com.robotrader.spring.dto.auth.AuthenticationRequest;
+import com.robotrader.spring.dto.auth.AuthenticationResponse;
 import com.robotrader.spring.model.User;
-import com.robotrader.spring.dto.security.AuthenticationRequest;
 import com.robotrader.spring.security.JwtUtil;
 import com.robotrader.spring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
@@ -38,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    public AuthenticationResponse loginUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(),
@@ -46,6 +50,7 @@ public class AuthController {
         );
 
         final UserDetails userDetails = userService.loadUserByUsername(authenticationRequest.getUsername());
-        return jwtUtil.generateToken(userDetails);
+        final String jwtToken = jwtUtil.generateToken(userDetails);
+        return new AuthenticationResponse(jwtToken, userDetails.getUsername());
     }
 }
