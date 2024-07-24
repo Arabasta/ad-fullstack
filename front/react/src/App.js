@@ -7,6 +7,8 @@ import mainRoutes from './routes/MainRoutes';
 import NavigationBarForWeb from './pages/NavigationBarForWeb';
 import settingsRoutes from "./routes/SettingsRoutes";
 import NaviRoutes from "./routes/NaviRoutes";
+
+
 const App = () => {
     return (
         <AuthProvider>
