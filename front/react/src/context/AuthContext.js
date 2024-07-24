@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import authService from '../services/auth/AuthService.js';
+import authenticationService from '../services/auth/AuthenticationService';
 
 // used to store auth state and methods across component tree
 export const AuthContext = createContext(undefined);
@@ -16,13 +16,13 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (username, password) => {
-        const response = await authService.login(username, password);
+        const response = await authenticationService.login(username, password);
         setUser(response);
         localStorage.setItem('user', JSON.stringify(response));
     };
 
     const logout = () => {
-        authService.logout();
+        authenticationService.logout();
         setUser(null);
     };
 
