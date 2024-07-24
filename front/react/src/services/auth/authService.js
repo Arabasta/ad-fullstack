@@ -37,9 +37,11 @@ const refreshToken = async () => {
     setToken(response.data.token);
 };
 
-export default {
+const authService = {
     register,
     login,
     logout,
     refreshToken,
 };
+
+export default authService;
