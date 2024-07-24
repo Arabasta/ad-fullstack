@@ -1,8 +1,3 @@
-import { Link, useLocation } from "react-router-dom";
-import React, { useState } from "react";
-import Logo from '../../assets/images/logo.svg'; // Import the SVG file
-import '../../assets/styles/NavigationBarForWeb.css';
-
 export default function NavigationBarForWeb() {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
