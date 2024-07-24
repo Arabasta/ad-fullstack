@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import authService from '../services/auth/AuthService';
+import authService from '../services/auth/AuthService.js';
 
 // used to store auth state and methods across component tree
 export const AuthContext = createContext(undefined);
