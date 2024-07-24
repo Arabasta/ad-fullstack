@@ -1,14 +1,14 @@
 import React from 'react';
-import LoginForm from '../../components/form/auth/LoginForm';
+import RegisterForm from '../../components/form/auth/RegisterForm';
 import Text from '../../components/common/Text';
 
-const LoginPage = () => {
+const RegisterPage = () => {
     return (
         <div>
             <Text variant="h2">Login</Text>
-            <LoginForm />
+            <RegisterForm />
         </div>
     );
 };
 
-export default LoginPage;
+export default RegisterPage;

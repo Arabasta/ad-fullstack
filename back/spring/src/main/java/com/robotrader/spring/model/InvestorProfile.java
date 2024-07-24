@@ -14,7 +14,7 @@ import lombok.Setter;
 public class InvestorProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private Integer withdrawalScore;
 

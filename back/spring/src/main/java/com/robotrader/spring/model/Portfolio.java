@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 public class Portfolio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     private PortfolioTypeEnum portfolioType;
