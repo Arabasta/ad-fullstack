@@ -1,25 +1,23 @@
-import logo from './assets/images/logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ErrorBoundary from './components/common/error/ErrorBoundary';
+import authRoutes from './routes/AuthRoutes';
+import mainRoutes from './routes/MainRoutes';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React test ci
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    return (
+        <AuthProvider>
+            <Router>
+                <ErrorBoundary>
+                    <Routes>
+                        {authRoutes}
+                        {mainRoutes}
+                    </Routes>
+                </ErrorBoundary>
+            </Router>
+        </AuthProvider>
+    );
+};
 
 export default App;
