@@ -10,38 +10,39 @@
 }
 
 .brand-logo {
-    font-size: 1.5em;
-    color: #fff;
-    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 40px; /* Adjust the height as needed */
 }
 
 .sidenav-trigger {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 2em;
-    cursor: pointer;
     display: none;
 }
 
-ul {
+.nav-wrapper ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
 }
 
-ul li {
+.nav-wrapper ul li {
     margin-right: 20px;
 }
 
-ul li a {
+.nav-wrapper ul li a {
     color: #fff;
     text-decoration: none;
 }
 
-ul li a:hover,
-ul li.active a {
+.nav-wrapper ul li a:hover {
+    text-decoration: underline;
+}
+
+.nav-wrapper ul li.active a {
     font-weight: bold;
     text-decoration: underline;
 }
@@ -49,23 +50,24 @@ ul li.active a {
 @media (max-width: 768px) {
     .sidenav-trigger {
         display: block;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5em;
     }
 
-    ul {
-        flex-direction: column;
+    .nav-wrapper ul {
+        display: ${isOpen ? 'block' : 'none'};
         position: absolute;
         top: 60px;
         right: 0;
         background-color: #333;
-        width: 200px;
-        display: none;
+        width: 100%;
+        text-align: center;
     }
 
-    ul.show {
-        display: flex;
-    }
-
-    ul li {
+    .nav-wrapper ul li {
         margin: 10px 0;
     }
 }
+
