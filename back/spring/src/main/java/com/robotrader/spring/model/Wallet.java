@@ -6,14 +6,12 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class Wallet {
@@ -27,4 +25,7 @@ public class Wallet {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal totalBalance;
 
+    public Wallet() {
+        this.totalBalance = new BigDecimal(0);
+    }
 }

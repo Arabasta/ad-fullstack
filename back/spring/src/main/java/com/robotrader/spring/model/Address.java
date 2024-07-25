@@ -25,10 +25,6 @@ public class Address {
     @Column(nullable = false, length = 50)
     private String city;
 
-    @Length(min=1, max=50, message = "State cannot be more than 50 characters")
-    @Column(nullable = false, length = 50)
-    private String state;
-
     @Length(min=1, max=50, message = "Postal code cannot be more than 50 characters")
     @Column(nullable = false, length = 50)
     private String postalCode;
@@ -41,4 +37,11 @@ public class Address {
     @Column(nullable = false, length = 10)
     private String unitNo;
 
+    public Address(String street, String city, String zip, String country, String state) {
+        this.street = street;
+        this.city = city;
+        this.postalCode = zip;
+        this.country = country;
+        this.unitNo = state;
+    }
 }
