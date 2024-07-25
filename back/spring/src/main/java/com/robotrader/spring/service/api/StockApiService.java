@@ -16,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class StockApiService {
     private WebClient webClient;
+    private static final String MULTIPLIER = "10";
+    private static final String TIMESPAN = "minute";
     private static final String API_ENDPOINT = "https://api.polygon.io/";
 
     public StockApiService(WebClient.Builder webClientBuilder, @Value("${POLYGON_API_KEY}") String apiKey) {
@@ -26,18 +28,19 @@ public class StockApiService {
                 .build();
     }
 
-    public Flux<StockData> getOneWeekStockDataByTicker(String stockTicker, String multiplier, String timespan, String toDate) {
+    public Flux<StockData> getStockDataByTicker(String stockTicker) {
         String path = "/v2/aggs/ticker/{stocksTicker}/range/{multiplier}/{timespan}/{from}/{to}";
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String toDate = LocalDate.now().format(df);
         String fromDate = LocalDate.parse(toDate, df).minusWeeks(1).format(df);
 
         Mono<StockApiResponse> dataStream = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(path)
                         .queryParam("adjusted", "true")
-                        .queryParam("sort", "asc")
-                        .queryParam("limit", 50000)
-                        .build(stockTicker, multiplier, timespan, fromDate, toDate))
+                        .queryParam("sort", "desc")
+                        .queryParam("limit", 1000)
+                        .build(stockTicker, MULTIPLIER, TIMESPAN, fromDate, toDate))
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError(), response ->
                         Mono.error(new RuntimeException("4xx error")))
