@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import useAuth from '../../../hooks/useAuth';
+import {useNavigate} from "react-router-dom";
 
 const LoginForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const { login } = useAuth();
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
             await login(username, password);
-            window.location.href = '/home';
+            navigate('/dashboard');
         } catch (error) {
-            setMessage('Invalid login pls try again');
+            setMessage('Invalid login please try again');
         }
     };
 
