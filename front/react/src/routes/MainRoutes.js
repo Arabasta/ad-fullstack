@@ -1,8 +1,14 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 import DashboardPage from '../pages/DashboardPage';
+import HomePage from '../pages/navbar/HomePage';
+import NewsPage from '../pages/navbar/NewsPage';
 import NotFoundPage from '../pages/error/NotFoundPage';
 import LandingPage from "../pages/navbar/LandingPage";
+import WalletPage from "../pages/navbar/WalletPage";
+import SupportPage from "../pages/navbar/SupportPage";
+import SettingsPage from "../pages/navbar/SettingsPage";
+
 
 const mainRoutes = [
     <Route key="landing" path="/" element={<LandingPage />} />,
