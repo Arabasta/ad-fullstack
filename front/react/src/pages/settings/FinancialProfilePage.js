@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 
-const FinancialPage = () => {
+const FinancialProfileForm = () => {
     const [form, setForm] = useState({
-        purpose: '',
-        sourceOfFunds: '',
-        netWorth: '',
-        cryptoExperience: '',
-        tradingVolume: ''
+        nationality: '',
+        employmentStatus: '',
+        industry: '',
+        annualIncome: ''
     });
 
     const handleChange = (e) => {
@@ -24,62 +23,78 @@ const FinancialPage = () => {
     };
 
     return (
-        <div>
-            <h2>Financial Profile</h2>
-            <p>Tell us a little about your financial profile.</p>
+        <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto' }}>
+            <h2>Complete your financial profile</h2>
+            <p>Financial regulations require we ask these questions. Please select the closest option.</p>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="purpose">Purpose of account</label>
-                    <select name="purpose" value={form.purpose} onChange={handleChange}>
-                        <option value="">Select purpose of account</option>
-                        <option value="investment">Investment</option>
-                        <option value="savings">Savings</option>
-                        <option value="trading">Trading</option>
+                <div style={{ marginBottom: '15px' }}>
+                    <label htmlFor="nationality">Nationality</label>
+                    <select name="nationality" value={form.nationality} onChange={handleChange} style={selectStyle}>
+                        <option value="">Select your nationality</option>
+                        <option value="sg">Singaporean</option>
+                        <option value="us">United States</option>
+                        <option value="ca">Canada</option>
+                        <option value="uk">United Kingdom</option>
+                        {/* Add other options as needed */}
                     </select>
                 </div>
-                <div>
-                    <label htmlFor="sourceOfFunds">Source of funds</label>
-                    <select name="sourceOfFunds" value={form.sourceOfFunds} onChange={handleChange}>
-                        <option value="">Select source of funds</option>
-                        <option value="salary">Salary</option>
-                        <option value="inheritance">Inheritance</option>
-                        <option value="investment">Investment</option>
+                <div style={{ marginBottom: '15px' }}>
+                    <label htmlFor="employmentStatus">Employment status</label>
+                    <select name="employmentStatus" value={form.employmentStatus} onChange={handleChange} style={selectStyle}>
+                        <option value="">Select your employment status</option>
+                        <option value="fullTime">Full-time employment</option>
+                        <option value="partTime">Part-time employment</option>
+                        <option value="selfEmployed">Self-employed</option>
+                        <option value="unemployed">Unemployed</option>
+                        <option value="student">Student</option>
+                        <option value="retired">Retired</option>
+                        {/* Add other options as needed */}
                     </select>
                 </div>
-                <div>
-                    <label htmlFor="netWorth">Net worth</label>
-                    <select name="netWorth" value={form.netWorth} onChange={handleChange}>
-                        <option value="">Select your net worth</option>
-                        <option value="less_than_50k">Less than $50,000</option>
-                        <option value="50k_to_100k">$50,000 to $100,000</option>
-                        <option value="100k_to_500k">$100,000 to $500,000</option>
-                        <option value="more_than_500k">More than $500,000</option>
+                <div style={{ marginBottom: '15px' }}>
+                    <label htmlFor="industry">Industry</label>
+                    <select name="industry" value={form.industry} onChange={handleChange} style={selectStyle}>
+                        <option value="">Select your industry</option>
+                        <option value="moneyService">Money Service Business</option>
+                        <option value="tech">Technology</option>
+                        <option value="finance">Finance</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="education">Education</option>
+                        {/* Add other options as needed */}
                     </select>
                 </div>
-                <div>
-                    <label htmlFor="cryptoExperience">Crypto trading experience</label>
-                    <select name="cryptoExperience" value={form.cryptoExperience} onChange={handleChange}>
-                        <option value="">Select crypto trading experience</option>
-                        <option value="none">None</option>
-                        <option value="beginner">Beginner</option>
-                        <option value="intermediate">Intermediate</option>
-                        <option value="advanced">Advanced</option>
+                <div style={{ marginBottom: '15px' }}>
+                    <label htmlFor="annualIncome">Annual income</label>
+                    <select name="annualIncome" value={form.annualIncome} onChange={handleChange} style={selectStyle}>
+                        <option value="">Select your annual income</option>
+                        <option value="under20k">S$20,000 - S$49,999</option>
+                        <option value="50kTo100k">S$50,000 - S$99,999</option>
+                        <option value="100kTo200k">S$100,000 - S$199,999</option>
+                        <option value="200kPlus">S$200,000+</option>
+                        {/* Add other options as needed */}
                     </select>
                 </div>
-                <div>
-                    <label htmlFor="tradingVolume">Monthly trading volume</label>
-                    <select name="tradingVolume" value={form.tradingVolume} onChange={handleChange}>
-                        <option value="">Select monthly trading volume</option>
-                        <option value="less_than_1k">Less than $1,000</option>
-                        <option value="1k_to_10k">$1,000 to $10,000</option>
-                        <option value="10k_to_50k">$10,000 to $50,000</option>
-                        <option value="more_than_50k">More than $50,000</option>
-                    </select>
-                </div>
-                <button type="submit">Submit</button>
+                <button type="submit" style={buttonStyle}>Submit</button>
             </form>
         </div>
     );
 };
 
-export default FinancialPage;
+const selectStyle = {
+    width: '100%',
+    padding: '10px',
+    margin: '5px 0',
+    borderRadius: '5px',
+    border: '1px solid #ccc'
+};
+
+const buttonStyle = {
+    padding: '10px 20px',
+    border: 'none',
+    borderRadius: '5px',
+    backgroundColor: '#000',
+    color: '#fff',
+    cursor: 'pointer'
+};
+
+export default FinancialProfileForm;
