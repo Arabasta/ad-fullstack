@@ -4,14 +4,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class FinancialProfile {
@@ -38,4 +36,12 @@ public class FinancialProfile {
     @Column(nullable = false, length = 50)
     private String investmentExperience;
 
+    public FinancialProfile() {
+        this.employmentStatus = "nil";
+        this.annualIncome = new BigDecimal(0);
+        this.netWorth = new BigDecimal(0);
+        this.sourceOfWealth = "nil";
+        this.investmentObjective = "nil";
+        this.investmentExperience = "nil";
+    }
 }

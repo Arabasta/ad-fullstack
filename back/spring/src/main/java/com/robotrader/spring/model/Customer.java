@@ -54,6 +54,4 @@ public class Customer {
     @Column(nullable = false, length = 50)
     private String nationality;
 
-    private boolean isDeleted;
-
 }
