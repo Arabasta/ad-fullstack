@@ -57,13 +57,17 @@
     }
 
     .nav-wrapper ul {
-        display: ${isOpen ? 'block' : 'none'};
+        display: none; /* 默认隐藏 */
         position: absolute;
         top: 60px;
         right: 0;
         background-color: #333;
         width: 100%;
         text-align: center;
+    }
+
+    .nav-wrapper ul.show {
+        display: block; /* 使用类名控制显示 */
     }
 
     .nav-wrapper ul li {
