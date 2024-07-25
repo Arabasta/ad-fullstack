@@ -37,7 +37,6 @@ public class Rules {
     @Enumerated(EnumType.STRING)
     private RecurringFrequencyEnum recurringAllocationFrequency;
 
-    @NotNull(message = "Recurring allocation day cannot be null")
     @Min(value = 1, message = "Recurring allocation day must be at least 1")
     @Max(value = 28, message = "Recurring allocation day cannot exceed 28")
     private Integer recurringAllocationDay;
