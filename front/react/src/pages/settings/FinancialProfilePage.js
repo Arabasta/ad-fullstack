@@ -1,3 +1,6 @@
+import React from 'react';
+
+const FinancialPage = () => {
 import React, { useState } from 'react';
 
 const FinancialProfileForm = () => {
@@ -23,6 +26,10 @@ const FinancialProfileForm = () => {
     };
 
     return (
+        <div>
+            <h2>Financial page</h2>
+            <p>Welcome to the financial page! For Test Only</p>
+            <p>todo: should put a financial form then submit</p>
         <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto' }}>
             <h2>Complete your financial profile</h2>
             <p>Financial regulations require we ask these questions. Please select the closest option.</p>
@@ -80,6 +87,7 @@ const FinancialProfileForm = () => {
     );
 };
 
+export default FinancialPage;
 const selectStyle = {
     width: '100%',
     padding: '10px',
