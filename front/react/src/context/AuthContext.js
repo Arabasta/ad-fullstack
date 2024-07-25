@@ -15,6 +15,12 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
+    const register = async (username, password, email) => {
+        const response = await authenticationService.register(username, password, email);
+        setUser(response);
+        localStorage.setItem('user', JSON.stringify(response));
+    };
+
     const login = async (username, password) => {
         const response = await authenticationService.login(username, password);
         setUser(response);
@@ -27,7 +33,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, register, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

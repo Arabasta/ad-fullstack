@@ -1,25 +1,36 @@
 import React, { useState } from 'react';
 import useAuth from "../../../hooks/useAuth";
+import {useNavigate} from "react-router-dom";
 
 const RegisterForm = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const { register } = useAuth();
+    const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            await register(username, password);
-            setMessage('User registered successfully');
+            await register(username, password, email);
+            navigate('/dashboard');
         } catch (error) {
-            setMessage('Registration failed');
+            setMessage('An error occurred, please try again.');
         }
     };
 
     return (
         <div>
             <form onSubmit={handleRegister}>
+                <div>
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                </div>
                 <div>
                     <label>Username</label>
                     <input
