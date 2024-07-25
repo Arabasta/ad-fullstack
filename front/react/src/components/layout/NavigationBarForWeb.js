@@ -14,7 +14,7 @@ export default function NavigationBarForWeb() {
     return (
         <nav className="nav-wrapper">
             <div className="nav-container">
-                <a href="#" className="brand-logo">
+                <a href="https://www.google.com" className="brand-logo">
                     <img src={Logo} alt="Logo" className="logo" />
                 </a>
                 <button className="sidenav-trigger" onClick={toggleMenu}>

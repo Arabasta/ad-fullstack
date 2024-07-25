@@ -1,12 +1,12 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import HomePage from '../pages/HomePage';
-import NewsPage from '../pages/NewsPage';
+import HomePage from '../pages/navbar/HomePage';
+import NewsPage from '../pages/navbar/NewsPage';
 import NotFoundPage from '../pages/error/NotFoundPage';
-import LandingPage from "../pages/LandingPage";
-import WalletPage from "../pages/WalletPage";
-import SupportPage from "../pages/SupportPage";
-import SettingsPage from "../pages/SettingsPage";
+import LandingPage from "../pages/navbar/LandingPage";
+import WalletPage from "../pages/navbar/WalletPage";
+import SupportPage from "../pages/navbar/SupportPage";
+import SettingsPage from "../pages/navbar/SettingsPage";
 
 
 const mainRoutes = [
