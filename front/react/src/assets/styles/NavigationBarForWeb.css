@@ -57,6 +57,7 @@
     }
 
     .nav-wrapper ul {
+        display: ${isOpen ? 'block' : 'none'};
         position: absolute;
         top: 60px;
         right: 0;
