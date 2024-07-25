@@ -1,48 +1,47 @@
-package com.robotrader.spring.controller;
+package com.robotrader.spring.service;
 
 import com.robotrader.spring.dto.auth.AuthenticationRequest;
 import com.robotrader.spring.dto.auth.AuthenticationResponse;
+import com.robotrader.spring.dto.auth.RegistrationRequest;
+import com.robotrader.spring.dto.auth.RegistrationResponse;
 import com.robotrader.spring.model.User;
+import com.robotrader.spring.model.enums.RoleEnum;
 import com.robotrader.spring.security.JwtUtil;
-import com.robotrader.spring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
-@RestController
-@RequestMapping("/api")
-public class AuthController {
-
-    private final AuthenticationManager authenticationManager;
-    private final UserService userService;
+@Service
+public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final UserService userService;
 
     @Autowired
-    public AuthController(UserService userService, PasswordEncoder passwordEncoder,
-                          AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
-        this.userService = userService;
+    public AuthenticationService(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
+                                 JwtUtil jwtUtil, UserService userService) {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.userService = userService;
     }
 
-    @PostMapping("/register")
-    public String registerUser(@RequestBody User user) {
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public RegistrationResponse registerCustomer(RegistrationRequest registerRequest) {
+        User user = new User();
+        user.setUsername(registerRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setEmail(registerRequest.getEmail());
+        user.setRole(RoleEnum.ROLE_CUSTOMER);
         userService.save(user);
-        return "User registered successfully";
+
+        return new RegistrationResponse("User registered successfully", user.getId());
     }
 
-    @PostMapping("/login")
-    public AuthenticationResponse loginUser(@RequestBody AuthenticationRequest authenticationRequest) {
+    public AuthenticationResponse authenticateUser(AuthenticationRequest authenticationRequest) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationRequest.getUsername(),
