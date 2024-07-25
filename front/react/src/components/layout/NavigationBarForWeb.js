@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import React, { useState } from "react";
-import './NavigationBarForWeb.css';
+import Logo from '../../assets/images/logo.svg'; // Import the SVG file
+import '../../assets/styles/NavigationBarForWeb.css';
 
 export default function NavigationBarForWeb() {
     const location = useLocation();
@@ -13,7 +14,9 @@ export default function NavigationBarForWeb() {
     return (
         <nav className="nav-wrapper">
             <div className="nav-container">
-                <a href="#!" className="brand-logo">Logo</a>
+                <a href="#!" className="brand-logo">
+                    <img src={Logo} alt="Logo" className="logo" />
+                </a>
                 <button className="sidenav-trigger" onClick={toggleMenu}>
                     ☰
                 </button>
@@ -38,6 +41,3 @@ export default function NavigationBarForWeb() {
         </nav>
     );
 }
-
-
-
