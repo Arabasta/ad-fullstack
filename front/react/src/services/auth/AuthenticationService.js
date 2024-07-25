@@ -2,11 +2,11 @@ import axios from 'axios';
 import { LOGIN_URL, REGISTER_URL } from '../../config/api/auth';
 import {API_BASE_URL} from "../../config/api/base";
 
-const register = (username, password) => {
-    // todo: add email etc
+const register = (username, password, email) => {
     return axios.post(REGISTER_URL, {
         username,
         password,
+        email
     });
 };
 

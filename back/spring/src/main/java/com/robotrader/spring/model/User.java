@@ -2,6 +2,8 @@ package com.robotrader.spring.model;
 
 import com.robotrader.spring.model.enums.RoleEnum;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,10 +42,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-//    @Email(message = "Please input a valid Email")
-//    @NotBlank(message = "Email cannot be blank")
-//    @Column(nullable = false)
-//    private String email; // temp disable for spring security
+    @Email(message = "Please input a valid Email")
+    @NotBlank(message = "Email cannot be blank")
+    @Column(nullable = false)
+    private String email;
 
     private LocalDateTime createDateTime;
     private LocalDateTime updateDateTime;
