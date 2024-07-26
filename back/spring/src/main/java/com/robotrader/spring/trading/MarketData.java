@@ -21,30 +21,34 @@ public class MarketData {
         this.stockApiService = stockApiService;
     }
 
-    public Mono<Map<String, List<BigDecimal>>> getHistoricalMarketData(String stockTicker) {
+    public Mono<Map<String, List<Object>>> getHistoricalMarketData(String stockTicker) {
         return stockApiService.getStockDataByTicker(stockTicker)
                 .collectList()
                 .map(stockDataList -> {
-                    Map<String, List<BigDecimal>> stockPrices = new HashMap<>();
+                    Map<String, List<Object>> stockData = new HashMap<>();
+                    List<Long> timestamp = new ArrayList<>();
                     List<BigDecimal> openPrices = new ArrayList<>();
                     List<BigDecimal> closePrices = new ArrayList<>();
                     List<BigDecimal> highPrices = new ArrayList<>();
                     List<BigDecimal> lowPrices = new ArrayList<>();
 
                     // Get stock prices in ascending order by time
-                    for (StockData stockData : stockDataList) {
-                        openPrices.add(0, stockData.getOpenPrice());
-                        closePrices.add(0, stockData.getClosePrice());
-                        highPrices.add(0, stockData.getHighPrice());
-                        lowPrices.add(0, stockData.getLowPrice());
+                    for (StockData data : stockDataList) {
+                        timestamp.add(data.getTimestamp());
+                        openPrices.add(0, data.getOpenPrice());
+                        closePrices.add(0, data.getClosePrice());
+                        highPrices.add(0, data.getHighPrice());
+                        lowPrices.add(0, data.getLowPrice());
                     }
+                    stockData.put("timestamp", new ArrayList<>(timestamp));
+                    stockData.put("open", new ArrayList<>(openPrices));
+                    stockData.put("close", new ArrayList<>(closePrices));
+                    stockData.put("high", new ArrayList<>(highPrices));
+                    stockData.put("low", new ArrayList<>(lowPrices));
 
-                    stockPrices.put("open", openPrices);
-                    stockPrices.put("close", closePrices);
-                    stockPrices.put("high", highPrices);
-                    stockPrices.put("low", lowPrices);
-
-                    return stockPrices;
+                    return stockData;
                 });
     }
+
+    public void getLiveMarketData(String stockTicker) {}
 }
