@@ -2,12 +2,10 @@ package com.robotrader.spring.trading.application;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
-import com.robotrader.spring.service.api.StockApiService;
 import com.robotrader.spring.trading.BackTesting;
 import com.robotrader.spring.trading.MarketData;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithm;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithmOne;
-import com.robotrader.spring.utils.JsonToBigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
