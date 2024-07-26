@@ -14,19 +14,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class TradingApplication {
@@ -52,10 +42,14 @@ public class TradingApplication {
         BackTesting backTesting = new BackTesting();
         PortfolioTypeEnum portfolioType = PortfolioTypeEnum.AGGRESSIVE;
         marketData.getHistoricalMarketData(stockTicker)
-                .subscribe(priceHistory -> {
-                            List<BigDecimal> pricePredictions = priceHistory.get("open"); // TODO: Predictions == history for now
-                            TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(portfolioType, moneyPoolService);
-                            backTesting.run(stockTicker, tradingAlgorithm, pricePredictions, priceHistory);
+                .subscribe(stockData -> {
+                            List<Object> objects = stockData.get("close");
+                            List<BigDecimal> pricePredictions = objects.stream()
+                                    .map(price -> (BigDecimal) price)
+                                    .collect(Collectors.toList()); //TODO: Predictions == history for now
+
+                            TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(stockTicker, portfolioType, moneyPoolService);
+                            backTesting.run(tradingAlgorithm, pricePredictions, stockData);
                         },
                         error -> System.err.println("Error fetching market data: " + error.getMessage())
                 );
