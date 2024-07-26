@@ -2,6 +2,7 @@ package com.robotrader.spring.service;
 
 import com.robotrader.spring.model.Wallet;
 import com.robotrader.spring.repository.WalletRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class WalletService {
         walletRepository.save(wallet);
     }
 
+    @Transactional
     public Wallet initBaseWallet() {
         Wallet wallet = new Wallet();
         save(wallet);

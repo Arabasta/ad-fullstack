@@ -17,6 +17,7 @@ public class FinancialProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // todo: change to enum
     @NotNull(message = "Amount cannot be null")
     @Column(nullable = false, length = 50)
     private String employmentStatus;
@@ -27,12 +28,15 @@ public class FinancialProfile {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal netWorth;
 
+    // todo: change to enum
     @Column(nullable = false, length = 50)
     private String sourceOfWealth;
 
+    // todo: change to enum
     @Column(nullable = false, length = 50)
     private String investmentObjective;
 
+    // todo: change to enum
     @Column(nullable = false, length = 50)
     private String investmentExperience;
 
