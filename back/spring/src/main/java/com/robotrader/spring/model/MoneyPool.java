@@ -44,6 +44,6 @@ public class MoneyPool {
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private ZonedDateTime tradeDateTime;
+    private ZonedDateTime tradeDateTime; //TODO: i think not required
 
 }
