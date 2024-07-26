@@ -2,6 +2,7 @@ package com.robotrader.spring.service;
 
 import com.robotrader.spring.dto.auth.RegistrationRequest;
 import com.robotrader.spring.dto.auth.RegistrationResponse;
+import com.robotrader.spring.dto.auth.UserDetailsDTO;
 import com.robotrader.spring.interfaces.IUserService;
 import com.robotrader.spring.model.Customer;
 import com.robotrader.spring.model.User;
@@ -49,15 +50,20 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     @Transactional
-    public RegistrationResponse createCustomerUser(RegistrationRequest registrationRequest) {
+    public RegistrationResponse create(RegistrationRequest registrationRequest, boolean isCustomer) {
         User user = new User();
-        user.setUsername(registrationRequest.getUsername());
-        user.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
-        user.setEmail(registrationRequest.getEmail());
-        user.setRole(RoleEnum.ROLE_CUSTOMER);
+        UserDetailsDTO userDetailsDTO = registrationRequest.getUserDetails();
+        user.setUsername(userDetailsDTO.getUsername());
+        user.setPassword(passwordEncoder.encode(userDetailsDTO.getPassword()));
+        user.setEmail(userDetailsDTO.getEmail());
 
-        Customer customer = customerService.createCustomerUser(registrationRequest);
-        user.setCustomer(customer);
+        if (isCustomer) {
+            user.setRole(RoleEnum.ROLE_CUSTOMER);
+            Customer customer = customerService.create(registrationRequest.getCustomerDetails());
+            user.setCustomer(customer);
+        } else {
+            user.setRole(RoleEnum.ROLE_ADMIN);
+        }
 
         save(user);
         return new RegistrationResponse("User registered successfully", user.getId());

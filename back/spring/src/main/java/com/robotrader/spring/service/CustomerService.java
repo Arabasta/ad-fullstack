@@ -1,7 +1,6 @@
 package com.robotrader.spring.service;
 
-import com.robotrader.spring.dto.auth.RegistrationRequest;
-import com.robotrader.spring.model.Address;
+import com.robotrader.spring.dto.auth.CustomerCreateDTO;
 import com.robotrader.spring.model.Customer;
 import com.robotrader.spring.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
@@ -35,23 +34,20 @@ public class CustomerService {
     }
 
     @Transactional
-    public Customer createCustomerUser(RegistrationRequest registerRequest) {
+    public Customer create(CustomerCreateDTO customerCreateDTO) {
         Customer customer = new Customer();
+        customer.setFirstName(customerCreateDTO.getFirstName());
+        customer.setLastName(customerCreateDTO.getLastName());
+        customer.setNationality(customerCreateDTO.getNationality());
+        customer.setMobileNumber(customerCreateDTO.getMobileNumber());
 
-        customer.setFirstName(registerRequest.getFirstName());
-        customer.setLastName(registerRequest.getLastName());
-        customer.setNationality(registerRequest.getNationality());
-        customer.setMobileNumber(registerRequest.getMobileNumber());
-
+        customer.setAddress(addressService.create(customerCreateDTO.getAddress()));
         customer.setFinancialProfile(financialProfileService.initBaseFinancialProfile());
         customer.setInvestorProfile(investorProfileService.initBaseInvestorProfile());
         customer.setWallet(walletService.initBaseWallet());
         customer.setPortfolios(portfolioService.initBasePortfolios());
 
-        // todo: set address from registerRequest
-        customer.setAddress(new Address("street", "city", "zip", "country", "state"));
         save(customer);
-
         return customer;
     }
 }

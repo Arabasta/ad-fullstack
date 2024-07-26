@@ -37,11 +37,11 @@ public class Address {
     @Column(nullable = false, length = 10)
     private String unitNo;
 
-    public Address(String street, String city, String zip, String country, String state) {
+    public Address(String street, String city, String postalCode, String country, String unitNo) {
         this.street = street;
         this.city = city;
-        this.postalCode = zip;
+        this.postalCode = postalCode;
         this.country = country;
-        this.unitNo = state;
+        this.unitNo = unitNo;
     }
 }
