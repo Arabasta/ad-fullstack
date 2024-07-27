@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CryptoWebSocketService extends MarketDataWebSocketService {
-    private static final String CRYPTO_WEBSOCKET_ENDPOINT = MarketDataWebSocketService.BASE_WEBSOCKET_ENDPOINT + "crypto";
+    private static final String CRYPTO_WEBSOCKET_ENDPOINT = "wss://socket.polygon.io/crypto";
 
     @Override
     public String getWebSocketEndpoint() {
