@@ -31,7 +31,7 @@ public class TradingApplication {
     public CommandLineRunner commandLineRunner() {
         return args -> {
 
-        runTradingAlgorithmUnscheduled("AAPL");
+            runTradingAlgorithmUnscheduled("AAPL");
 
         };
     }
@@ -49,7 +49,10 @@ public class TradingApplication {
                             TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(stockTicker, portfolioType, moneyPoolService);
                             backTesting.run(tradingAlgorithm, pricePredictions, stockData);
                         },
-                        error -> System.err.println("Error fetching market data: " + error.getMessage())
+                        error -> {
+                            System.err.println("Error fetching market data: " + error.getMessage());
+                            error.printStackTrace();
+                        }
                 );
     }
 

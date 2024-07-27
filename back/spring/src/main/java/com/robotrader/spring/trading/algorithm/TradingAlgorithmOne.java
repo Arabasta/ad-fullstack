@@ -23,27 +23,27 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
             Integer window = 20; // TODO: Assumed prediction data size is 20 for now, depending on model output
             // Not enough prediction data, cannot trade
             if (pricePredictions.size() < window) {
+                System.out.println("Not enough price predictions");
                 return false;
             }
-            atr = getATR(priceHistory);
-            position = positionSizing(AGGRESSIVE_RISK); // TODO: Should this be in isTradeable to check sufficient capital
-            stopLoss = calculateStopLoss(currentPrice);
-            profitTarget = calculateProfitTarget(currentPrice);
 
-            System.out.println("Current price: " + priceHistory.get("close").get(0));
-            System.out.println("Stop loss: " + stopLoss);
-            System.out.println("Profit target: " + profitTarget);
+            profitTarget = calculateProfitTargetPrice(currentPrice);
 
+            // True if within the window the predicted price goes above the PT without dropping below the SL
             for (int i = 0; i < window; i++) {
-                System.out.println("Price predicted at " + i + ": " + pricePredictions.get(i));
-                if (pricePredictions.get(i).compareTo(stopLoss) < 0) {
+                System.out.println("Price predicted at t" + i + ": " + pricePredictions.get(i));
+                if (pricePredictions.get(i).compareTo(stopLossPrice) < 0) {
+                    System.out.println("Price prediction: Predicted price below stop loss");
                     return false;
                 }
                 if (pricePredictions.get(i).compareTo(profitTarget) > 0) {
+                    System.out.println("Price prediction: Predicted price above profit target");
                     return true;
                 }
             }
+            System.out.println("Price prediction: Predicted price did not hit the target or stop loss within the prediction window");
         }
+        System.out.println("Trade rules not met");
         return false;
     }
 
@@ -58,7 +58,15 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
 
     @Override
     public Integer positionSizing(BigDecimal risk) {
-        BigDecimal divisor = atr.multiply(BigDecimal.valueOf(1.1));
+        // 14-day ATR
+        Integer atrPeriod = 14;
+        if (priceHistory.get("close").size() < atrPeriod + 1) { // Need a atrPeriod + 1 window
+            System.out.println("Insufficient number of to make a trade decision, no. of data: " + atrPeriod);
+            return -1;
+        }
+        atr = getATR(priceHistory, atrPeriod);
+        stopLossPrice = calculateStopLossPrice(currentPrice);
+        BigDecimal divisor = currentPrice.subtract(stopLossPrice);
         if (isTest) {
             Integer positionSize = ((capitalTest.multiply(risk)).divide(divisor, 4, RoundingMode.HALF_UP)).intValue();
             return positionSize;
@@ -71,29 +79,30 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
     }
 
     @Override
-    public BigDecimal calculateStopLoss(BigDecimal currentPrice) {
-        return currentPrice.subtract(atr.multiply(BigDecimal.valueOf(1.1))).setScale(4, RoundingMode.HALF_UP);
+    public BigDecimal calculateStopLossPrice(BigDecimal currentPrice) {
+        stopLossAmount = atr.multiply(BigDecimal.valueOf(1.5));
+        return currentPrice.subtract(stopLossAmount).setScale(4, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal calculateProfitTarget(BigDecimal currentPrice) {
-        return currentPrice.add(atr.multiply(BigDecimal.valueOf(2))).setScale(4, RoundingMode.HALF_UP);
+    private BigDecimal calculateProfitTargetPrice(BigDecimal currentPrice) {
+        return currentPrice.add(stopLossAmount.multiply(BigDecimal.valueOf(2))).setScale(4, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal getATR(Map<String, List<Object>> stockPriceHistory) {
+    private BigDecimal getATR(Map<String, List<Object>> stockPriceHistory, Integer atrPeriod) {
         List<Object> closePrices = stockPriceHistory.get("close");
         List<Object> highPrices = stockPriceHistory.get("high");
         List<Object> lowPrices = stockPriceHistory.get("low");
-        // 14-day ATR
-        Integer atrPeriod = 14;
+
         BigDecimal sum = BigDecimal.ZERO;
         for (int i = 1; i < atrPeriod + 1; i ++) {
             BigDecimal prevClosePrice = (BigDecimal) closePrices.get(i - 1);
             BigDecimal highPrice = (BigDecimal) highPrices.get(i);
             BigDecimal lowPrice = (BigDecimal) lowPrices.get(i);
 
-            BigDecimal dailyMax = highPrice.subtract(lowPrice)
-                    .max((highPrice.subtract(prevClosePrice)).abs())
-                    .max((lowPrice.subtract(prevClosePrice)).abs());
+            BigDecimal tr1 = highPrice.subtract(lowPrice);
+            BigDecimal tr2 = (highPrice.subtract(prevClosePrice)).abs();
+            BigDecimal tr3 = (lowPrice.subtract(prevClosePrice)).abs();
+            BigDecimal dailyMax = tr1.max(tr2).max(tr3);
             sum = sum.add(dailyMax);
         }
         BigDecimal atr = sum.divide(BigDecimal.valueOf(atrPeriod), RoundingMode.HALF_UP);
