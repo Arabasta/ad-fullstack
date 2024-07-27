@@ -88,10 +88,10 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
         return currentPrice.add(stopLossAmount.multiply(BigDecimal.valueOf(2))).setScale(4, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal getATR(Map<String, List<Object>> stockPriceHistory, Integer atrPeriod) {
-        List<Object> closePrices = stockPriceHistory.get("close");
-        List<Object> highPrices = stockPriceHistory.get("high");
-        List<Object> lowPrices = stockPriceHistory.get("low");
+    private BigDecimal getATR(Map<String, List<Object>> priceHistory, Integer atrPeriod) {
+        List<Object> closePrices = priceHistory.get("close");
+        List<Object> highPrices = priceHistory.get("high");
+        List<Object> lowPrices = priceHistory.get("low");
 
         BigDecimal sum = BigDecimal.ZERO;
         for (int i = 1; i < atrPeriod + 1; i ++) {

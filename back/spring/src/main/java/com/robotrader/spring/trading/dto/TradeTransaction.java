@@ -8,7 +8,7 @@ import java.util.UUID;
 @Data
 public class TradeTransaction {
     private String transactionId;
-    private String stockSymbol;
+    private String ticker;
     private String action;
     private Long transactionTimestamp;
     private Integer transactionQuantity;
@@ -16,9 +16,9 @@ public class TradeTransaction {
 
     public TradeTransaction() {}
 
-    public TradeTransaction(String stockSymbol, Long transactionTimestamp, Integer transactionQuantity, BigDecimal transactionPrice, String action) {
+    public TradeTransaction(String ticker, Long transactionTimestamp, Integer transactionQuantity, BigDecimal transactionPrice, String action) {
         this.transactionId = UUID.randomUUID().toString();
-        this.stockSymbol = stockSymbol;
+        this.ticker = ticker;
         this.action = action;
         this.transactionTimestamp = transactionTimestamp;
         this.transactionQuantity = transactionQuantity;
@@ -29,7 +29,7 @@ public class TradeTransaction {
     public String toString() {
         return "TradeTransaction{" +
                 "transactionId='" + transactionId + '\'' +
-                ", stockSymbol='" + stockSymbol + '\'' +
+                ", ticker='" + ticker + '\'' +
                 ", action='" + action + '\'' +
                 ", transactionTimestamp=" + transactionTimestamp +
                 ", transactionQuantity=" + transactionQuantity +
