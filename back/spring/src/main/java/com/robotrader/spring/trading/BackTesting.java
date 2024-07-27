@@ -1,8 +1,6 @@
 package com.robotrader.spring.trading;
 
-import com.robotrader.spring.dto.TradeTransaction;
-import com.robotrader.spring.model.MoneyPool;
-import com.robotrader.spring.model.enums.PortfolioTypeEnum;
+import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithm;
 
 import java.math.BigDecimal;

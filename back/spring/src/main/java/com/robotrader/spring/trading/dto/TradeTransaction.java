@@ -1,4 +1,4 @@
-package com.robotrader.spring.dto;
+package com.robotrader.spring.trading.dto;
 
 import lombok.Data;
 
