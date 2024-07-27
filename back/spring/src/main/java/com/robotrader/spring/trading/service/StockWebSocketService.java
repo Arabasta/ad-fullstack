@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class StockWebSocketService extends MarketDataWebSocketService {
-    private static final String STOCK_WEBSOCKET_ENDPOINT = MarketDataWebSocketService.BASE_WEBSOCKET_ENDPOINT + "stock";
+    private static final String STOCK_WEBSOCKET_ENDPOINT = "wss://delayed.polygon.io/stocks";
 
     @Override
     public String getWebSocketEndpoint() {

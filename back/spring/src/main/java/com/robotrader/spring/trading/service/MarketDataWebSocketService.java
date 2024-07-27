@@ -19,7 +19,6 @@ import java.util.concurrent.CompletableFuture;
 
 // Reference: https://www.geeksforgeeks.org/spring-boot-web-socket/
 public abstract class MarketDataWebSocketService extends TextWebSocketHandler implements MarketDataWebSocketHandler {
-    protected static final String BASE_WEBSOCKET_ENDPOINT = "wss://socket.polygon.io/";
     protected final ObjectMapper objectMapper = new ObjectMapper();
     WebSocketSession session ;
     @Value("${POLYGON_API_KEY}")
@@ -38,9 +37,6 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
-        this.session = session;
-        System.out.println("Connected to WebSocket server");
-        authenticate();
     }
 
     @Override
@@ -71,7 +67,20 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
         WebSocketClient client = new StandardWebSocketClient();
         WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
         String endpoint = getWebSocketEndpoint();
-        client.doHandshake(this, headers, URI.create(endpoint));
+        client.execute(this, headers, URI.create(endpoint))
+                .thenAccept(webSocketSession -> {
+                    this.session = webSocketSession;
+                    System.out.println("Connected to WebSocket server: " + getWebSocketEndpoint());
+                    try {
+                        authenticate();
+                    } catch (IOException e) {
+                        System.err.println("Failed to authenticate: " + e.getMessage());
+                    }
+                })
+                .exceptionally(throwable -> {
+                    System.err.println("Failed to connect: " + throwable.getMessage());
+                    return null;
+                });
     }
 
     private void authenticate() throws IOException {
