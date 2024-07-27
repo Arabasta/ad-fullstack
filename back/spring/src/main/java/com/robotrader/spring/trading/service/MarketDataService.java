@@ -1,6 +1,6 @@
 package com.robotrader.spring.trading.service;
 
-import com.robotrader.spring.trading.dto.StockHistoricalData;
+import com.robotrader.spring.trading.dto.TickerHistoricalData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -13,19 +13,19 @@ import java.util.Map;
 
 @Service
 public class MarketDataService {
-    private final StockApiService stockApiService;
+    private final HistoricalDataApiService historicalDataApiService;
     private final MarketDataWebSocketService stockWebSocketService;
     private final MarketDataWebSocketService cryptoWebSocketService;
 
     @Autowired
-    public MarketDataService(StockApiService stockApiService, MarketDataWebSocketService stockWebSocketService, MarketDataWebSocketService cryptoWebSocketService) {
-        this.stockApiService = stockApiService;
+    public MarketDataService(HistoricalDataApiService historicalDataApiService, MarketDataWebSocketService stockWebSocketService, MarketDataWebSocketService cryptoWebSocketService) {
+        this.historicalDataApiService = historicalDataApiService;
         this.stockWebSocketService = stockWebSocketService;
         this.cryptoWebSocketService = cryptoWebSocketService;
     }
 
-    public Mono<Map<String, List<Object>>> getHistoricalStockData(String stockTicker) {
-        return stockApiService.getStockDataByTicker(stockTicker)
+    public Mono<Map<String, List<Object>>> getHistoricalMarketData(String ticker) {
+        return historicalDataApiService.getMarketDataByTicker(ticker)
                 .collectList()
                 .map(stockDataList -> {
                     Map<String, List<Object>> stockData = new HashMap<>();
@@ -36,7 +36,7 @@ public class MarketDataService {
                     List<BigDecimal> lowPrices = new ArrayList<>();
 
                     // Get stock prices in ascending order by time
-                    for (StockHistoricalData data : stockDataList) {
+                    for (TickerHistoricalData data : stockDataList) {
                         timestamp.add(data.getTimestamp());
                         openPrices.add(0, data.getOpenPrice());
                         closePrices.add(0, data.getClosePrice());

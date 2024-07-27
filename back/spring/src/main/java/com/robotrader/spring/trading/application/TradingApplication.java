@@ -36,24 +36,25 @@ public class TradingApplication {
     public CommandLineRunner commandLineRunner() {
         return args -> {
 
-            runTradingAlgorithmUnscheduled("AAPL");
+//            runTradingAlgorithmUnscheduled("AAPL");
+            runTradingAlgorithmUnscheduled("X:BTCUSD");
 
-            runTradingAlgorithmLive();
+//            runTradingAlgorithmLive();
 
         };
     }
 
-    public void runTradingAlgorithmUnscheduled(String stockTicker) {
+    public void runTradingAlgorithmUnscheduled(String ticker) {
         BackTesting backTesting = new BackTesting();
         PortfolioTypeEnum portfolioType = PortfolioTypeEnum.AGGRESSIVE;
-        marketDataService.getHistoricalStockData(stockTicker)
+        marketDataService.getHistoricalMarketData(ticker)
                 .subscribe(stockData -> {
                             List<Object> objects = stockData.get("close");
                             List<BigDecimal> pricePredictions = objects.stream()
                                     .map(price -> (BigDecimal) price)
                                     .collect(Collectors.toList()); //TODO: Predictions == history for now
 
-                            TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(stockTicker, portfolioType, moneyPoolService);
+                            TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
                             backTesting.run(tradingAlgorithm, pricePredictions, stockData);
                         },
                         error -> {
