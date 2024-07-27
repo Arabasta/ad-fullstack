@@ -1,7 +1,7 @@
-package com.robotrader.spring.service.api;
+package com.robotrader.spring.trading.service;
 
 import com.robotrader.spring.dto.StockApiResponse;
-import com.robotrader.spring.dto.StockData;
+import com.robotrader.spring.dto.StockHistoricalData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,7 +28,7 @@ public class StockApiService {
                 .build();
     }
 
-    public Flux<StockData> getStockDataByTicker(String stockTicker) {
+    public Flux<StockHistoricalData> getStockDataByTicker(String stockTicker) {
         String path = "/v2/aggs/ticker/{stocksTicker}/range/{multiplier}/{timespan}/{from}/{to}";
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String toDate = LocalDate.now().format(df);
