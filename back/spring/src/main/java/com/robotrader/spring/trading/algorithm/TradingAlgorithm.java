@@ -24,13 +24,16 @@ public abstract class TradingAlgorithm {
     protected final MoneyPoolService moneyPoolService;
     @Getter
     protected List<TradeTransaction> tradeTransactions;
-    protected static final BigDecimal AGGRESSIVE_RISK = BigDecimal.valueOf(0.03);
-    protected static final BigDecimal MODERATE_RISK = BigDecimal.valueOf(0.02);
-    protected static final BigDecimal CONSERVATIVE_RISK = BigDecimal.valueOf(0.01);
+    protected static final BigDecimal AGGRESSIVE_RISK = BigDecimal.valueOf(0.0005);
+    protected static final BigDecimal MODERATE_RISK = BigDecimal.valueOf(0.0003);
+    protected static final BigDecimal CONSERVATIVE_RISK = BigDecimal.valueOf(0.0001);
     protected Integer position;
     protected BigDecimal currentPrice;
-    protected BigDecimal stopLoss;
+    protected BigDecimal stopLossPrice;
+    protected BigDecimal stopLossAmount;
     protected BigDecimal profitTarget;
+    @Getter
+    @Setter
     protected BigDecimal capitalTest;
     protected boolean isTest;
 
@@ -50,24 +53,31 @@ public abstract class TradingAlgorithm {
     public abstract Integer positionSizing(BigDecimal risk);
 
     // Determining stop loss
-    public abstract BigDecimal calculateStopLoss(BigDecimal currentPrice);
+    public abstract BigDecimal calculateStopLossPrice(BigDecimal currentPrice);
 
     public void executeBackTest() {
         isTest = true;
-        if (checkForSellSignal()) {
+        System.out.println("------ Execution ------");
+
+        boolean sellSignal = checkForSellSignal();
+        System.out.println("Sell signal: " + sellSignal);
+
+        if (sellSignal) {
             executeSellTradeBackTest();
-            System.out.println("Sell signal: " + true);
             return; // Allow only 1 trade per execution.
-        } else {
-            System.out.println("Sell signal: " + false);
         }
-        if (checkForBuySignal()) {
+
+        boolean buySignal = checkForBuySignal();
+        System.out.println("Buy signal: " + buySignal);
+
+        if (buySignal) {
             executeBuyTradeBackTest();
-            System.out.println("Buy signal: " + true);
         }
-        else {
-            System.out.println("Buy signal: " + false);
-        }
+
+        System.out.println("Current price: " + currentPrice);
+        System.out.println("Profit target: " + profitTarget);
+        System.out.println("Stop loss: " + stopLossPrice);
+
     }
 
     public void executeLiveTrade() {
@@ -81,7 +91,20 @@ public abstract class TradingAlgorithm {
             return false;
         }
 
-//        position = positionSizing(AGGRESSIVE_RISK);
+        // Calculate the position size
+        position = positionSizing(AGGRESSIVE_RISK);
+        if (position == -1) {
+            return false;
+        }
+        // Calculate the total cost of the trade
+        BigDecimal totalCost = currentPrice.multiply(BigDecimal.valueOf(position));
+
+        // Check if there's enough capital for the trade
+        if (totalCost.compareTo(capitalTest) > 0) {
+            System.out.println("Position: " + position);
+            System.out.println("Not enough capital for the trade. Required: " + totalCost + ", Available: " + capitalTest);
+            return false;
+        }
         return true;
     }
 
@@ -92,6 +115,9 @@ public abstract class TradingAlgorithm {
 
         TradeTransaction tradeTransaction = new TradeTransaction(ticker, timestamp, position, currentPrice, "BUY");
         tradeTransactions.add(tradeTransaction);
+        capitalTest = capitalTest.subtract(currentPrice.multiply(BigDecimal.valueOf(position)));
+        System.out.println("Trade: " + tradeTransaction);
+        System.out.println("Capital:" + capitalTest);
     }
     public void executeBuyTradeLive(){
         // Call API for live price
@@ -105,6 +131,9 @@ public abstract class TradingAlgorithm {
 
         TradeTransaction tradeTransaction = new TradeTransaction(ticker, timestamp, position, currentPrice, "SELL");
         tradeTransactions.add(tradeTransaction);
+        capitalTest = capitalTest.add(currentPrice.multiply(BigDecimal.valueOf(position)));
+        System.out.println("Trade: " + tradeTransaction);
+        System.out.println("Capital:" + capitalTest);
     }
     public void executeSellTradeLive(){
         // Call API for live price
@@ -117,7 +146,7 @@ public abstract class TradingAlgorithm {
 
     // Stop loss
     public boolean isStopLossTriggered(BigDecimal currentPrice) {
-            if (currentPrice.compareTo(stopLoss) < 0){
+            if (currentPrice.compareTo(stopLossPrice) < 0){
                 return true;
             }
         return false;
