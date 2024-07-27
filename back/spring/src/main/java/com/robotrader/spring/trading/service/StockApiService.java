@@ -1,7 +1,7 @@
 package com.robotrader.spring.trading.service;
 
-import com.robotrader.spring.dto.StockApiResponse;
-import com.robotrader.spring.dto.StockHistoricalData;
+import com.robotrader.spring.trading.dto.StockApiResponse;
+import com.robotrader.spring.trading.dto.StockHistoricalData;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

@@ -1,6 +1,6 @@
 package com.robotrader.spring.trading.service;
 
-import com.robotrader.spring.dto.StockHistoricalData;
+import com.robotrader.spring.trading.dto.StockHistoricalData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -12,13 +12,15 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class MarketData {
+public class MarketDataService {
     private final StockApiService stockApiService;
-    private final CryptoWebSocketService cryptoWebSocketService;
+    private final MarketDataWebSocketService stockWebSocketService;
+    private final MarketDataWebSocketService cryptoWebSocketService;
 
     @Autowired
-    public MarketData(StockApiService stockApiService, CryptoWebSocketService cryptoWebSocketService) {
+    public MarketDataService(StockApiService stockApiService, MarketDataWebSocketService stockWebSocketService, MarketDataWebSocketService cryptoWebSocketService) {
         this.stockApiService = stockApiService;
+        this.stockWebSocketService = stockWebSocketService;
         this.cryptoWebSocketService = cryptoWebSocketService;
     }
 
@@ -51,7 +53,15 @@ public class MarketData {
                 });
     }
 
-    public void getLiveStockData(String stockTicker) {}
+    public void getLiveStockData(List<String> stockTickers) {
+        stockWebSocketService.connect();
+        stockWebSocketService.subscribe(stockTickers);
+    }
+
+    public void disconnectLiveStockData() {
+        stockWebSocketService.disconnect();
+    }
+
 
     public void getLiveCryptoData(List<String> cryptoTickers) {
         cryptoWebSocketService.connect();

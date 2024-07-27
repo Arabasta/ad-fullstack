@@ -1,6 +1,6 @@
 package com.robotrader.spring.trading.algorithm;
 
-import com.robotrader.spring.dto.TradeTransaction;
+import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 import lombok.Getter;
