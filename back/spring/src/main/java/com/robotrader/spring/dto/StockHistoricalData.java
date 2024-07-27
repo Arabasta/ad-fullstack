@@ -6,7 +6,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class StockData {
+public class StockHistoricalData {
     @JsonProperty("c")
     private BigDecimal closePrice;  // Close price
 

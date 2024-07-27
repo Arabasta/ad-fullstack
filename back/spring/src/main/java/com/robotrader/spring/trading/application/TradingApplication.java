@@ -3,7 +3,7 @@ package com.robotrader.spring.trading.application;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 import com.robotrader.spring.trading.BackTesting;
-import com.robotrader.spring.trading.MarketData;
+import com.robotrader.spring.trading.service.MarketData;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithm;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithmOne;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,13 +34,16 @@ public class TradingApplication {
 
             runTradingAlgorithmUnscheduled("AAPL");
 
+
+            List<String> cryptoTickers = Arrays.asList("BTC-USD","ETH-USD");
+            runTradingAlgorithmLive(cryptoTickers);
         };
     }
 
     public void runTradingAlgorithmUnscheduled(String stockTicker) {
         BackTesting backTesting = new BackTesting();
         PortfolioTypeEnum portfolioType = PortfolioTypeEnum.AGGRESSIVE;
-        marketData.getHistoricalMarketData(stockTicker)
+        marketData.getHistoricalStockData(stockTicker)
                 .subscribe(stockData -> {
                             List<Object> objects = stockData.get("close");
                             List<BigDecimal> pricePredictions = objects.stream()
@@ -54,6 +58,10 @@ public class TradingApplication {
                             error.printStackTrace();
                         }
                 );
+    }
+
+    public void runTradingAlgorithmLive(List<String> cryptoTickers) {
+        marketData.getLiveCryptoData(cryptoTickers);
     }
 
 

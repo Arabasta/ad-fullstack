@@ -13,7 +13,7 @@ public class StockApiResponse {
     private int queryCount;
     @JsonProperty("request_id")
     private String requestId;
-    private List<StockData> results;
+    private List<StockHistoricalData> results;
     private int resultsCount;
     private String status;
     private String ticker;

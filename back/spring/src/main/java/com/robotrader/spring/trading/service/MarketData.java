@@ -1,7 +1,6 @@
-package com.robotrader.spring.trading;
+package com.robotrader.spring.trading.service;
 
-import com.robotrader.spring.dto.StockData;
-import com.robotrader.spring.service.api.StockApiService;
+import com.robotrader.spring.dto.StockHistoricalData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -15,13 +14,15 @@ import java.util.Map;
 @Service
 public class MarketData {
     private final StockApiService stockApiService;
+    private final CryptoWebSocketService cryptoWebSocketService;
 
     @Autowired
-    public MarketData(StockApiService stockApiService) {
+    public MarketData(StockApiService stockApiService, CryptoWebSocketService cryptoWebSocketService) {
         this.stockApiService = stockApiService;
+        this.cryptoWebSocketService = cryptoWebSocketService;
     }
 
-    public Mono<Map<String, List<Object>>> getHistoricalMarketData(String stockTicker) {
+    public Mono<Map<String, List<Object>>> getHistoricalStockData(String stockTicker) {
         return stockApiService.getStockDataByTicker(stockTicker)
                 .collectList()
                 .map(stockDataList -> {
@@ -33,7 +34,7 @@ public class MarketData {
                     List<BigDecimal> lowPrices = new ArrayList<>();
 
                     // Get stock prices in ascending order by time
-                    for (StockData data : stockDataList) {
+                    for (StockHistoricalData data : stockDataList) {
                         timestamp.add(data.getTimestamp());
                         openPrices.add(0, data.getOpenPrice());
                         closePrices.add(0, data.getClosePrice());
@@ -50,5 +51,14 @@ public class MarketData {
                 });
     }
 
-    public void getLiveMarketData(String stockTicker) {}
+    public void getLiveStockData(String stockTicker) {}
+
+    public void getLiveCryptoData(List<String> cryptoTickers) {
+        cryptoWebSocketService.connect();
+        cryptoWebSocketService.subscribe(cryptoTickers);
+    }
+
+    public void disconnectLiveCryptoData() {
+        cryptoWebSocketService.disconnect();
+    }
 }
