@@ -1,15 +1,22 @@
 package com.robotrader.spring.model;
 
+import com.robotrader.spring.model.enums.EmploymentStatusEnum;
+import com.robotrader.spring.model.enums.InvestmentExperienceEnum;
+import com.robotrader.spring.model.enums.InvestmentObjectiveEnum;
+import com.robotrader.spring.model.enums.SourceOfWealthEnum;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity
 public class FinancialProfile {
@@ -17,35 +24,26 @@ public class FinancialProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // todo: change to enum
-    @NotNull(message = "Amount cannot be null")
-    @Column(nullable = false, length = 50)
-    private String employmentStatus;
+    @Enumerated(EnumType.STRING)
+    private EmploymentStatusEnum employmentStatus;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
+    @DecimalMax(value = "1000000000.00", message = "Amount must be less than or equal to 1000000000.00")
+    @Column(precision = 10, scale = 2)
     private BigDecimal annualIncome;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
+    @DecimalMax(value = "1000000000.00", message = "Amount must be less than or equal to 1000000000.00")
+    @Column(precision = 10, scale = 2)
     private BigDecimal netWorth;
 
-    // todo: change to enum
-    @Column(nullable = false, length = 50)
-    private String sourceOfWealth;
+    @Enumerated(EnumType.STRING)
+    private SourceOfWealthEnum sourceOfWealth;
 
-    // todo: change to enum
-    @Column(nullable = false, length = 50)
-    private String investmentObjective;
+    @Enumerated(EnumType.STRING)
+    private InvestmentObjectiveEnum investmentObjective;
 
-    // todo: change to enum
-    @Column(nullable = false, length = 50)
-    private String investmentExperience;
+    @Enumerated(EnumType.STRING)
+    private InvestmentExperienceEnum investmentExperience;
 
-    public FinancialProfile() {
-        this.employmentStatus = "nil";
-        this.annualIncome = new BigDecimal(0);
-        this.netWorth = new BigDecimal(0);
-        this.sourceOfWealth = "nil";
-        this.investmentObjective = "nil";
-        this.investmentExperience = "nil";
-    }
 }

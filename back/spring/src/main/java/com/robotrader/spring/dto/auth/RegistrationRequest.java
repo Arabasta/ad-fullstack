@@ -1,5 +1,7 @@
 package com.robotrader.spring.dto.auth;
 
+import com.robotrader.spring.dto.customer.CustomerDTO;
+import com.robotrader.spring.dto.user.UserCredentialsDTO;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +10,8 @@ import lombok.Setter;
 @Setter
 public class RegistrationRequest {
     @NotNull
-    private UserDetailsDTO userDetails;
+    private UserCredentialsDTO userDetails;
 
     @NotNull
-    private CustomerCreateDTO customerDetails;
+    private CustomerDTO customerDetails;
 }
