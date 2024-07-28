@@ -1,6 +1,5 @@
 package com.robotrader.spring.trading.algorithm;
 
-import com.robotrader.spring.model.MoneyPool;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 
@@ -49,7 +48,10 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
 
     @Override
     public boolean checkForSellSignal() {
-        currentPrice = (BigDecimal) priceHistory.get("close").get(0);
+        if (isTest) {
+            currentPrice = (BigDecimal) priceHistory.get("close").get(0);
+        }
+
         if (isSellable()) {
             return isStopLossTriggered(currentPrice) || isProfitTargetTriggered(currentPrice);
         }

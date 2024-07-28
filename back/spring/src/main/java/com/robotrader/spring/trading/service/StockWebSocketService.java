@@ -44,6 +44,6 @@ public class StockWebSocketService extends MarketDataWebSocketService {
 
         System.out.println("Stock Data: " + stockData);
 
-        // TODO: Use in LiveTrading to check stop loss or profit target
+        marketDataSink.tryEmitNext(stockData);
     }
 }

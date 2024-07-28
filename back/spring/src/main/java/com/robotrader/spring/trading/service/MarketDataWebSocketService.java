@@ -2,6 +2,7 @@ package com.robotrader.spring.trading.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.robotrader.spring.trading.dto.LiveMarketData;
 import com.robotrader.spring.trading.interfaces.MarketDataWebSocketHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.socket.CloseStatus;
@@ -11,6 +12,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.WebSocketClient;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,6 +27,9 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
     @Value("${POLYGON_API_KEY}")
     protected String apiKey;
     protected CompletableFuture<Void> authenticationFuture = new CompletableFuture<>();
+    // Sink publisher can emit multiple elements and have multiple subscribers, with buffering of element
+    protected final Sinks.Many<LiveMarketData> marketDataSink = Sinks.many().multicast().onBackpressureBuffer();
+    protected final Flux<LiveMarketData> marketDataFlux = marketDataSink.asFlux();
 
     @Override
     public abstract String getEventType();
@@ -139,5 +145,9 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
         } else {
             System.out.println("WebSocket is not connected");
         }
+    }
+
+    public Flux<LiveMarketData> getLiveMarketDataFlux() {
+        return marketDataFlux;
     }
 }
