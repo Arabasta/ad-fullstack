@@ -139,4 +139,30 @@ public class PortfolioService implements IPortfolioService {
         save(portfolio);
     }
 
+    @Override
+    @Transactional
+    public void handleStopLoss(Portfolio portfolio) {
+        stopLossWithdrawAllToWallet(portfolio);
+        // todo: send notification
+    }
+
+    @Override
+    @Transactional
+    public void stopLossWithdrawAllToWallet(Portfolio portfolio) {
+        walletService.addAmountToWallet(walletService.getWalletByPortfolio(portfolio), portfolio.getCurrentValue());
+        portfolio.setCurrentValue(BigDecimal.ZERO);
+        save(portfolio);
+    }
+
+    @Override
+    @Transactional
+    public void handleRecurringAllocation(Portfolio portfolio) {
+        BigDecimal recurringAmount = portfolio.getRule().getRecurringAllocationAmount();
+        Wallet wallet = walletService.getWalletByPortfolio(portfolio);
+        walletService.withdrawAmountFromWallet(wallet, recurringAmount);
+
+        addFundsToPortfolio(portfolio, recurringAmount);
+        // todo: send notification
+    }
+
 }
