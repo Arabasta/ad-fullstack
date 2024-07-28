@@ -24,8 +24,8 @@ public class Portfolio {
     private PortfolioTypeEnum portfolioType;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "rules_id")
-    Rules rules;
+    @JoinColumn(name = "rule_id")
+    private Rule rule;
 
     @NotNull(message = "Amount cannot be null")
     @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
