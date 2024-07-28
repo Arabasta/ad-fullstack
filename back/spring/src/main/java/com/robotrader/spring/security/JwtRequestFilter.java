@@ -2,7 +2,7 @@ package com.robotrader.spring.security;
 
 import com.robotrader.spring.exception.auth.AuthenticationMissingException;
 import com.robotrader.spring.exception.auth.JwtInvalidException;
-import com.robotrader.spring.service.UserService;
+import com.robotrader.spring.service.interfaces.IUserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,10 +27,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtRequestFilter.class);
     private final JwtUtil jwtUtil;
-    private final UserService userService;
+    private final IUserService userService;
 
     @Autowired
-    public JwtRequestFilter(JwtUtil jwtUtil, UserService userService) {
+    public JwtRequestFilter(JwtUtil jwtUtil, IUserService userService) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
     }
