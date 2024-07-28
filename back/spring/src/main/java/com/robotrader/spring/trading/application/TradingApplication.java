@@ -21,26 +21,25 @@ import java.util.stream.Collectors;
 public class TradingApplication {
     private final MarketDataService marketDataService;
     private final MoneyPoolService moneyPoolService;
-    private List<String> cryptoTickers;
-    private List<String> stockTickers;
 
     @Autowired
     public TradingApplication(MarketDataService marketDataService, MoneyPoolService moneyPoolService) {
         this.marketDataService = marketDataService;
         this.moneyPoolService = moneyPoolService;
-        stockTickers = Arrays.asList("AAPL","GOOGL");
-        cryptoTickers = Arrays.asList("BTC-USD","ETH-USD");
+
     }
 
     @Bean
     public CommandLineRunner commandLineRunner() {
         return args -> {
 
-//            runTradingAlgorithmUnscheduled("AAPL");
-//            runTradingAlgorithmUnscheduled("X:BTCUSD");
+            runTradingAlgorithmUnscheduled("AAPL");
+            runTradingAlgorithmUnscheduled("X:BTCUSD");
 
-            runTradingAlgorithmLive();
-
+            List<String> stockTickers = Arrays.asList("AAPL","GOOGL");
+            List<String> cryptoTickers = Arrays.asList("BTC-USD","ETH-USD");
+            runTradingAlgorithmLive(stockTickers);
+            runTradingAlgorithmLive(cryptoTickers);
         };
     }
 
@@ -64,9 +63,15 @@ public class TradingApplication {
                 );
     }
 
-    public void runTradingAlgorithmLive() {
-        marketDataService.getLiveCryptoData(cryptoTickers);
-        marketDataService.getLiveStockData(stockTickers);
+    public void runTradingAlgorithmLive(List<String> tickers) {
+        PortfolioTypeEnum portfolioType = PortfolioTypeEnum.AGGRESSIVE;
+        marketDataService.subscribeToLiveMarketData(tickers);
+        for (String ticker : tickers) {
+            TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
+            tradingAlgorithm.subscribeToMarketData(marketDataService.getLiveMarketDataFlux());
+        }
+
+
     }
 
 
