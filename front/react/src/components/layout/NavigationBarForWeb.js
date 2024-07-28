@@ -1,40 +1,32 @@
-import { useLocation } from "react-router-dom";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/images/logo.svg";
 
 export default function NavigationBarForWeb() {
-    const location = useLocation();
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    };
-
     return (
-        <nav className="nav-wrapper">
-            <div className="nav-container">
-                <a href="https://www.google.com" className="brand-logo">
-                    <img src={logo} alt="Logo" className="logo" />
+        <nav className="navbar navbar-expand-md navbar-dark bg-dark text-white">
+            <div className="container-fluid">
+                <a className="navbar-brand" href="/">
+                    <img src={logo} alt="Logo" className="logo" style={{ height: '40px' }} />
                 </a>
-                <button className="sidenav-trigger" onClick={toggleMenu}>
-                    ☰
-                </button>
-                <ul className={`right ${isOpen ? "show" : ""}`}>
-                    <li className={location.pathname === "/news" ? "active" : ""}>
-                        <Link to="/news">NEWS</Link>
-                    </li>
-                    <li className={location.pathname === "/wallet" ? "active" : ""}>
-                        <Link to="/wallet">WALLET</Link>
-                    </li>
-                    <li className={location.pathname === "/support" ? "active" : ""}>
-                        <Link to="/support">SUPPORT</Link>
-                    </li>
-                    <li className={location.pathname === "/settings" ? "active" : ""}>
-                        <Link to="/settings">SETTINGS</Link>
-                    </li>
-                </ul>
+                <div className="collapse navbar-collapse">
+                    <ul className="navbar-nav ml-auto">
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/news">NEWS</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/wallet">WALLET</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/support">SUPPORT</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/settings">SETTINGS</Link>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
     );
 }
+
+
