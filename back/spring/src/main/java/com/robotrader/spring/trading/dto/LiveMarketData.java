@@ -5,7 +5,10 @@ import lombok.ToString;
 
 @Data
 @ToString(callSuper = true)
-public class LiveMarketData extends MarketData{
+public abstract class LiveMarketData extends MarketData{
+
+    public abstract String getTicker();
+
     private String ev;       // Event type
     private int z;           // Average trade size
     private long s;          // Start timestamp

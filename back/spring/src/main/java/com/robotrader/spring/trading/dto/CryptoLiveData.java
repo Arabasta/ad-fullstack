@@ -7,4 +7,9 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class CryptoLiveData extends LiveMarketData {
     private String pair; // Crypto pair
+
+    @Override
+    public String getTicker() {
+        return pair;
+    }
 }
