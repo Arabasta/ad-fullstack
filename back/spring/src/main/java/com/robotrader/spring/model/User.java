@@ -4,6 +4,7 @@ import com.robotrader.spring.model.enums.RoleEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 
@@ -48,7 +50,10 @@ public class User implements UserDetails {
     private String email;
 
     private LocalDateTime createDateTime;
+
     private LocalDateTime updateDateTime;
+
+    private boolean isDeleted;
 
     @PrePersist
     protected void onCreate() {
