@@ -1,0 +1,77 @@
+.nav-wrapper {
+    background-color: #333;
+    padding: 10px;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 40px; /* Adjust the height as needed */
+}
+
+.sidenav-trigger {
+    display: none;
+}
+
+.nav-wrapper ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.nav-wrapper ul li {
+    margin-right: 20px;
+}
+
+.nav-wrapper ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.nav-wrapper ul li a:hover {
+    text-decoration: underline;
+}
+
+.nav-wrapper ul li.active a {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .sidenav-trigger {
+        display: block;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5em;
+    }
+
+    .nav-wrapper ul {
+        display: none; /* 默认隐藏 */
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background-color: #333;
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-wrapper ul.show {
+        display: block; /* 使用类名控制显示 */
+    }
+
+    .nav-wrapper ul li {
+        margin: 10px 0;
+    }
+}
+
