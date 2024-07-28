@@ -12,4 +12,9 @@ public class StockLiveData extends LiveMarketData {
     private int av;          // Accumulated volume
     private BigDecimal op;   // Today's open price
     private BigDecimal a;    // Today's volume weighted average price
+
+    @Override
+    public String getTicker() {
+        return sym;
+    }
 }
