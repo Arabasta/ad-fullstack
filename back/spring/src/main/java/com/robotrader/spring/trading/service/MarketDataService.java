@@ -1,6 +1,6 @@
 package com.robotrader.spring.trading.service;
 
-import com.robotrader.spring.trading.dto.TickerHistoricalData;
+import com.robotrader.spring.trading.dto.HistoricalData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -36,12 +36,12 @@ public class MarketDataService {
                     List<BigDecimal> lowPrices = new ArrayList<>();
 
                     // Get stock prices in ascending order by time
-                    for (TickerHistoricalData data : stockDataList) {
-                        timestamp.add(data.getTimestamp());
-                        openPrices.add(0, data.getOpenPrice());
-                        closePrices.add(0, data.getClosePrice());
-                        highPrices.add(0, data.getHighPrice());
-                        lowPrices.add(0, data.getLowPrice());
+                    for (HistoricalData data : stockDataList) {
+                        timestamp.add(data.getT());
+                        openPrices.add(0, data.getO());
+                        closePrices.add(0, data.getC());
+                        highPrices.add(0, data.getH());
+                        lowPrices.add(0, data.getL());
                     }
                     stockData.put("timestamp", new ArrayList<>(timestamp));
                     stockData.put("open", new ArrayList<>(openPrices));

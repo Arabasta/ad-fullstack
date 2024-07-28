@@ -13,7 +13,7 @@ public class MarketDataApiResponse {
     private int queryCount;
     @JsonProperty("request_id")
     private String requestId;
-    private List<TickerHistoricalData> results;
+    private List<HistoricalData> results;
     private int resultsCount;
     private String status;
     private String ticker;
