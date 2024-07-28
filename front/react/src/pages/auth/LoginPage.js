@@ -5,7 +5,6 @@ import Text from '../../components/common/Text';
 const LoginPage = () => {
     return (
         <div>
-            <Text variant="h2">Login</Text>
             <LoginForm />
         </div>
     );

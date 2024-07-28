@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import useAuth from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { Box, Button, ButtonGroup, Flex, Progress, useToast } from '@chakra-ui/react';
 import RegisterStep1 from './RegisterStep1';
 import RegisterStep2 from './RegisterStep2';
 import RegisterStep3 from './RegisterStep3';
@@ -29,16 +30,10 @@ const RegisterForm = () => {
     const [message, setMessage] = useState('');
     const { register } = useAuth();
     const navigate = useNavigate();
+    const toast = useToast();
 
-    const handleNext = (e) => {
-        e.preventDefault();
-        setStep(step + 1);
-    };
-
-    const handlePrevious = (e) => {
-        e.preventDefault();
-        setStep(step - 1);
-    };
+    const handleNext = () => setStep(step + 1);
+    const handlePrevious = () => setStep(step - 1);
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -53,13 +48,29 @@ const RegisterForm = () => {
                 }
             });
             navigate('/dashboard');
+            toast({
+                title: 'Account created.',
+                description: "We've created your account for you.",
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            });
         } catch (error) {
             setMessage('An error occurred, please try again.');
         }
     };
 
     return (
-        <div>
+        <Box
+            borderWidth="1px"
+            rounded="lg"
+            shadow="1px 1px 3px rgba(0,0,0,0.3)"
+            maxWidth={800}
+            p={6}
+            m="10px auto"
+            as="form"
+        >
+            <Progress hasStripe value={(step / 4) * 100} mb="5%" mx="5%" isAnimated></Progress>
             {step === 1 && (
                 <RegisterStep1
                     email={email}
@@ -71,7 +82,6 @@ const RegisterForm = () => {
                     handleNext={handleNext}
                 />
             )}
-
             {step === 2 && (
                 <RegisterStep2
                     mobileNumber={mobileNumber}
@@ -86,7 +96,6 @@ const RegisterForm = () => {
                     handleNext={handleNext}
                 />
             )}
-
             {step === 3 && (
                 <RegisterStep3
                     street={street}
@@ -103,7 +112,6 @@ const RegisterForm = () => {
                     handleNext={handleNext}
                 />
             )}
-
             {step === 4 && (
                 <RegisterStep4
                     employmentStatus={employmentStatus}
@@ -123,7 +131,7 @@ const RegisterForm = () => {
                     message={message}
                 />
             )}
-        </div>
+        </Box>
     );
 };
 

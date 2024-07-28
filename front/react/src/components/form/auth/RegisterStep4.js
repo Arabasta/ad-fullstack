@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormControl, FormLabel, Input, Button, Stack, Flex, Textarea } from '@chakra-ui/react';
 
 const RegisterStep4 = ({
                            employmentStatus, setEmploymentStatus, annualIncome, setAnnualIncome, netWorth, setNetWorth,
@@ -6,59 +7,61 @@ const RegisterStep4 = ({
                            setInvestmentExperience, handlePrevious, handleRegister, message
                        }) => {
     return (
-        <form onSubmit={handleRegister}>
-            <div>
-                <label>Employment Status</label>
-                <input
+        <Stack spacing={4}>
+            <FormControl>
+                <FormLabel>Employment Status</FormLabel>
+                <Input
                     type="text"
                     value={employmentStatus}
                     onChange={(e) => setEmploymentStatus(e.target.value)}
                 />
-            </div>
-            <div>
-                <label>Annual Income</label>
-                <input
+            </FormControl>
+            <FormControl>
+                <FormLabel>Annual Income</FormLabel>
+                <Input
                     type="number"
                     value={annualIncome}
                     onChange={(e) => setAnnualIncome(e.target.value)}
                 />
-            </div>
-            <div>
-                <label>Net Worth</label>
-                <input
+            </FormControl>
+            <FormControl>
+                <FormLabel>Net Worth</FormLabel>
+                <Input
                     type="number"
                     value={netWorth}
                     onChange={(e) => setNetWorth(e.target.value)}
                 />
-            </div>
-            <div>
-                <label>Source of Wealth</label>
-                <input
+            </FormControl>
+            <FormControl>
+                <FormLabel>Source of Wealth</FormLabel>
+                <Input
                     type="text"
                     value={sourceOfWealth}
                     onChange={(e) => setSourceOfWealth(e.target.value)}
                 />
-            </div>
-            <div>
-                <label>Investment Objective</label>
-                <input
+            </FormControl>
+            <FormControl>
+                <FormLabel>Investment Objective</FormLabel>
+                <Input
                     type="text"
                     value={investmentObjective}
                     onChange={(e) => setInvestmentObjective(e.target.value)}
                 />
-            </div>
-            <div>
-                <label>Investment Experience</label>
-                <input
+            </FormControl>
+            <FormControl>
+                <FormLabel>Investment Experience</FormLabel>
+                <Input
                     type="text"
                     value={investmentExperience}
                     onChange={(e) => setInvestmentExperience(e.target.value)}
                 />
-            </div>
-            <button type="button" onClick={handlePrevious}>Previous</button>
-            <button type="submit">Register</button>
+            </FormControl>
+            <Flex justify="space-between">
+                <Button onClick={handlePrevious} colorScheme="teal" variant="outline">Previous</Button>
+                <Button onClick={handleRegister} colorScheme="teal" type="submit">Register</Button>
+            </Flex>
             {message && <p>{message}</p>}
-        </form>
+        </Stack>
     );
 };
 

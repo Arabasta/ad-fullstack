@@ -1,54 +1,57 @@
 import React from 'react';
+import { FormControl, FormLabel, Input, Button, Stack, Flex } from '@chakra-ui/react';
 
 const RegisterStep3 = ({
                            street, setStreet, city, setCity, postalCode, setPostalCode,
-                           country, setCountry, unitNo, setUnitNo, handlePrevious, handleNext, message
+                           country, setCountry, unitNo, setUnitNo, handlePrevious, handleNext
                        }) => {
     return (
-        <form onSubmit={handleNext}>
-            <div>
-                <label>Street</label>
-                <input
+        <Stack spacing={4}>
+            <FormControl>
+                <FormLabel>Street</FormLabel>
+                <Input
                     type="text"
                     value={street}
                     onChange={(e) => setStreet(e.target.value)}
                 />
-            </div>
-            <div>
-                <label>City</label>
-                <input
+            </FormControl>
+            <FormControl>
+                <FormLabel>City</FormLabel>
+                <Input
                     type="text"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                 />
-            </div>
-            <div>
-                <label>Postal Code</label>
-                <input
+            </FormControl>
+            <FormControl>
+                <FormLabel>Postal Code</FormLabel>
+                <Input
                     type="text"
                     value={postalCode}
                     onChange={(e) => setPostalCode(e.target.value)}
                 />
-            </div>
-            <div>
-                <label>Country</label>
-                <input
+            </FormControl>
+            <FormControl>
+                <FormLabel>Country</FormLabel>
+                <Input
                     type="text"
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
                 />
-            </div>
-            <div>
-                <label>Unit No</label>
-                <input
+            </FormControl>
+            <FormControl>
+                <FormLabel>Unit No</FormLabel>
+                <Input
                     type="text"
                     value={unitNo}
                     onChange={(e) => setUnitNo(e.target.value)}
                 />
-            </div>
-            <button type="button" onClick={handlePrevious}>Previous</button>
-            <button type="submit">Next</button>
-        </form>
+            </FormControl>
+            <Flex justify="space-between">
+                <Button onClick={handlePrevious} colorScheme="teal" variant="outline">Previous</Button>
+                <Button onClick={handleNext} colorScheme="teal" type="button">Next</Button>
+            </Flex>
+        </Stack>
     );
 };
 
