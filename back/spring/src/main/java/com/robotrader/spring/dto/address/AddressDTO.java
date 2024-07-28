@@ -1,13 +1,15 @@
-package com.robotrader.spring.dto.auth;
+package com.robotrader.spring.dto.address;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class AddressCreateDTO {
+@AllArgsConstructor
+public class AddressDTO {
     @NotBlank
     @Size(min = 1, max = 50, message = "Block, street, building, etc. cannot be more than 50 characters")
     private String street;

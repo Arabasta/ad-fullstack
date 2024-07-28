@@ -1,4 +1,4 @@
-package com.robotrader.spring.dto.auth;
+package com.robotrader.spring.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserDetailsDTO {
+public class UserCredentialsDTO {
     @NotBlank
     @Size(min = 3, max = 20)
     private String username;
