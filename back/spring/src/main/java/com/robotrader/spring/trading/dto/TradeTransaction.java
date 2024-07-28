@@ -11,12 +11,12 @@ public class TradeTransaction {
     private String ticker;
     private String action;
     private Long transactionTimestamp;
-    private Integer transactionQuantity;
+    private BigDecimal transactionQuantity;
     private BigDecimal transactionPrice;
 
     public TradeTransaction() {}
 
-    public TradeTransaction(String ticker, Long transactionTimestamp, Integer transactionQuantity, BigDecimal transactionPrice, String action) {
+    public TradeTransaction(String ticker, Long transactionTimestamp, BigDecimal transactionQuantity, BigDecimal transactionPrice, String action) {
         this.transactionId = UUID.randomUUID().toString();
         this.ticker = ticker;
         this.action = action;
@@ -34,7 +34,7 @@ public class TradeTransaction {
                 ", transactionTimestamp=" + transactionTimestamp +
                 ", transactionQuantity=" + transactionQuantity +
                 ", transactionPrice=" + transactionPrice +
-                ", transactionAmount=" + transactionPrice.multiply(BigDecimal.valueOf(transactionQuantity)) +
+                ", transactionAmount=" + transactionPrice.multiply(transactionQuantity) +
                 '}';
     }
 }

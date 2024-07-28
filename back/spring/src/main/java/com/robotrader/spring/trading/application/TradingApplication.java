@@ -37,9 +37,9 @@ public class TradingApplication {
         return args -> {
 
 //            runTradingAlgorithmUnscheduled("AAPL");
-            runTradingAlgorithmUnscheduled("X:BTCUSD");
+//            runTradingAlgorithmUnscheduled("X:BTCUSD");
 
-//            runTradingAlgorithmLive();
+            runTradingAlgorithmLive();
 
         };
     }
