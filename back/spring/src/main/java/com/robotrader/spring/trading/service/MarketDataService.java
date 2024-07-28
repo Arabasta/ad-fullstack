@@ -16,12 +16,11 @@ import java.util.Map;
 @Service
 public class MarketDataService {
     private final HistoricalDataApiService historicalDataApiService;
-    private final MarketDataWebSocketService marketDataWebSocketService;
+    private MarketDataWebSocketService marketDataWebSocketService;
 
     @Autowired
-    public MarketDataService(HistoricalDataApiService historicalDataApiService, MarketDataWebSocketService stockWebSocketService, MarketDataWebSocketService cryptoWebSocketService) {
+    public MarketDataService(HistoricalDataApiService historicalDataApiService) {
         this.historicalDataApiService = historicalDataApiService;
-        this.marketDataWebSocketService = stockWebSocketService;
     }
 
     public Mono<Map<String, List<Object>>> getHistoricalMarketData(String ticker) {
@@ -54,16 +53,17 @@ public class MarketDataService {
     }
 
 
-    public void subscribeToLiveMarketData(List<String> tickers) {
+    public void subscribeToLiveMarketData(List<String> tickers, MarketDataWebSocketService marketDataWebSocketService) {
+        this.marketDataWebSocketService = marketDataWebSocketService;
         marketDataWebSocketService.connect();
         marketDataWebSocketService.subscribe(tickers);
     }
 
-    public Flux<LiveMarketData> getLiveMarketDataFlux() {
-        return marketDataWebSocketService.getLiveMarketDataFlux();
-    }
-
     public void disconnectLiveMarketData() {
         marketDataWebSocketService.disconnect();
+    }
+
+    public Flux<LiveMarketData> getLiveMarketDataFlux() {
+        return marketDataWebSocketService.getLiveMarketDataFlux();
     }
 }
