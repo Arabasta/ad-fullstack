@@ -41,6 +41,6 @@ public class CryptoWebSocketService extends MarketDataWebSocketService {
 
         System.out.println("Crypto Data: " + cryptoData);
 
-        // TODO: Use in LiveTrading to check stop loss or profit target
+        marketDataSink.tryEmitNext(cryptoData);
     }
 }

@@ -1,10 +1,13 @@
 package com.robotrader.spring.trading.algorithm;
 
+import com.robotrader.spring.trading.dto.LiveMarketData;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 import lombok.Getter;
 import lombok.Setter;
+import reactor.core.Disposable;
+import reactor.core.publisher.Flux;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -37,6 +40,8 @@ public abstract class TradingAlgorithm {
     protected BigDecimal capitalTest;
     protected boolean isTest;
     protected final BigDecimal HIGH_PRICE_THRESHOLD = BigDecimal.valueOf(10000);
+    protected LiveMarketData latestMarketData;
+    private Disposable dataSubscription;
 
     public TradingAlgorithm(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         this.ticker = ticker;
@@ -58,7 +63,7 @@ public abstract class TradingAlgorithm {
 
     public void executeBackTest() {
         isTest = true;
-        System.out.println("------ Execution ------");
+        System.out.println("------ Back Test Execution ------");
 
         boolean sellSignal = checkForSellSignal();
         System.out.println("Sell signal: " + sellSignal);
@@ -78,11 +83,30 @@ public abstract class TradingAlgorithm {
         System.out.println("Current price: " + currentPrice);
         System.out.println("Profit target: " + profitTarget);
         System.out.println("Stop loss: " + stopLossPrice);
-
     }
 
     public void executeLiveTrade() {
         isTest = false;
+        System.out.println("------ Live Trade Execution ------");
+
+        boolean sellSignal = checkForSellSignal();
+        System.out.println("Sell signal: " + sellSignal);
+
+        if (sellSignal) {
+            executeSellTradeLive();
+            return; // Allow only 1 trade per execution.
+        }
+
+        boolean buySignal = checkForBuySignal();
+        System.out.println("Buy signal: " + buySignal);
+
+        if (buySignal) {
+            executeBuyTradeLive();
+        }
+
+        System.out.println("Current price: " + currentPrice);
+        System.out.println("Profit target: " + profitTarget);
+        System.out.println("Stop loss: " + stopLossPrice);
     }
 
     // Risk management. max trades/day, prediction confidence level, enough capital to buy position
@@ -159,5 +183,25 @@ public abstract class TradingAlgorithm {
             return tradeTransactions.size() % 2 != 0;
         }
         return false;
+    }
+
+    public void subscribeToMarketData(Flux<LiveMarketData> liveMarketDataFlux) {
+        dataSubscription = liveMarketDataFlux.subscribe(
+                data -> {
+                    this.latestMarketData = data;
+                    if (latestMarketData.getTicker().equals(ticker)) {
+                        currentPrice = latestMarketData.getC();
+                    }
+                    executeLiveTrade();
+                },
+                error -> System.err.println("Error in market data stream: " + error),
+                () -> System.out.println("Market data stream completed")
+        );
+    }
+
+    public void unsubscribeFromMarketData() {
+        if (dataSubscription != null && !dataSubscription.isDisposed()) {
+            dataSubscription.dispose();
+        }
     }
 }

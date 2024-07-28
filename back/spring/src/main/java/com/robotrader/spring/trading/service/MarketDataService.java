@@ -1,8 +1,10 @@
 package com.robotrader.spring.trading.service;
 
 import com.robotrader.spring.trading.dto.HistoricalData;
+import com.robotrader.spring.trading.dto.LiveMarketData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -14,14 +16,12 @@ import java.util.Map;
 @Service
 public class MarketDataService {
     private final HistoricalDataApiService historicalDataApiService;
-    private final MarketDataWebSocketService stockWebSocketService;
-    private final MarketDataWebSocketService cryptoWebSocketService;
+    private final MarketDataWebSocketService marketDataWebSocketService;
 
     @Autowired
     public MarketDataService(HistoricalDataApiService historicalDataApiService, MarketDataWebSocketService stockWebSocketService, MarketDataWebSocketService cryptoWebSocketService) {
         this.historicalDataApiService = historicalDataApiService;
-        this.stockWebSocketService = stockWebSocketService;
-        this.cryptoWebSocketService = cryptoWebSocketService;
+        this.marketDataWebSocketService = stockWebSocketService;
     }
 
     public Mono<Map<String, List<Object>>> getHistoricalMarketData(String ticker) {
@@ -53,22 +53,17 @@ public class MarketDataService {
                 });
     }
 
-    public void getLiveStockData(List<String> stockTickers) {
-        stockWebSocketService.connect();
-        stockWebSocketService.subscribe(stockTickers);
+
+    public void subscribeToLiveMarketData(List<String> tickers) {
+        marketDataWebSocketService.connect();
+        marketDataWebSocketService.subscribe(tickers);
     }
 
-    public void disconnectLiveStockData() {
-        stockWebSocketService.disconnect();
+    public Flux<LiveMarketData> getLiveMarketDataFlux() {
+        return marketDataWebSocketService.getLiveMarketDataFlux();
     }
 
-
-    public void getLiveCryptoData(List<String> cryptoTickers) {
-        cryptoWebSocketService.connect();
-        cryptoWebSocketService.subscribe(cryptoTickers);
-    }
-
-    public void disconnectLiveCryptoData() {
-        cryptoWebSocketService.disconnect();
+    public void disconnectLiveMarketData() {
+        marketDataWebSocketService.disconnect();
     }
 }
