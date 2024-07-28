@@ -1,5 +1,7 @@
 package com.robotrader.spring.security;
 
+import com.robotrader.spring.exception.auth.AuthenticationMissingException;
+import com.robotrader.spring.exception.auth.JwtInvalidException;
 import com.robotrader.spring.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -35,6 +38,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response,
                                     @NonNull FilterChain chain) throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+        if (Arrays.stream(ExcludedPathsEnum.values()).anyMatch(path -> path.getPath().equals(requestURI))) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         final String authorizationHeader = request.getHeader("Authorization");
 
         String username = null;
@@ -42,7 +51,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
-            username = jwtUtil.extractUsername(jwt);
+            try {
+                username = jwtUtil.extractUsername(jwt);
+            } catch (Exception e) {
+                throw new JwtInvalidException("Invalid JWT Token");
+            }
             logger.debug("JWT: {}", jwt);
             logger.debug("Username: {}", username);
         }
@@ -62,16 +75,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 logger.debug("Authorities: {}", userDetails.getAuthorities().stream()
                         .map(GrantedAuthority::getAuthority).toList());
             } else {
-                logger.warn("Invalid JWT Token");
+                throw new JwtInvalidException("Invalid JWT Token");
             }
-        } else {
-            logger.debug("JWT Token not present or already authenticated");
-            if (username != null) {
-                UserDetails userDetails = this.userService.loadUserByUsername(username);
-                logger.debug("Authorities: {}", userDetails.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority).toList());
-            }
+        } else if (username == null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            throw new AuthenticationMissingException("Authentication is missing");
         }
+
         chain.doFilter(request, response);
     }
 }

@@ -15,6 +15,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.Arrays;
+
 /*
  * References:
  * https://stackoverflow.com/questions/74683225/updating-to-spring-security-6-0-replacing-removed-and-deprecated-functionality
@@ -49,30 +51,27 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 // prevent http sessions from being created
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+                .authorizeHttpRequests((authorize) -> {
+                    authorize
+                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+                    // allow all users to access excluded paths
+                    Arrays.stream(ExcludedPathsEnum.values())
+                            .forEach(path -> authorize.requestMatchers(path.getPath()).permitAll());
+                    authorize
+                            // CUSTOMER role required to access /api/health/customer
+                            .requestMatchers(
+                                    "/api/health/customer"
+                            ).hasAuthority("ROLE_CUSTOMER")
 
-                        // allow all users to access
-                        .requestMatchers(
-                                "/api/login",
-                                "/api/register",
-                                "/api/health"
-                        ).permitAll()
+                            // ADMIN role required to access /api/health/admin
+                            .requestMatchers(
+                                    "/api/health/admin"
+                            ).hasAuthority("ROLE_ADMIN")
 
-                        // CUSTOMER role required to access /api/health/customer
-                        .requestMatchers(
-                                "/api/health/customer"
-                        ).hasAuthority("ROLE_CUSTOMER")
-
-                        // ADMIN role required to access /api/health/admin
-                        .requestMatchers(
-                                "/api/health/admin"
-                        ).hasAuthority("ROLE_ADMIN")
-
-                        // all other endpoints require authentication
-                        // temporarily allow all requests for development
-                        .anyRequest().permitAll()
-                )
+                            // all other endpoints require authentication
+                            // temporarily allow all requests for development
+                            .anyRequest().permitAll();
+                })
 
                 // validate JWT token before executing UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
