@@ -1,3 +1,8 @@
+import { useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import logo from "../../assets/images/logo.svg";
+
 export default function NavigationBarForWeb() {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
@@ -10,15 +15,12 @@ export default function NavigationBarForWeb() {
         <nav className="nav-wrapper">
             <div className="nav-container">
                 <a href="https://www.google.com" className="brand-logo">
-                    <img src={Logo} alt="Logo" className="logo" />
+                    <img src={logo} alt="Logo" className="logo" />
                 </a>
                 <button className="sidenav-trigger" onClick={toggleMenu}>
                     ☰
                 </button>
                 <ul className={`right ${isOpen ? "show" : ""}`}>
-                    <li className={location.pathname === "/home" ? "active" : ""}>
-                        <Link to="/home">HOME</Link>
-                    </li>
                     <li className={location.pathname === "/news" ? "active" : ""}>
                         <Link to="/news">NEWS</Link>
                     </li>
