@@ -33,11 +33,18 @@ public class Portfolio {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal allocatedBalance;
 
+    @NotNull(message = "Amount cannot be null")
+    @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
+    @DecimalMax(value = "1000000000.00", message = "Amount must be less than or equal to 1000000000.00")
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal currentValue;
+
     private Integer allocatedUnitQty;
 
     public Portfolio() {
         this.allocatedBalance = new BigDecimal(0);
         this.allocatedUnitQty = 0;
+        this.currentValue = new BigDecimal(0);
     }
 
 }
