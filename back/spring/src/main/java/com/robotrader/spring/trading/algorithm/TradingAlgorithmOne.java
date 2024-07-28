@@ -57,30 +57,27 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
     }
 
     @Override
-    public Integer positionSizing(BigDecimal risk) {
+    public BigDecimal positionSizing(BigDecimal risk) {
         // 14-day ATR
         Integer atrPeriod = 14;
         if (priceHistory.get("close").size() < atrPeriod + 1) { // Need a atrPeriod + 1 window
             System.out.println("Insufficient number of to make a trade decision, no. of data: " + atrPeriod);
-            return -1;
+            return BigDecimal.ZERO;
         }
         atr = getATR(priceHistory, atrPeriod);
         stopLossPrice = calculateStopLossPrice(currentPrice);
-        BigDecimal divisor = currentPrice.subtract(stopLossPrice);
-        if (isTest) {
-            Integer positionSize = ((capitalTest.multiply(risk)).divide(divisor, 4, RoundingMode.HALF_UP)).intValue();
-            return positionSize;
-        } else {
-            MoneyPool moneyPool = moneyPoolService.findByPortfolioType(portfolioType);
-            BigDecimal portfolioBalance = moneyPool.getPoolBalance();
-            Integer positionSize = ((portfolioBalance.multiply(risk)).divide(divisor, 4, RoundingMode.HALF_UP)).intValue();
-            return positionSize;
-        }
+
+        // Determine available capital
+        BigDecimal availableCapital = isTest ? capitalTest : moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
+
+        // Calculate raw position size
+        BigDecimal rawPositionSize = availableCapital.multiply(risk).divide(stopLossAmount, 8, RoundingMode.HALF_UP);
+        return applyPriceBasedScaling(rawPositionSize, currentPrice, HIGH_PRICE_THRESHOLD);
     }
 
     @Override
     public BigDecimal calculateStopLossPrice(BigDecimal currentPrice) {
-        stopLossAmount = atr.multiply(BigDecimal.valueOf(1.5));
+        stopLossAmount = atr.multiply(BigDecimal.valueOf(1.1));
         return currentPrice.subtract(stopLossAmount).setScale(4, RoundingMode.HALF_UP);
     }
 
@@ -114,5 +111,13 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
             return true;
         }
         return false;
+    }
+
+    private BigDecimal applyPriceBasedScaling(BigDecimal rawPositionSize, BigDecimal currentPrice, BigDecimal highPriceThreshold) {
+        if (currentPrice.compareTo(highPriceThreshold) > 0) {
+            return rawPositionSize.setScale(2, RoundingMode.HALF_UP);
+        } else {
+            return rawPositionSize.setScale(0, RoundingMode.HALF_UP);
+        }
     }
 }

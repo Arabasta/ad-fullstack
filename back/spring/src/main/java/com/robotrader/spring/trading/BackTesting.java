@@ -34,7 +34,7 @@ public class BackTesting {
             System.out.println(trade);
             if (trade.getAction().equals("SELL")) {
                 BigDecimal profitPerQty = trade.getTransactionPrice().subtract(lastTrade.getTransactionPrice());
-                BigDecimal subtotalProfit = profitPerQty.multiply(BigDecimal.valueOf(trade.getTransactionQuantity()));
+                BigDecimal subtotalProfit = profitPerQty.multiply(trade.getTransactionQuantity());
                 totalProfit = totalProfit.add(subtotalProfit);
                 System.out.println("Profit: " + subtotalProfit);
             } else if (trade.getAction().equals("BUY")) {

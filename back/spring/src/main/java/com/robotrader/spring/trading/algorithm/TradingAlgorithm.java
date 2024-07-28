@@ -27,7 +27,7 @@ public abstract class TradingAlgorithm {
     protected static final BigDecimal AGGRESSIVE_RISK = BigDecimal.valueOf(0.0005);
     protected static final BigDecimal MODERATE_RISK = BigDecimal.valueOf(0.0003);
     protected static final BigDecimal CONSERVATIVE_RISK = BigDecimal.valueOf(0.0001);
-    protected Integer position;
+    protected BigDecimal position;
     protected BigDecimal currentPrice;
     protected BigDecimal stopLossPrice;
     protected BigDecimal stopLossAmount;
@@ -36,6 +36,7 @@ public abstract class TradingAlgorithm {
     @Setter
     protected BigDecimal capitalTest;
     protected boolean isTest;
+    protected final BigDecimal HIGH_PRICE_THRESHOLD = BigDecimal.valueOf(10000);
 
     public TradingAlgorithm(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         this.ticker = ticker;
@@ -50,7 +51,7 @@ public abstract class TradingAlgorithm {
     public abstract boolean checkForSellSignal();
 
     // Position Sizing
-    public abstract Integer positionSizing(BigDecimal risk);
+    public abstract BigDecimal positionSizing(BigDecimal risk);
 
     // Determining stop loss
     public abstract BigDecimal calculateStopLossPrice(BigDecimal currentPrice);
@@ -93,11 +94,11 @@ public abstract class TradingAlgorithm {
 
         // Calculate the position size
         position = positionSizing(AGGRESSIVE_RISK);
-        if (position == -1) {
+        if (position.equals(BigDecimal.ZERO)) {
             return false;
         }
         // Calculate the total cost of the trade
-        BigDecimal totalCost = currentPrice.multiply(BigDecimal.valueOf(position));
+        BigDecimal totalCost = currentPrice.multiply(position);
 
         // Check if there's enough capital for the trade
         if (totalCost.compareTo(capitalTest) > 0) {
@@ -115,7 +116,7 @@ public abstract class TradingAlgorithm {
 
         TradeTransaction tradeTransaction = new TradeTransaction(ticker, timestamp, position, currentPrice, "BUY");
         tradeTransactions.add(tradeTransaction);
-        capitalTest = capitalTest.subtract(currentPrice.multiply(BigDecimal.valueOf(position)));
+        capitalTest = capitalTest.subtract(currentPrice.multiply(position));
         System.out.println("Trade: " + tradeTransaction);
         System.out.println("Capital:" + capitalTest);
     }
@@ -131,7 +132,7 @@ public abstract class TradingAlgorithm {
 
         TradeTransaction tradeTransaction = new TradeTransaction(ticker, timestamp, position, currentPrice, "SELL");
         tradeTransactions.add(tradeTransaction);
-        capitalTest = capitalTest.add(currentPrice.multiply(BigDecimal.valueOf(position)));
+        capitalTest = capitalTest.add(currentPrice.multiply(position));
         System.out.println("Trade: " + tradeTransaction);
         System.out.println("Capital:" + capitalTest);
     }
