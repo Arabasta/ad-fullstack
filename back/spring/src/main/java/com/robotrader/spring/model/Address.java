@@ -36,12 +36,4 @@ public class Address {
     @Length(min=1, max=50, message = "Unit number cannot be more than 10 characters")
     @Column(nullable = false, length = 10)
     private String unitNo;
-
-    public Address(String street, String city, String postalCode, String country, String unitNo) {
-        this.street = street;
-        this.city = city;
-        this.postalCode = postalCode;
-        this.country = country;
-        this.unitNo = unitNo;
-    }
 }
