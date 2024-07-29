@@ -4,7 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import ErrorBoundary from './components/common/error/ErrorBoundary';
 import authRoutes from './routes/AuthRoutes';
 import mainRoutes from './routes/MainRoutes';
-import NavigationBarForWeb from './components/layout/NavigationBarForWeb';
+import NavigationBarForWeb from './pages/NavigationBarForWeb';
 import settingsRoutes from "./routes/SettingsRoutes";
 import NaviRoutes from "./routes/NaviRoutes";
 const App = () => {
