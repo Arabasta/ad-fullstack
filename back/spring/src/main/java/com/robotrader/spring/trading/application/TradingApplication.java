@@ -2,24 +2,23 @@ package com.robotrader.spring.trading.application;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
-import com.robotrader.spring.trading.BackTesting;
-import com.robotrader.spring.trading.LiveTrading;
+import com.robotrader.spring.trading.strategy.BackTestingStrategy;
+import com.robotrader.spring.trading.strategy.LiveTradingStrategy;
 import com.robotrader.spring.trading.service.CryptoWebSocketService;
 import com.robotrader.spring.trading.service.MarketDataService;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithm;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithmOne;
 import com.robotrader.spring.trading.service.MarketDataWebSocketService;
 import com.robotrader.spring.trading.service.StockWebSocketService;
+import com.robotrader.spring.trading.strategy.TradingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TradingApplication {
@@ -27,6 +26,7 @@ public class TradingApplication {
     private final MarketDataService marketDataService;
     private final CryptoWebSocketService cryptoWebSocketService;
     private final StockWebSocketService stockWebSocketService;
+    private final TradingContext tradingContext;
 
     @Autowired
     public TradingApplication(MoneyPoolService moneyPoolService, MarketDataService marketDataService, CryptoWebSocketService cryptoWebSocketService, StockWebSocketService stockWebSocketService) {
@@ -34,6 +34,7 @@ public class TradingApplication {
         this.marketDataService = marketDataService;
         this.cryptoWebSocketService = cryptoWebSocketService;
         this.stockWebSocketService = stockWebSocketService;
+        this.tradingContext = new TradingContext(marketDataService);
     }
 
     @Bean
@@ -53,17 +54,17 @@ public class TradingApplication {
     }
 
     public void runTradingAlgorithmBackTest(String ticker, PortfolioTypeEnum portfolioType) {
+        tradingContext.setStrategy(new BackTestingStrategy());
         TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
-        BackTesting backTesting = new BackTesting(marketDataService);
-        backTesting.run(tradingAlgorithm);
+        tradingContext.executeTradingStrategy(tradingAlgorithm);
     }
 
     public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, MarketDataWebSocketService marketDataWebSocketService) {
         marketDataService.subscribeToLiveMarketData(tickers, marketDataWebSocketService);
+        tradingContext.setStrategy(new LiveTradingStrategy());
         for (String ticker : tickers) {
             TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
-            LiveTrading liveTrading = new LiveTrading(marketDataService);
-            liveTrading.run(tradingAlgorithm);
+            tradingContext.executeTradingStrategy(tradingAlgorithm);
         }
     }
 

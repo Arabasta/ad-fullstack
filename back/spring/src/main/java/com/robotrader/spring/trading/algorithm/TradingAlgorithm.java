@@ -20,7 +20,6 @@ public abstract class TradingAlgorithm {
     protected Map<String,List<Object>> priceHistory;
     protected String ticker;
     protected final MoneyPoolService moneyPoolService;
-    protected List<TradeTransaction> tradeTransactions;
     protected PortfolioTypeEnum portfolioType;
     protected BigDecimal algoRisk;
     protected static final BigDecimal AGGRESSIVE_RISK = BigDecimal.valueOf(0.0005);
@@ -34,12 +33,12 @@ public abstract class TradingAlgorithm {
     protected BigDecimal capitalTest;
     protected boolean isTest;
     protected final BigDecimal HIGH_PRICE_THRESHOLD = BigDecimal.valueOf(10000);
+    protected TradeTransaction lastTradeTransaction;
 
     public TradingAlgorithm(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         this.ticker = ticker;
         this.portfolioType = portfolioType;
         this.moneyPoolService = moneyPoolService;
-        tradeTransactions = new ArrayList<>();
         capitalTest = BigDecimal.valueOf(1000000);
         setAlgoRisk(portfolioType);
     }
@@ -70,7 +69,7 @@ public abstract class TradingAlgorithm {
         System.out.println("Sell signal: " + sellSignal);
 
         if (sellSignal) {
-            executeSellTradeBackTest();
+            executeTradeBackTest("SELL");
             return; // Allow only 1 trade per execution.
         }
 
@@ -78,7 +77,7 @@ public abstract class TradingAlgorithm {
         System.out.println("Buy signal: " + buySignal);
 
         if (buySignal) {
-            executeBuyTradeBackTest();
+            executeTradeBackTest("BUY");
         }
 
         System.out.println("Current price: " + currentPrice);
@@ -94,7 +93,7 @@ public abstract class TradingAlgorithm {
         System.out.println("Sell signal: " + sellSignal);
 
         if (sellSignal) {
-            executeSellTradeLive();
+            executeTradeLive("SELL");
             return; // Allow only 1 trade per execution.
         }
 
@@ -107,7 +106,7 @@ public abstract class TradingAlgorithm {
         System.out.println("Buy signal: " + buySignal);
 
         if (buySignal) {
-            executeBuyTradeLive();
+            executeTradeLive("BUY");
         }
 
         System.out.println("Current price: " + currentPrice);
@@ -139,47 +138,34 @@ public abstract class TradingAlgorithm {
         return true;
     }
 
-    public void executeBuyTradeBackTest(){
+    public void executeTradeBackTest(String action) {
         ZonedDateTime dt = DateTimeUtil.convertTimestampToZonedDateTime((Long) priceHistory.get("timestamp").get(0));
         BigDecimal currentPrice = (BigDecimal) priceHistory.get("close").get(0);
 
-        TradeTransaction tradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, "BUY");
-        tradeTransactions.add(tradeTransaction);
-        capitalTest = capitalTest.subtract(currentPrice.multiply(position));
-        System.out.println("Trade: " + tradeTransaction);
+        lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action);
+        if (action.equals("BUY")) {
+            capitalTest = capitalTest.subtract(currentPrice.multiply(position));
+        }
+        else {
+            capitalTest = capitalTest.add(currentPrice.multiply(position));
+        }
+
+        System.out.println("Trade: " + lastTradeTransaction);
         System.out.println("Capital:" + capitalTest);
     }
 
-    public void executeSellTradeBackTest(){
-        ZonedDateTime dt = DateTimeUtil.convertTimestampToZonedDateTime((Long) priceHistory.get("timestamp").get(0));
-        BigDecimal currentPrice = (BigDecimal) priceHistory.get("close").get(0);
-
-        TradeTransaction tradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, "SELL");
-        tradeTransactions.add(tradeTransaction);
-        capitalTest = capitalTest.add(currentPrice.multiply(position));
-        System.out.println("Trade: " + tradeTransaction);
-        System.out.println("Capital:" + capitalTest);
-    }
-
-    public void executeBuyTradeLive() {
+    public void executeTradeLive(String action) {
         ZonedDateTime dt = ZonedDateTime.now();
-        TradeTransaction tradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, "BUY");
+        lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action);
 
-        // TODO: replace below with write to S3 and using moneypool instead of capitalTest
-        tradeTransactions.add(tradeTransaction);
-        capitalTest = capitalTest.subtract(currentPrice.multiply(position));
-        System.out.println("Trade: " + tradeTransaction);
-        System.out.println("Capital:" + capitalTest);
-    }
-
-    public void executeSellTradeLive() {
-        ZonedDateTime dt = ZonedDateTime.now();
-        TradeTransaction tradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, "SELL");
-
-        // TODO: replace below with write to S3 and using moneypool instead of capitalTest
-        tradeTransactions.add(tradeTransaction);
-        capitalTest = capitalTest.add(currentPrice.multiply(position));
-        System.out.println("Trade: " + tradeTransaction);
+        // TODO: replace below to use moneypool instead of capitalTest
+        if (action.equals("BUY")) {
+            capitalTest = capitalTest.subtract(currentPrice.multiply(position));
+        }
+        else {
+            capitalTest = capitalTest.add(currentPrice.multiply(position));
+        }
+        System.out.println("Trade: " + lastTradeTransaction);
         System.out.println("Capital:" + capitalTest);
     }
 
@@ -197,8 +183,8 @@ public abstract class TradingAlgorithm {
 
     protected boolean openTrade() {
         // Only allow 1 open trade per stock
-        if (tradeTransactions != null) {
-            return tradeTransactions.size() % 2 != 0;
+        if (lastTradeTransaction != null && lastTradeTransaction.getAction().equals("BUY")) {
+            return true;
         }
         return false;
     }
