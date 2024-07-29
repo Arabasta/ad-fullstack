@@ -1,10 +1,7 @@
 package com.robotrader.spring.service;
 
 import com.robotrader.spring.dto.auth.RegistrationRequest;
-import com.robotrader.spring.dto.user.EmailDTO;
-import com.robotrader.spring.dto.user.ResetPasswordDTO;
-import com.robotrader.spring.dto.user.UpdatePasswordDTO;
-import com.robotrader.spring.dto.user.UserCredentialsDTO;
+import com.robotrader.spring.dto.user.*;
 import com.robotrader.spring.exception.notFound.UserNotFoundException;
 import com.robotrader.spring.model.Customer;
 import com.robotrader.spring.model.User;
@@ -32,6 +29,21 @@ public class UserService implements IUserService, UserDetailsService {
         this.userRepository = userRepository;
         this.customerService = customerService;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Transactional
+    @Override
+    public UserDTO getUserDTOByUsername(String username) {
+        User user = getUserByUsername(username);
+        return new UserDTO(
+                user.getUsername(),
+                user.getPassword(),
+                user.getEmail(),
+                user.getRole(),
+                user.getCreateDateTime(),
+                user.getUpdateDateTime(),
+                user.isDeleted()
+        );
     }
 
     @Override
@@ -81,6 +93,8 @@ public class UserService implements IUserService, UserDetailsService {
         }
         return user;
     }
+
+
 
     @Override
     public EmailDTO getEmail(String username) {

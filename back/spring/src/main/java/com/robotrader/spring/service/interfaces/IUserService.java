@@ -4,10 +4,15 @@ import com.robotrader.spring.dto.auth.RegistrationRequest;
 import com.robotrader.spring.dto.user.EmailDTO;
 import com.robotrader.spring.dto.user.ResetPasswordDTO;
 import com.robotrader.spring.dto.user.UpdatePasswordDTO;
+import com.robotrader.spring.dto.user.UserDTO;
 import com.robotrader.spring.model.User;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface IUserService extends UserDetailsService {
+    @Transactional
+    UserDTO getUserDTOByUsername(String username);
+
     User findByUsername(String username);
     void save(User user);
     User create(RegistrationRequest registrationRequest, boolean isCustomer);
