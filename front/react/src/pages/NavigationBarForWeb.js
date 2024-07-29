@@ -1,6 +1,5 @@
 import React from "react";
 import NavButton from "../components/common/buttons/NavButtons";
-
 export default function Navbar() {
     return (
         <ul className="navbar-nav">
