@@ -2,6 +2,7 @@ package com.robotrader.spring.dto.customer;
 
 import com.robotrader.spring.dto.address.AddressDTO;
 import com.robotrader.spring.dto.financialProfile.FinancialProfileDTO;
+import com.robotrader.spring.dto.investorProfile.InvestorProfileUpdateDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -17,6 +18,9 @@ public class CustomerDTO {
 
     @NotNull
     private FinancialProfileDTO financialProfile;
+
+    @NotNull
+    private InvestorProfileUpdateDTO investorProfile;
 
     @NotBlank
     @Size(min = 7, max = 15, message = "Please input a valid mobile number")

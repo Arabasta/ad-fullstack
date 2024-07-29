@@ -54,7 +54,7 @@ public class CustomerService implements ICustomerService {
 
         customer.setAddress(addressService.create(customerDTO.getAddress()));
         customer.setFinancialProfile(financialProfileService.create(customerDTO.getFinancialProfile()));
-        customer.setInvestorProfile(investorProfileService.initBaseInvestorProfile());
+        customer.setInvestorProfile(investorProfileService.create(customerDTO.getInvestorProfile()));
         customer.setWallet(walletService.initBaseWallet());
         customer.setPortfolios(portfolioService.initBasePortfolios());
 
