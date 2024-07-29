@@ -1,43 +1,13 @@
-import { Link, useLocation } from "react-router-dom";
-import React, { useState } from "react";
-import Logo from '../../assets/images/logo.svg'; // Import the SVG file
-import '../../assets/styles/NavigationBarForWeb.css';
+import React from "react";
+import NavButton from "../../components/common/buttons/NavButtons";
 
-export default function NavigationBarForWeb() {
-    const location = useLocation();
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    };
-
+export default function Navbar() {
     return (
-        <nav className="nav-wrapper">
-            <div className="nav-container">
-                <a href="https://www.google.com" className="brand-logo">
-                    <img src={Logo} alt="Logo" className="logo" />
-                </a>
-                <button className="sidenav-trigger" onClick={toggleMenu}>
-                    ☰
-                </button>
-                <ul className={`right ${isOpen ? "show" : ""}`}>
-                    <li className={location.pathname === "/home" ? "active" : ""}>
-                        <Link to="/home">HOME</Link>
-                    </li>
-                    <li className={location.pathname === "/news" ? "active" : ""}>
-                        <Link to="/news">NEWS</Link>
-                    </li>
-                    <li className={location.pathname === "/wallet" ? "active" : ""}>
-                        <Link to="/wallet">WALLET</Link>
-                    </li>
-                    <li className={location.pathname === "/support" ? "active" : ""}>
-                        <Link to="/support">SUPPORT</Link>
-                    </li>
-                    <li className={location.pathname === "/settings" ? "active" : ""}>
-                        <Link to="/settings">SETTINGS</Link>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+        <ul className="navbar-nav">
+            <NavButton to="/news" label="NEWS" />
+            <NavButton to="/settings" label="SETTINGS" />
+            <NavButton to="/support" label="SUPPORT" />
+            <NavButton to="/wallet" label="WALLET" />
+        </ul>
     );
 }
