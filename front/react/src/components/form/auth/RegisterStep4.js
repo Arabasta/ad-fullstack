@@ -3,10 +3,10 @@ import React from 'react';
 const RegisterStep4 = ({
                            employmentStatus, setEmploymentStatus, annualIncome, setAnnualIncome, netWorth, setNetWorth,
                            sourceOfWealth, setSourceOfWealth, investmentObjective, setInvestmentObjective, investmentExperience,
-                           setInvestmentExperience, handlePrevious, handleRegister, message
+                           setInvestmentExperience, handlePrevious, handleNext
                        }) => {
     return (
-        <form onSubmit={handleRegister}>
+        <form onSubmit={handleNext}>
             <div>
                 <label>Employment Status</label>
                 <input
@@ -56,8 +56,7 @@ const RegisterStep4 = ({
                 />
             </div>
             <button type="button" onClick={handlePrevious}>Previous</button>
-            <button type="submit">Register</button>
-            {message && <p>{message}</p>}
+            <button type="submit">Next</button>
         </form>
     );
 };

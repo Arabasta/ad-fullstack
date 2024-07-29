@@ -5,6 +5,7 @@ import RegisterStep1 from './RegisterStep1';
 import RegisterStep2 from './RegisterStep2';
 import RegisterStep3 from './RegisterStep3';
 import RegisterStep4 from './RegisterStep4';
+import RegisterStep5 from "./RegisterStep5";
 
 const RegisterForm = () => {
     const [step, setStep] = useState(1);
@@ -26,6 +27,12 @@ const RegisterForm = () => {
     const [sourceOfWealth, setSourceOfWealth] = useState('');
     const [investmentObjective, setInvestmentObjective] = useState('');
     const [investmentExperience, setInvestmentExperience] = useState('');
+    const [investmentDurationScore, setInvestmentDurationScore] = useState(1);
+    const [withdrawalSpendingPlanScore, setWithdrawalSpendingPlanScore] = useState(1);
+    const [investmentKnowledgeScore, setInvestmentKnowledgeScore] = useState(1);
+    const [riskRewardScore, setRiskRewardScore] = useState(1);
+    const [ownedInvestmentsScore, setOwnedInvestmentsScore] = useState(1);
+    const [investmentPersonalityScore, setInvestmentPersonalityScore] = useState(1);
     const [message, setMessage] = useState('');
     const { register } = useAuth();
     const navigate = useNavigate();
@@ -48,8 +55,11 @@ const RegisterForm = () => {
                 customerDetails: {
                     mobileNumber, firstName, lastName, nationality,
                     address: { street, city, postalCode, country, unitNo },
-                    financialProfile: { employmentStatus, annualIncome, netWorth, sourceOfWealth,
-                        investmentObjective, investmentExperience }
+                    financialProfile: { employmentStatus, annualIncome, netWorth,
+                        sourceOfWealth, investmentObjective, investmentExperience },
+                    investorProfile: { investmentDurationScore, withdrawalSpendingPlanScore,
+                        investmentKnowledgeScore, riskRewardScore, ownedInvestmentsScore,
+                        investmentPersonalityScore }
                 }
             });
             navigate('/dashboard');
@@ -118,6 +128,25 @@ const RegisterForm = () => {
                     setInvestmentObjective={setInvestmentObjective}
                     investmentExperience={investmentExperience}
                     setInvestmentExperience={setInvestmentExperience}
+                    handlePrevious={handlePrevious}
+                    handleNext={handleNext}
+                />
+            )}
+
+            {step === 5 && (
+                <RegisterStep5
+                    investmentDurationScore={investmentDurationScore}
+                    setInvestmentDurationScore={setInvestmentDurationScore}
+                    withdrawalSpendingPlanScore={withdrawalSpendingPlanScore}
+                    setWithdrawalSpendingPlanScore={setWithdrawalSpendingPlanScore}
+                    investmentKnowledgeScore={investmentKnowledgeScore}
+                    setInvestmentKnowledgeScore={setInvestmentKnowledgeScore}
+                    riskRewardScore={riskRewardScore}
+                    setRiskRewardScore={setRiskRewardScore}
+                    ownedInvestmentsScore={ownedInvestmentsScore}
+                    setOwnedInvestmentsScore={setOwnedInvestmentsScore}
+                    investmentPersonalityScore={investmentPersonalityScore}
+                    setInvestmentPersonalityScore={setInvestmentPersonalityScore}
                     handlePrevious={handlePrevious}
                     handleRegister={handleRegister}
                     message={message}
