@@ -2,7 +2,7 @@ import React from 'react';
 
 const RegisterStep3 = ({
                            street, setStreet, city, setCity, postalCode, setPostalCode,
-                           country, setCountry, unitNo, setUnitNo, handlePrevious, handleNext, message
+                           country, setCountry, unitNo, setUnitNo, handlePrevious, handleNext
                        }) => {
     return (
         <form onSubmit={handleNext}>
