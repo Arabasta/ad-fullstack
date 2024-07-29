@@ -9,4 +9,5 @@ public interface IFinancialProfileService {
     FinancialProfile getFinancialProfileByUsername(String username);
     FinancialProfileDTO getFinancialProfileDTOByUsername(String username);
     FinancialProfileDTO update(String username, FinancialProfileDTO financialProfileDTO);
+    void updateFinancialProfileFromDTO(FinancialProfile financialProfile, FinancialProfileDTO financialProfileDTO);
 }

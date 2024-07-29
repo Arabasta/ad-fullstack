@@ -33,12 +33,7 @@ public class FinancialProfileService implements IFinancialProfileService {
     @Transactional
     public FinancialProfile create(FinancialProfileDTO financialProfileDTO) {
         FinancialProfile financialProfile = new FinancialProfile();
-        financialProfile.setEmploymentStatus(financialProfileDTO.getEmploymentStatus());
-        financialProfile.setAnnualIncome(financialProfileDTO.getAnnualIncome());
-        financialProfile.setNetWorth(financialProfileDTO.getNetWorth());
-        financialProfile.setSourceOfWealth(financialProfileDTO.getSourceOfWealth());
-        financialProfile.setInvestmentObjective(financialProfileDTO.getInvestmentObjective());
-        financialProfile.setInvestmentExperience(financialProfileDTO.getInvestmentExperience());
+        updateFinancialProfileFromDTO(financialProfile, financialProfileDTO);
         save(financialProfile);
         return financialProfile;
     }
@@ -63,13 +58,18 @@ public class FinancialProfileService implements IFinancialProfileService {
     @Transactional
     public FinancialProfileDTO update(String username, FinancialProfileDTO financialProfileDTO) {
         FinancialProfile financialProfile = getFinancialProfileByUsername(username);
+        updateFinancialProfileFromDTO(financialProfile, financialProfileDTO);
+        save(financialProfile);
+        return financialProfileDTO;
+    }
+
+    @Override
+    public void updateFinancialProfileFromDTO(FinancialProfile financialProfile, FinancialProfileDTO financialProfileDTO) {
         financialProfile.setEmploymentStatus(financialProfileDTO.getEmploymentStatus());
         financialProfile.setAnnualIncome(financialProfileDTO.getAnnualIncome());
         financialProfile.setNetWorth(financialProfileDTO.getNetWorth());
         financialProfile.setSourceOfWealth(financialProfileDTO.getSourceOfWealth());
         financialProfile.setInvestmentObjective(financialProfileDTO.getInvestmentObjective());
         financialProfile.setInvestmentExperience(financialProfileDTO.getInvestmentExperience());
-        save(financialProfile);
-        return financialProfileDTO;
     }
 }
