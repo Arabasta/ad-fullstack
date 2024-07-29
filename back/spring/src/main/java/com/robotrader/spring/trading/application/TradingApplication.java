@@ -44,11 +44,12 @@ public class TradingApplication {
 //            runTradingAlgorithmBackTest("AAPL", PortfolioTypeEnum.AGGRESSIVE);
 //            runTradingAlgorithmBackTest("X:BTC-USD", PortfolioTypeEnum.AGGRESSIVE);
 
-            List<String> stockTickers = Arrays.asList("AAPL","GOOGL");
+//            List<String> stockTickers = Arrays.asList("AAPL","GOOGL");
+            List<String> stockTickers = Arrays.asList("AAPL");
 //            List<String> cryptoTickers = Arrays.asList("X:BTC-USD","X:ETH-USD");
             List<String> cryptoTickers = Arrays.asList("X:BTC-USD");
-//            runTradingAlgorithmLive(stockTickers);
-            runTradingAlgorithmLive(cryptoTickers, PortfolioTypeEnum.AGGRESSIVE, cryptoWebSocketService);
+            runTradingAlgorithmLive(stockTickers, PortfolioTypeEnum.AGGRESSIVE, stockWebSocketService);
+//            runTradingAlgorithmLive(cryptoTickers, PortfolioTypeEnum.AGGRESSIVE, cryptoWebSocketService);
         };
 
     }

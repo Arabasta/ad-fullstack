@@ -9,7 +9,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -175,17 +174,11 @@ public abstract class TradingAlgorithm {
 
     // Stop loss
     public boolean isStopLossTriggered(BigDecimal currentPrice) {
-        if (currentPrice.compareTo(stopLossPrice) < 0){
-            return true;
-        }
-        return false;
+        return currentPrice.compareTo(stopLossPrice) < 0;
     }
 
     protected boolean openTrade() {
         // Only allow 1 open trade per stock
-        if (lastTradeTransaction != null && lastTradeTransaction.getAction().equals("BUY")) {
-            return true;
-        }
-        return false;
+        return lastTradeTransaction != null && lastTradeTransaction.getAction().equals("BUY");
     }
 }
