@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,17 +23,15 @@ import java.util.stream.Collectors;
 
 @Service
 public class TradingApplication {
-    private final LiveTrading liveTrading;
-    private final BackTesting backTesting;
     private final MoneyPoolService moneyPoolService;
+    private final MarketDataService marketDataService;
     private final CryptoWebSocketService cryptoWebSocketService;
     private final StockWebSocketService stockWebSocketService;
 
     @Autowired
-    public TradingApplication(LiveTrading liveTrading, BackTesting backTesting, MoneyPoolService moneyPoolService, CryptoWebSocketService cryptoWebSocketService, StockWebSocketService stockWebSocketService) {
-        this.liveTrading = liveTrading;
-        this.backTesting = backTesting;
+    public TradingApplication(MoneyPoolService moneyPoolService, MarketDataService marketDataService, CryptoWebSocketService cryptoWebSocketService, StockWebSocketService stockWebSocketService) {
         this.moneyPoolService = moneyPoolService;
+        this.marketDataService = marketDataService;
         this.cryptoWebSocketService = cryptoWebSocketService;
         this.stockWebSocketService = stockWebSocketService;
     }
@@ -43,33 +40,32 @@ public class TradingApplication {
     public CommandLineRunner commandLineRunner() {
         return args -> {
 
-            runTradingAlgorithmBackTest("AAPL", PortfolioTypeEnum.AGGRESSIVE);
-//            runTradingAlgorithmBackTest("X:BTCUSD");
+//            runTradingAlgorithmBackTest("AAPL", PortfolioTypeEnum.AGGRESSIVE);
+//            runTradingAlgorithmBackTest("X:BTC-USD", PortfolioTypeEnum.AGGRESSIVE);
 
             List<String> stockTickers = Arrays.asList("AAPL","GOOGL");
-            List<String> cryptoTickers = Arrays.asList("BTC-USD","ETH-USD");
+//            List<String> cryptoTickers = Arrays.asList("X:BTC-USD","X:ETH-USD");
+            List<String> cryptoTickers = Arrays.asList("X:BTC-USD");
 //            runTradingAlgorithmLive(stockTickers);
-//            runTradingAlgorithmLive(cryptoTickers, PortfolioTypeEnum.AGGRESSIVE, cryptoWebSocketService);
+            runTradingAlgorithmLive(cryptoTickers, PortfolioTypeEnum.AGGRESSIVE, cryptoWebSocketService);
         };
+
     }
 
     public void runTradingAlgorithmBackTest(String ticker, PortfolioTypeEnum portfolioType) {
-
         TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
+        BackTesting backTesting = new BackTesting(marketDataService);
         backTesting.run(tradingAlgorithm);
-
     }
 
-//    public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, MarketDataWebSocketService marketDataWebSocketService) {
-//        LiveTrading liveTrading = new LiveTrading();
-//        PortfolioTypeEnum portfolioType = PortfolioTypeEnum.AGGRESSIVE;
-//        marketDataService.subscribeToLiveMarketData(tickers, marketDataWebSocketService);
-//        for (String ticker : tickers) {
-//            TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
-//            liveTrading.run(tradingAlgorithm, pricePredictions, stockData, marketDataService.getLiveMarketDataFlux();
-//
-//        }
-//    }
+    public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, MarketDataWebSocketService marketDataWebSocketService) {
+        marketDataService.subscribeToLiveMarketData(tickers, marketDataWebSocketService);
+        for (String ticker : tickers) {
+            TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
+            LiveTrading liveTrading = new LiveTrading(marketDataService);
+            liveTrading.run(tradingAlgorithm);
+        }
+    }
 
 
     @Scheduled(cron = "0 */10 * * * *") // Runs every 10 minutes

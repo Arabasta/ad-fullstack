@@ -1,14 +1,9 @@
 package com.robotrader.spring.trading;
 
-import com.robotrader.spring.trading.algorithm.TradingAlgorithmOne;
-import com.robotrader.spring.trading.dto.LiveMarketData;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithm;
 import com.robotrader.spring.trading.service.MarketDataService;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Service
 public class BackTesting {
     private final MarketDataService marketDataService;
     private TradingAlgorithm tradingAlgorithm;
@@ -25,7 +19,6 @@ public class BackTesting {
     @Setter
     private Map<String, List<Object>> marketDataHistory;
 
-    @Autowired
     public BackTesting(MarketDataService marketDataService) {
         this.marketDataService = marketDataService;
     }
@@ -33,7 +26,7 @@ public class BackTesting {
     public void run(TradingAlgorithm tradingAlgorithm) {
         this.tradingAlgorithm = tradingAlgorithm;
 
-        marketDataService.getHistoricalMarketData(tradingAlgorithm.getTicker())
+        marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithm.getTicker()))
                 .doOnNext(this::setMarketDataHistory)
                 .doOnNext(data -> getPricePredictions())
                 .doOnNext(data -> runSimulation())
@@ -45,6 +38,11 @@ public class BackTesting {
                             error.printStackTrace();
                         }
                 );
+    }
+
+    // Polygon's API and websocket ticker format is different. eg. BTCUSD vs BTC-USD
+    private String processTicker(String ticker) {
+        return ticker.replace("-","");
     }
 
      public void runSimulation() {
