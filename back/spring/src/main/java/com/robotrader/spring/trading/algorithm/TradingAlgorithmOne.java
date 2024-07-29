@@ -18,7 +18,7 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
     @Override
     public boolean checkForBuySignal() {
 
-        if (isTradeable()) {
+        if (isTradeable() && pricePredictions != null) {
             Integer window = 20; // TODO: Assumed prediction data size is 20 for now, depending on model output
             // Not enough prediction data, cannot trade
             if (pricePredictions.size() < window) {
@@ -42,7 +42,7 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
             }
             System.out.println("Price prediction: Predicted price did not hit the target or stop loss within the prediction window");
         }
-        System.out.println("Trade rules not met");
+        System.out.println("Buy trade rules not met");
         return false;
     }
 
@@ -62,19 +62,21 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
     public BigDecimal positionSizing(BigDecimal risk) {
         // 14-day ATR
         Integer atrPeriod = 14;
-        if (priceHistory.get("close").size() < atrPeriod + 1) { // Need a atrPeriod + 1 window
-            System.out.println("Insufficient number of to make a trade decision, no. of data: " + atrPeriod);
-            return BigDecimal.ZERO;
-        }
-        atr = getATR(priceHistory, atrPeriod);
-        stopLossPrice = calculateStopLossPrice(currentPrice);
 
-        // Determine available capital
-        BigDecimal availableCapital = isTest ? capitalTest : moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
+            if (priceHistory.get("close").size() < atrPeriod + 1) { // Need a atrPeriod + 1 window
+                System.out.println("Insufficient number of to make a trade decision, no. of data: " + atrPeriod);
+                return BigDecimal.ZERO;
+            }
+            atr = getATR(priceHistory, atrPeriod);
+            stopLossPrice = calculateStopLossPrice(currentPrice);
 
-        // Calculate raw position size
-        BigDecimal rawPositionSize = availableCapital.multiply(risk).divide(stopLossAmount, 8, RoundingMode.HALF_UP);
-        return applyPriceBasedScaling(rawPositionSize, currentPrice, HIGH_PRICE_THRESHOLD);
+            // Determine available capital
+//            BigDecimal availableCapital = isTest ? capitalTest : moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
+            BigDecimal availableCapital = capitalTest; //todo: delete this code and uncomment above once moneypool is setup
+
+            // Calculate raw position size
+            BigDecimal rawPositionSize = availableCapital.multiply(risk).divide(stopLossAmount, 8, RoundingMode.HALF_UP);
+            return applyPriceBasedScaling(rawPositionSize, currentPrice, HIGH_PRICE_THRESHOLD);
     }
 
     @Override
@@ -103,8 +105,11 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
             BigDecimal tr3 = (lowPrice.subtract(prevClosePrice)).abs();
             BigDecimal dailyMax = tr1.max(tr2).max(tr3);
             sum = sum.add(dailyMax);
+
+            System.out.println("ATR Period: " + i + ", TR1: " + tr1 + ", TR2: " + tr2 + ", TR3: " + tr3 );
         }
         BigDecimal atr = sum.divide(BigDecimal.valueOf(atrPeriod), RoundingMode.HALF_UP);
+        System.out.println("ATR: " + atr);
         return atr;
     }
 

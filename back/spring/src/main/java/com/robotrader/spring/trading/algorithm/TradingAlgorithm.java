@@ -1,32 +1,28 @@
 package com.robotrader.spring.trading.algorithm;
 
-import com.robotrader.spring.trading.dto.LiveMarketData;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
+import com.robotrader.spring.utils.DateTimeUtil;
 import lombok.Getter;
 import lombok.Setter;
-import reactor.core.Disposable;
-import reactor.core.publisher.Flux;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Getter
+@Setter
 public abstract class TradingAlgorithm {
-    @Getter
-    @Setter
     protected List<BigDecimal> pricePredictions;
-    @Getter
-    @Setter
     protected Map<String,List<Object>> priceHistory;
     protected String ticker;
-    @Getter
-    protected PortfolioTypeEnum portfolioType;
     protected final MoneyPoolService moneyPoolService;
-    @Getter
     protected List<TradeTransaction> tradeTransactions;
+    protected PortfolioTypeEnum portfolioType;
+    protected BigDecimal algoRisk;
     protected static final BigDecimal AGGRESSIVE_RISK = BigDecimal.valueOf(0.0005);
     protected static final BigDecimal MODERATE_RISK = BigDecimal.valueOf(0.0003);
     protected static final BigDecimal CONSERVATIVE_RISK = BigDecimal.valueOf(0.0001);
@@ -35,13 +31,9 @@ public abstract class TradingAlgorithm {
     protected BigDecimal stopLossPrice;
     protected BigDecimal stopLossAmount;
     protected BigDecimal profitTarget;
-    @Getter
-    @Setter
     protected BigDecimal capitalTest;
     protected boolean isTest;
     protected final BigDecimal HIGH_PRICE_THRESHOLD = BigDecimal.valueOf(10000);
-    protected LiveMarketData latestMarketData;
-    private Disposable dataSubscription;
 
     public TradingAlgorithm(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         this.ticker = ticker;
@@ -49,6 +41,15 @@ public abstract class TradingAlgorithm {
         this.moneyPoolService = moneyPoolService;
         tradeTransactions = new ArrayList<>();
         capitalTest = BigDecimal.valueOf(1000000);
+        setAlgoRisk(portfolioType);
+    }
+
+    public void setAlgoRisk(PortfolioTypeEnum portfolioType) {
+        switch (portfolioType) {
+            case AGGRESSIVE -> algoRisk = AGGRESSIVE_RISK;
+            case MODERATE -> algoRisk = MODERATE_RISK;
+            case CONSERVATIVE -> algoRisk = CONSERVATIVE_RISK;
+        }
     }
 
     public abstract boolean checkForBuySignal();
@@ -97,7 +98,12 @@ public abstract class TradingAlgorithm {
             return; // Allow only 1 trade per execution.
         }
 
-        boolean buySignal = checkForBuySignal();
+        // TODO: temporarily set to always true if tradeable, pending price predictions
+        checkForBuySignal();
+        boolean buySignal = false;
+        if (isTradeable()) { buySignal = true; }
+        // TODO: temporarily set to always true if tradeable, pending price predictions
+
         System.out.println("Buy signal: " + buySignal);
 
         if (buySignal) {
@@ -117,7 +123,7 @@ public abstract class TradingAlgorithm {
         }
 
         // Calculate the position size
-        position = positionSizing(AGGRESSIVE_RISK);
+        position = positionSizing(algoRisk);
         if (position.equals(BigDecimal.ZERO)) {
             return false;
         }
@@ -125,7 +131,7 @@ public abstract class TradingAlgorithm {
         BigDecimal totalCost = currentPrice.multiply(position);
 
         // Check if there's enough capital for the trade
-        if (totalCost.compareTo(capitalTest) > 0) {
+        if (totalCost.compareTo(capitalTest) > 0) { //TODO: use money pool for live trading
             System.out.println("Position: " + position);
             System.out.println("Not enough capital for the trade. Required: " + totalCost + ", Available: " + capitalTest);
             return false;
@@ -133,47 +139,59 @@ public abstract class TradingAlgorithm {
         return true;
     }
 
-    // Buy trade
     public void executeBuyTradeBackTest(){
-        Long timestamp = (Long) priceHistory.get("timestamp").get(0);
+        ZonedDateTime dt = DateTimeUtil.convertTimestampToZonedDateTime((Long) priceHistory.get("timestamp").get(0));
         BigDecimal currentPrice = (BigDecimal) priceHistory.get("close").get(0);
 
-        TradeTransaction tradeTransaction = new TradeTransaction(ticker, timestamp, position, currentPrice, "BUY");
+        TradeTransaction tradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, "BUY");
         tradeTransactions.add(tradeTransaction);
         capitalTest = capitalTest.subtract(currentPrice.multiply(position));
         System.out.println("Trade: " + tradeTransaction);
         System.out.println("Capital:" + capitalTest);
     }
-    public void executeBuyTradeLive(){
-        // Call API for live price
-        // Store in S3
-    }
 
-    // Sell trade
     public void executeSellTradeBackTest(){
-        Long timestamp = (Long) priceHistory.get("timestamp").get(0);
+        ZonedDateTime dt = DateTimeUtil.convertTimestampToZonedDateTime((Long) priceHistory.get("timestamp").get(0));
         BigDecimal currentPrice = (BigDecimal) priceHistory.get("close").get(0);
 
-        TradeTransaction tradeTransaction = new TradeTransaction(ticker, timestamp, position, currentPrice, "SELL");
+        TradeTransaction tradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, "SELL");
         tradeTransactions.add(tradeTransaction);
         capitalTest = capitalTest.add(currentPrice.multiply(position));
         System.out.println("Trade: " + tradeTransaction);
         System.out.println("Capital:" + capitalTest);
     }
-    public void executeSellTradeLive(){
-        // Call API for live price
-        // Store in S3
+
+    public void executeBuyTradeLive() {
+        ZonedDateTime dt = ZonedDateTime.now();
+        TradeTransaction tradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, "BUY");
+
+        // TODO: replace below with write to S3 and using moneypool instead of capitalTest
+        tradeTransactions.add(tradeTransaction);
+        capitalTest = capitalTest.subtract(currentPrice.multiply(position));
+        System.out.println("Trade: " + tradeTransaction);
+        System.out.println("Capital:" + capitalTest);
     }
 
-    public boolean isSellable(){
+    public void executeSellTradeLive() {
+        ZonedDateTime dt = ZonedDateTime.now();
+        TradeTransaction tradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, "SELL");
+
+        // TODO: replace below with write to S3 and using moneypool instead of capitalTest
+        tradeTransactions.add(tradeTransaction);
+        capitalTest = capitalTest.add(currentPrice.multiply(position));
+        System.out.println("Trade: " + tradeTransaction);
+        System.out.println("Capital:" + capitalTest);
+    }
+
+    public boolean isSellable() {
         return openTrade();
     }
 
     // Stop loss
     public boolean isStopLossTriggered(BigDecimal currentPrice) {
-            if (currentPrice.compareTo(stopLossPrice) < 0){
-                return true;
-            }
+        if (currentPrice.compareTo(stopLossPrice) < 0){
+            return true;
+        }
         return false;
     }
 
@@ -183,25 +201,5 @@ public abstract class TradingAlgorithm {
             return tradeTransactions.size() % 2 != 0;
         }
         return false;
-    }
-
-    public void subscribeToMarketData(Flux<LiveMarketData> liveMarketDataFlux) {
-        dataSubscription = liveMarketDataFlux.subscribe(
-                data -> {
-                    this.latestMarketData = data;
-                    if (latestMarketData.getTicker().equals(ticker)) {
-                        currentPrice = latestMarketData.getC();
-                    }
-                    executeLiveTrade();
-                },
-                error -> System.err.println("Error in market data stream: " + error),
-                () -> System.out.println("Market data stream completed")
-        );
-    }
-
-    public void unsubscribeFromMarketData() {
-        if (dataSubscription != null && !dataSubscription.isDisposed()) {
-            dataSubscription.dispose();
-        }
     }
 }
