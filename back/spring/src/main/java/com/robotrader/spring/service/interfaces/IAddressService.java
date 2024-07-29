@@ -5,9 +5,9 @@ import com.robotrader.spring.model.Address;
 
 public interface IAddressService {
     void save(Address address);
-    void create(Address address);
     Address create(AddressDTO addressDTO);
     Address getAddressByUsername(String username);
     AddressDTO getAddressDTOByUsername(String username);
     AddressDTO update(String username, AddressDTO addressDTO);
+    void updateAddressFromDTO(Address address, AddressDTO addressDTO);
 }

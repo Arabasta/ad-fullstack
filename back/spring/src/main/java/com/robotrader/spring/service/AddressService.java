@@ -30,20 +30,10 @@ public class AddressService implements IAddressService {
 
     @Override
     @Transactional
-    public void create(Address address) {
-        addressRepository.save(address);
-    }
-
-    @Override
-    @Transactional
     public Address create(AddressDTO addressDTO) {
         Address address = new Address();
-        address.setStreet(addressDTO.getStreet());
-        address.setCity(addressDTO.getCity());
-        address.setPostalCode(addressDTO.getPostalCode());
-        address.setCountry(addressDTO.getCountry());
-        address.setUnitNo(addressDTO.getUnitNo());
-        create(address);
+        updateAddressFromDTO(address, addressDTO);
+        save(address);
         return address;
     }
 
@@ -67,14 +57,17 @@ public class AddressService implements IAddressService {
     @Transactional
     public AddressDTO update(String username, AddressDTO addressDTO) {
         Address address = getAddressByUsername(username);
+        updateAddressFromDTO(address, addressDTO);
+        save(address);
+        return addressDTO;
+    }
+
+    @Override
+    public void updateAddressFromDTO(Address address, AddressDTO addressDTO) {
         address.setStreet(addressDTO.getStreet());
         address.setCity(addressDTO.getCity());
         address.setPostalCode(addressDTO.getPostalCode());
         address.setCountry(addressDTO.getCountry());
         address.setUnitNo(addressDTO.getUnitNo());
-
-        save(address);
-        return addressDTO;
     }
-
 }
