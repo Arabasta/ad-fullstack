@@ -1,6 +1,3 @@
-import React from 'react';
-
-const FinancialPage = () => {
 import React, { useState } from 'react';
 
 const FinancialProfileForm = () => {
@@ -25,11 +22,24 @@ const FinancialProfileForm = () => {
         console.log(form);
     };
 
+    const selectStyle = {
+        width: '100%',
+        padding: '10px',
+        margin: '5px 0',
+        borderRadius: '5px',
+        border: '1px solid #ccc'
+    };
+
+    const buttonStyle = {
+        padding: '10px 20px',
+        border: 'none',
+        borderRadius: '5px',
+        backgroundColor: '#000',
+        color: '#fff',
+        cursor: 'pointer'
+    };
+
     return (
-        <div>
-            <h2>Financial page</h2>
-            <p>Welcome to the financial page! For Test Only</p>
-            <p>todo: should put a financial form then submit</p>
         <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto' }}>
             <h2>Complete your financial profile</h2>
             <p>Financial regulations require we ask these questions. Please select the closest option.</p>
@@ -87,22 +97,15 @@ const FinancialProfileForm = () => {
     );
 };
 
+const FinancialPage = () => {
+    return (
+        <div>
+            <h2>Financial page</h2>
+            <p>Welcome to the financial page! For Test Only</p>
+            <p>todo: should put a financial form then submit</p>
+            <FinancialProfileForm />
+        </div>
+    );
+};
+
 export default FinancialPage;
-const selectStyle = {
-    width: '100%',
-    padding: '10px',
-    margin: '5px 0',
-    borderRadius: '5px',
-    border: '1px solid #ccc'
-};
-
-const buttonStyle = {
-    padding: '10px 20px',
-    border: 'none',
-    borderRadius: '5px',
-    backgroundColor: '#000',
-    color: '#fff',
-    cursor: 'pointer'
-};
-
-export default FinancialProfileForm;
