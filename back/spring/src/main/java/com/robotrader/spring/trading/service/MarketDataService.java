@@ -36,7 +36,7 @@ public class MarketDataService {
 
                     // Get stock prices in ascending order by time
                     for (HistoricalData data : stockDataList) {
-                        timestamp.add(data.getT());
+                        timestamp.add(0, data.getT());
                         openPrices.add(0, data.getO());
                         closePrices.add(0, data.getC());
                         highPrices.add(0, data.getH());
@@ -47,7 +47,6 @@ public class MarketDataService {
                     stockData.put("close", new ArrayList<>(closePrices));
                     stockData.put("high", new ArrayList<>(highPrices));
                     stockData.put("low", new ArrayList<>(lowPrices));
-
                     return stockData;
                 });
     }
