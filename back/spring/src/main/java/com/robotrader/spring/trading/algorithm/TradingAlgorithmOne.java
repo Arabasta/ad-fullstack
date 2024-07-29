@@ -19,7 +19,7 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
     public boolean checkForBuySignal() {
 
         if (isTradeable() && pricePredictions != null) {
-            Integer window = 20; // TODO: Assumed prediction data size is 20 for now, depending on model output
+            int window = 20; // TODO: Assumed prediction data size is 20 for now, depending on model output
             // Not enough prediction data, cannot trade
             if (pricePredictions.size() < window) {
                 System.out.println("Not enough price predictions");
@@ -61,7 +61,7 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
     @Override
     public BigDecimal positionSizing(BigDecimal risk) {
         // 14-day ATR
-        Integer atrPeriod = 14;
+        int atrPeriod = 14;
 
             if (priceHistory.get("close").size() < atrPeriod + 1) { // Need a atrPeriod + 1 window
                 System.out.println("Insufficient number of to make a trade decision, no. of data: " + atrPeriod);
@@ -94,8 +94,13 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
         List<Object> highPrices = priceHistory.get("high");
         List<Object> lowPrices = priceHistory.get("low");
 
+        // If back test, ATR calculated from beginning of data. If live test, ATR calculated from recent history
+        int dataSize = closePrices.size();
+        int startIndex = isTest ? 0 : dataSize - atrPeriod - 1;
+        int endIndex = isTest ? atrPeriod : dataSize - 1;
+
         BigDecimal sum = BigDecimal.ZERO;
-        for (int i = 1; i < atrPeriod + 1; i ++) {
+        for (int i = startIndex + 1; i <= endIndex; i ++) {
             BigDecimal prevClosePrice = (BigDecimal) closePrices.get(i - 1);
             BigDecimal highPrice = (BigDecimal) highPrices.get(i);
             BigDecimal lowPrice = (BigDecimal) lowPrices.get(i);
@@ -105,8 +110,6 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
             BigDecimal tr3 = (lowPrice.subtract(prevClosePrice)).abs();
             BigDecimal dailyMax = tr1.max(tr2).max(tr3);
             sum = sum.add(dailyMax);
-
-            System.out.println("ATR Period: " + i + ", TR1: " + tr1 + ", TR2: " + tr2 + ", TR3: " + tr3 );
         }
         BigDecimal atr = sum.divide(BigDecimal.valueOf(atrPeriod), RoundingMode.HALF_UP);
         System.out.println("ATR: " + atr);
@@ -114,10 +117,7 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
     }
 
     private boolean isProfitTargetTriggered(BigDecimal currentPrice) {
-        if (currentPrice.compareTo(profitTarget) > 0){
-            return true;
-        }
-        return false;
+        return currentPrice.compareTo(profitTarget) > 0;
     }
 
     private BigDecimal applyPriceBasedScaling(BigDecimal rawPositionSize, BigDecimal currentPrice, BigDecimal highPriceThreshold) {
