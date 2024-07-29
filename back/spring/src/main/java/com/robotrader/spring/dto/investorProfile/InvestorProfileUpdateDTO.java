@@ -1,6 +1,5 @@
 package com.robotrader.spring.dto.investorProfile;
 
-import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InvestorProfileDTO {
+public class InvestorProfileUpdateDTO {
     // Question 1
     @Min(value = 1, message = "Please input a value between 1 and 4")
     @Max(value = 4, message = "Please input a value between 1 and 4")
@@ -49,13 +48,4 @@ public class InvestorProfileDTO {
     @Max(value = 4, message = "Please input a value between 1 and 4")
     @NotNull
     private Integer investmentPersonalityScore;
-
-    // derived field
-    private Integer calculatedTimeHorizonScore = 0;
-
-    // derived field
-    private Integer calculatedRiskToleranceScore = 0;
-
-    // derived field
-    private PortfolioTypeEnum recommendedPortfolioType;
 }
