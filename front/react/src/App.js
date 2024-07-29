@@ -21,7 +21,7 @@ const App = () => {
 const AppContent = () => {
     const location = useLocation();
 
-    //these routes not need navi bar
+    // these routes not need navi bar
     const noNavRoutes = ['/login', '/register', '/forgot-password'];
 
     return (
@@ -40,4 +40,3 @@ const AppContent = () => {
 };
 
 export default App;
-
