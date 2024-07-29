@@ -53,6 +53,6 @@ public class HistoricalDataApiService {
         return dataStream
                 .flatMapMany(response ->  Flux.fromIterable(response.getResults()))
                 .switchIfEmpty(Mono.error(new RuntimeException("No results found in the API response")))
-                .doOnError(error -> System.err.println("Error fetching stock prices: " + error.getMessage()));
+                .doOnError(error -> System.err.println("Error fetching prices: " + error.getMessage() + ticker));
     }
 }

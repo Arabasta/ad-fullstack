@@ -20,7 +20,7 @@ public class CryptoWebSocketService extends MarketDataWebSocketService {
 
     @Override
     public String getSubscriberPrefix() {
-        return getEventType() + ".X:";
+        return getEventType() + ".";
     }
 
     @Override
