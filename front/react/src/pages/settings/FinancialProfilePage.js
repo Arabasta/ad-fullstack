@@ -52,7 +52,7 @@ const FinancialProfileForm = () => {
                         <option value="us">United States</option>
                         <option value="ca">Canada</option>
                         <option value="uk">United Kingdom</option>
-                        {/* Add other options as needed */}
+
                     </select>
                 </div>
                 <div style={{ marginBottom: '15px' }}>
@@ -65,7 +65,7 @@ const FinancialProfileForm = () => {
                         <option value="unemployed">Unemployed</option>
                         <option value="student">Student</option>
                         <option value="retired">Retired</option>
-                        {/* Add other options as needed */}
+
                     </select>
                 </div>
                 <div style={{ marginBottom: '15px' }}>
@@ -88,7 +88,7 @@ const FinancialProfileForm = () => {
                         <option value="50kTo100k">S$50,000 - S$99,999</option>
                         <option value="100kTo200k">S$100,000 - S$199,999</option>
                         <option value="200kPlus">S$200,000+</option>
-                        {/* Add other options as needed */}
+
                     </select>
                 </div>
                 <button type="submit" style={buttonStyle}>Submit</button>
