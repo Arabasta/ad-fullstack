@@ -1,9 +1,14 @@
 import axios from 'axios';
 import { LOGIN_URL, REGISTER_URL } from '../../config/api/auth';
-import {API_BASE_URL} from "../../config/api/base";
 
 const register = (registrationData) => {
-    return axios.post(REGISTER_URL, registrationData);
+    return axios.post(REGISTER_URL, registrationData).then(response => {
+        const token = response.data.data.jwtToken;
+        if (token) {
+            setToken(token);
+        }
+        return response.data;
+    });
 };
 
 const login = (username, password) => {
@@ -11,16 +16,17 @@ const login = (username, password) => {
         username,
         password,
     }).then(response => {
-        if (response.data.jwtToken) {
-            setToken(response.data.jwtToken);
+        const token = response.data.data.jwtToken;
+        if (token) {
+            setToken(token);
         }
         return response.data;
     });
 };
 
 const logout = () => {
-    localStorage.removeItem('user');
     localStorage.removeItem('token');
+    delete axios.defaults.headers.common['Authorization'];
 };
 
 const setToken = (token) => {
@@ -28,16 +34,16 @@ const setToken = (token) => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 };
 
-const refreshToken = async () => {
-    const response = await axios.post(`${API_BASE_URL}/refresh-token`);
-    setToken(response.data.token);
-};
+// for future reference, no refresh token endpoint rn
+// const refreshToken = async () => {
+//     const response = await axios.post(`${API_BASE_URL}/refresh-token`);
+//     setToken(response.data.token);
+// };
 
 const authenticationService = {
     register,
     login,
     logout,
-    refreshToken,
 };
 
 export default authenticationService;
