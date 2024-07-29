@@ -23,7 +23,8 @@ public class LiveTradingStrategy implements TradingStrategy {
         dataSubscription = marketDataService.getLiveMarketDataFlux().subscribe(
                 data -> {
                     this.latestMarketData = data;
-                    if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithm.getTicker())) {
+                    if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithm.getTicker()) ||
+                            latestMarketData.getTicker().equals(tradingAlgorithm.getTicker())) {
                         tradingAlgorithm.setCurrentPrice(latestMarketData.getC());
                         setupAndExecuteLiveTrade(tradingAlgorithm, marketDataService);
                     }
