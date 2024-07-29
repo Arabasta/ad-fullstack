@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import authenticationService from '../services/auth/AuthenticationService';
 
 // used to store auth state and methods across component tree
+// context object can be accessed by calling useContext(AuthContext)
 export const AuthContext = createContext(undefined);
 
 export const AuthProvider = ({ children }) => {
@@ -33,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, register, login, logout }}>
+        <AuthContext.Provider value={{ user, setUser, register, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
