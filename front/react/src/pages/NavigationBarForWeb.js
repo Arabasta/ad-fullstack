@@ -32,4 +32,3 @@ const NavigationBarForWeb = () => {
 };
 
 export default NavigationBarForWeb;
-
