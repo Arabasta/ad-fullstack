@@ -6,6 +6,7 @@ import com.robotrader.spring.dto.user.ResetPasswordDTO;
 import com.robotrader.spring.dto.user.UpdatePasswordDTO;
 import com.robotrader.spring.model.Portfolio;
 import com.robotrader.spring.dto.user.UserDTO;
+import com.robotrader.spring.model.Portfolio;
 import com.robotrader.spring.model.User;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetailsService;
