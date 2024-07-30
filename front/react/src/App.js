@@ -7,12 +7,15 @@ import mainRoutes from './routes/MainRoutes';
 import NavigationBarForWeb from './pages/NavigationBarForWeb';
 import settingsRoutes from './routes/SettingsRoutes';
 import NaviRoutes from './routes/NaviRoutes';
+import { ChakraProvider } from '@chakra-ui/react'
 
 const App = () => {
     return (
         <Router>
             <AuthProvider>
-                <AppContent />
+                <ChakraProvider>
+                    <AppContent />
+                </ChakraProvider>
             </AuthProvider>
         </Router>
     );
