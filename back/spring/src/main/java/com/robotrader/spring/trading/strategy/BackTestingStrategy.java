@@ -2,6 +2,7 @@ package com.robotrader.spring.trading.strategy;
 
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithm;
+import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.MarketDataService;
 
@@ -13,13 +14,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BackTestingStrategy implements TradingStrategy {
-    private List<TradeTransaction> tradeTransactions = new ArrayList<>();
+    private final TradePersistence tradePersistence;
+
+    public BackTestingStrategy(TradePersistence tradePersistence) {
+        this.tradePersistence = tradePersistence;
+    }
 
     @Override
     public void execute(TradingAlgorithm tradingAlgorithm, MarketDataService marketDataService) {
         marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithm.getTicker()))
                 .doOnNext(data -> runSimulation(tradingAlgorithm, data))
-                .doOnNext(data -> printTrade(tradeTransactions))
+                .doOnNext(data -> printTrade(tradePersistence.readAllTrades()))
                 .subscribe(
                         data -> System.out.println("Backtesting completed successfully."),
                         error -> {
@@ -27,12 +32,11 @@ public class BackTestingStrategy implements TradingStrategy {
                             error.printStackTrace();
                         }
                 );
-
     }
 
     @Override
     public void processTrade(TradeTransaction trade) {
-        tradeTransactions.add(trade);
+        tradePersistence.saveTrade(trade);
     }
 
     // Polygon's API and websocket ticker format is different. eg. BTCUSD vs BTC-USD
@@ -74,6 +78,7 @@ public class BackTestingStrategy implements TradingStrategy {
                 .collect(Collectors.toList()); //TODO: Predictions == history for now
     }
 
+    //todo: delete printTrade if not required
     public void printTrade(List<TradeTransaction> trades) {
         TradeTransaction lastTrade = null;
         BigDecimal totalProfit = BigDecimal.ZERO;
