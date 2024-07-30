@@ -5,8 +5,8 @@ import ErrorBoundary from './components/common/error/ErrorBoundary';
 import authRoutes from './routes/AuthRoutes';
 import mainRoutes from './routes/MainRoutes';
 import NavigationBarForWeb from './pages/NavigationBarForWeb';
-import settingsRoutes from "./routes/SettingsRoutes";
-import NaviRoutes from "./routes/NaviRoutes";
+import settingsRoutes from './routes/SettingsRoutes';
+import NaviRoutes from './routes/NaviRoutes';
 
 const App = () => {
     return (
@@ -21,7 +21,7 @@ const App = () => {
 const AppContent = () => {
     const location = useLocation();
 
-    // these routes not need navi bar
+    //these routes not need navi bar
     const noNavRoutes = ['/login', '/register', '/forgot-password'];
 
     return (

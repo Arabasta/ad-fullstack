@@ -1,33 +1,33 @@
 import React, { useState } from 'react';
 import UserService from '../../services/UserService';
 
-const UpdatePassword = ({ user }) => {
-    const [password, setPassword] = useState('');
+const UpdateEmail = ({ user }) => {
+    const [email, setEmail] = useState(user?.email || '');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const handleUpdatePassword = async () => {
+    const handleUpdateEmail = async () => {
         try {
-            await UserService.updatePassword(user.username, { password });
-            setSuccess('Password updated successfully');
+            await UserService.updateEmail(user.username, { email });
+            setSuccess('Email updated successfully');
             setError('');
         } catch (error) {
-            setError('Error updating password');
+            setError('Error updating email');
             setSuccess('');
         }
     };
 
     return (
         <div>
-            <h1>Update Password</h1>
+            <h1>Update Email</h1>
             <div>
                 <input
-                    type="password"
-                    placeholder="New Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    type="email"
+                    placeholder="New Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                 />
-                <button onClick={handleUpdatePassword}>Update Password</button>
+                <button onClick={handleUpdateEmail}>Update Email</button>
             </div>
             {error && <p>{error}</p>}
             {success && <p>{success}</p>}
@@ -35,4 +35,4 @@ const UpdatePassword = ({ user }) => {
     );
 };
 
-export default UpdatePassword;
+export default UpdateEmail;
