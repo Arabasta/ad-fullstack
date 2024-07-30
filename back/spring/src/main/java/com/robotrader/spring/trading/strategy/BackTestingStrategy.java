@@ -1,7 +1,7 @@
 package com.robotrader.spring.trading.strategy;
 
 import com.robotrader.spring.trading.dto.TradeTransaction;
-import com.robotrader.spring.trading.algorithm.TradingAlgorithm;
+import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.MarketDataService;
@@ -21,9 +21,9 @@ public class BackTestingStrategy implements TradingStrategy {
     }
 
     @Override
-    public void execute(TradingAlgorithm tradingAlgorithm, MarketDataService marketDataService) {
-        marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithm.getTicker()))
-                .doOnNext(data -> runSimulation(tradingAlgorithm, data))
+    public void execute(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
+        marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
+                .doOnNext(data -> runSimulation(tradingAlgorithmBase, data))
                 .doOnNext(data -> printTrade(tradePersistence.readAllTrades()))
                 .subscribe(
                         data -> System.out.println("Backtesting completed successfully."),
@@ -45,16 +45,16 @@ public class BackTestingStrategy implements TradingStrategy {
         return ticker.replace("-","");
     }
 
-    public void runSimulation(TradingAlgorithm tradingAlgorithm, Map<String, List<Object>> marketDataHistory) {
+    public void runSimulation(TradingAlgorithmBase tradingAlgorithmBase, Map<String, List<Object>> marketDataHistory) {
 
         List<BigDecimal> pricePredictions = getPricePredictions(marketDataHistory);
         // Loop through price history and execute algo, simulating progress of time
         while (!pricePredictions.isEmpty()) {
-            TradeTransaction lastTransactionBeforeExecution = tradingAlgorithm.getLastTradeTransaction();
+            TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getLastTradeTransaction();
 
-            tradingAlgorithm.setPricePredictions(new ArrayList<>(pricePredictions));
-            tradingAlgorithm.setPriceHistory(new HashMap<>(marketDataHistory));
-            tradingAlgorithm.executeBackTest();
+            tradingAlgorithmBase.setPricePredictions(new ArrayList<>(pricePredictions));
+            tradingAlgorithmBase.setPriceHistory(new HashMap<>(marketDataHistory));
+            tradingAlgorithmBase.executeBackTest();
             pricePredictions.remove(0); // Remove the oldest price
             marketDataHistory.get("timestamp").remove(0);
             marketDataHistory.get("open").remove(0);
@@ -62,7 +62,7 @@ public class BackTestingStrategy implements TradingStrategy {
             marketDataHistory.get("high").remove(0);
             marketDataHistory.get("low").remove(0);
 
-            TradeTransaction newTransaction = tradingAlgorithm.getLastTradeTransaction();
+            TradeTransaction newTransaction = tradingAlgorithmBase.getLastTradeTransaction();
             // Only process the trade if a new transaction was created
             if (newTransaction != null && !newTransaction.equals(lastTransactionBeforeExecution)) {
                 processTrade(newTransaction);
