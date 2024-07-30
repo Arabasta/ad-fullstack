@@ -2,6 +2,7 @@ package com.robotrader.spring.trading.application;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
+import com.robotrader.spring.trading.MemoryStoreTradePersistence;
 import com.robotrader.spring.trading.strategy.BackTestingStrategy;
 import com.robotrader.spring.trading.strategy.LiveTradingStrategy;
 import com.robotrader.spring.trading.service.CryptoWebSocketService;
@@ -42,20 +43,20 @@ public class TradingApplication {
         return args -> {
 
 //            runTradingAlgorithmBackTest("AAPL", PortfolioTypeEnum.AGGRESSIVE);
-//            runTradingAlgorithmBackTest("X:BTC-USD", PortfolioTypeEnum.AGGRESSIVE);
+            runTradingAlgorithmBackTest("X:BTC-USD", PortfolioTypeEnum.AGGRESSIVE);
 
 //            List<String> stockTickers = Arrays.asList("AAPL","GOOGL");
             List<String> stockTickers = Arrays.asList("AAPL");
 //            List<String> cryptoTickers = Arrays.asList("X:BTC-USD","X:ETH-USD");
             List<String> cryptoTickers = Arrays.asList("X:BTC-USD");
-            runTradingAlgorithmLive(stockTickers, PortfolioTypeEnum.AGGRESSIVE, stockWebSocketService);
+//            runTradingAlgorithmLive(stockTickers, PortfolioTypeEnum.AGGRESSIVE, stockWebSocketService);
 //            runTradingAlgorithmLive(cryptoTickers, PortfolioTypeEnum.AGGRESSIVE, cryptoWebSocketService);
         };
 
     }
 
     public void runTradingAlgorithmBackTest(String ticker, PortfolioTypeEnum portfolioType) {
-        tradingContext.setStrategy(new BackTestingStrategy());
+        tradingContext.setStrategy(new BackTestingStrategy(new MemoryStoreTradePersistence()));
         TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
         tradingContext.executeTradingStrategy(tradingAlgorithm);
     }
