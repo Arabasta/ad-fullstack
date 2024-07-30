@@ -1,7 +1,9 @@
 package com.robotrader.spring.controller.user;
 
+import com.robotrader.spring.dto.general.ApiResponse;
 import com.robotrader.spring.dto.user.EmailDTO;
 import com.robotrader.spring.dto.user.UpdatePasswordDTO;
+import com.robotrader.spring.dto.user.UserDTO;
 import com.robotrader.spring.service.interfaces.IUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,13 @@ public class UserControllerV1 {
     @Autowired
     public UserControllerV1(IUserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<ApiResponse<UserDTO>> getUserDetails(Authentication authentication) {
+        String username = authentication.getName();
+        UserDTO userDTO = userService.getUserDTOByUsername(username);
+        return ResponseEntity.ok(new ApiResponse<>("success", "User details retrieved successfully", userDTO));
     }
 
     @GetMapping("/email")
