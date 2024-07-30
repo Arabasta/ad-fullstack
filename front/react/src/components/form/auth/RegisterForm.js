@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import useAuth from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { Box, Progress, ButtonGroup, Button, Flex, useToast } from '@chakra-ui/react';
+import { Box, Progress, useToast } from '@chakra-ui/react';
 import RegisterStep1 from './RegisterStep1';
 import RegisterStep2 from './RegisterStep2';
 import RegisterStep3 from './RegisterStep3';

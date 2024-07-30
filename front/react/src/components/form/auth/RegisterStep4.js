@@ -8,9 +8,6 @@ import {
     Heading,
     ButtonGroup,
     Tooltip,
-    VStack,
-    Box,
-    Text,
 } from '@chakra-ui/react';
 
 const RegisterStep4 = ({
