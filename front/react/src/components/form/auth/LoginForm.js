@@ -34,13 +34,15 @@ const LoginForm = () => {
 
     return (
         <form onSubmit={handleLogin}>
-            <Stack spacing={4}>
+            <Stack spacing={6}>
                 <FormControl id="username" isRequired>
                     <FormLabel>Username</FormLabel>
                     <Input
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        _focus={{ borderColor: 'blue.400', boxShadow: '0 0 0 1px blue.400' }}
+                        _hover={{ borderColor: 'blue.300' }}
                     />
                 </FormControl>
                 <FormControl id="password" isRequired>
@@ -50,6 +52,8 @@ const LoginForm = () => {
                             type={showPassword ? 'text' : 'password'}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            _focus={{ borderColor: 'blue.400', boxShadow: '0 0 0 1px blue.400' }}
+                            _hover={{ borderColor: 'blue.300' }}
                         />
                         <InputRightElement h={'full'}>
                             <IconButton
@@ -66,7 +70,11 @@ const LoginForm = () => {
                     color={'white'}
                     _hover={{
                         bg: 'blue.500',
-                    }}>
+                    }}
+                    _focus={{
+                        boxShadow: '0 0 0 3px rgba(66, 153, 225, 0.6)',
+                    }}
+                    size="lg">
                     Login
                 </Button>
                 {message && (

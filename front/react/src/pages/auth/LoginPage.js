@@ -11,9 +11,9 @@ const LoginPage = () => {
             bg={useColorModeValue('gray.50', 'gray.900')}>
             <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
                 <Stack align={'center'}>
-                    <Heading fontSize={'4xl'}>Login</Heading>
+                    <Heading fontSize={'4xl'} fontWeight="bold">Login</Heading>
                     <Text fontSize={'lg'} color={useColorModeValue('gray.600', 'gray.300')}>
-                        Welcome to FourQuant.ai! Please login to your account.
+                        Welcome back! Please login to your account.
                     </Text>
                 </Stack>
                 <Box
