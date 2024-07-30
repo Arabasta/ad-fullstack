@@ -62,7 +62,7 @@ const RegisterForm = () => {
                         investmentPersonalityScore }
                 }
             });
-            navigate('/dashboard');
+            navigate('/recommended-portfolio-type');
         } catch (error) {
             setMessage('An error occurred, please try again.');
         }
