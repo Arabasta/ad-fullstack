@@ -1,9 +1,12 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import InvestorProfileService from "../../services/InvestorProfileService";
 import FormInput from "../../components/common/inputs/FormInput_Register5";
+import { AuthContext } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const InvestorProfilePage = () => {
+    const { isAuthenticated } = useContext(AuthContext);
     const [profile, setProfile] = useState({
         investmentDurationScore: 1,
         withdrawalSpendingPlanScore: 1,
@@ -15,22 +18,27 @@ const InvestorProfilePage = () => {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [recommendedPortfolioType, setRecommendedPortfolioType] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const response = await InvestorProfileService.getInvestorProfile();
-                console.log('Fetched profile data:', response.data); // 添加调试信息
-                setProfile(response.data.data); // 确保访问到正确的数据结构
-                setLoading(false);
-            } catch (error) {
-                setMessage('Error fetching investor profile');
-                setLoading(false);
-            }
-        };
+        if (!isAuthenticated) {
+            navigate('/login');
+        } else {
+            const fetchProfile = async () => {
+                try {
+                    const response = await InvestorProfileService.getInvestorProfile();
+                    console.log('Fetched profile data:', response.data); // 添加调试信息
+                    setProfile(response.data.data); // 确保访问到正确的数据结构
+                    setLoading(false);
+                } catch (error) {
+                    setMessage('Error fetching investor profile');
+                    setLoading(false);
+                }
+            };
 
-        fetchProfile();
-    }, []);
+            fetchProfile();
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleUpdate = async (event) => {
         event.preventDefault();
