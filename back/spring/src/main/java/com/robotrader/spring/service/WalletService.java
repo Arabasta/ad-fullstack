@@ -1,5 +1,6 @@
 package com.robotrader.spring.service;
 
+import com.robotrader.spring.aws.s3.S3TransactionLogger;
 import com.robotrader.spring.dto.wallet.WalletAddFundsDTO;
 import com.robotrader.spring.dto.wallet.WalletDTO;
 import com.robotrader.spring.dto.wallet.WalletTransactionResponseDTO;
@@ -12,7 +13,6 @@ import com.robotrader.spring.repository.WalletRepository;
 import com.robotrader.spring.service.interfaces.ICustomerService;
 import com.robotrader.spring.service.interfaces.IPaymentService;
 import com.robotrader.spring.service.interfaces.IWalletService;
-import com.robotrader.spring.service.payment.PaymentService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -26,12 +26,15 @@ public class WalletService implements IWalletService {
     private final WalletRepository walletRepository;
     private final IPaymentService paymentService;
     private final ICustomerService customerService;
+    private final S3TransactionLogger s3TransactionLogger;
 
     @Autowired
-    public WalletService(WalletRepository walletRepository, IPaymentService paymentService, @Lazy ICustomerService customerService) {
+    public WalletService(WalletRepository walletRepository, IPaymentService paymentService,
+                         @Lazy ICustomerService customerService, S3TransactionLogger s3TransactionLogger) {
         this.walletRepository = walletRepository;
         this.paymentService = paymentService;
         this.customerService = customerService;
+        this.s3TransactionLogger = s3TransactionLogger;
     }
 
     @Override
@@ -78,6 +81,7 @@ public class WalletService implements IWalletService {
         BigDecimal amount = walletAddFundsDTO.getAmount();
         paymentService.processPayment(username, amount);
         this.addAmountToWallet(wallet, amount);
+        s3TransactionLogger.logWalletTransaction(username, amount, wallet.getTotalBalance(), "Deposit");
         return new WalletTransactionResponseDTO(amount, wallet.getTotalBalance());
     }
 
@@ -95,6 +99,7 @@ public class WalletService implements IWalletService {
         BigDecimal amount = walletWithdrawFundsDTO.getAmount();
         paymentService.processWithdrawal(username, amount);
         this.withdrawAmountFromWallet(wallet, amount);
+        s3TransactionLogger.logWalletTransaction(username, amount, wallet.getTotalBalance(), "Withdrawal");
         return new WalletTransactionResponseDTO(amount, wallet.getTotalBalance());
     }
 
