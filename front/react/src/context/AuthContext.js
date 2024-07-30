@@ -1,27 +1,22 @@
-import React, { createContext, useState, useEffect } from 'react';
+
+import React, { createContext, useState } from 'react';
 import authenticationService from '../services/auth/AuthenticationService';
 
-// used to store auth state and methods across component tree
-// context object can be accessed by calling useContext(AuthContext)
-export const AuthContext = createContext(undefined);
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            setIsAuthenticated(true);
-        }
-    }, []);
-
     const register = async (registrationData) => {
-        return authenticationService.register(registrationData);
+        const response = await authenticationService.register(registrationData);
+        setIsAuthenticated(true);
+        return response;
     };
 
     const login = async (username, password) => {
-        await authenticationService.login(username, password);
+        const response = await authenticationService.login(username, password);
         setIsAuthenticated(true);
+        return response;
     };
 
     const logout = () => {
@@ -35,3 +30,5 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
+

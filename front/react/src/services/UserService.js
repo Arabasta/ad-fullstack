@@ -2,8 +2,8 @@ import axiosInstance from '../config/axios/axiosInstance';
 
 const getUserDetails = async () => {
     try {
-        const response = await axiosInstance.get('/api/v1/user/details');
-        return response.data;
+        const response = await axiosInstance.get('/v1/user/details');
+        return response.data.data; // 假设API返回的数据在data属性中
     } catch (error) {
         console.error('Error fetching user details', error);
         throw error;
@@ -11,11 +11,24 @@ const getUserDetails = async () => {
 };
 
 const updateEmail = async (username, emailDTO) => {
-    return await axiosInstance.put(`/api/v1/user/update-email`, emailDTO);
+    try {
+        const response = await axiosInstance.put(`/v1/user/update-email`, emailDTO);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating email', error);
+        throw error;
+    }
 };
 
 const updatePassword = async (username, updatePasswordDTO) => {
-    return await axiosInstance.put(`/api/v1/user/update-password`, updatePasswordDTO);
+    try {
+        console.log('Sending update password request for user:', username);
+        const response = await axiosInstance.put(`/v1/user/update-password`, updatePasswordDTO);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating password', error);
+        throw error;
+    }
 };
 
 const UserService = {
