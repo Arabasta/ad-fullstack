@@ -19,6 +19,7 @@ const useAddress = () => {
     const getAddress = async () => {
         try {
             const response = await AddressService.getAddress();
+
             setAddressValues(
                 response.data.data.street,
                 response.data.data.city,
