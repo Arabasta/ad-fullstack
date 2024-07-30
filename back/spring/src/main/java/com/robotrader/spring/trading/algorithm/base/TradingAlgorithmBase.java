@@ -1,4 +1,4 @@
-package com.robotrader.spring.trading.algorithm;
+package com.robotrader.spring.trading.algorithm.base;
 
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-public abstract class TradingAlgorithm {
+public abstract class TradingAlgorithmBase {
     protected List<BigDecimal> pricePredictions;
     protected Map<String,List<Object>> priceHistory;
     protected String ticker;
@@ -34,7 +34,7 @@ public abstract class TradingAlgorithm {
     protected final BigDecimal HIGH_PRICE_THRESHOLD = BigDecimal.valueOf(10000);
     protected TradeTransaction lastTradeTransaction;
 
-    public TradingAlgorithm(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
+    public TradingAlgorithmBase(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         this.ticker = ticker;
         this.portfolioType = portfolioType;
         this.moneyPoolService = moneyPoolService;

@@ -1,7 +1,6 @@
 package com.robotrader.spring.trading.strategy;
 
-import com.robotrader.spring.trading.algorithm.TradingAlgorithm;
-import com.robotrader.spring.trading.dto.TradeTransaction;
+import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.MarketDataService;
 
@@ -17,7 +16,7 @@ public class TradingContext {
         this.strategy = strategy;
     }
 
-    public void executeTradingStrategy(TradingAlgorithm algorithm) {
+    public void executeTradingStrategy(TradingAlgorithmBase algorithm) {
         strategy.execute(algorithm, marketDataService);
     }
 }

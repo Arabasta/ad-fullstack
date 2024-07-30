@@ -1,12 +1,12 @@
 package com.robotrader.spring.trading.strategy;
 
-import com.robotrader.spring.trading.algorithm.TradingAlgorithm;
+import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.dto.LiveMarketData;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.MarketDataService;
 import reactor.core.Disposable;
-import reactor.core.publisher.Flux;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +19,14 @@ public class LiveTradingStrategy implements TradingStrategy {
     private List<TradeTransaction> tradeTransactions = new ArrayList<>();
 
     @Override
-    public void execute(TradingAlgorithm tradingAlgorithm, MarketDataService marketDataService) {
+    public void execute(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
         dataSubscription = marketDataService.getLiveMarketDataFlux().subscribe(
                 data -> {
                     this.latestMarketData = data;
-                    if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithm.getTicker()) ||
-                            latestMarketData.getTicker().equals(tradingAlgorithm.getTicker())) {
-                        tradingAlgorithm.setCurrentPrice(latestMarketData.getC());
-                        setupAndExecuteLiveTrade(tradingAlgorithm, marketDataService);
+                    if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithmBase.getTicker()) ||
+                            latestMarketData.getTicker().equals(tradingAlgorithmBase.getTicker())) {
+                        tradingAlgorithmBase.setCurrentPrice(latestMarketData.getC());
+                        setupAndExecuteLiveTrade(tradingAlgorithmBase, marketDataService);
                     }
                 },
                 error -> {
@@ -51,14 +51,14 @@ public class LiveTradingStrategy implements TradingStrategy {
     // Polygon's websocket ticker subscription is X:BTC-USD but response object is BTC-USD......
     private String processResponseTicker(String ticker) { return "X:" + ticker; }
 
-    private void setupAndExecuteLiveTrade(TradingAlgorithm tradingAlgorithm, MarketDataService marketDataService) {
-        marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithm.getTicker()))
-                .doOnNext(data-> tradingAlgorithm.setPriceHistory(data))
-                .doOnNext(data -> tradingAlgorithm.setPricePredictions(getPricePredictions(data)))
+    private void setupAndExecuteLiveTrade(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
+        marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
+                .doOnNext(data-> tradingAlgorithmBase.setPriceHistory(data))
+                .doOnNext(data -> tradingAlgorithmBase.setPricePredictions(getPricePredictions(data)))
                 .doOnNext(data -> {
-                    TradeTransaction lastTransactionBeforeExecution = tradingAlgorithm.getLastTradeTransaction();
-                    tradingAlgorithm.executeLiveTrade();
-                    TradeTransaction newTransaction = tradingAlgorithm.getLastTradeTransaction();
+                    TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getLastTradeTransaction();
+                    tradingAlgorithmBase.executeLiveTrade();
+                    TradeTransaction newTransaction = tradingAlgorithmBase.getLastTradeTransaction();
 
                     // Only process the trade if a new transaction was created
                     if (newTransaction != null && !newTransaction.equals(lastTransactionBeforeExecution)) {

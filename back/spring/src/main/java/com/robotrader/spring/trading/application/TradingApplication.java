@@ -7,8 +7,8 @@ import com.robotrader.spring.trading.strategy.BackTestingStrategy;
 import com.robotrader.spring.trading.strategy.LiveTradingStrategy;
 import com.robotrader.spring.trading.service.CryptoWebSocketService;
 import com.robotrader.spring.trading.service.MarketDataService;
-import com.robotrader.spring.trading.algorithm.TradingAlgorithm;
-import com.robotrader.spring.trading.algorithm.TradingAlgorithmOne;
+import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
+import com.robotrader.spring.trading.algorithm.TradingAlgorithmBaseOne;
 import com.robotrader.spring.trading.service.MarketDataWebSocketService;
 import com.robotrader.spring.trading.service.StockWebSocketService;
 import com.robotrader.spring.trading.strategy.TradingContext;
@@ -57,16 +57,16 @@ public class TradingApplication {
 
     public void runTradingAlgorithmBackTest(String ticker, PortfolioTypeEnum portfolioType) {
         tradingContext.setStrategy(new BackTestingStrategy(new MemoryStoreTradePersistence()));
-        TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
-        tradingContext.executeTradingStrategy(tradingAlgorithm);
+        TradingAlgorithmBase tradingAlgorithmBase = new TradingAlgorithmBaseOne(ticker, portfolioType, moneyPoolService);
+        tradingContext.executeTradingStrategy(tradingAlgorithmBase);
     }
 
     public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, MarketDataWebSocketService marketDataWebSocketService) {
         marketDataService.subscribeToLiveMarketData(tickers, marketDataWebSocketService);
         tradingContext.setStrategy(new LiveTradingStrategy());
         for (String ticker : tickers) {
-            TradingAlgorithm tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
-            tradingContext.executeTradingStrategy(tradingAlgorithm);
+            TradingAlgorithmBase tradingAlgorithmBase = new TradingAlgorithmBaseOne(ticker, portfolioType, moneyPoolService);
+            tradingContext.executeTradingStrategy(tradingAlgorithmBase);
         }
     }
 

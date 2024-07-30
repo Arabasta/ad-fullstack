@@ -2,16 +2,18 @@ package com.robotrader.spring.trading.algorithm;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
+import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
-public class TradingAlgorithmOne extends TradingAlgorithm {
+public class TradingAlgorithmBaseOne extends TradingAlgorithmBase {
     private BigDecimal atr;
+    public static final String ALGORITHM_TYPE = "TREND_FOLLOWING_ATR";
 
-    public TradingAlgorithmOne(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
+    public TradingAlgorithmBaseOne(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         super(ticker, portfolioType, moneyPoolService);
     }
 
