@@ -10,11 +10,11 @@ import NaviRoutes from './routes/NaviRoutes';
 
 const App = () => {
     return (
-        <AuthProvider>
-            <Router>
+        <Router>
+            <AuthProvider>
                 <AppContent />
-            </Router>
-        </AuthProvider>
+            </AuthProvider>
+        </Router>
     );
 };
 
