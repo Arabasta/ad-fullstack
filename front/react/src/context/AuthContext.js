@@ -1,11 +1,12 @@
-
 import React, { createContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import authenticationService from '../services/auth/AuthenticationService';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const navigate = useNavigate();
 
     const register = async (registrationData) => {
         const response = await authenticationService.register(registrationData);
@@ -22,6 +23,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         authenticationService.logout();
         setIsAuthenticated(false);
+        navigate('/');  // 登出后跳转到首页
     };
 
     return (
@@ -30,5 +32,3 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
-
-
