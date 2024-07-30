@@ -3,7 +3,7 @@ import axiosInstance from '../config/axios/axiosInstance';
 const getUserDetails = async () => {
     try {
         const response = await axiosInstance.get('/v1/user/details');
-        return response.data.data; // 假设API返回的数据在data属性中
+        return response.data.data;
     } catch (error) {
         console.error('Error fetching user details', error);
         throw error;
