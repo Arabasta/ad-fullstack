@@ -5,7 +5,6 @@ import Text from '../../components/common/Text';
 const RegisterPage = () => {
     return (
         <div>
-            <Text variant="h2">Register</Text>
             <RegisterForm />
         </div>
     );
