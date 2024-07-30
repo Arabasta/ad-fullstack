@@ -2,7 +2,7 @@ import React from 'react';
 import AccountPage from "../pages/settings/AccountPage";
 import FinancialProfilePage from "../pages/settings/FinancialProfilePage";
 import NotificationPage from "../pages/settings/NotificationPage";
-import PreferenceFormPage from "../pages/settings/PreferenceFormPage";
+import PreferenceFormPage from "../pages/settings/InvestorProfilePage";
 import {Route} from "react-router-dom";
 
 

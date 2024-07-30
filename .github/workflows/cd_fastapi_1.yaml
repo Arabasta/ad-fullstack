@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.KEI_DOCKER_USERNAME }}
           password: ${{ secrets.KEI_DOCKER_PASSWORD }}
 
-      - name: build and push
+      - name: build andpush
         uses: docker/build-push-action@v6
         with:
           context: ./back/fastApi/price_predictor

@@ -1,4 +1,5 @@
 import React from 'react';
+import FormInput from "../../common/inputs/FormInput_Register5";
 
 const RegisterStep5 = ({
                            investmentDurationScore, setInvestmentDurationScore,
@@ -11,72 +12,54 @@ const RegisterStep5 = ({
                        }) => {
     return (
         <form onSubmit={handleRegister}>
-            <div>
-                <label>Investment Duration Score</label>
-                <input
-                    type="number"
-                    value={investmentDurationScore}
-                    onChange={(e) => setInvestmentDurationScore(e.target.value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-            </div>
-            <div>
-                <label>Withdrawal Spending Plan Score</label>
-                <input
-                    type="number"
-                    value={withdrawalSpendingPlanScore}
-                    onChange={(e) => setWithdrawalSpendingPlanScore(e.target.value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-            </div>
-            <div>
-                <label>Investment Knowledge Score</label>
-                <input
-                    type="number"
-                    value={investmentKnowledgeScore}
-                    onChange={(e) => setInvestmentKnowledgeScore(e.target.value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-            </div>
-            <div>
-                <label>Risk Reward Score</label>
-                <input
-                    type="number"
-                    value={riskRewardScore}
-                    onChange={(e) => setRiskRewardScore(e.target.value)}
-                    min="1"
-                    max="3"
-                    required
-                />
-            </div>
-            <div>
-                <label>Owned Investments Score</label>
-                <input
-                    type="number"
-                    value={ownedInvestmentsScore}
-                    onChange={(e) => setOwnedInvestmentsScore(e.target.value)}
-                    min="1"
-                    max="3"
-                    required
-                />
-            </div>
-            <div>
-                <label>Investment Personality Score</label>
-                <input
-                    type="number"
-                    value={investmentPersonalityScore}
-                    onChange={(e) => setInvestmentPersonalityScore(e.target.value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-            </div>
+            <FormInput
+                label="Investment Duration Score"
+                value={investmentDurationScore}
+                onChange={setInvestmentDurationScore}
+                min="1"
+                max="4"
+                required
+            />
+            <FormInput
+                label="Withdrawal Spending Plan Score"
+                value={withdrawalSpendingPlanScore}
+                onChange={setWithdrawalSpendingPlanScore}
+                min="1"
+                max="4"
+                required
+            />
+            <FormInput
+                label="Investment Knowledge Score"
+                value={investmentKnowledgeScore}
+                onChange={setInvestmentKnowledgeScore}
+                min="1"
+                max="4"
+                required
+            />
+            <FormInput
+                label="Risk Reward Score"
+                value={riskRewardScore}
+                onChange={setRiskRewardScore}
+                min="1"
+                max="3"
+                required
+            />
+            <FormInput
+                label="Owned Investments Score"
+                value={ownedInvestmentsScore}
+                onChange={setOwnedInvestmentsScore}
+                min="1"
+                max="3"
+                required
+            />
+            <FormInput
+                label="Investment Personality Score"
+                value={investmentPersonalityScore}
+                onChange={setInvestmentPersonalityScore}
+                min="1"
+                max="4"
+                required
+            />
             <button type="button" onClick={handlePrevious}>Previous</button>
             <button type="submit">Register</button>
             {message && <p>{message}</p>}
