@@ -11,7 +11,6 @@ export default function SettingsPage() {
                 <SettingsButton to="/settings/financialProfile" label="Financial Profile" />
                 <SettingsButton to="/settings/preferenceForm" label="Preference Form" />
                 <SettingsButton to="/settings/notification" label="Notifications" />
-                <SettingsButton to="/logout" label="Logout" />
             </ul>
         </div>
     );
