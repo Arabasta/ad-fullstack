@@ -9,6 +9,7 @@ const useTransactionHistory = (type, portfolioType = null) => {
     const [loading, setLoading] = useState(false);
     const size = 10;
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const loadMoreTransactions = useCallback(
         throttle(async () => {
             if (loading || !hasMore) return;
