@@ -2,6 +2,8 @@ package com.robotrader.spring.aws.s3;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.robotrader.spring.exception.aws.LogParsingException;
+import com.robotrader.spring.exception.aws.TransactionRetrievalException;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @ConditionalOnProperty(name = "s3.transaction_logging.enabled", havingValue = "true")
@@ -34,24 +35,13 @@ public class S3TransactionLogger {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         String fileName = String.format("transactions/%s/%s-%s.json", username, transactionType, timestamp);
 
-        // ObjectNode logEntry = objectMapper.createObjectNode();
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode logEntry = mapper.getNodeFactory().objectNode();
-
+        ObjectNode logEntry = objectMapper.createObjectNode();
         logEntry.put("timestamp", timestamp);
         logEntry.put("user", username);
         logEntry.put("transactionAmount", transactionAmount);
         logEntry.put("totalAmount", totalAmount);
         logEntry.put("type", transactionType);
         s3Logger.s3PutObject(bucketName, fileName, logEntry.toString());
-
-//        try {
-//            String jsonString = objectMapper.writeValueAsString(logEntry);
-//            s3Logger.s3PutObject(bucketName, fileName, jsonString);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            // Handle exception
-//        }    }
     }
 
     public void logPortfolioTransaction(String username, PortfolioTypeEnum portfolioType, BigDecimal transactionAmount,
@@ -67,45 +57,38 @@ public class S3TransactionLogger {
         logEntry.put("transactionAmount", transactionAmount);
         logEntry.put("totalAmount", totalAmount);
         logEntry.put("type", transactionType);
-
         s3Logger.s3PutObject(bucketName, fileName, logEntry.toString());
     }
 
-    public List<String> getWalletTransactions(String username, int count) {
-        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME");
+    public List<ObjectNode> getWalletTransactions(String username, int count) {
         String prefix = String.format("transactions/%s/", username);
-        List<String> logs = s3Logger.listAndRetrieveLatestObjects(bucketName, prefix, count);
-        List<String> parsedLogs = new ArrayList<>();
+        return getTransactions(prefix, count);
+    }
+
+    public List<ObjectNode> getPortfolioTransactions(String username, PortfolioTypeEnum portfolioType, int count) {
+        String prefix = String.format("transactions/%s/%s/", username, portfolioType);
+        return getTransactions(prefix, count);
+    }
+
+    private List<ObjectNode> getTransactions(String prefix, int count) {
+        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME");
+        List<String> logs;
+        try {
+            logs = s3Logger.listAndRetrieveLatestObjects(bucketName, prefix, count);
+        } catch (Exception e) {
+            throw new TransactionRetrievalException("Failed to retrieve transactions");
+        }
+
+        List<ObjectNode> parsedLogs = new ArrayList<>();
 
         for (String rawLog : logs) {
             try {
                 ObjectNode logNode = (ObjectNode) objectMapper.readTree(rawLog);
-                parsedLogs.add(logNode.toString());
+                parsedLogs.add(logNode);
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new LogParsingException("Failed to parse log");
             }
         }
-
         return parsedLogs;
     }
-
-    public List<String> getPortfolioTransactions(String username, PortfolioTypeEnum portfolioType, int count) {
-        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME");
-        String prefix = String.format("transactions/%s/%s/", username, portfolioType);
-        List<String> logs = s3Logger.listAndRetrieveLatestObjects(bucketName, prefix, count);
-
-        // Parse the JSON strings into JSON objects
-        return logs.stream()
-                .map(log -> {
-                    try {
-                        return objectMapper.readTree(log).toString();
-                    } catch (Exception e) {
-                        throw new RuntimeException("Failed to parse JSON log", e);
-                    }
-                })
-                .collect(Collectors.toList());
-    }
-
-
-
 }

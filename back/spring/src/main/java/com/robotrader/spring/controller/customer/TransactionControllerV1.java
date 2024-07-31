@@ -1,6 +1,7 @@
 package com.robotrader.spring.controller.customer;
 
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.robotrader.spring.aws.s3.S3TransactionLogger;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,13 @@ public class TransactionControllerV1 {
     }
 
     @GetMapping("/wallet/{count}")
-    public List<String> getWalletTransactions(Authentication authentication, @PathVariable int count) {
+    public List<ObjectNode> getWalletTransactions(Authentication authentication, @PathVariable int count) {
         String username = authentication.getName();
         return s3TransactionLogger.getWalletTransactions(username, count);
     }
 
     @GetMapping("/portfolio/{portfolioType}/{count}")
-    public List<String> getPortfolioTransactions(Authentication authentication, @PathVariable PortfolioTypeEnum portfolioType,
+    public List<ObjectNode> getPortfolioTransactions(Authentication authentication, @PathVariable PortfolioTypeEnum portfolioType,
                                                  @PathVariable int count) {
         String username = authentication.getName();
         return s3TransactionLogger.getPortfolioTransactions(username, portfolioType, count);
