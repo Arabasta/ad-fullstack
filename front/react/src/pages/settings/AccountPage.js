@@ -19,8 +19,10 @@ const AccountPage = () => {
     }, [getUserDetails]);
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        if (isAuthenticated) {
+            fetchData();
+        }
+    }, [isAuthenticated, fetchData]);
 
     if (!isAuthenticated) {
         return <div>Please log in to view this page.</div>;
