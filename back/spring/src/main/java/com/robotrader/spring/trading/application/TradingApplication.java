@@ -43,7 +43,7 @@ public class TradingApplication {
         return args -> {
 
 //            runTradingAlgorithmBackTest("AAPL", PortfolioTypeEnum.AGGRESSIVE);
-            runTradingAlgorithmBackTest("X:BTC-USD", PortfolioTypeEnum.AGGRESSIVE);
+//            runTradingAlgorithmBackTest("X:BTC-USD", PortfolioTypeEnum.AGGRESSIVE);
 
 //            List<String> stockTickers = Arrays.asList("AAPL","GOOGL");
             List<String> stockTickers = Arrays.asList("AAPL");
