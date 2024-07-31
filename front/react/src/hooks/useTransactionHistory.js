@@ -37,7 +37,7 @@ const useTransactionHistory = (type, portfolioType = null) => {
                 setLoading(false);
             }
         }, 3500), // throttle delay
-        [loading, hasMore, page, type, portfolioType, size]
+        [loading, hasMore, page, type, portfolioType] // todo: temp removed size need to double check
     );
 
     useEffect(() => {
