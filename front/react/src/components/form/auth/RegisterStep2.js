@@ -1,4 +1,5 @@
 import React from 'react';
+import FreeFormField from "../../common/inputs/FreeFormField";
 
 const RegisterStep2 = ({
                            mobileNumber, setMobileNumber, firstName, setFirstName, lastName, setLastName,
@@ -6,38 +7,34 @@ const RegisterStep2 = ({
                        }) => {
     return (
         <form onSubmit={handleNext}>
-            <div>
-                <label>Mobile Number</label>
-                <input
-                    type="text"
-                    value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value)}
-                />
-            </div>
-            <div>
-                <label>First Name</label>
-                <input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                />
-            </div>
-            <div>
-                <label>Last Name</label>
-                <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                />
-            </div>
-            <div>
-                <label>Nationality</label>
-                <input
-                    type="text"
-                    value={nationality}
-                    onChange={(e) => setNationality(e.target.value)}
-                />
-            </div>
+            <FreeFormField
+                label="Mobile Number"
+                type="text"
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value)}
+                required
+            />
+            <FreeFormField
+                label="First Name"
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+            />
+            <FreeFormField
+                label="Last Name"
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+            />
+            <FreeFormField
+                label="Nationality"
+                type="text"
+                value={nationality}
+                onChange={(e) => setNationality(e.target.value)}
+                required
+            />
             <button type="button" onClick={handlePrevious}>Previous</button>
             <button type="submit">Next</button>
         </form>

@@ -1,6 +1,4 @@
 import React from 'react';
-
-import React from 'react';
 import PropTypes from 'prop-types';
 
 const FreeFormField = ({ label, type, value, onChange, placeholder, required }) => {
