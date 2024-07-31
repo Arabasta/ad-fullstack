@@ -60,21 +60,21 @@ public class S3TransactionLogger {
         s3Logger.s3PutObject(bucketName, fileName, logEntry.toString());
     }
 
-    public List<ObjectNode> getWalletTransactions(String username, int count) {
+    public List<ObjectNode> getWalletTransactions(String username, int page, int size) {
         String prefix = String.format("transactions/%s/", username);
-        return getTransactions(prefix, count);
+        return getTransactions(prefix, page, size);
     }
 
-    public List<ObjectNode> getPortfolioTransactions(String username, PortfolioTypeEnum portfolioType, int count) {
+    public List<ObjectNode> getPortfolioTransactions(String username, PortfolioTypeEnum portfolioType, int page, int size) {
         String prefix = String.format("transactions/%s/%s/", username, portfolioType);
-        return getTransactions(prefix, count);
+        return getTransactions(prefix, page, size);
     }
 
-    private List<ObjectNode> getTransactions(String prefix, int count) {
+    private List<ObjectNode> getTransactions(String prefix, int page, int size) {
         String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME");
         List<String> logs;
         try {
-            logs = s3Logger.listAndRetrieveLatestObjects(bucketName, prefix, count);
+            logs = s3Logger.listAndRetrievePaginatedObjects(bucketName, prefix, page, size);
         } catch (Exception e) {
             throw new TransactionRetrievalException("Failed to retrieve transactions");
         }
