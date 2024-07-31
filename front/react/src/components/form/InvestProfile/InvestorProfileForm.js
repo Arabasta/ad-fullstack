@@ -1,5 +1,5 @@
 import React from 'react';
-import FormInput from "../common/inputs/FormInput_Register5";
+import FormSelect from "./FormSelect";
 
 const InvestorProfileForm = ({
                                  investmentDurationScore, setInvestmentDurationScore,
@@ -10,54 +10,51 @@ const InvestorProfileForm = ({
                                  investmentPersonalityScore, setInvestmentPersonalityScore,
                                  handleSubmit, buttonText, message
                              }) => {
+    const options1to4 = [1, 2, 3, 4];
+    const options1to3 = [1, 2, 3];
+
     return (
         <form onSubmit={handleSubmit}>
-            <FormInput
+            <FormSelect
                 label="Investment Duration Score"
                 value={investmentDurationScore}
                 onChange={setInvestmentDurationScore}
-                min="1"
-                max="4"
+                options={options1to4}
                 required
             />
-            <FormInput
+            <FormSelect
                 label="Withdrawal Spending Plan Score"
                 value={withdrawalSpendingPlanScore}
                 onChange={setWithdrawalSpendingPlanScore}
-                min="1"
-                max="4"
+                options={options1to4}
                 required
             />
-            <FormInput
+            <FormSelect
                 label="Investment Knowledge Score"
                 value={investmentKnowledgeScore}
                 onChange={setInvestmentKnowledgeScore}
-                min="1"
-                max="4"
+                options={options1to4}
                 required
             />
-            <FormInput
+            <FormSelect
                 label="Risk Reward Score"
                 value={riskRewardScore}
                 onChange={setRiskRewardScore}
-                min="1"
-                max="3"
+                options={options1to3}
                 required
             />
-            <FormInput
+            <FormSelect
                 label="Owned Investments Score"
                 value={ownedInvestmentsScore}
                 onChange={setOwnedInvestmentsScore}
-                min="1"
-                max="3"
+                options={options1to3}
                 required
             />
-            <FormInput
+            <FormSelect
                 label="Investment Personality Score"
                 value={investmentPersonalityScore}
                 onChange={setInvestmentPersonalityScore}
-                min="1"
-                max="4"
+                options={options1to4}
                 required
             />
             <button type="submit">{buttonText}</button>

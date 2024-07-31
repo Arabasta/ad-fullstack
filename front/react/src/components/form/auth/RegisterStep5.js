@@ -1,5 +1,5 @@
 import React from 'react';
-import InvestorProfileForm from "../InvestorProfileForm";
+import InvestorProfileForm from "../InvestProfile/InvestorProfileForm";
 
 const RegisterStep5 = ({
                            investmentDurationScore, setInvestmentDurationScore,
