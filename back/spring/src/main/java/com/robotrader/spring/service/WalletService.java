@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 public class WalletService implements IWalletService {
@@ -30,11 +31,11 @@ public class WalletService implements IWalletService {
 
     @Autowired
     public WalletService(WalletRepository walletRepository, IPaymentService paymentService,
-                         @Lazy ICustomerService customerService, S3TransactionLogger s3TransactionLogger) {
+                         @Lazy ICustomerService customerService, Optional<S3TransactionLogger> s3TransactionLogger) {
         this.walletRepository = walletRepository;
         this.paymentService = paymentService;
         this.customerService = customerService;
-        this.s3TransactionLogger = s3TransactionLogger;
+        this.s3TransactionLogger = s3TransactionLogger.orElse(null);
     }
 
     @Override
@@ -81,7 +82,9 @@ public class WalletService implements IWalletService {
         BigDecimal amount = walletAddFundsDTO.getAmount();
         paymentService.processPayment(username, amount);
         this.addAmountToWallet(wallet, amount);
-        s3TransactionLogger.logWalletTransaction(username, amount, wallet.getTotalBalance(), "Deposit");
+        if (s3TransactionLogger != null) {
+            s3TransactionLogger.logWalletTransaction(username, amount, wallet.getTotalBalance(), "Deposit");
+        }
         return new WalletTransactionResponseDTO(amount, wallet.getTotalBalance());
     }
 
@@ -99,7 +102,9 @@ public class WalletService implements IWalletService {
         BigDecimal amount = walletWithdrawFundsDTO.getAmount();
         paymentService.processWithdrawal(username, amount);
         this.withdrawAmountFromWallet(wallet, amount);
-        s3TransactionLogger.logWalletTransaction(username, amount, wallet.getTotalBalance(), "Withdrawal");
+        if (s3TransactionLogger != null) {
+            s3TransactionLogger.logWalletTransaction(username, amount, wallet.getTotalBalance(), "Withdrawal");
+        }
         return new WalletTransactionResponseDTO(amount, wallet.getTotalBalance());
     }
 
