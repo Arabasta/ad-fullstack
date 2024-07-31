@@ -20,7 +20,7 @@ public class TradingContext {
         this.strategy = strategy;
     }
 
-    public CompletableFuture executeTradingStrategy(TradingAlgorithmBase algorithm) {
+    public CompletableFuture<Void> executeTradingStrategy(TradingAlgorithmBase algorithm) {
         return strategy.execute(algorithm, marketDataService);
     }
 
