@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import AddressService from "../../../services/AddressService";
 
 // this will update the address
-// this is optional, so if you have a page for adding funds only (that doesn't need to update the balance)
 const CustomerUpdateAddress = ({ onUpdateAddress }) => {
 
     const initialAddressValues = {
@@ -28,7 +27,7 @@ const CustomerUpdateAddress = ({ onUpdateAddress }) => {
             await AddressService.updateAddress( updatedAddressValues );
             onUpdateAddress(); // call the prop function if it exists
             setAddressValues({
-               ...oldAddressValues,
+               ...addressValues,
                [e.target.name]:e.target.value,
             })
         } catch (error) {
