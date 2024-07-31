@@ -5,6 +5,7 @@ import { Button as CButton } from '@chakra-ui/react';
 /* Buttons Examples:
 Login, Logout, Register,
 Previous, Next, Last
+
 */
 
 const Button = ({ variant, size, type, colorScheme, onClick, children, ...props }) => {
