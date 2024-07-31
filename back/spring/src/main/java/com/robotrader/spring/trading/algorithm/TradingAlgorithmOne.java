@@ -9,11 +9,11 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
-public class TradingAlgorithmBaseOne extends TradingAlgorithmBase {
+public class TradingAlgorithmOne extends TradingAlgorithmBase {
     private BigDecimal atr;
     public static final String ALGORITHM_TYPE = "TREND_FOLLOWING_ATR";
 
-    public TradingAlgorithmBaseOne(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
+    public TradingAlgorithmOne(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         super(ticker, portfolioType, moneyPoolService);
     }
 
@@ -74,7 +74,7 @@ public class TradingAlgorithmBaseOne extends TradingAlgorithmBase {
 
             // Determine available capital
 //            BigDecimal availableCapital = isTest ? capitalTest : moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
-            BigDecimal availableCapital = capitalTest; //todo: delete this code and uncomment above once moneypool is setup
+            BigDecimal availableCapital = currentCapitalTest; //todo: delete this code and uncomment above once moneypool is setup
 
             // Calculate raw position size
             BigDecimal rawPositionSize = availableCapital.multiply(risk).divide(stopLossAmount, 8, RoundingMode.HALF_UP);
