@@ -1,32 +1,28 @@
-import React, { useState } from 'react';
+import useWallet from "../hooks/useWallet";
+import WalletBalance from "../components/wallet/WalletBalance";
+import WalletAddFunds from "../components/wallet/WalletAddFunds";
+import LogoutButton from "../components/form/auth/LogoutButton";
 
 const WalletPage = () => {
-    const [data, setData] = useState(null);
-
-    const handleButtonClick = async () => {
-        try {
-            const response = await fetch(' http://localhost:8080/api/v1/customer/wallet');
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            const data = await response.json();
-            setData(data);
-        } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
-        }
-    };
+    // use the useWallet custom hook to get the wallet state and getWallet function
+    const { wallet, getWallet } = useWallet();
 
     return (
         <div>
             <h2>Wallet</h2>
-            <p>Welcome to the Wallet page! For Test Only</p>
-            <button onClick={handleButtonClick}>Fetch Data</button>
-            {data && (
-                <div>
-                    <h3>data:</h3>
-                    <pre>{JSON.stringify(data, null, 2)}</pre>
-                </div>
-            )}
+
+            {/* Pass the wallet state to the WalletBalance component */}
+            {/* This will display the wallet balance */}
+            <WalletBalance wallet={wallet} />
+
+            {/* Pass the getWallet function to be called when handleDeposit is done */}
+            {/* This will update the WalletBalance component */}
+            {/* onAddFunds is a prop that is a function to be called when the deposit is done */}
+            {/* It is optional, so if you have a page for adding funds only (that doesn't need to update the balance) */}
+            {/* you can omit this prop */}
+            <WalletAddFunds onAddFunds={getWallet}/>
+
+            <LogoutButton />
         </div>
     );
 };
