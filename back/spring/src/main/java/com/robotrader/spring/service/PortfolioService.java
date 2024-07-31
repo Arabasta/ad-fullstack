@@ -105,11 +105,13 @@ public class PortfolioService implements IPortfolioService {
     public PortfolioTransactionResponseDTO allocateFundsToPortfolio(String username, PortfolioAllocateFundsDTO portfolioAllocateFundsDTO) {
         Portfolio portfolio = getPortfolioByUsernameAndType(username, portfolioAllocateFundsDTO.getPortfolioType());
         BigDecimal amount = portfolioAllocateFundsDTO.getAmount();
+        Wallet wallet = walletService.getWalletByUsername(username);
 
-        walletService.withdrawAmountFromWallet(walletService.getWalletByUsername(username), amount);
+        walletService.withdrawAmountFromWallet(wallet, amount);
         addFundsToPortfolio(portfolio, amount);
         if (s3TransactionLogger != null) {
             s3TransactionLogger.logPortfolioTransaction(username, portfolio.getPortfolioType(), amount, portfolio.getCurrentValue(), "Allocate");
+            s3TransactionLogger.logWalletTransaction(username, amount, wallet.getTotalBalance(), "Allocate to Portfolio " + portfolio.getPortfolioType());
         }
         return new PortfolioTransactionResponseDTO(portfolio.getPortfolioType(), amount,
                 portfolio.getAllocatedBalance(), portfolio.getCurrentValue());
@@ -120,11 +122,13 @@ public class PortfolioService implements IPortfolioService {
     public PortfolioTransactionResponseDTO withdrawFundsFromPortfolio(String username, PortfolioWithdrawFundsDTO portfolioWithdrawFundsDTO) {
         Portfolio portfolio = getPortfolioByUsernameAndType(username, portfolioWithdrawFundsDTO.getPortfolioType());
         BigDecimal amount = portfolioWithdrawFundsDTO.getAmount();
+        Wallet wallet = walletService.getWalletByUsername(username);
 
         removeFundsFromPortfolio(portfolio, amount);
-        walletService.addAmountToWallet(walletService.getWalletByUsername(username), amount);
+        walletService.addAmountToWallet(wallet, amount);
         if (s3TransactionLogger != null) {
             s3TransactionLogger.logPortfolioTransaction(username, portfolio.getPortfolioType(), amount, portfolio.getCurrentValue(), "Withdraw");
+            s3TransactionLogger.logWalletTransaction(username, amount, wallet.getTotalBalance(), "Withdraw from Portfolio " + portfolio.getPortfolioType());
         }
         return new PortfolioTransactionResponseDTO(portfolio.getPortfolioType(), amount,
                 portfolio.getAllocatedBalance(), portfolio.getCurrentValue());

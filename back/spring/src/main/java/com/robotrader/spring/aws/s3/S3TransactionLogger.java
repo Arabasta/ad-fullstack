@@ -44,6 +44,8 @@ public class S3TransactionLogger {
         s3Logger.s3PutObject(bucketName, fileName, logEntry.toString());
     }
 
+    // todo: log wallet changes due to portfolio transactions
+
     public void logPortfolioTransaction(String username, PortfolioTypeEnum portfolioType, BigDecimal transactionAmount,
                                         BigDecimal totalAmount, String transactionType) {
         String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME");
