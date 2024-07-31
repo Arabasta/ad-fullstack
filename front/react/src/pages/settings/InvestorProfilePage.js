@@ -1,9 +1,7 @@
-
 import React, { useEffect, useState, useContext } from 'react';
 import InvestorProfileService from "../../services/InvestorProfileService";
-import FormInput from "../../components/common/inputs/FormInput_Register5";
+import InvestorProfileForm from "../../components/form/InvestorProfileForm";
 import { AuthContext } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const InvestorProfilePage = () => {
     const { isAuthenticated } = useContext(AuthContext);
@@ -18,17 +16,16 @@ const InvestorProfilePage = () => {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [recommendedPortfolioType, setRecommendedPortfolioType] = useState('');
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (!isAuthenticated) {
-            navigate('/login');
+            setLoading(false); // 如果没有登录，停止加载并显示消息
         } else {
             const fetchProfile = async () => {
                 try {
                     const response = await InvestorProfileService.getInvestorProfile();
-                    console.log('Fetched profile data:', response.data); // 添加调试信息
                     setProfile(response.data.data); // 确保访问到正确的数据结构
+                    setRecommendedPortfolioType(response.data.data.recommendedPortfolioType); // 设置之前的推荐投资组合
                     setLoading(false);
                 } catch (error) {
                     setMessage('Error fetching investor profile');
@@ -38,14 +35,13 @@ const InvestorProfilePage = () => {
 
             fetchProfile();
         }
-    }, [isAuthenticated, navigate]);
+    }, [isAuthenticated]);
 
     const handleUpdate = async (event) => {
         event.preventDefault();
         try {
             const response = await InvestorProfileService.updateInvestorProfile(profile);
             setMessage('Profile updated successfully');
-            console.log('Updated profile data:', response.data); // 添加调试信息
             setProfile(response.data.data); // 确保访问到正确的数据结构
             setRecommendedPortfolioType(response.data.data.recommendedPortfolioType);
         } catch (error) {
@@ -64,65 +60,30 @@ const InvestorProfilePage = () => {
         return <p>Loading...</p>;
     }
 
-    if (!profile) {
-        return <p>{message}</p>;
+    if (!isAuthenticated) {
+        return <p>Please log in to view this page.</p>;
     }
 
     return (
         <div>
             <h2>Investor Profile</h2>
-            <form onSubmit={handleUpdate}>
-                <FormInput
-                    label="Investment Duration Score"
-                    value={profile.investmentDurationScore}
-                    onChange={(value) => handleChange('investmentDurationScore', value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-                <FormInput
-                    label="Withdrawal Spending Plan Score"
-                    value={profile.withdrawalSpendingPlanScore}
-                    onChange={(value) => handleChange('withdrawalSpendingPlanScore', value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-                <FormInput
-                    label="Investment Knowledge Score"
-                    value={profile.investmentKnowledgeScore}
-                    onChange={(value) => handleChange('investmentKnowledgeScore', value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-                <FormInput
-                    label="Risk Reward Score"
-                    value={profile.riskRewardScore}
-                    onChange={(value) => handleChange('riskRewardScore', value)}
-                    min="1"
-                    max="3"
-                    required
-                />
-                <FormInput
-                    label="Owned Investments Score"
-                    value={profile.ownedInvestmentsScore}
-                    onChange={(value) => handleChange('ownedInvestmentsScore', value)}
-                    min="1"
-                    max="3"
-                    required
-                />
-                <FormInput
-                    label="Investment Personality Score"
-                    value={profile.investmentPersonalityScore}
-                    onChange={(value) => handleChange('investmentPersonalityScore', value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-                <button type="submit">Update</button>
-                {message && <p>{message}</p>}
-            </form>
+            <InvestorProfileForm
+                investmentDurationScore={profile.investmentDurationScore}
+                setInvestmentDurationScore={(value) => handleChange('investmentDurationScore', value)}
+                withdrawalSpendingPlanScore={profile.withdrawalSpendingPlanScore}
+                setWithdrawalSpendingPlanScore={(value) => handleChange('withdrawalSpendingPlanScore', value)}
+                investmentKnowledgeScore={profile.investmentKnowledgeScore}
+                setInvestmentKnowledgeScore={(value) => handleChange('investmentKnowledgeScore', value)}
+                riskRewardScore={profile.riskRewardScore}
+                setRiskRewardScore={(value) => handleChange('riskRewardScore', value)}
+                ownedInvestmentsScore={profile.ownedInvestmentsScore}
+                setOwnedInvestmentsScore={(value) => handleChange('ownedInvestmentsScore', value)}
+                investmentPersonalityScore={profile.investmentPersonalityScore}
+                setInvestmentPersonalityScore={(value) => handleChange('investmentPersonalityScore', value)}
+                handleSubmit={handleUpdate}
+                buttonText="Update"
+                message={message}
+            />
             {recommendedPortfolioType && (
                 <div>
                     <h3>Recommended Portfolio Type</h3>
