@@ -1,4 +1,4 @@
-package com.robotrader.spring.trading.algorithm;
+package com.robotrader.spring.trading.algorithm.base;
 
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-public abstract class TradingAlgorithm {
+public abstract class TradingAlgorithmBase {
     protected List<BigDecimal> pricePredictions;
     protected Map<String,List<Object>> priceHistory;
     protected String ticker;
@@ -29,16 +29,18 @@ public abstract class TradingAlgorithm {
     protected BigDecimal stopLossPrice;
     protected BigDecimal stopLossAmount;
     protected BigDecimal profitTarget;
-    protected BigDecimal capitalTest;
+    protected BigDecimal initialCapitalTest;
+    protected BigDecimal currentCapitalTest;
     protected boolean isTest;
     protected final BigDecimal HIGH_PRICE_THRESHOLD = BigDecimal.valueOf(10000);
     protected TradeTransaction lastTradeTransaction;
 
-    public TradingAlgorithm(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
+    public TradingAlgorithmBase(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         this.ticker = ticker;
         this.portfolioType = portfolioType;
         this.moneyPoolService = moneyPoolService;
-        capitalTest = BigDecimal.valueOf(1000000);
+        currentCapitalTest = BigDecimal.valueOf(1000000);
+        initialCapitalTest = currentCapitalTest;
         setAlgoRisk(portfolioType);
     }
 
@@ -129,9 +131,9 @@ public abstract class TradingAlgorithm {
         BigDecimal totalCost = currentPrice.multiply(position);
 
         // Check if there's enough capital for the trade
-        if (totalCost.compareTo(capitalTest) > 0) { //TODO: use money pool for live trading
+        if (totalCost.compareTo(currentCapitalTest) > 0) { //TODO: use money pool for live trading
             System.out.println("Position: " + position);
-            System.out.println("Not enough capital for the trade. Required: " + totalCost + ", Available: " + capitalTest);
+            System.out.println("Not enough capital for the trade. Required: " + totalCost + ", Available: " + currentCapitalTest);
             return false;
         }
         return true;
@@ -143,14 +145,14 @@ public abstract class TradingAlgorithm {
 
         lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action);
         if (action.equals("BUY")) {
-            capitalTest = capitalTest.subtract(currentPrice.multiply(position));
+            currentCapitalTest = currentCapitalTest.subtract(currentPrice.multiply(position));
         }
         else {
-            capitalTest = capitalTest.add(currentPrice.multiply(position));
+            currentCapitalTest = currentCapitalTest.add(currentPrice.multiply(position));
         }
 
         System.out.println("Trade: " + lastTradeTransaction);
-        System.out.println("Capital:" + capitalTest);
+        System.out.println("Capital:" + currentCapitalTest);
     }
 
     public void executeTradeLive(String action) {
@@ -159,13 +161,13 @@ public abstract class TradingAlgorithm {
 
         // TODO: replace below to use moneypool instead of capitalTest
         if (action.equals("BUY")) {
-            capitalTest = capitalTest.subtract(currentPrice.multiply(position));
+            currentCapitalTest = currentCapitalTest.subtract(currentPrice.multiply(position));
         }
         else {
-            capitalTest = capitalTest.add(currentPrice.multiply(position));
+            currentCapitalTest = currentCapitalTest.add(currentPrice.multiply(position));
         }
         System.out.println("Trade: " + lastTradeTransaction);
-        System.out.println("Capital:" + capitalTest);
+        System.out.println("Capital:" + currentCapitalTest);
     }
 
     public boolean isSellable() {
