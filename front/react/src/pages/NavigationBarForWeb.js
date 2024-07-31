@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import NavButton from '../components/common/buttons/NavButtons';
+import NavButton from '../components/common/navLinks/NavButtons';
 import { AuthContext } from '../context/AuthContext';
 
 const NavigationBarForWeb = () => {
