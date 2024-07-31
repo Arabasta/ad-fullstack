@@ -1,5 +1,5 @@
 import React from 'react';
-import FreeFormField from "../../common/inputs/FreeFormField";
+import FreeFormField from "../inputFields/FreeFormField";
 
 const RegisterStep2 = ({
                            mobileNumber, setMobileNumber, firstName, setFirstName, lastName, setLastName,

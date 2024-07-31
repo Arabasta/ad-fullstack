@@ -1,5 +1,5 @@
 import React from 'react';
-import FreeFormField from "../../common/inputs/FreeFormField";
+import FreeFormField from "../inputFields/FreeFormField";
 
 const RegisterStep3 = ({
                            street, setStreet, city, setCity, postalCode, setPostalCode,
