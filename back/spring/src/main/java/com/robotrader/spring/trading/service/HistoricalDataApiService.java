@@ -1,5 +1,6 @@
 package com.robotrader.spring.trading.service;
 
+import com.robotrader.spring.exception.notFound.TickerNotFoundException;
 import com.robotrader.spring.trading.dto.MarketDataApiResponse;
 import com.robotrader.spring.trading.dto.HistoricalData;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,6 +52,12 @@ public class HistoricalDataApiService {
                 .doOnError(error -> System.err.println("Error in API call: " + error.getMessage()));
 
         return dataStream
+                .flatMap(response -> {
+                    if (response.getResultsCount() == 0) {
+                        return Mono.error(new TickerNotFoundException("Ticker not found in API call: " + ticker));
+                    }
+                    return Mono.just(response);
+                })
                 .flatMapMany(response ->  Flux.fromIterable(response.getResults()))
                 .switchIfEmpty(Mono.error(new RuntimeException("No results found in the API response")))
                 .doOnError(error -> System.err.println("Error fetching prices: " + error.getMessage() + ticker));
