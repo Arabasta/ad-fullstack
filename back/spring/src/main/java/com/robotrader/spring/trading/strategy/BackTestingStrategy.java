@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class BackTestingStrategy implements TradingStrategy {
@@ -21,17 +22,17 @@ public class BackTestingStrategy implements TradingStrategy {
     }
 
     @Override
-    public void execute(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
-        marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
+    public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
+        return marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
                 .doOnNext(data -> runSimulation(tradingAlgorithmBase, data))
-                .doOnNext(data -> printTrade(tradePersistence.readAllTrades()))
-                .subscribe(
-                        data -> System.out.println("Backtesting completed successfully."),
-                        error -> {
-                            System.err.println("Error during backtesting: " + error.getMessage());
-                            error.printStackTrace();
-                        }
-                );
+                .doOnNext(data -> getTradeResults())
+                .toFuture()
+                .thenAccept(data -> System.out.println("Backtesting completed successfully."))
+                .exceptionally(error -> {
+                    System.err.println("Error during backtesting: " + error.getMessage());
+                    error.printStackTrace();
+                    return null;
+                });
     }
 
     @Override
@@ -79,7 +80,9 @@ public class BackTestingStrategy implements TradingStrategy {
     }
 
     //todo: delete printTrade if not required
-    public void printTrade(List<TradeTransaction> trades) {
+    @Override
+    public List<TradeTransaction> getTradeResults() {
+        List<TradeTransaction> trades = tradePersistence.readAllTrades();
         TradeTransaction lastTrade = null;
         BigDecimal totalProfit = BigDecimal.ZERO;
         System.out.println("Trade Transactions: ");
@@ -97,5 +100,6 @@ public class BackTestingStrategy implements TradingStrategy {
             }
             System.out.println("Total Profit: " + totalProfit);
         }
+        return trades;
     }
 }
