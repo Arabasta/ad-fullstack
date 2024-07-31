@@ -4,6 +4,7 @@ import com.robotrader.spring.dto.auth.RegistrationRequest;
 import com.robotrader.spring.dto.user.*;
 import com.robotrader.spring.exception.notFound.UserNotFoundException;
 import com.robotrader.spring.model.Customer;
+import com.robotrader.spring.model.Portfolio;
 import com.robotrader.spring.model.User;
 import com.robotrader.spring.model.enums.RoleEnum;
 import com.robotrader.spring.repository.UserRepository;
@@ -147,5 +148,14 @@ public class UserService implements IUserService, UserDetailsService {
     public void lockAccount(String username) {
         User user = getUserByUsername(username);
         user.setRole(RoleEnum.ROLE_LOCKED);
+    }
+
+    @Override
+    public User getUserByPortfolio(Portfolio portfolio) {
+        User user = userRepository.findByPortfolioId(portfolio.getId());
+        if (user == null) {
+            throw new UserNotFoundException("User not found");
+        }
+        return user;
     }
 }

@@ -1,5 +1,6 @@
 package com.robotrader.spring.service;
 
+import com.robotrader.spring.aws.s3.S3TransactionLogger;
 import com.robotrader.spring.dto.portfolio.PortfolioAllocateFundsDTO;
 import com.robotrader.spring.dto.portfolio.PortfolioBalanceDTO;
 import com.robotrader.spring.dto.portfolio.PortfolioTransactionResponseDTO;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PortfolioService implements IPortfolioService {
@@ -30,14 +32,19 @@ public class PortfolioService implements IPortfolioService {
     private final IRuleService ruleService;
     private final ICustomerService customerService;
     private final IWalletService walletService;
+    private final S3TransactionLogger s3TransactionLogger;
+    private final UserService userService;
 
     @Autowired
     public PortfolioService(PortfolioRepository portfolioRepository, IRuleService ruleService,
-                            @Lazy ICustomerService customerService, IWalletService walletService) {
+                            @Lazy ICustomerService customerService, IWalletService walletService, Optional<S3TransactionLogger> s3TransactionLogger,
+                            @Lazy UserService userService) {
         this.portfolioRepository = portfolioRepository;
         this.ruleService = ruleService;
         this.customerService = customerService;
         this.walletService = walletService;
+        this.s3TransactionLogger = s3TransactionLogger.orElse(null);
+        this.userService = userService;
     }
 
     @Override
@@ -101,6 +108,9 @@ public class PortfolioService implements IPortfolioService {
 
         walletService.withdrawAmountFromWallet(walletService.getWalletByUsername(username), amount);
         addFundsToPortfolio(portfolio, amount);
+        if (s3TransactionLogger != null) {
+            s3TransactionLogger.logPortfolioTransaction(username, portfolio.getPortfolioType(), amount, portfolio.getCurrentValue(), "Allocate");
+        }
         return new PortfolioTransactionResponseDTO(portfolio.getPortfolioType(), amount,
                 portfolio.getAllocatedBalance(), portfolio.getCurrentValue());
     }
@@ -113,6 +123,9 @@ public class PortfolioService implements IPortfolioService {
 
         removeFundsFromPortfolio(portfolio, amount);
         walletService.addAmountToWallet(walletService.getWalletByUsername(username), amount);
+        if (s3TransactionLogger != null) {
+            s3TransactionLogger.logPortfolioTransaction(username, portfolio.getPortfolioType(), amount, portfolio.getCurrentValue(), "Withdraw");
+        }
         return new PortfolioTransactionResponseDTO(portfolio.getPortfolioType(), amount,
                 portfolio.getAllocatedBalance(), portfolio.getCurrentValue());
     }
@@ -160,6 +173,8 @@ public class PortfolioService implements IPortfolioService {
         BigDecimal recurringAmount = portfolio.getRule().getRecurringAllocationAmount();
         Wallet wallet = walletService.getWalletByPortfolio(portfolio);
         walletService.withdrawAmountFromWallet(wallet, recurringAmount);
+        s3TransactionLogger.logPortfolioTransaction(userService.getUserByPortfolio(portfolio).getUsername(), portfolio.getPortfolioType(),
+                recurringAmount, portfolio.getCurrentValue(), "Recurring Allocation");
 
         addFundsToPortfolio(portfolio, recurringAmount);
         // todo: send notification
