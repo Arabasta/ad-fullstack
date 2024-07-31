@@ -5,7 +5,7 @@ const getAddress = async () => {
 };
 
 const updateAddress = async (address) => {
-    return await axiosInstance.post(`/v1/customer/address/update`, { address });
+    return await axiosInstance.post(`/v1/customer/address/update`, address);
 };
 
 const AddressService = {

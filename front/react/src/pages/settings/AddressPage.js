@@ -9,7 +9,7 @@ const AddressPage = () => {
     return (
         <div>
             <h2>Address</h2>
-            <CustomerUpdateAddress onUpdateAddress={getAddress}/>
+            <CustomerUpdateAddress address={address} onUpdateAddress={getAddress} />
         </div>
     );
 };

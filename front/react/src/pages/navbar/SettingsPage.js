@@ -9,6 +9,7 @@ export default function SettingsPage() {
             <ul className="nav">
                 <SettingsButton to="/settings/account" label="Account" />
                 <SettingsButton to="/settings/financialProfile" label="Financial Profile" />
+                <SettingsButton to={"/settings/address"} label={"Address"} />
                 <SettingsButton to="/settings/preferenceForm" label="Preference Form" />
                 <SettingsButton to="/settings/notification" label="Notifications" />
             </ul>

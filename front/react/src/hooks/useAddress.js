@@ -2,31 +2,25 @@ import { useState, useEffect } from 'react';
 import AddressService from '../services/AddressService';
 
 const useAddress = () => {
-    // all the fields in AddressDTO
-
-    /*
-    const initialAddressValues = {
+    const [address, setAddress] = useState({
         street: '',
         city: '',
         postalCode: '',
         country: '',
         unitNo: ''
-    };
-    */
-
-    const [address, setAddressValues] = useState(null);
+    });
 
     const getAddress = async () => {
         try {
             const response = await AddressService.getAddress();
-
-            setAddressValues(
-                response.data.data.street,
-                response.data.data.city,
-                response.data.data.postalCode,
-                response.data.data.country,
-                response.data.data.unitNo
-            );
+            const data = response.data.data;
+            setAddress({
+                street: data.street,
+                city: data.city,
+                postalCode: data.postalCode,
+                country: data.country,
+                unitNo: data.unitNo
+            });
         } catch (error) {
             console.error('Error fetching address data', error);
         }
@@ -39,4 +33,4 @@ const useAddress = () => {
     return { address, getAddress };
 };
 
-export default useAddress();
+export default useAddress;

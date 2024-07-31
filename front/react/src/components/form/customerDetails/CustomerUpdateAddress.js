@@ -1,35 +1,28 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import AddressService from "../../../services/AddressService";
 
-// this will update the address
-const CustomerUpdateAddress = ({ onUpdateAddress }) => {
+const CustomerUpdateAddress = ({ address, onUpdateAddress }) => {
+    const [addressValues, setAddressValues] = useState(address);
 
-    const initialAddressValues = {
-        street: '',
-        city: '',
-        postalCode: '',
-        country: '',
-        unitNo: ''
+    useEffect(() => {
+        setAddressValues(address);
+    }, [address]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setAddressValues({ ...addressValues, [name]: value });
     };
 
-    const [addressValues, setAddressValues] = useState(initialAddressValues);
-
-    const handleAddress = async (e) => {
+    const handleAddressUpdate = async () => {
         try {
-            const updatedAddressValues = addressValues;
-            if (addressValues == null) {
+            // todo: add more robust validation
+            if (!addressValues) {
                 alert('You have no address to update.');
                 return;
             }
 
-            // call the updateAddress function from the AddressService
-            // this will call the /address/update api endpoint
-            await AddressService.updateAddress( updatedAddressValues );
-            onUpdateAddress(); // call the prop function if it exists
-            setAddressValues({
-               ...addressValues,
-               [e.target.name]:e.target.value,
-            })
+            await AddressService.updateAddress(addressValues);
+            onUpdateAddress();
         } catch (error) {
             console.error('Error updating address', error);
         }
@@ -41,45 +34,53 @@ const CustomerUpdateAddress = ({ onUpdateAddress }) => {
                 <label>Street</label>
                 <input
                     type="text"
-                    value={street}
-                    onChange={handleAddress}
-                    placeholder="" // how do I get it to return the previous values?
+                    name="street"
+                    value={addressValues.street}
+                    onChange={handleInputChange}
+                    placeholder="Enter street"
                 />
             </div>
             <div>
                 <label>City</label>
                 <input
                     type="text"
-                    value={city}
-                    onChange={handleAddress}
+                    name="city"
+                    value={addressValues.city}
+                    onChange={handleInputChange}
+                    placeholder="Enter city"
                 />
             </div>
             <div>
                 <label>Postal Code</label>
                 <input
                     type="text"
-                    value={postalCode}
-                    onChange={handleAddress}
+                    name="postalCode"
+                    value={addressValues.postalCode}
+                    onChange={handleInputChange}
+                    placeholder="Enter postal code"
                 />
             </div>
             <div>
                 <label>Country</label>
                 <input
                     type="text"
-                    value={country}
-                    onChange={handleAddress}
+                    name="country"
+                    value={addressValues.country}
+                    onChange={handleInputChange}
+                    placeholder="Enter country"
                 />
             </div>
             <div>
                 <label>Unit No</label>
                 <input
                     type="text"
-                    value={unitNo}
-                    onChange={handleAddress}
+                    name="unitNo"
+                    value={addressValues.unitNo}
+                    onChange={handleInputChange}
+                    placeholder="Enter unit number"
                 />
             </div>
-
-            <button onClick={handleAddress}>Update</button>
+            <button onClick={handleAddressUpdate}>Update</button>
         </div>
     );
 };
