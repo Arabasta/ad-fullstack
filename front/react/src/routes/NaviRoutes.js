@@ -1,9 +1,9 @@
 import React from 'react';
 import {Route} from "react-router-dom";
-import NewsPage from "../pages/navbar/NewsPage";
-import SupportPage from "../pages/navbar/SupportPage";
-import WalletPage from "../pages/navbar/WalletPage";
-import SettingsPage from "../pages/navbar/SettingsPage";
+import NewsPage from "../pages/NewsPage";
+import SupportPage from "../pages/SupportPage";
+import WalletPage from "../pages/WalletPage";
+import SettingsPage from "../pages/SettingsPage";
 
 const mainRoutes = [
     <Route key="news" path="/news" element={<NewsPage />} />,
