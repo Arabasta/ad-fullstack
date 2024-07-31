@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PortfolioService implements IPortfolioService {
@@ -36,13 +37,13 @@ public class PortfolioService implements IPortfolioService {
 
     @Autowired
     public PortfolioService(PortfolioRepository portfolioRepository, IRuleService ruleService,
-                            @Lazy ICustomerService customerService, IWalletService walletService, S3TransactionLogger s3TransactionLogger,
+                            @Lazy ICustomerService customerService, IWalletService walletService, Optional<S3TransactionLogger> s3TransactionLogger,
                             @Lazy UserService userService) {
         this.portfolioRepository = portfolioRepository;
         this.ruleService = ruleService;
         this.customerService = customerService;
         this.walletService = walletService;
-        this.s3TransactionLogger = s3TransactionLogger;
+        this.s3TransactionLogger = s3TransactionLogger.orElse(null);
         this.userService = userService;
     }
 
@@ -107,7 +108,9 @@ public class PortfolioService implements IPortfolioService {
 
         walletService.withdrawAmountFromWallet(walletService.getWalletByUsername(username), amount);
         addFundsToPortfolio(portfolio, amount);
-        s3TransactionLogger.logPortfolioTransaction(username, portfolio.getPortfolioType(), amount, portfolio.getCurrentValue(), "Allocate");
+        if (s3TransactionLogger != null) {
+            s3TransactionLogger.logPortfolioTransaction(username, portfolio.getPortfolioType(), amount, portfolio.getCurrentValue(), "Allocate");
+        }
         return new PortfolioTransactionResponseDTO(portfolio.getPortfolioType(), amount,
                 portfolio.getAllocatedBalance(), portfolio.getCurrentValue());
     }
@@ -120,7 +123,9 @@ public class PortfolioService implements IPortfolioService {
 
         removeFundsFromPortfolio(portfolio, amount);
         walletService.addAmountToWallet(walletService.getWalletByUsername(username), amount);
-        s3TransactionLogger.logPortfolioTransaction(username, portfolio.getPortfolioType(), amount, portfolio.getCurrentValue(), "Withdraw");
+        if (s3TransactionLogger != null) {
+            s3TransactionLogger.logPortfolioTransaction(username, portfolio.getPortfolioType(), amount, portfolio.getCurrentValue(), "Withdraw");
+        }
         return new PortfolioTransactionResponseDTO(portfolio.getPortfolioType(), amount,
                 portfolio.getAllocatedBalance(), portfolio.getCurrentValue());
     }
