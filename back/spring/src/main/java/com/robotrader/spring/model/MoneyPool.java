@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Pool {
+public class MoneyPool {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,6 +44,6 @@ public class Pool {
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private ZonedDateTime tradeDateTime;
+    private ZonedDateTime tradeDateTime; //TODO: i think not required
 
 }
