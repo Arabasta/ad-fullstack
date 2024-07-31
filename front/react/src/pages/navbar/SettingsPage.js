@@ -1,5 +1,5 @@
 import React from 'react';
-import SettingsButton from "../../components/common/buttons/SettingsButtons";
+import SettingsButton from "../../components/common/navLinks/SettingsButtons";
 
 export default function SettingsPage() {
     return (
