@@ -15,6 +15,8 @@ const NavigationBarForWeb = () => {
             <NavButton to="/settings" label="SETTINGS" />
             <NavButton to="/support" label="SUPPORT" />
             <NavButton to="/wallet" label="WALLET" />
+            <NavButton to="/wallet/history" label="WALLET TX HISTORY" />
+            <NavButton to="/portfolio/history" label="PORTFOLIO TX HISTORY TEMPORARY" />
             {isAuthenticated ? (
                 <li>
                     <button onClick={handleLogout}>Logout</button>
