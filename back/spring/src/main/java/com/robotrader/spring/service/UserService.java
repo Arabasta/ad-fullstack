@@ -1,5 +1,7 @@
 package com.robotrader.spring.service;
 
+import com.robotrader.spring.aws.sns.SnsPasswordNotificationService;
+import com.robotrader.spring.aws.sns.SnsPortfolioNotificationService;
 import com.robotrader.spring.dto.auth.RegistrationRequest;
 import com.robotrader.spring.dto.user.*;
 import com.robotrader.spring.exception.auth.InvalidPasswordException;
@@ -20,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,12 +31,18 @@ public class UserService implements IUserService, UserDetailsService {
     private final UserRepository userRepository;
     private final ICustomerService customerService;
     private final PasswordEncoder passwordEncoder;
+    private final SnsPortfolioNotificationService snsPortfolioNotificationService;
+    private final SnsPasswordNotificationService snsPasswordNotificationService;
 
     @Autowired
-    public UserService(UserRepository userRepository, ICustomerService customerService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, ICustomerService customerService, PasswordEncoder passwordEncoder,
+                       Optional<SnsPortfolioNotificationService> snsPortfolioNotificationService,
+                       Optional<SnsPasswordNotificationService> snsPasswordNotificationService) {
         this.userRepository = userRepository;
         this.customerService = customerService;
         this.passwordEncoder = passwordEncoder;
+        this.snsPortfolioNotificationService = snsPortfolioNotificationService.orElse(null);
+        this.snsPasswordNotificationService = snsPasswordNotificationService.orElse(null);
     }
 
     @Transactional
@@ -140,6 +149,8 @@ public class UserService implements IUserService, UserDetailsService {
         }
         user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
         save(user);
+        if (snsPasswordNotificationService != null)
+            snsPasswordNotificationService.sendPasswordChangeNotification(username);
     }
 
     @Override
