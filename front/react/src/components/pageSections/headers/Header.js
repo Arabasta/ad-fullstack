@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Button from "../../elements/buttons/Button";
 
 const Header = ({ logo, navLinks, user }) => {
     return (
@@ -17,7 +18,12 @@ const Header = ({ logo, navLinks, user }) => {
                         </li>
                     ))}
                 </ul>
+
+                <Button>
+                    Sign Out
+                </Button>
             </nav>
+
             <div style={styles.userProfile}>
                 {user && (
                     <>
@@ -66,7 +72,7 @@ const styles = {
     nav: {
         flex: '1 1 auto',
         display: 'flex',
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
     },
     navList: {
         listStyle: 'none',
@@ -86,6 +92,7 @@ const styles = {
         alignItems: 'center',
     },
     userName: {
+        marginLeft: '10px',
         marginRight: '10px',
     },
     userAvatar: {
