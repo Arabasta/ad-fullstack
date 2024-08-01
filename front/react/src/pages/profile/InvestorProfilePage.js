@@ -1,10 +1,8 @@
-
 import React, { useEffect, useState, useContext } from 'react';
 import InvestorProfileService from "../../services/InvestorProfileService";
 import FormInput from "../../components/common/inputs/FormInput_Register5";
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import RecommendedPortfolioType from "../../components/elements/alerts/info/RecommendedPortfolioType";
 
 const InvestorProfilePage = () => {
     const { isAuthenticated } = useContext(AuthContext);
@@ -124,10 +122,13 @@ const InvestorProfilePage = () => {
                 <button type="submit">Update</button>
                 {message && <p>{message}</p>}
             </form>
-
-            <RecommendedPortfolioType />
+            {recommendedPortfolioType && (
+                <div>
+                    <h3>Recommended Portfolio Type</h3>
+                    <p>{recommendedPortfolioType}</p>
+                </div>
+            )}
         </div>
-
     );
 };
 
