@@ -4,6 +4,7 @@ import React from 'react';
 //import logo from "../../assets/images/fourquantlogo.jpg"
 import Header2 from "../../components/pageSections/headers/Header2";
 import Footer2 from "../../components/pageSections/footers/Footer2";
+import ParagraphWithImageCard from "../../components/elements/cards/ParagraphWithImageCard";
 
 const HomePage = () => {
     const navLinks = [
@@ -33,9 +34,7 @@ const HomePage = () => {
         <div>
             <Header2 />
             <main>
-                <h2>Home</h2>
-                <p>Welcome to the home page! For Test Only</p>
-                <p>Todo: include some card element here</p>
+                <ParagraphWithImageCard />
             </main>
             <Footer2/>
 
