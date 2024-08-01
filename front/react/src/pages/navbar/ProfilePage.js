@@ -1,12 +1,15 @@
 import React from 'react';
 import SettingsButton from "../../components/navigation/navBar/navLinks/ProfileButtons";
 import RecommendedPortfolioType from "../../components/elements/alerts/info/RecommendedPortfolioType";
+import CustomerName from "../../components/common/CustomerName";
 
 export default function ProfilePage() {
     return (
         <div>
             <h2>Profile</h2>
             <p>Welcome to the Profile Page! For Test Only</p>
+
+            <CustomerName />
 
             <RecommendedPortfolioType> </RecommendedPortfolioType>
 

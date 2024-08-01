@@ -5,12 +5,12 @@ const getCustomerDetails = async () => {
         const response = await axiosInstance.get('/v1/customer/details');
         return response.data.data;
     } catch (error) {
-        console.error('Error fetching user details', error);
+        console.error('Error fetching Customer details', error);
         throw error;
     }
 };
 
-const updateMobileNumber = async (username, mobileNumberDTO) => {
+const updateMobileNumber = async (mobileNumberDTO) => {
     try {
         const response = await axiosInstance.put(`/v1/customer/update-mobile-number`, mobileNumberDTO);
         return response.data;
