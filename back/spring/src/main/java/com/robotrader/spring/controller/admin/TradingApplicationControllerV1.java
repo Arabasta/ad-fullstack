@@ -1,13 +1,14 @@
 package com.robotrader.spring.controller.admin;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.robotrader.spring.dto.chart.ChartDataDTO;
 import com.robotrader.spring.dto.general.ApiResponse;
+import com.robotrader.spring.dto.ticker.TickerDTO;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.ChartService;
 import com.robotrader.spring.service.TickerService;
 import com.robotrader.spring.trading.application.TradingApplicationService;
 import com.robotrader.spring.trading.dto.BackTestResultDTO;
+import com.robotrader.spring.trading.dto.PredictionDTO;
 import com.robotrader.spring.trading.service.PredictionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -48,11 +49,8 @@ public class TradingApplicationControllerV1 {
     }
 
     @GetMapping("prediction")
-    public ResponseEntity<ApiResponse<ObjectMapper>> getPredictions(@RequestParam String ticker) throws IOException {
-        ObjectMapper predictionObjectMapper = predictionService.byStock(ticker);
-        if (predictionObjectMapper == null) {
-            return ResponseEntity.ok(new ApiResponse<>("fail", "Prediction retrieval failed.", null));
-        }
-        return ResponseEntity.ok(new ApiResponse<>("success", "Prediction retrieved successfully", predictionObjectMapper));
+    public ResponseEntity<ApiResponse<PredictionDTO>> getPredictions(@RequestBody TickerDTO tickerDTO) throws IOException {
+        PredictionDTO predictionDTO = predictionService.byTicker(tickerDTO);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Prediction retrieved successfully", predictionDTO));
     }
 }
