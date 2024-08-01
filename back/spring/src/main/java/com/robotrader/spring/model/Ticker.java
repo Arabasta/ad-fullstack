@@ -20,6 +20,6 @@ public class Ticker {
     @Enumerated(EnumType.STRING)
     private TickerTypeEnum tickerType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String tickerName;
 }
