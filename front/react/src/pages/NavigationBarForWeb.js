@@ -12,7 +12,7 @@ const NavigationBarForWeb = () => {
     return (
         <ul className="navbar-nav">
             <NavButton to="/news" label="NEWS" />
-            <NavButton to="/settings" label="SETTINGS" />
+            <NavButton to="/profile" label="PROFILE" />
             <NavButton to="/support" label="SUPPORT" />
             <NavButton to="/wallet" label="WALLET" />
             {isAuthenticated ? (

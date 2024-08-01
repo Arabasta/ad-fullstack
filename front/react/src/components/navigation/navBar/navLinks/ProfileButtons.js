@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-const SettingsButton = ({ to, label }) => {
+const ProfileButtons = ({ to, label }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -14,9 +14,9 @@ const SettingsButton = ({ to, label }) => {
     );
 };
 
-SettingsButton.propTypes = {
+ProfileButtons.propTypes = {
     to: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
 };
 
-export default SettingsButton;
+export default ProfileButtons;

@@ -5,7 +5,7 @@ import ErrorBoundary from './components/elements/alerts/error/ErrorBoundary';
 import authRoutes from './routes/AuthRoutes';
 import mainRoutes from './routes/MainRoutes';
 import NavigationBarForWeb from './pages/NavigationBarForWeb';
-import settingsRoutes from './routes/SettingsRoutes';
+import profileRoutes from './routes/ProfileRoutes';
 import NaviRoutes from './routes/NaviRoutes';
 
 const App = () => {
@@ -32,7 +32,7 @@ const AppContent = () => {
                     {NaviRoutes}
                     {authRoutes}
                     {mainRoutes}
-                    {settingsRoutes}
+                    {profileRoutes}
                 </Routes>
             </ErrorBoundary>
         </>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import InvestorProfileService from "../../services/InvestorProfileService";
 
-const RecommendedPortfolioTypePage = () => {
+const RecommendedInvestorProfileTypePage = () => {
     const [recommendedPortfolioType, setRecommendedPortfolioType] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -38,4 +38,4 @@ const RecommendedPortfolioTypePage = () => {
     );
 };
 
-export default RecommendedPortfolioTypePage;
+export default RecommendedInvestorProfileTypePage;

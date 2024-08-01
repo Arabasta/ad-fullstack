@@ -1,23 +1,21 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import React from 'react';
+import SettingsButton from "../../components/navigation/navBar/navLinks/ProfileButtons";
 
-const ProfilePage = () => {
-    // Use the AuthContext to access the user and logout function
-    const { user, logout } = useContext(AuthContext);
-
+export default function ProfilePage() {
     return (
         <div>
             <h2>Profile</h2>
-            {user ? (
-                <div>
-                    <p>Username: {user.username}</p>
-                    <button onClick={logout}>Logout</button>
-                </div>
-            ) : (
-                <p>Please log in.</p>
-            )}
+            <p>Welcome to the Profile Page! For Test Only</p>
+
+
+            <ul className="nav">
+                <SettingsButton to="/profile/account" label="Update Email and Password" />
+                <SettingsButton to="/profile/financialProfile" label="Update Financial Profile" />
+                <SettingsButton to={"/profile/address"} label={"Update Address"} />
+                <SettingsButton to="/profile/preferenceForm" label="Update Investor Profile" />
+                <SettingsButton to="/profile/notification" label="Notifications" />
+            </ul>
         </div>
     );
-};
+}
 
-export default ProfilePage;
