@@ -2,6 +2,7 @@ package com.robotrader.spring.exception;
 
 import com.robotrader.spring.dto.general.ApiErrorResponse;
 import com.robotrader.spring.exception.auth.AuthenticationMissingException;
+import com.robotrader.spring.exception.auth.InvalidPasswordException;
 import com.robotrader.spring.exception.auth.JwtInvalidException;
 import com.robotrader.spring.exception.aws.LogParsingException;
 import com.robotrader.spring.exception.aws.TransactionRetrievalException;
@@ -107,6 +108,13 @@ public class GlobalExceptionHandler {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse("error", "Transaction retrieval failed", ex.getMessage());
         return new ResponseEntity<>(apiErrorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ApiErrorResponse> handleInvalidPasswordException(InvalidPasswordException ex) {
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse("error", "Invalid password", ex.getMessage());
+        return new ResponseEntity<>(apiErrorResponse, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiErrorResponse> handleRuntimeException(RuntimeException ex) {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse("error", "An error occurred", ex.getMessage());
