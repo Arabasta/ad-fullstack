@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Service
 public class PredictionService {
@@ -33,12 +34,19 @@ public class PredictionService {
         return mapper.readValue(readJsonFromS3Bucket(tickerName), PredictionDTO.class);
     }
 
-    public ObjectMapper byTickerList(List<TickerDTO> tickerDTOList) throws IOException {
+    public List<PredictionDTO> byTickerList(List<TickerDTO> tickerDTOList) throws IOException {
         if (tickerDTOList.isEmpty()) {
             throw new IOException("Ticker list is empty");
         }
-        // todo: alvin implement this
-        return new ObjectMapper();
+        return tickerDTOList.stream()
+                .map(tickerDTO -> {
+                    try {
+                        return byTicker(tickerDTO);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to fetch prediction for ticker: " + tickerDTO.getTickerName(), e);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     private String readJsonFromS3Bucket(String keyName) {

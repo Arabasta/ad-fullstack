@@ -49,8 +49,8 @@ public class TradingApplicationControllerV1 {
     }
 
     @GetMapping("prediction")
-    public ResponseEntity<ApiResponse<PredictionDTO>> getPredictions(@RequestBody TickerDTO tickerDTO) throws IOException {
-        PredictionDTO predictionDTO = predictionService.byTicker(tickerDTO);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Prediction retrieved successfully", predictionDTO));
+    public ResponseEntity<ApiResponse<List<PredictionDTO>>> getPredictions(@RequestBody List<TickerDTO> tickerDTO) throws IOException {
+        List<PredictionDTO> predictionDTOList = predictionService.byTickerList(tickerDTO);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Prediction retrieved successfully", predictionDTOList));
     }
 }
