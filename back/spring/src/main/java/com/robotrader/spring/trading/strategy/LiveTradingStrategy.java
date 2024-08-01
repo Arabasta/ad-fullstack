@@ -2,7 +2,7 @@ package com.robotrader.spring.trading.strategy;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
-import com.robotrader.spring.trading.dto.LiveMarketData;
+import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class LiveTradingStrategy implements TradingStrategy {
-    private LiveMarketData latestMarketData;
+    private LiveMarketDataDTO latestMarketData;
     private Disposable dataSubscription;
     private final TradePersistence tradePersistence;
     private final CompletableFuture<Void> completionFuture = new CompletableFuture<>();

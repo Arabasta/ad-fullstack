@@ -1,7 +1,7 @@
 package com.robotrader.spring.trading.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.robotrader.spring.trading.dto.CryptoLiveData;
+import com.robotrader.spring.trading.dto.CryptoLiveDataDTO;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,7 +25,7 @@ public class CryptoWebSocketService extends MarketDataWebSocketService {
 
     @Override
     public void handleMarketData(JsonNode event) {
-        CryptoLiveData cryptoData = new CryptoLiveData();
+        CryptoLiveDataDTO cryptoData = new CryptoLiveDataDTO();
 
         cryptoData.setEv(event.get("ev").asText());
         cryptoData.setPair(event.get("pair").asText());
