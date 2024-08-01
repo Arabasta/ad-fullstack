@@ -8,12 +8,14 @@ Previous, Next, Last
 
 */
 
-const Button = ({ variant, size, type, colorScheme, onClick, children, ...props }) => {
+const Button = ({ variant, size, type, colorScheme, onClick, href, children, ...props }) => {
+
     return (
         <CButton variant={variant}
                 size={size}
                 type={type}
                 colorScheme={colorScheme}
+                 href={href}
                 onClick={onClick}
                 {...props}>
             {children}
@@ -25,8 +27,9 @@ Button.propTypes = {
     variant: PropTypes.oneOf(['solid', 'outline', 'ghost', 'link']),
     size: PropTypes.oneOf(['xs', 'sm', 'md', 'lg']),
     type: PropTypes.oneOf(['button', 'submit', 'reset']),
-    colorScheme: PropTypes.oneOf([]), // todo: include color scheme
+    colorScheme: PropTypes.string,
     onClick: PropTypes.func,
+    href: PropTypes.string,
     children: PropTypes.node.isRequired,
 };
 
