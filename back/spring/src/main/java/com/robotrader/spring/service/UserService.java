@@ -2,6 +2,7 @@ package com.robotrader.spring.service;
 
 import com.robotrader.spring.dto.auth.RegistrationRequest;
 import com.robotrader.spring.dto.user.*;
+import com.robotrader.spring.exception.auth.InvalidPasswordException;
 import com.robotrader.spring.exception.notFound.UserNotFoundException;
 import com.robotrader.spring.model.Customer;
 import com.robotrader.spring.model.Portfolio;
@@ -116,7 +117,11 @@ public class UserService implements IUserService, UserDetailsService {
     @Transactional
     public void updatePassword(String username, UpdatePasswordDTO updatePasswordDTO) {
         User user = getUserByUsername(username);
-        user.setPassword(passwordEncoder.encode(updatePasswordDTO.getPassword()));
+        // Validate old password
+        if (!passwordEncoder.matches(updatePasswordDTO.getOldPassword(), user.getPassword())) {
+            throw new InvalidPasswordException("Old password is incorrect");
+        }
+        user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
         save(user);
     }
 
@@ -141,13 +146,6 @@ public class UserService implements IUserService, UserDetailsService {
     public void restore(String username) {
         User user = getUserByUsername(username);
         user.setDeleted(false);
-    }
-
-    @Override
-    @Transactional
-    public void lockAccount(String username) {
-        User user = getUserByUsername(username);
-        user.setRole(RoleEnum.ROLE_LOCKED);
     }
 
     @Override
