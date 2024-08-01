@@ -19,6 +19,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class UserService implements IUserService, UserDetailsService {
 
@@ -51,6 +54,22 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public List<UsersDTO> searchUsersByUsernameOrEmail(String search) {
+        return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(search, search)
+                .stream()
+                .map(user -> new UsersDTO(user.getUsername(), user.getEmail(), user.getRole()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UsersDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new UsersDTO(user.getUsername(), user.getEmail(), user.getRole()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -95,8 +114,6 @@ public class UserService implements IUserService, UserDetailsService {
         }
         return user;
     }
-
-
 
     @Override
     public EmailDTO getEmail(String username) {
