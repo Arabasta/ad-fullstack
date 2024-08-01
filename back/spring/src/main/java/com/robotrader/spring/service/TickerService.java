@@ -8,6 +8,8 @@ import com.robotrader.spring.service.interfaces.ITickerService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TickerService implements ITickerService {
     private final TickerRepository tickerRepository;
@@ -38,6 +40,11 @@ public class TickerService implements ITickerService {
             throw new TickerNotFoundException("Ticker not found");
         }
         return ticker;
+    }
+
+    @Override
+    public List<Ticker> getAllTickers() {
+        return tickerRepository.findAll();
     }
 
     @Override

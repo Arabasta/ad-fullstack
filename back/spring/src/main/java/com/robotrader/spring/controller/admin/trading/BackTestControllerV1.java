@@ -1,5 +1,6 @@
-package com.robotrader.spring.controller.admin;
+package com.robotrader.spring.controller.admin.trading;
 
+import com.robotrader.spring.dto.backtest.AlgorithmDTO;
 import com.robotrader.spring.dto.chart.ChartDataDTO;
 import com.robotrader.spring.dto.general.ApiResponse;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
@@ -10,8 +11,6 @@ import com.robotrader.spring.trading.dto.BackTestResultDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/admin/trading/backtest")
@@ -28,9 +27,12 @@ public class BackTestControllerV1 {
     }
 
     @GetMapping("/view")
-    public ResponseEntity<ApiResponse<List<String>>> getTradingAlgorithms() {
-        List<String> algorithmList = tradingApplicationService.getAlgorithmList();
-        return ResponseEntity.ok(new ApiResponse<>("success", "Algorithm list retrieved successfully", algorithmList));
+    public ResponseEntity<ApiResponse<AlgorithmDTO>> getTradingAlgorithms() {
+        AlgorithmDTO responseDTO = new AlgorithmDTO();
+        responseDTO.setAlgorithms(tradingApplicationService.getAlgorithmList());
+        responseDTO.setPortfolioTypes(PortfolioTypeEnum.values());
+        responseDTO.setTickerList(tickerService.getAllTickers());
+        return ResponseEntity.ok(new ApiResponse<>("success", "Algorithm list retrieved successfully", responseDTO));
     }
 
     @GetMapping("/{ticker}")
@@ -38,7 +40,7 @@ public class BackTestControllerV1 {
                                                                                @RequestParam PortfolioTypeEnum portfolioType) {
 
         BackTestResultDTO tradeResults = tradingApplicationService.runTradingAlgorithmBackTest(ticker, portfolioType);
-        ChartDataDTO chartDataDTO = chartService.transformBackTestDTOtoChartDataDTO(tradeResults);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Back test results retrieved successfully", chartDataDTO));
+        ChartDataDTO responseDTO = chartService.transformBackTestDTOtoChartDataDTO(tradeResults);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Back test results retrieved successfully", responseDTO));
     }
 }
