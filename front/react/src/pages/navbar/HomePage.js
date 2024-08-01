@@ -1,14 +1,22 @@
 import React from 'react';
-import Header from "../../components/pageSections/headers/Header";
-import Footer from "../../components/pageSections/footers/Footer";
+//import Header from "../../components/pageSections/headers/Header";
+//import Footer from "../../components/pageSections/footers/Footer";
+//import logo from "../../assets/images/fourquantlogo.jpg"
+import Header2 from "../../components/pageSections/headers/Header2";
+import Footer2 from "../../components/pageSections/footers/Footer2";
 
 const HomePage = () => {
     const navLinks = [
-        { href: '#', label: 'Home' },
-        { href: '#', label: 'About' },
-        { href: '#', label: 'Services' },
+        { href: '#', label: 'Portfolio' },
+        { href: '#', label: 'Wallet' },
+        { href: '#', label: 'News' },
         { href: '#', label: 'Contact' },
     ];
+
+    const footerLinks = [
+        { href: '#', label: 'Support' },
+        { href: '#', label: 'About Us' },
+    ]
 
     const user = {
         name: 'John Doe',
@@ -23,12 +31,14 @@ const HomePage = () => {
 
     return (
         <div>
-            <Header logo="https://via.placeholder.com/150" navLinks={navLinks} user={user} />
+            <Header2 />
             <main>
                 <h2>Home</h2>
                 <p>Welcome to the home page! For Test Only</p>
+                <p>Todo: include some card element here</p>
             </main>
-            <Footer navLinks={navLinks} socialLinks={socialLinks} />
+            <Footer2/>
+
         </div>
     );
 };
