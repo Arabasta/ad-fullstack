@@ -6,14 +6,14 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class MarketDataApiResponse {
+public class MarketDataApiResponseDTO {
     private boolean adjusted;
     @JsonProperty("next_url")
     private String nextUrl;
     private int queryCount;
     @JsonProperty("request_id")
     private String requestId;
-    private List<HistoricalData> results;
+    private List<HistoricalDataDTO> results;
     private int resultsCount;
     private String status;
     private String ticker;

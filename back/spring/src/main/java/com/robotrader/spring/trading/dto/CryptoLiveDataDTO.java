@@ -5,7 +5,7 @@ import lombok.ToString;
 
 @Data
 @ToString(callSuper = true)
-public class CryptoLiveData extends LiveMarketData {
+public class CryptoLiveDataDTO extends LiveMarketDataDTO {
     private String pair; // Crypto pair
 
     @Override

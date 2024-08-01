@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 @ToString(callSuper = true)
-public class StockLiveData extends LiveMarketData {
+public class StockLiveDataDTO extends LiveMarketDataDTO {
     private String sym;      // Ticker
     private int av;          // Accumulated volume
     private BigDecimal op;   // Today's open price

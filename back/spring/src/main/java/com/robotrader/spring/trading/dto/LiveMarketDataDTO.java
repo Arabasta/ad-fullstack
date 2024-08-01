@@ -5,7 +5,7 @@ import lombok.ToString;
 
 @Data
 @ToString(callSuper = true)
-public abstract class LiveMarketData extends MarketData{
+public abstract class LiveMarketDataDTO extends MarketDataDTO {
 
     public abstract String getTicker();
 
