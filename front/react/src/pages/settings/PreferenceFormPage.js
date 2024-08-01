@@ -3,7 +3,7 @@ import InvestorProfileService from "../../services/InvestorProfileService";
 import InvestorProfileForm from "../../components/form/InvestProfile/InvestorProfileForm";
 import { AuthContext } from '../../context/AuthContext';
 
-const InvestorProfilePage = () => {
+const PreferenceFormPage = () => {
     const { isAuthenticated } = useContext(AuthContext);
     const [profile, setProfile] = useState({
         investmentDurationScore: 1,
@@ -137,4 +137,4 @@ const InvestorProfilePage = () => {
     );
 };
 
-export default InvestorProfilePage;
+export default PreferenceFormPage;
