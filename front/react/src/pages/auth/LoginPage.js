@@ -1,31 +1,48 @@
-import React from 'react';
-import { Flex, Stack, Box, Heading, Text, useColorModeValue } from '@chakra-ui/react';
-import LoginForm from '../../components/form/auth/LoginForm';
+import React, { useState } from 'react';
+import useAuth from "../../hooks/useAuth";
+import {useNavigate} from "react-router-dom";
 
-const LoginPage = () => {
+const LoginForm = () => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+            await login(username, password);
+            navigate('/dashboard');
+        } catch (error) {
+            setMessage('Invalid login please try again');
+        }
+    };
+
     return (
-        <Flex
-            minH={'100vh'}
-            align={'center'}
-            justify={'center'}
-            bg={useColorModeValue('gray.50', 'gray.900')}>
-            <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-                <Stack align={'center'}>
-                    <Heading fontSize={'4xl'} fontWeight="bold">Login</Heading>
-                    <Text fontSize={'lg'} color={useColorModeValue('gray.600', 'gray.300')}>
-                        Welcome back! Please login to your account.
-                    </Text>
-                </Stack>
-                <Box
-                    rounded={'lg'}
-                    bg={useColorModeValue('white', 'gray.800')}
-                    boxShadow={'lg'}
-                    p={8}>
-                    <LoginForm />
-                </Box>
-            </Stack>
-        </Flex>
+        <div>
+            <form onSubmit={handleLogin}>
+                <div>
+                    <label>Username</label>
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
+                <button type="submit">Login</button>
+                {message && <p>{message}</p>}
+            </form>
+        </div>
     );
 };
 
-export default LoginPage;
+export default LoginForm;

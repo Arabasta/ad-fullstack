@@ -1,119 +1,98 @@
-import React from "react";
-import {
-    chakra,
-    Box,
-    Flex,
-    useColorModeValue,
-    HStack,
-    Button,
-    useDisclosure,
-    VStack,
-    IconButton,
-    CloseButton,
-} from "@chakra-ui/react";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-import { AiOutlineMenu } from "react-icons/ai";
-import { Logo } from ""; // todo: replace with logo filepath
-
-// todo: refactor later to use the button components
-
-const Header = () => {
-    const bg = useColorModeValue("white", "gray.800"); //todo: confirm color scheme
-    const mobileNav = useDisclosure();
-
+const Header = ({ logo, navLinks, user }) => {
     return (
-
-        <chakra.header
-            bg={bg}
-            w="full"
-            px={{ base: 2, sm: 4 }}
-            py={4}
-            shadow="md"
-        >
-            <Flex alignItems="center" justifyContent="space-between" mx="auto">
-                <Flex>
-                    <chakra.a
-                        href="/"
-                        {/* todo: update the link */}
-                        title="FourQuant HomePage"
-                        display="flex"
-                        alignItems="center"
-                    >
-                        <Logo />
-                    </chakra.a>
-                    <chakra.h1 fontSize="xl" fontWeight="medium" ml="2">
-                        FourQuant
-                    </chakra.h1>
-                </Flex>
-                <HStack display="flex" alignItems="center" spacing={1}>
-                    <HStack
-                        spacing={1}
-                        mr={1}
-                        color="brand.500"
-                        display={{ base: "none", md: "inline-flex" }}
-                    >
-                        <Button variant="ghost">Trade</Button>
-                        <Button variant="ghost">Wallet</Button>
-                        <Button variant="ghost">News</Button>
-                        <Button variant="ghost">Profile</Button>
-                        <Button variant="ghost">Sign in</Button>
-                    </HStack>
-                    <Button colorScheme="brand" size="sm">
-                        Get Started
-                    </Button>
-                    <Box display={{ base: "inline-flex", md: "none" }}>
-                        <IconButton
-                            display={{ base: "flex", md: "none" }}
-                            aria-label="Open menu"
-                            fontSize="20px"
-                            color="gray.800"
-                            _dark={{ color: "inherit" }}
-                            variant="ghost"
-                            icon={<AiOutlineMenu />}
-                            onClick={mobileNav.onOpen}
-                        />
-
-                        <VStack
-                            pos="absolute"
-                            top={0}
-                            left={0}
-                            right={0}
-                            display={mobileNav.isOpen ? "flex" : "none"}
-                            flexDirection="column"
-                            p={2}
-                            pb={4}
-                            m={2}
-                            bg={bg}
-                            spacing={3}
-                            rounded="sm"
-                            shadow="sm"
-                        >
-                            <CloseButton
-                                aria-label="Close menu"
-                                onClick={mobileNav.onClose}
-                            />
-
-                            <Button w="full" variant="ghost">
-                                Trade
-                            </Button>
-                            <Button w="full" variant="ghost">
-                                Wallet
-                            </Button>
-                            <Button w="full" variant="ghost">
-                                News
-                            </Button>
-                            <Button w="full" variant="ghost">
-                                Profile
-                            </Button>
-                            <Button w="full" variant="ghost">
-                                Sign in
-                            </Button>
-                        </VStack>
-                    </Box>
-                </HStack>
-            </Flex>
-        </chakra.header>
+        <header style={styles.header}>
+            <div style={styles.logoContainer}>
+                {logo && <img src={logo} alt="Logo" style={styles.logo} />}
+            </div>
+            <nav style={styles.nav}>
+                <ul style={styles.navList}>
+                    {navLinks.map((link, index) => (
+                        <li key={index} style={styles.navItem}>
+                            <a href={link.href} style={styles.navLink}>
+                                {link.label}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
+            <div style={styles.userProfile}>
+                {user && (
+                    <>
+                        <span style={styles.userName}>{user.name}</span>
+                        <img src={user.avatar} alt="User Avatar" style={styles.userAvatar} />
+                    </>
+                )}
+            </div>
+        </header>
     );
+};
+
+Header.propTypes = {
+    logo: PropTypes.string,
+    navLinks: PropTypes.arrayOf(
+        PropTypes.shape({
+            href: PropTypes.string.isRequired,
+            label: PropTypes.string.isRequired,
+        })
+    ).isRequired,
+    user: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        avatar: PropTypes.string.isRequired,
+    }),
+};
+
+Header.defaultProps = {
+    logo: '',
+    user: null,
+};
+
+const styles = {
+    header: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px 20px',
+        borderBottom: '1px solid #ddd',
+    },
+    logoContainer: {
+        flex: '0 1 auto',
+    },
+    logo: {
+        height: '40px',
+    },
+    nav: {
+        flex: '1 1 auto',
+        display: 'flex',
+        justifyContent: 'center',
+    },
+    navList: {
+        listStyle: 'none',
+        display: 'flex',
+        margin: 0,
+        padding: 0,
+    },
+    navItem: {
+        margin: '0 10px',
+    },
+    navLink: {
+        textDecoration: 'none',
+        color: '#000',
+    },
+    userProfile: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    userName: {
+        marginRight: '10px',
+    },
+    userAvatar: {
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+    },
 };
 
 export default Header;
