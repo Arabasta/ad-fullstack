@@ -24,9 +24,12 @@ public class ChartService implements IChartService {
         List<BigDecimal> capitalPercentChangeData = new ArrayList<>();
 
         BigDecimal initialCapital = backTestResult.getInitialCapitalTest();
-        capitalAbsoluteData.add(initialCapital);
         BigDecimal currentCapital = initialCapital;
         BigDecimal cumulativePercentChange = BigDecimal.ZERO;
+        capitalAbsoluteData.add(initialCapital);
+        capitalPercentChangeData.add(cumulativePercentChange);
+        labels.add(0);
+
         List<TradeTransaction> tradeTransactionList = backTestResult.getTradeResults();
 
         for (int i = 0; i < tradeTransactionList.size(); i++) {
