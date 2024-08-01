@@ -8,6 +8,8 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.ses.SesClient;
+import software.amazon.awssdk.services.sns.SnsClient;
 
 @Configuration
 public class AwsConfig {
@@ -23,6 +25,32 @@ public class AwsConfig {
         );
         return S3Client.builder()
                 .region(Region.of(dotenv.get("AWS_S3_REGION")))
+                .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "sns.notifications.enabled", havingValue = "true")
+    public SnsClient snsClient() {
+        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(
+                dotenv.get("AWS_SNS_ACCESS_KEY_ID"),
+                dotenv.get("AWS_SNS_SECRET_ACCESS_KEY")
+        );
+        return SnsClient.builder()
+                .region(Region.of(dotenv.get("AWS_SNS_REGION")))
+                .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
+                .build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "ses.notifications.enabled", havingValue = "true")
+    public SesClient sesClient() {
+        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(
+                dotenv.get("AWS_SES_ACCESS_KEY_ID"),
+                dotenv.get("AWS_SES_SECRET_ACCESS_KEY")
+        );
+        return SesClient.builder()
+                .region(Region.of(dotenv.get("AWS_SES_REGION")))
                 .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
                 .build();
     }
