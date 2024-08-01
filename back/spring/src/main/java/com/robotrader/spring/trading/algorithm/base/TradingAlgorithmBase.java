@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -140,7 +140,7 @@ public abstract class TradingAlgorithmBase {
     }
 
     public void executeTradeBackTest(String action) {
-        ZonedDateTime dt = DateTimeUtil.convertTimestampToZonedDateTime((Long) priceHistory.get("timestamp").get(0));
+        LocalDateTime dt = DateTimeUtil.convertTimestampToLocalDateTime((Long) priceHistory.get("timestamp").get(0));
         BigDecimal currentPrice = (BigDecimal) priceHistory.get("close").get(0);
 
         lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action);
@@ -156,7 +156,7 @@ public abstract class TradingAlgorithmBase {
     }
 
     public void executeTradeLive(String action) {
-        ZonedDateTime dt = ZonedDateTime.now();
+        LocalDateTime dt = LocalDateTime.now();
         lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action);
 
         // TODO: replace below to use moneypool instead of capitalTest

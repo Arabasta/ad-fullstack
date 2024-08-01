@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -44,6 +44,6 @@ public class MoneyPool {
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private ZonedDateTime tradeDateTime; //TODO: i think not required
+    private LocalDateTime tradeDateTime; //TODO: i think not required
 
 }

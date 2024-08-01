@@ -1,25 +1,27 @@
 package com.robotrader.spring.trading;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.robotrader.spring.aws.s3.S3TransactionLogger;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ObjectStoreTradePersistence implements TradePersistence {
+private final S3TransactionLogger s3TransactionLogger;
+
+    public ObjectStoreTradePersistence(Optional<S3TransactionLogger> s3TransactionLogger) {
+        this.s3TransactionLogger = s3TransactionLogger.orElse(null);
+    }
 
     @Override
     public void saveTrade(TradeTransaction tradeTransaction) {
-
+        s3TransactionLogger.logTradeTransaction(tradeTransaction);
     }
 
     @Override
-    public TradeTransaction readTrade() {
-        return null;
-    }
-
-    @Override
-    public List<TradeTransaction> readAllTrades() {
-        return new ArrayList<>();
+    public List<ObjectNode> getAllTrades() {
+        return s3TransactionLogger.getAllTradeTransactions(Integer.MAX_VALUE);
     }
 }

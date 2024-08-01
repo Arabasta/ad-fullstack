@@ -3,7 +3,7 @@ package com.robotrader.spring.trading.dto;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -11,13 +11,13 @@ public class TradeTransaction {
     private String transactionId;
     private String ticker;
     private String action;
-    private ZonedDateTime transactionDateTime;
+    private LocalDateTime transactionDateTime;
     private BigDecimal transactionQuantity;
     private BigDecimal transactionPrice;
 
     public TradeTransaction() {}
 
-    public TradeTransaction(String ticker, ZonedDateTime transactionDateTime, BigDecimal transactionQuantity, BigDecimal transactionPrice, String action) {
+    public TradeTransaction(String ticker, LocalDateTime transactionDateTime, BigDecimal transactionQuantity, BigDecimal transactionPrice, String action) {
         this.transactionId = UUID.randomUUID().toString();
         this.ticker = ticker;
         this.action = action;

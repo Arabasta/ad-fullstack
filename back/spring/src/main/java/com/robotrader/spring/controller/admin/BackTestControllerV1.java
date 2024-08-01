@@ -14,27 +14,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/admin/trading")
-public class TradingApplicationControllerV1 {
+@RequestMapping("/api/v1/admin/trading/backtest")
+public class BackTestControllerV1 {
     private final TradingApplicationService tradingApplicationService;
     private final TickerService tickerService;
     private final ChartService chartService;
 
     @Autowired
-    public TradingApplicationControllerV1(TradingApplicationService tradingApplicationService, TickerService tickerService, ChartService chartService) {
+    public BackTestControllerV1(TradingApplicationService tradingApplicationService, TickerService tickerService, ChartService chartService) {
         this.tradingApplicationService = tradingApplicationService;
         this.tickerService = tickerService;
         this.chartService = chartService;
     }
 
-    @GetMapping
+    @GetMapping("/view")
     public ResponseEntity<ApiResponse<List<String>>> getTradingAlgorithms() {
         List<String> algorithmList = tradingApplicationService.getAlgorithmList();
         return ResponseEntity.ok(new ApiResponse<>("success", "Algorithm list retrieved successfully", algorithmList));
     }
 
-    @GetMapping("backtest")
-    public ResponseEntity<ApiResponse<ChartDataDTO>> getTradingBackTestResults(@RequestParam String ticker,
+    @GetMapping("/{ticker}")
+    public ResponseEntity<ApiResponse<ChartDataDTO>> getTradingBackTestResults(@PathVariable String ticker,
                                                                                @RequestParam PortfolioTypeEnum portfolioType) {
 
         BackTestResultDTO tradeResults = tradingApplicationService.runTradingAlgorithmBackTest(ticker, portfolioType);

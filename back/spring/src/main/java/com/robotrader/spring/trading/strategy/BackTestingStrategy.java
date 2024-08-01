@@ -1,5 +1,6 @@
 package com.robotrader.spring.trading.strategy;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
@@ -79,22 +80,30 @@ public class BackTestingStrategy implements TradingStrategy {
                 .collect(Collectors.toList()); //TODO: Predictions == history for now
     }
 
-    //todo: delete printTrade if not required
     @Override
-    public List<TradeTransaction> getTradeResults() {
-        List<TradeTransaction> trades = tradePersistence.readAllTrades();
-        TradeTransaction lastTrade = null;
+    public List<ObjectNode> getTradeResults() {
+        List<ObjectNode> trades = tradePersistence.getAllTrades();
+
+        // Printing of trades
+        ObjectNode lastTrade = null;
         BigDecimal totalProfit = BigDecimal.ZERO;
         System.out.println("Trade Transactions: ");
         if (trades != null && !trades.isEmpty()) {
-            for (TradeTransaction trade : trades) {
-                System.out.println(trade);
-                if (trade.getAction().equals("SELL")) {
-                    BigDecimal profitPerQty = trade.getTransactionPrice().subtract(lastTrade.getTransactionPrice());
-                    BigDecimal subtotalProfit = profitPerQty.multiply(trade.getTransactionQuantity());
-                    totalProfit = totalProfit.add(subtotalProfit);
-                    System.out.println("Profit: " + subtotalProfit);
-                } else if (trade.getAction().equals("BUY")) {
+            for (ObjectNode trade : trades) {
+                System.out.println(trade.toString());
+                String action = trade.get("action").asText();
+                if ("SELL".equals(action)) {
+                    if (lastTrade != null) {
+                        BigDecimal sellPrice = new BigDecimal(trade.get("transactionPrice").asText());
+                        BigDecimal buyPrice = new BigDecimal(lastTrade.get("transactionPrice").asText());
+                        BigDecimal quantity = new BigDecimal(trade.get("transactionQuantity").asText());
+
+                        BigDecimal profitPerQty = sellPrice.subtract(buyPrice);
+                        BigDecimal subtotalProfit = profitPerQty.multiply(quantity);
+                        totalProfit = totalProfit.add(subtotalProfit);
+                        System.out.println("Profit: " + subtotalProfit);
+                    }
+                } else if ("BUY".equals(action)) {
                     lastTrade = trade;
                 }
             }

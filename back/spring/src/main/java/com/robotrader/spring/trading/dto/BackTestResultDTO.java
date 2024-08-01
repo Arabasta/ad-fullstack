@@ -1,5 +1,6 @@
 package com.robotrader.spring.trading.dto;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -10,5 +11,5 @@ import java.util.List;
 @AllArgsConstructor
 public class BackTestResultDTO {
     private BigDecimal initialCapitalTest;
-    private List<TradeTransaction> tradeResults;
+    private List<ObjectNode> tradeResults;
 }

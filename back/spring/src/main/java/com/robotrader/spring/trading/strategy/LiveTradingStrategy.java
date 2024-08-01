@@ -1,5 +1,6 @@
 package com.robotrader.spring.trading.strategy;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.dto.LiveMarketData;
 import com.robotrader.spring.trading.dto.TradeTransaction;
@@ -102,25 +103,7 @@ public class LiveTradingStrategy implements TradingStrategy {
         }
     }
 
-    public List<TradeTransaction> getTradeResults () {
-        List<TradeTransaction> trades = tradePersistence.readAllTrades();
-        TradeTransaction lastTrade = null;
-        BigDecimal totalProfit = BigDecimal.ZERO;
-        System.out.println("Trade Transactions: ");
-        if (trades != null && !trades.isEmpty()) {
-            for (TradeTransaction trade : trades) {
-                System.out.println(trade);
-                if (trade.getAction().equals("SELL")) {
-                    BigDecimal profitPerQty = trade.getTransactionPrice().subtract(lastTrade.getTransactionPrice());
-                    BigDecimal subtotalProfit = profitPerQty.multiply(trade.getTransactionQuantity());
-                    totalProfit = totalProfit.add(subtotalProfit);
-                    System.out.println("Profit: " + subtotalProfit);
-                } else if (trade.getAction().equals("BUY")) {
-                    lastTrade = trade;
-                }
-            }
-            System.out.println("Total Profit: " + totalProfit);
-        }
-        return trades;
+    public List<ObjectNode> getTradeResults() {
+        return tradePersistence.getAllTrades();
     }
 }
