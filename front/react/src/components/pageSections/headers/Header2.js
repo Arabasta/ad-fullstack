@@ -16,9 +16,7 @@ import {
 import { AiOutlineMenu } from "react-icons/ai";
 import { Logo } from "@choc-ui/logo";
 import Button from '../../../components/elements/buttons/Button'
-import {Link, Route, Routes} from 'react-router-dom'
-import HomePage from "../../../pages/navbar/HomePage";
-import walletPage from "../../../pages/navbar/WalletPage";
+import {Link} from 'react-router-dom'
 
 const Header = () => {
     const bg = useColorModeValue("white", "gray.800");
@@ -57,16 +55,19 @@ const Header = () => {
                         <Button variant="ghost">Portfolio</Button>
 
                         <Link to="/wallet">
-                            <Button variant="ghost" href="/wallet">Wallet</Button>
+                            <Button variant="ghost">Wallet</Button>
                         </Link>
 
-                        <Button variant="ghost" href="/news">News</Button>
-                        <Button variant="ghost">Profile</Button>
-                        <Button variant="ghost">Sign in</Button>
+                        <Link to="/news">
+                            <Button variant="ghost">News</Button>
+                        </Link>
 
-                        <Routes>
-                            <Route path="/news" element={walletPage} />
-                        </Routes>
+
+                        <Button variant="ghost">Profile</Button>
+
+                        <Link to="/login">
+                            <Button variant="ghost">Sign in</Button>
+                        </Link>
                     </HStack>
 
                     <Button colorScheme="brand" size="sm">
@@ -107,19 +108,31 @@ const Header = () => {
                             <Button w="full" variant="ghost">
                                 Portfolio
                             </Button>
-                            <Button w="full" variant="ghost"
-                                    href="/home/wallet">
-                                Wallet
-                            </Button>
-                            <Button w="full" variant="ghost">
-                                News
-                            </Button>
+
+                            <Link to="/wallet">
+                                <Button w="full" variant="ghost">
+                                    Wallet
+                                </Button>
+                            </Link>
+
+                            <Link to="/news">
+                                <Button w="full" variant="ghost">
+                                    News
+                                </Button>
+                            </Link>
+
+
                             <Button w="full" variant="ghost">
                                 Profile
                             </Button>
-                            <Button w="full" variant="ghost">
-                                Sign in
-                            </Button>
+
+                            <Link to="/login">
+                                <Button w="full" variant="ghost">
+                                    Sign in
+                                </Button>
+                            </Link>
+
+
                         </VStack>
                     </Box>
                 </HStack>
