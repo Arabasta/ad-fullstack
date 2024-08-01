@@ -10,6 +10,6 @@ public interface ITickerService {
     Ticker create(TickerDTO tickerDTO);
     Ticker getTickerByTickerName(String tickerName);
     List<Ticker> getAllTickers();
-    TickerDTO update(String tickerName, TickerDTO tickerDTO);
     void updateTickerFromDTO(Ticker ticker, TickerDTO tickerDTO);
+    void deleteTicker(String tickerName);
 }

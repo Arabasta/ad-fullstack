@@ -48,17 +48,14 @@ public class TickerService implements ITickerService {
     }
 
     @Override
-    @Transactional
-    public TickerDTO update(String tickerName, TickerDTO tickerDTO) {
-        Ticker ticker = getTickerByTickerName(tickerName);
-        updateTickerFromDTO(ticker, tickerDTO);
-        save(ticker);
-        return tickerDTO;
-    }
-
-    @Override
     public void updateTickerFromDTO(Ticker ticker, TickerDTO tickerDTO) {
         ticker.setTickerName(tickerDTO.getTickerName());
         ticker.setTickerType(tickerDTO.getTickerType());
+    }
+
+    @Override
+    public void deleteTicker(String tickerName) {
+        Ticker ticker = getTickerByTickerName(tickerName);
+        tickerRepository.delete(ticker);
     }
 }
