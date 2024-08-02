@@ -3,10 +3,13 @@ import RecommendedPortfolioType from "../../components/elements/alerts/info/Reco
 
 const RecommendedInvestorProfileTypePage = () => {
     return (
+
         <div>
             <h1>Recommended Portfolio Type</h1>
             <RecommendedPortfolioType />
         </div>
+
+
     );
 };
 

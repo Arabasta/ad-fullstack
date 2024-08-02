@@ -6,6 +6,7 @@
     "@chakra-ui/react": "^2.8.2",
     "@choc-ui/logo": "^1.0.0",
     "@emotion/is-prop-valid": "^1.3.0",
+    "@emotion/memoize": "^0.9.0",
     "@emotion/styled": "^11.13.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
