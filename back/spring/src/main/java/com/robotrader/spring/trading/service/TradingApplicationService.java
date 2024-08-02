@@ -1,18 +1,17 @@
-package com.robotrader.spring.trading.application;
+package com.robotrader.spring.trading.service;
 
+import com.robotrader.spring.aws.s3.S3TransactionLogger;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 import com.robotrader.spring.trading.MemoryStoreTradePersistence;
+import com.robotrader.spring.trading.ObjectStoreTradePersistence;
+import com.robotrader.spring.trading.interfaces.ITradingApplicationService;
 import com.robotrader.spring.trading.dto.BackTestResultDTO;
 import com.robotrader.spring.trading.strategy.BackTestingStrategy;
 import com.robotrader.spring.trading.strategy.LiveTradingStrategy;
-import com.robotrader.spring.trading.service.CryptoWebSocketService;
-import com.robotrader.spring.trading.service.MarketDataService;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithmOne;
-import com.robotrader.spring.trading.service.MarketDataWebSocketService;
-import com.robotrader.spring.trading.service.StockWebSocketService;
 import com.robotrader.spring.trading.strategy.TradingContext;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -31,13 +31,17 @@ public class TradingApplicationService implements ITradingApplicationService {
     private final MarketDataService marketDataService;
     private final CryptoWebSocketService cryptoWebSocketService;
     private final StockWebSocketService stockWebSocketService;
+    private final S3TransactionLogger s3TransactionLogger;
+    private TradingContext tradingContext;
+
 
     @Autowired
-    public TradingApplicationService(MoneyPoolService moneyPoolService, MarketDataService marketDataService, CryptoWebSocketService cryptoWebSocketService, StockWebSocketService stockWebSocketService) {
+    public TradingApplicationService(MoneyPoolService moneyPoolService, MarketDataService marketDataService, CryptoWebSocketService cryptoWebSocketService, StockWebSocketService stockWebSocketService, S3TransactionLogger s3TransactionLogger) {
         this.moneyPoolService = moneyPoolService;
         this.marketDataService = marketDataService;
         this.cryptoWebSocketService = cryptoWebSocketService;
         this.stockWebSocketService = stockWebSocketService;
+        this.s3TransactionLogger = s3TransactionLogger;
     }
 
 //    @Bean
@@ -78,13 +82,18 @@ public class TradingApplicationService implements ITradingApplicationService {
             case STOCKS -> marketDataWebSocketService = stockWebSocketService;
         }
 
-        TradingContext tradingContext = new TradingContext(marketDataService);
+        tradingContext = new TradingContext(marketDataService);
         marketDataService.subscribeToLiveMarketData(tickers, marketDataWebSocketService);
-        tradingContext.setStrategy(new LiveTradingStrategy(new MemoryStoreTradePersistence())); //todo: change to object store
+        tradingContext.setStrategy(new LiveTradingStrategy(new ObjectStoreTradePersistence(Optional.ofNullable(s3TransactionLogger))));
         for (String ticker : tickers) {
             TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
             tradingContext.executeTradingStrategy(tradingAlgorithmOne);
         }
+    }
+
+    @Override
+    public void stopTradingAlgorithmLive() {
+        tradingContext.stop(marketDataService);
     }
 
 

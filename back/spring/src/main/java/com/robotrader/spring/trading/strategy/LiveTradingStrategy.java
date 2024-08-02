@@ -82,6 +82,7 @@ public class LiveTradingStrategy implements TradingStrategy {
                             error.printStackTrace();
                         }
                 );
+
     }
 
     public List<BigDecimal> getPricePredictions(Map<String, List<Object>> marketDataHistory) {
@@ -91,13 +92,13 @@ public class LiveTradingStrategy implements TradingStrategy {
                 .collect(Collectors.toList()); //TODO: Predictions == history for now
     }
 
-    public void stop() {
-        unsubscribeFromMarketData();
+    public void stop(MarketDataService marketDataService) {
+        unsubscribeFromFlux();
         completionFuture.complete(null); // Complete on stop
+        marketDataService.disconnectLiveMarketData();
     }
 
-    // todo: is it possible to unsub for 1 ticker only? or need to resub
-    public void unsubscribeFromMarketData() {
+    public void unsubscribeFromFlux() {
         if (dataSubscription != null && !dataSubscription.isDisposed()) {
             dataSubscription.dispose();
         }

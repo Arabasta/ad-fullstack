@@ -111,4 +111,9 @@ public class BackTestingStrategy implements TradingStrategy {
         }
         return trades;
     }
+
+    @Override
+    public void stop(MarketDataService marketDataService){
+
+    }
 }
