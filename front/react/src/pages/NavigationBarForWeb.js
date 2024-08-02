@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import NavButton from '../components/common/buttons/NavBarButtons';
 import { AuthContext } from '../context/AuthContext';
+import NavButtons from "../components/navigation/navBar/navLinks/NavButtons";
 
 const NavigationBarForWeb = () => {
     const { isAuthenticated, logout } = useContext(AuthContext);
@@ -11,20 +11,20 @@ const NavigationBarForWeb = () => {
 
     return (
         <ul className="navbar-nav">
-            <NavButton to="/news" label="NEWS" />
-            <NavButton to="/settings" label="SETTINGS" />
-            <NavButton to="/support" label="SUPPORT" />
-            <NavButton to="/wallet" label="WALLET" />
-            <NavButton to="/wallet/history" label="WALLET TX HISTORY" />
-            <NavButton to="/portfolio/history" label="PORTFOLIO TX HISTORY TEMPORARY" />
+            <NavButtons to="/news" label="NEWS" />
+            <NavButtons to="/profile" label="PROFILE" />
+            <NavButtons to="/support" label="SUPPORT" />
+            <NavButtons to="/wallet" label="WALLET" />
+            <NavButtons to="/wallet/history" label="WALLET TX HISTORY" />
+            <NavButtons to="/portfolio/history" label="PORTFOLIO TX HISTORY TEMPORARY" />
             {isAuthenticated ? (
                 <li>
                     <button onClick={handleLogout}>Logout</button>
                 </li>
             ) : (
                 <>
-                    <NavButton to="/login" label="Login" />
-                    <NavButton to="/register" label="Register" />
+                    <NavButtons to="/login" label="Login" />
+                    <NavButtons to="/register" label="Register" />
                 </>
             )}
         </ul>
@@ -32,3 +32,4 @@ const NavigationBarForWeb = () => {
 };
 
 export default NavigationBarForWeb;
+

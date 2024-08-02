@@ -27,11 +27,12 @@ public class FinancialProfileControllerV1 {
         return ResponseEntity.ok(new ApiResponse<>("success", "Financial profile retrieved successfully", financialProfileDTO));
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<ApiResponse<FinancialProfileDTO>> updateFinancialProfile(Authentication authentication,
                                                                                    @Valid @RequestBody FinancialProfileDTO financialProfileDTO) {
         String username = authentication.getName();
         FinancialProfileDTO updatedProfileDTO = financialProfileService.update(username, financialProfileDTO);
         return ResponseEntity.ok(new ApiResponse<>("success", "Financial profile updated successfully", updatedProfileDTO));
     }
+
 }
