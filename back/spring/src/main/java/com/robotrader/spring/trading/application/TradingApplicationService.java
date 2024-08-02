@@ -1,6 +1,7 @@
 package com.robotrader.spring.trading.application;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
+import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 import com.robotrader.spring.trading.MemoryStoreTradePersistence;
 import com.robotrader.spring.trading.dto.BackTestResultDTO;
@@ -70,7 +71,13 @@ public class TradingApplicationService implements ITradingApplicationService {
     }
 
     @Override
-    public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, MarketDataWebSocketService marketDataWebSocketService) {
+    public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, TickerTypeEnum tickerType) {
+        MarketDataWebSocketService marketDataWebSocketService = null;
+        switch (tickerType) {
+            case CRYPTO -> marketDataWebSocketService = cryptoWebSocketService;
+            case STOCKS -> marketDataWebSocketService = stockWebSocketService;
+        }
+
         TradingContext tradingContext = new TradingContext(marketDataService);
         marketDataService.subscribeToLiveMarketData(tickers, marketDataWebSocketService);
         tradingContext.setStrategy(new LiveTradingStrategy(new MemoryStoreTradePersistence())); //todo: change to object store
@@ -82,7 +89,7 @@ public class TradingApplicationService implements ITradingApplicationService {
 
 
     @Override
-    @Scheduled(cron = "0 */10 * * * *") // Runs every 10 minutes
+    @Scheduled(cron = "0 */10 * * * *") // todo: Runs every 10 minutes
     public void runTradingAlgorithm() {
         try {
 
