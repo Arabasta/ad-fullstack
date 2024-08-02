@@ -2,6 +2,7 @@ import useWallet from "../hooks/useWallet";
 import WalletBalance from "../components/wallet/WalletBalance";
 import WalletAddFunds from "../components/wallet/WalletAddFunds";
 import LogoutButton from "../components/form/auth/LogoutButton";
+import WalletWithdrawFunds from "../components/wallet/WalletWithdrawFunds";
 
 const WalletPage = () => {
     // use the useWallet custom hook to get the wallet state and getWallet function
@@ -21,6 +22,8 @@ const WalletPage = () => {
             {/* It is optional, so if you have a page for adding funds only (that doesn't need to update the balance) */}
             {/* you can omit this prop */}
             <WalletAddFunds onAddFunds={getWallet}/>
+
+            <WalletWithdrawFunds onWithdrawFunds={getWallet} wallet={wallet} />
 
             <LogoutButton />
         </div>
