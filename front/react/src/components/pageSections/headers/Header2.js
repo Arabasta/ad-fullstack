@@ -62,8 +62,11 @@ const Header = () => {
                             <Button variant="ghost">News</Button>
                         </Link>
 
-
-                        <Button variant="ghost">Profile</Button>
+                        <Link to="/profile">
+                            <Button w="full" variant="ghost">
+                                Profile
+                            </Button>
+                        </Link>
 
                         <Link to="/login">
                             <Button variant="ghost">Sign in</Button>
@@ -121,10 +124,11 @@ const Header = () => {
                                 </Button>
                             </Link>
 
-
-                            <Button w="full" variant="ghost">
-                                Profile
-                            </Button>
+                            <Link to="/profile">
+                                <Button w="full" variant="ghost">
+                                    Profile
+                                </Button>
+                            </Link>
 
                             <Link to="/login">
                                 <Button w="full" variant="ghost">
