@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         authenticationService.logout();
         setIsAuthenticated(false);
-        navigate('/');  // 登出后跳转到首页
+        navigate('/');
     };
 
     return (

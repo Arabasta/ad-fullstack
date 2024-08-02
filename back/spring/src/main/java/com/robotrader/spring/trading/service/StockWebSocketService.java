@@ -1,7 +1,7 @@
 package com.robotrader.spring.trading.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.robotrader.spring.trading.dto.StockLiveData;
+import com.robotrader.spring.trading.dto.StockLiveDataDTO;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,7 +25,7 @@ public class StockWebSocketService extends MarketDataWebSocketService {
 
     @Override
     public void handleMarketData(JsonNode event) {
-        StockLiveData stockData = new StockLiveData();
+        StockLiveDataDTO stockData = new StockLiveDataDTO();
 
         stockData.setEv(event.get("ev").asText());
         stockData.setSym(event.get("sym").asText());

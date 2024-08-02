@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.s3.model.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @ConditionalOnProperty(name = "s3.transaction_logging.enabled", havingValue = "true")
@@ -29,20 +30,60 @@ public class S3Logger {
                 RequestBody.fromString(value));
     }
 
-    public List<String> listAndRetrieveLatestObjects(String bucketName, String prefix, int count) {
+    public List<String> listAndRetrievePaginatedObjects(String bucketName, String prefix, int page, int size) {
+        List<S3Object> objects = s3Client.listObjectsV2(ListObjectsV2Request.builder()
+                        .bucket(bucketName)
+                        .prefix(prefix)
+                        .build())
+                .contents()
+                .stream()
+                .sorted(Comparator.comparing(S3Object::key).reversed()) // Sort by key (timestamp) in descending order
+                .skip(page * size) // Skip to the current page
+                .limit(size) // Limit the results to the page size
+                .collect(Collectors.toList());
+
+        return objects.stream()
+                .map(S3Object::key)
+                .map(key -> s3Client.getObjectAsBytes(GetObjectRequest.builder().bucket(bucketName).key(key).build()).asUtf8String())
+                .collect(Collectors.toList());
+    }
+
+    private String getContinuationToken(String bucketName, String prefix, int page, int size) {
+        String continuationToken = null;
+        int skipCount = page * size;
+
+        ListObjectsV2Request.Builder requestBuilder = ListObjectsV2Request.builder()
+                .bucket(bucketName)
+                .prefix(prefix)
+                .maxKeys(skipCount + 1);  // skip to the starting point of page
+
+        while (skipCount > 0) {
+            ListObjectsV2Response response = s3Client.listObjectsV2(requestBuilder.continuationToken(continuationToken).build());
+            List<S3Object> objects = response.contents();
+            if (objects.size() < skipCount) {
+                skipCount -= objects.size();
+                continuationToken = response.nextContinuationToken();
+            } else {
+                continuationToken = response.nextContinuationToken();
+                break;
+            }
+        }
+        return continuationToken;
+    }
+
+    // unused for now
+    // anyone using this method should be aware that it will return the last n objects in the bucket
+    public List<String> listAndRetrieveNumObjects(String bucketName, String prefix, int num) {
         List<String> logs = new ArrayList<>();
         ListObjectsV2Request listObjectsReqManual = ListObjectsV2Request.builder()
                 .bucket(bucketName)
                 .prefix(prefix)
-                .maxKeys(count)
+                .maxKeys(num)
                 .build();
 
-        ListObjectsV2Response listObjResponse = s3Client.listObjectsV2(listObjectsReqManual);
-
-        // Retrieve latest 'count' objects
-        listObjResponse.contents().stream()
+        s3Client.listObjectsV2(listObjectsReqManual).contents().stream()
                 .sorted(Comparator.comparing(S3Object::key).reversed())
-                .limit(count)
+                .limit(num)
                 .forEach(s3Object -> {
                     String log = s3Client.getObjectAsBytes(GetObjectRequest.builder()
                             .bucket(bucketName)
@@ -53,6 +94,4 @@ public class S3Logger {
 
         return logs;
     }
-
-
 }

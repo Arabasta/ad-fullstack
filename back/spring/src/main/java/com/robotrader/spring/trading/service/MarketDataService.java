@@ -1,7 +1,9 @@
 package com.robotrader.spring.trading.service;
 
-import com.robotrader.spring.trading.dto.HistoricalData;
-import com.robotrader.spring.trading.dto.LiveMarketData;
+import com.robotrader.spring.trading.dto.HistoricalDataDTO;
+import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
+import com.robotrader.spring.trading.dto.TickerDataApiResponseDTO;
+import com.robotrader.spring.trading.dto.TickerDataDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -16,11 +18,15 @@ import java.util.Map;
 @Service
 public class MarketDataService {
     private final HistoricalDataApiService historicalDataApiService;
+    private final TickerDataApiService tickerDataApiService;
     private MarketDataWebSocketService marketDataWebSocketService;
 
+
     @Autowired
-    public MarketDataService(HistoricalDataApiService historicalDataApiService) {
+    public MarketDataService(HistoricalDataApiService historicalDataApiService,
+                             TickerDataApiService tickerDataApiService) {
         this.historicalDataApiService = historicalDataApiService;
+        this.tickerDataApiService = tickerDataApiService;
     }
 
     public Mono<Map<String, List<Object>>> getHistoricalMarketData(String ticker) {
@@ -35,7 +41,7 @@ public class MarketDataService {
                     List<BigDecimal> lowPrices = new ArrayList<>();
 
                     // Get stock prices in ascending order by time
-                    for (HistoricalData data : stockDataList) {
+                    for (HistoricalDataDTO data : stockDataList) {
                         timestamp.add(0, data.getT());
                         openPrices.add(0, data.getO());
                         closePrices.add(0, data.getC());
@@ -51,6 +57,18 @@ public class MarketDataService {
                 });
     }
 
+    public Mono<List<TickerDataDTO>> getTickerDataByTicker(String ticker) {
+        return tickerDataApiService.getStockTickerDataByTicker(ticker)
+                .collectList()
+                .map(tickerDataList -> {
+                    List<TickerDataDTO> tickerDataDTOList = new ArrayList<>();
+                    for (TickerDataDTO data : tickerDataList) {
+                        tickerDataDTOList.add(data);
+                    }
+                    return tickerDataDTOList;
+                });
+    }
+
 
     public void subscribeToLiveMarketData(List<String> tickers, MarketDataWebSocketService marketDataWebSocketService) {
         this.marketDataWebSocketService = marketDataWebSocketService;
@@ -62,7 +80,7 @@ public class MarketDataService {
         marketDataWebSocketService.disconnect();
     }
 
-    public Flux<LiveMarketData> getLiveMarketDataFlux() {
+    public Flux<LiveMarketDataDTO> getLiveMarketDataFlux() {
         return marketDataWebSocketService.getLiveMarketDataFlux();
     }
 }
