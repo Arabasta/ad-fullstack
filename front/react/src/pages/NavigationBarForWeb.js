@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import NavButton from '../components/common/buttons/NavButtons';
+import NavButton from '../components/common/buttons/NavBarButtons';
 import { AuthContext } from '../context/AuthContext';
 
 const NavigationBarForWeb = () => {
@@ -32,4 +32,3 @@ const NavigationBarForWeb = () => {
 };
 
 export default NavigationBarForWeb;
-

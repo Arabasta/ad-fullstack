@@ -29,6 +29,7 @@ public class UserControllerV1 {
         return ResponseEntity.ok(new ApiResponse<>("success", "User details retrieved successfully", userDTO));
     }
 
+    // todo: return standardized response with ApiResponse
     @GetMapping("/email")
     public ResponseEntity<EmailDTO> getEmail(Authentication authentication) {
         String username = authentication.getName();
@@ -42,9 +43,9 @@ public class UserControllerV1 {
     }
 
     @PutMapping("/update-password")
-    public ResponseEntity<Void> updatePassword(Authentication authentication, @Valid @RequestBody UpdatePasswordDTO updatePasswordDTO) {
+    public ResponseEntity<ApiResponse<String>> updatePassword(Authentication authentication, @Valid @RequestBody UpdatePasswordDTO updatePasswordDTO) {
         String currentUsername = authentication.getName();
         userService.updatePassword(currentUsername, updatePasswordDTO);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new ApiResponse<>("success", "Password updated successfully", null));
     }
 }

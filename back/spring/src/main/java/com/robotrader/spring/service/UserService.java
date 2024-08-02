@@ -1,7 +1,10 @@
 package com.robotrader.spring.service;
 
+import com.robotrader.spring.aws.sns.SnsPasswordNotificationService;
+import com.robotrader.spring.aws.sns.SnsPortfolioNotificationService;
 import com.robotrader.spring.dto.auth.RegistrationRequest;
 import com.robotrader.spring.dto.user.*;
+import com.robotrader.spring.exception.auth.InvalidPasswordException;
 import com.robotrader.spring.exception.notFound.UserNotFoundException;
 import com.robotrader.spring.model.Customer;
 import com.robotrader.spring.model.Portfolio;
@@ -18,18 +21,28 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class UserService implements IUserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final ICustomerService customerService;
     private final PasswordEncoder passwordEncoder;
+    private final SnsPortfolioNotificationService snsPortfolioNotificationService;
+    private final SnsPasswordNotificationService snsPasswordNotificationService;
 
     @Autowired
-    public UserService(UserRepository userRepository, ICustomerService customerService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, ICustomerService customerService, PasswordEncoder passwordEncoder,
+                       Optional<SnsPortfolioNotificationService> snsPortfolioNotificationService,
+                       Optional<SnsPasswordNotificationService> snsPasswordNotificationService) {
         this.userRepository = userRepository;
         this.customerService = customerService;
         this.passwordEncoder = passwordEncoder;
+        this.snsPortfolioNotificationService = snsPortfolioNotificationService.orElse(null);
+        this.snsPasswordNotificationService = snsPasswordNotificationService.orElse(null);
     }
 
     @Transactional
@@ -50,6 +63,22 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public List<UsersDTO> searchUsersByUsernameOrEmail(String search) {
+        return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(search, search)
+                .stream()
+                .map(user -> new UsersDTO(user.getUsername(), user.getEmail(), user.getRole()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UsersDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new UsersDTO(user.getUsername(), user.getEmail(), user.getRole()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -95,8 +124,6 @@ public class UserService implements IUserService, UserDetailsService {
         return user;
     }
 
-
-
     @Override
     public EmailDTO getEmail(String username) {
         User user = getUserByUsername(username);
@@ -116,8 +143,14 @@ public class UserService implements IUserService, UserDetailsService {
     @Transactional
     public void updatePassword(String username, UpdatePasswordDTO updatePasswordDTO) {
         User user = getUserByUsername(username);
-        user.setPassword(passwordEncoder.encode(updatePasswordDTO.getPassword()));
+        // Validate old password
+        if (!passwordEncoder.matches(updatePasswordDTO.getOldPassword(), user.getPassword())) {
+            throw new InvalidPasswordException("Old password is incorrect");
+        }
+        user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
         save(user);
+        if (snsPasswordNotificationService != null)
+            snsPasswordNotificationService.sendPasswordChangeNotification(username);
     }
 
     @Override
@@ -141,13 +174,6 @@ public class UserService implements IUserService, UserDetailsService {
     public void restore(String username) {
         User user = getUserByUsername(username);
         user.setDeleted(false);
-    }
-
-    @Override
-    @Transactional
-    public void lockAccount(String username) {
-        User user = getUserByUsername(username);
-        user.setRole(RoleEnum.ROLE_LOCKED);
     }
 
     @Override
