@@ -52,9 +52,4 @@ public class BackTestControllerV1 {
         return ResponseEntity.ok(new ApiResponse<>("success", "Back test results retrieved successfully", responseDTO));
     }
 
-    @GetMapping("prediction")
-    public ResponseEntity<ApiResponse<List<PredictionDTO>>> getPredictions(@RequestBody List<TickerDTO> tickerDTO) throws IOException {
-        List<PredictionDTO> predictionDTOList = predictionService.byTickerList(tickerDTO);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Prediction retrieved successfully", predictionDTOList));
-    }
 }

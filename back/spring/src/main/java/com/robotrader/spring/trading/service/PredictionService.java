@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class PredictionService {
 
     private final String AWS_S3_PREDICTION_BUCKET_NAME;
-//    private final Dotenv dotenv = Dotenv.load();
 
     public PredictionService(@Value("${AWS_S3_PREDICTION_BUCKET_NAME}") String awsS3PredictionBucketName) {
         this.AWS_S3_PREDICTION_BUCKET_NAME = awsS3PredictionBucketName;
