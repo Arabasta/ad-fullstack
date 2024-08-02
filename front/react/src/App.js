@@ -1,18 +1,18 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import ErrorBoundary from './components/common/error/ErrorBoundary';
+import ErrorBoundary from './components/elements/alerts/error/ErrorBoundary';
 import authRoutes from './routes/AuthRoutes';
 import mainRoutes from './routes/MainRoutes';
 import NavigationBarForWeb from './pages/NavigationBarForWeb';
-import settingsRoutes from './routes/SettingsRoutes';
+import profileRoutes from './routes/ProfileRoutes';
 import NaviRoutes from './routes/NaviRoutes';
 
 const App = () => {
     return (
         <Router>
             <AuthProvider>
-                <AppContent />
+                    <AppContent />
             </AuthProvider>
         </Router>
     );
@@ -32,7 +32,7 @@ const AppContent = () => {
                     {NaviRoutes}
                     {authRoutes}
                     {mainRoutes}
-                    {settingsRoutes}
+                    {profileRoutes}
                 </Routes>
             </ErrorBoundary>
         </>
