@@ -10,7 +10,7 @@ public enum ExcludedPathsEnum {
     LOGIN("/api/v1/auth/login"),
     REGISTER("/api/v1/auth/register"),
     DEVAWSWIPETX("/api/v1/devAws/wipe-tx"),
-    TRADING_PREDICTION("/api/v1/admin/trading/prediction");
-
+    //todo: /prediction/ paths used for API debugging. delete before submission if not needed.
+    PREDICTION_AVAILABLE_TICKERS("/api/v1/admin/prediction/available");
     private final String path;
 }
