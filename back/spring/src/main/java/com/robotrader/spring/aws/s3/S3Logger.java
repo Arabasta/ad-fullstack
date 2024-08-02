@@ -48,6 +48,17 @@ public class S3Logger {
                 .collect(Collectors.toList());
     }
 
+    public List<String> retrieveObjectNameList(String bucketName) {
+        List<S3Object> objects = s3Client.listObjectsV2(ListObjectsV2Request.builder()
+                .bucket(bucketName)
+                .build())
+                .contents();
+
+        return objects.stream()
+                .map(S3Object::key)
+                .collect(Collectors.toList());
+    }
+
     private String getContinuationToken(String bucketName, String prefix, int page, int size) {
         String continuationToken = null;
         int skipCount = page * size;
