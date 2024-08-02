@@ -5,7 +5,7 @@ import HomePage from '../pages/HomePage';
 import NewsPage from '../pages/NewsPage';
 import NotFoundPage from '../pages/error/NotFoundPage';
 import LandingPage from "../pages/LandingPage";
-import WalletPage from "../pages/navbar/WalletPage";
+import WalletPage from "../pages/WalletPage";
 import SupportPage from "../pages/SupportPage";
 import ProfilePage from "../pages/ProfilePage";
 import RecommendedInvestorProfileTypePage from "../pages/auth/RecommendedInvestorProfileTypePage";

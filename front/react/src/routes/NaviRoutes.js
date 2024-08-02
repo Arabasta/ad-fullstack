@@ -1,6 +1,6 @@
 import React from 'react';
 import {Route} from "react-router-dom";
-import WalletPage from "../pages/navbar/WalletPage";
+import WalletPage from "../pages/WalletPage";
 import NewsPage from "../pages/NewsPage";
 import SupportPage from "../pages/SupportPage";
 import ProfilePage from "../pages/ProfilePage";
