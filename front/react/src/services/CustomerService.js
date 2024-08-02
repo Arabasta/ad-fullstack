@@ -1,11 +1,17 @@
 import axiosInstance from '../config/axios/axiosInstance';
 
 const getCustomer = async () => {
-    return await axiosInstance.get(`/v1/customer/details`);
+    try {
+        const response = await axiosInstance.get('/v1/customer/details');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching customer data', error);
+        throw error;
+    }
 };
 
-
-const CustomerService = {
+const customerService = {
     getCustomer
 };
-export default CustomerService;
+
+export default customerService;

@@ -1,9 +1,9 @@
 import React from 'react';
+import useCustomer from '../hooks/useCustomer';
 import ShowCustomerDetails from '../components/customer/ShowCustomerDetails';
-import useCustomer from "../hooks/useCustomer";
 
 const CustomerDetailsPage = () => {
-    const[customer] = useCustomer();
+    const { customer } = useCustomer();
 
     return (
         <div>

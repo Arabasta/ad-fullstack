@@ -3,7 +3,7 @@ import React from 'react';
 const ShowCustomerDetails = ({ customer }) => {
     return (
         <div>
-            {customer !== null ? (
+            {customer ? (
                 <div>
                     <p>FirstName: {customer.firstName}</p>
                     <p>LastName: {customer.lastName}</p>
@@ -11,7 +11,7 @@ const ShowCustomerDetails = ({ customer }) => {
                     <p>Mobile Number: {customer.mobileNumber}</p>
                 </div>
             ) : (
-                <p>Loading user details...</p>
+                <p>Loading customer details...</p>
             )}
         </div>
     );
