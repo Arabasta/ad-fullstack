@@ -1,6 +1,7 @@
 import React from 'react';
 import useTransactionHistory from '../../hooks/useTransactionHistory';
-import TransactionHistoryListView from '../../components/listView/TransactionHistoryListView';
+import TransactionHistoryListView from "../../components/listView/TransactionHistoryListView";
+
 
 const WalletTransactionHistoryPage = () => {
     const { transactions, loadMoreTransactions, hasMore } = useTransactionHistory('wallet');
