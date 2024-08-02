@@ -1,10 +1,11 @@
 import React from 'react';
+import Header2 from "../components/pageSections/headers/Header2";
+import ParagraphWithImageCard from "../components/elements/cards/ParagraphWithImageCard";
+import Footer2 from "../components/pageSections/footers/Footer2";
 //import Header from "../../components/pageSections/headers/Header";
 //import Footer from "../../components/pageSections/footers/Footer";
-//import logo from "../../assets/images/fourquantlogo.jpg"
-import Header2 from "../../components/pageSections/headers/Header2";
-import Footer2 from "../../components/pageSections/footers/Footer2";
-import ParagraphWithImageCard from "../../components/elements/cards/ParagraphWithImageCard";
+//import logo from "../../assets/images/fourquantlogo.
+
 
 const HomePage = () => {
     const navLinks = [
@@ -36,7 +37,7 @@ const HomePage = () => {
             <main>
                 <ParagraphWithImageCard />
             </main>
-            <Footer2/>
+            <Footer2 />
 
         </div>
     );
