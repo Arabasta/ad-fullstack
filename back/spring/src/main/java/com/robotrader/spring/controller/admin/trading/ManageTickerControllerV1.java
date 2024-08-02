@@ -31,25 +31,25 @@ public class ManageTickerControllerV1 {
     @GetMapping
     public ResponseEntity<ApiResponse<TickerListDTO>> getActiveTickers() {
         List<Ticker> tickerList = tickerService.getAllTickers();
-        TickerListDTO tickerListDTO = new TickerListDTO();
-        tickerListDTO.setTickerList(tickerList);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Active ticker list retrieved successfully", tickerListDTO));
+        TickerListDTO responseDTO = new TickerListDTO();
+        responseDTO.setTickerList(tickerList);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Active ticker list retrieved successfully", responseDTO));
     }
 
     @GetMapping("/available")
     public ResponseEntity<ApiResponse<TickerDTOListDTO>> getTickersWithPredictions() {
-        TickerDTOListDTO tickerDTOListDTO = predictionService.getAvailableTickers();
-        return ResponseEntity.ok(new ApiResponse<>("success", "Available tickers list retrieved successfully", tickerDTOListDTO));
+        TickerDTOListDTO responseDTO = predictionService.getAvailableTickers();
+        return ResponseEntity.ok(new ApiResponse<>("success", "Available tickers list retrieved successfully", responseDTO));
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponse<TickerDTO>> createTicker(@RequestBody TickerDTO tickerDTO) {
-        tickerService.create(tickerDTO);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Ticker created successfully", tickerDTO));
+    public ResponseEntity<ApiResponse<TickerDTO>> createTicker(@RequestBody TickerDTO responseDTO) {
+        tickerService.create(responseDTO);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Ticker created successfully", responseDTO));
     }
 
     @DeleteMapping("/{ticker}")
-    public ResponseEntity<ApiResponse<TickerDTO>> deleteTicker(@PathVariable String ticker) {
+    public ResponseEntity<ApiResponse<?>> deleteTicker(@PathVariable String ticker) {
         tickerService.deleteTicker(ticker);
         return ResponseEntity.ok(new ApiResponse<>("success", "Ticker deleted successfully", null));
     }
