@@ -12,6 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TickerDTOListDTO {
-    // DTO for Ticker entity
+    // DTO for Ticker DTO
     private List<TickerDTO> tickerDTOList;
 }
