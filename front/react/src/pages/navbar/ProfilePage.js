@@ -3,7 +3,7 @@ import RecommendedPortfolioType from "../../components/elements/alerts/info/Reco
 import CustomerName from "../../components/common/CustomerName";
 import Header2 from "../../components/pageSections/headers/Header2";
 import Footer2 from "../../components/pageSections/footers/Footer2";
-import ProfileButtons from "../../components/navigation/navBar/navLinks/ProfileButtons";
+import ProfileButtons from "../../components/elements/buttons/ProfileButtons";
 
 const ProfilePage = () => {
     return (
