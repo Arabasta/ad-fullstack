@@ -8,6 +8,8 @@ import com.robotrader.spring.service.interfaces.ITickerService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TickerService implements ITickerService {
     private final TickerRepository tickerRepository;
@@ -41,17 +43,19 @@ public class TickerService implements ITickerService {
     }
 
     @Override
-    @Transactional
-    public TickerDTO update(String tickerName, TickerDTO tickerDTO) {
-        Ticker ticker = getTickerByTickerName(tickerName);
-        updateTickerFromDTO(ticker, tickerDTO);
-        save(ticker);
-        return tickerDTO;
+    public List<Ticker> getAllTickers() {
+        return tickerRepository.findAll();
     }
 
     @Override
     public void updateTickerFromDTO(Ticker ticker, TickerDTO tickerDTO) {
         ticker.setTickerName(tickerDTO.getTickerName());
         ticker.setTickerType(tickerDTO.getTickerType());
+    }
+
+    @Override
+    public void deleteTicker(String tickerName) {
+        Ticker ticker = getTickerByTickerName(tickerName);
+        tickerRepository.delete(ticker);
     }
 }

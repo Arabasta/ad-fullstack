@@ -1,5 +1,6 @@
-package com.robotrader.spring.controller.admin;
+package com.robotrader.spring.controller.admin.trading;
 
+import com.robotrader.spring.dto.backtest.AlgorithmDTO;
 import com.robotrader.spring.dto.chart.ChartDataDTO;
 import com.robotrader.spring.dto.general.ApiResponse;
 import com.robotrader.spring.dto.ticker.TickerDTO;
@@ -18,34 +19,37 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/admin/trading")
-public class TradingApplicationControllerV1 {
+@RequestMapping("/api/v1/admin/trading/backtest")
+public class BackTestControllerV1 {
     private final TradingApplicationService tradingApplicationService;
     private final TickerService tickerService;
     private final ChartService chartService;
     private final PredictionService predictionService;
 
     @Autowired
-    public TradingApplicationControllerV1(TradingApplicationService tradingApplicationService, TickerService tickerService, ChartService chartService, PredictionService predictionService) {
+    public BackTestControllerV1(TradingApplicationService tradingApplicationService, TickerService tickerService, ChartService chartService, PredictionService predictionService) {
         this.tradingApplicationService = tradingApplicationService;
         this.tickerService = tickerService;
         this.chartService = chartService;
         this.predictionService = predictionService;
     }
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<String>>> getTradingAlgorithms() {
-        List<String> algorithmList = tradingApplicationService.getAlgorithmList();
-        return ResponseEntity.ok(new ApiResponse<>("success", "Algorithm list retrieved successfully", algorithmList));
+    @GetMapping("/view")
+    public ResponseEntity<ApiResponse<AlgorithmDTO>> getTradingAlgorithms() {
+        AlgorithmDTO responseDTO = new AlgorithmDTO();
+        responseDTO.setAlgorithms(tradingApplicationService.getAlgorithmList());
+        responseDTO.setPortfolioTypes(PortfolioTypeEnum.values());
+        responseDTO.setTickerList(tickerService.getAllTickers());
+        return ResponseEntity.ok(new ApiResponse<>("success", "Algorithm list retrieved successfully", responseDTO));
     }
 
-    @GetMapping("backtest")
-    public ResponseEntity<ApiResponse<ChartDataDTO>> getTradingBackTestResults(@RequestParam String ticker,
+    @GetMapping("/{ticker}")
+    public ResponseEntity<ApiResponse<ChartDataDTO>> getTradingBackTestResults(@PathVariable String ticker,
                                                                                @RequestParam PortfolioTypeEnum portfolioType) {
 
         BackTestResultDTO tradeResults = tradingApplicationService.runTradingAlgorithmBackTest(ticker, portfolioType);
-        ChartDataDTO chartDataDTO = chartService.transformBackTestDTOtoChartDataDTO(tradeResults);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Back test results retrieved successfully", chartDataDTO));
+        ChartDataDTO responseDTO = chartService.transformBackTestDTOtoChartDataDTO(tradeResults);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Back test results retrieved successfully", responseDTO));
     }
 
     @GetMapping("prediction")

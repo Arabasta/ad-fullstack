@@ -6,15 +6,12 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class MarketDataApiResponse {
-    private boolean adjusted;
+public class TickerDataApiResponseDTO {
+    private int count;
     @JsonProperty("next_url")
     private String nextUrl;
-    private int queryCount;
     @JsonProperty("request_id")
     private String requestId;
-    private List<HistoricalData> results;
-    private int resultsCount;
+    private List<TickerDataDTO> results;
     private String status;
-    private String ticker;
 }
