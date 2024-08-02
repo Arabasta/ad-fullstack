@@ -15,7 +15,7 @@ const useUser = () => {
 
     useEffect(() => {
             getUserDetails();
-    }, []);
+    }, [getUserDetails]);
 
     return { user, getUserDetails };
 };
