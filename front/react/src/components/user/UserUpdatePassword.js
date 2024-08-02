@@ -9,7 +9,7 @@ const UpdatePassword = ({ user, setUser }) => {
 
     const handleUpdatePassword = async () => {
         try {
-            const response = await UserService.updatePassword({ oldPassword, newPassword });
+            await UserService.updatePassword({ oldPassword, newPassword });
             setSuccess('Password updated successfully');
             setError('');
             setNewPassword('');
