@@ -1,10 +1,12 @@
 package com.robotrader.spring.trading.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public abstract class LiveMarketDataDTO extends MarketDataDTO {
 
     public abstract String getTicker();
