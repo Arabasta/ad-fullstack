@@ -1,11 +1,9 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import UpdatePassword from "../../components/user/UserUpdatePassword";
 import UpdateEmail from "../../components/user/UserUpdateEmail";
 import useUser from "../../hooks/useUser";
-import { AuthContext } from "../../context/AuthContext";
 
 const AccountPage = () => {
-    const { isAuthenticated } = useContext(AuthContext);
     const { user, getUserDetails } = useUser();
     const [loading, setLoading] = useState(true);
 
@@ -19,14 +17,9 @@ const AccountPage = () => {
     }, [getUserDetails]);
 
     useEffect(() => {
-        if (isAuthenticated) {
             fetchData();
-        }
-    }, [isAuthenticated, fetchData]);
+    }, [fetchData]);
 
-    if (!isAuthenticated) {
-        return <div>Please log in to view this page.</div>;
-    }
 
     if (loading) {
         return <div>Loading...</div>;

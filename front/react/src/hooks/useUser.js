@@ -1,9 +1,7 @@
-import { useState, useEffect, useContext, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import UserService from '../services/UserService';
-import { AuthContext } from '../context/AuthContext';
 
 const useUser = () => {
-    const { isAuthenticated } = useContext(AuthContext);
     const [user, setUser] = useState(null);
 
     const getUserDetails = useCallback(async () => {
@@ -16,10 +14,8 @@ const useUser = () => {
     }, []);
 
     useEffect(() => {
-        if (isAuthenticated) {
             getUserDetails();
-        }
-    }, [isAuthenticated, getUserDetails]);
+    }, []);
 
     return { user, getUserDetails };
 };

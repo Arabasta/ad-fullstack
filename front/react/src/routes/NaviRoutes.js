@@ -6,6 +6,7 @@ import WalletPage from "../pages/WalletPage";
 import SettingsPage from "../pages/SettingsPage";
 import WalletTransactionHistoryPage from "../pages/wallet/WalletTransactionHistoryPage";
 import PortfolioTransactionHistoryPage from "../pages/portfolio/PortfolioTransactionHistoryPage";
+import CustomerDetailsPage from "../pages/CustomerDetailsPage";
 
 const mainRoutes = [
     <Route key="news" path="/news" element={<NewsPage />} />,
@@ -14,7 +15,9 @@ const mainRoutes = [
     <Route key="settings" path="/settings" element={<SettingsPage />} />,
     <Route key="walletHistory" path="/wallet/history" element={<WalletTransactionHistoryPage />} />,
     // Temporary, to pass in portfolio type when portfolio pages are up
-    <Route key="portfolioHistory" path="/portfolio/history" element={<PortfolioTransactionHistoryPage portfolioType="MODERATE" />} />
+    <Route key="portfolioHistory" path="/portfolio/history" element={<PortfolioTransactionHistoryPage portfolioType="MODERATE" />} />,
+    <Route key="customerDetails" path="/customer/details" element={<CustomerDetailsPage />} />
+
 ];
 
 export default mainRoutes;
