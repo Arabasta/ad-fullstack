@@ -2,7 +2,6 @@ import React from 'react';
 import {
     Flex,
     Box,
-    Image,
     chakra,
     Link,
 } from '@chakra-ui/react'; // Make sure you have Chakra UI installed

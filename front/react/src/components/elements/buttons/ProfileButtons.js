@@ -1,19 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button, Flex, useColorModeValue } from '@chakra-ui/react';
 
-// Function to generate a random color
-function randomColor() {
-    return Math.floor(Math.random() * 5);
-}
-
-// List of colors to choose from
-const colorList = ['#E53E3E', '#38A169', '#00B5D8', '#44337A', '#ED64A6'];
 
 const ProfileButtons = ({ to, label }) => {
     const navigate = useNavigate();
-    const [colorCode, setColorCode] = useState(colorList[randomColor()]);
+    //const [colorCode, setColorCode] = useState(colorList[randomColor()]);
 
     const handleClick = () => {
         navigate(to);
