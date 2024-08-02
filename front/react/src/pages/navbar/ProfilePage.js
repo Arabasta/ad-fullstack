@@ -1,9 +1,9 @@
 import React from 'react';
-import SettingsButton from "../../components/navigation/navBar/navLinks/ProfileButtons";
 import RecommendedPortfolioType from "../../components/elements/alerts/info/RecommendedPortfolioType";
 import CustomerName from "../../components/common/CustomerName";
 import Header2 from "../../components/pageSections/headers/Header2";
 import Footer2 from "../../components/pageSections/footers/Footer2";
+import ProfileButtons from "../../components/navigation/navBar/navLinks/ProfileButtons";
 
 const ProfilePage = () => {
     return (
@@ -17,11 +17,11 @@ const ProfilePage = () => {
             <RecommendedPortfolioType/>
 
             <ul className="nav">
-                <SettingsButton to="/profile/account" label="Update Email and Password"/>
-                <SettingsButton to="/profile/financialProfile" label="Update Financial Profile"/>
-                <SettingsButton to="/profile/address" label="Update Address"/>
-                <SettingsButton to="/profile/preferenceForm" label="Update Investor Profile"/>
-                <SettingsButton to="/profile/notification" label="Notifications"/>
+                <ProfileButtons to="/profile/account" label="Update Email and Password"/>
+                <ProfileButtons to="/profile/financialProfile" label="Update Financial Profile"/>
+                <ProfileButtons to="/profile/address" label="Update Address"/>
+                <ProfileButtons to="/profile/investorProfile" label="Update Investor Profile"/>
+                <ProfileButtons to="/profile/notification" label="Notification Settings"/>
             </ul>
 
             <Footer2/>
