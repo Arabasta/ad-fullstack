@@ -71,7 +71,7 @@ public class PredictionService {
         };
         // Transform the list of stock names into TickerDTO and collect into TickerDTOListDTO
         List<TickerDTO> tickerDTOList = logger
-                .retrieveObjectNameList(AWS_S3_PREDICTION_BUCKET_NAME).stream()
+                .retrieveObjectNameList(AWS_S3_MODEL_BUCKET_NAME).stream()
                 .map(fileName -> fileName.split("\\.")[0]) // splits AAPL.json to AAPL
                 .map(tickerName -> new TickerDTO(tickerTypeEnum, tickerName))
                 .toList();
@@ -79,6 +79,7 @@ public class PredictionService {
         return new TickerDTOListDTO(tickerDTOList);
     }
 
+    // todo: replace reading static predictions .json with calling fastApi for updated predictions.
     private String readJsonFromS3Bucket(String keyName) {
         try {
             AwsConfig config = new AwsConfig();
