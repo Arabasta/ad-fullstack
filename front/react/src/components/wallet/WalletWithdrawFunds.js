@@ -11,7 +11,7 @@ const WalletWithdrawFunds = ({ onWithdrawFunds,wallet }) => {
             if (isNaN(amount) || amount <= 0) {
                 alert('Invalid amount');
                 return;
-            }else if(withdrawAmount < wallet){
+            }else if(withdrawAmount > wallet){
                 alert('not enough fund');
                 return;
             }
