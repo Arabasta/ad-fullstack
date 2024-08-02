@@ -143,7 +143,7 @@ public abstract class TradingAlgorithmBase {
         LocalDateTime dt = DateTimeUtil.convertTimestampToLocalDateTime((Long) priceHistory.get("timestamp").get(0));
         BigDecimal currentPrice = (BigDecimal) priceHistory.get("close").get(0);
 
-        lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action);
+        lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action, portfolioType);
         if (action.equals("BUY")) {
             currentCapitalTest = currentCapitalTest.subtract(currentPrice.multiply(position));
         }
@@ -157,7 +157,7 @@ public abstract class TradingAlgorithmBase {
 
     public void executeTradeLive(String action) {
         LocalDateTime dt = LocalDateTime.now();
-        lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action);
+        lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action, portfolioType);
 
         // TODO: replace below to use moneypool instead of capitalTest
         if (action.equals("BUY")) {

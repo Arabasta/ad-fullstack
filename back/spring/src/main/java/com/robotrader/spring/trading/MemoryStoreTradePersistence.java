@@ -34,6 +34,7 @@ public class MemoryStoreTradePersistence implements TradePersistence {
         node.put("transactionDateTime", tradeTransaction.getTransactionDateTime().format(DATE_TIME_FORMATTER));
         node.put("transactionQuantity", tradeTransaction.getTransactionQuantity());
         node.put("transactionPrice", tradeTransaction.getTransactionPrice());
+        node.put("portfolioType", tradeTransaction.getPortfolioType().ordinal());
         return node;
     }
 }
