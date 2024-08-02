@@ -27,7 +27,7 @@ public class BackTestControllerV1 {
     private final PredictionService predictionService;
 
     @Autowired
-    public BackTestControllerV1(TradingApplicationService tradingApplicationService, TickerService tickerService, ChartService chartService) {
+    public BackTestControllerV1(TradingApplicationService tradingApplicationService, TickerService tickerService, ChartService chartService, PredictionService predictionService) {
         this.tradingApplicationService = tradingApplicationService;
         this.tickerService = tickerService;
         this.chartService = chartService;
