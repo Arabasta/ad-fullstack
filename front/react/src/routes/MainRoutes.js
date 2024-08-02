@@ -9,6 +9,11 @@ import WalletPage from "../pages/navbar/WalletPage";
 import SupportPage from "../pages/navbar/SupportPage";
 import ProfilePage from "../pages/navbar/ProfilePage";
 import RecommendedInvestorProfileTypePage from "../pages/auth/RecommendedInvestorProfileTypePage";
+import LandingPage from "../pages/LandingPage";
+import WalletPage from "../pages/WalletPage";
+import SupportPage from "../pages/SupportPage";
+import SettingsPage from "../pages/SettingsPage";
+import RecommendedPortfolioTypePage from "../pages/auth/RecommendedPortfolioTypePage";
 
 
 const mainRoutes = [
@@ -17,9 +22,10 @@ const mainRoutes = [
     <Route key="login" path="/news" element={<NewsPage />} />,
     <Route key="wallet" path="/wallet" element={<WalletPage />} />,
     <Route key="support" path="/support" element={<SupportPage />} />,
-    <Route key="profile" path="/profile" element={<ProfilePage />} />,
+    <Route key="settings" path="/settings" element={<SettingsPage />} />,
     <Route key="dashboard" path="/dashboard" element={<DashboardPage />} />,
     <Route key="recommended-portfolio-type" path="/recommended-portfolio-type" element={<RecommendedInvestorProfileTypePage />} />,
+    <Route key="recommended-portfolio-type" path="/recommended-portfolio-type" element={<RecommendedPortfolioTypePage />} />,
     <Route key="not-found" path="*" element={<NotFoundPage />} />
 ];
 

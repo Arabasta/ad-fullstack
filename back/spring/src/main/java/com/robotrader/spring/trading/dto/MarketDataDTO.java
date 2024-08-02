@@ -5,7 +5,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class MarketData {
+public class MarketDataDTO {
     private int v;           // Volume
     private BigDecimal vw;   // Volume weighted average price
     private BigDecimal o;    // Open price

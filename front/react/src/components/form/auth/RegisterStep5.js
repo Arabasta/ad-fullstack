@@ -1,4 +1,5 @@
 import React from 'react';
+import InvestorProfileForm from "../InvestProfile/InvestorProfileForm";
 
 const RegisterStep5 = ({
                            investmentDurationScore, setInvestmentDurationScore,
@@ -9,78 +10,68 @@ const RegisterStep5 = ({
                            investmentPersonalityScore, setInvestmentPersonalityScore,
                            handlePrevious, handleRegister, message
                        }) => {
+    const optionsForQuestion1 = [
+        { label: "Less than 3 years", value: 1 },
+        { label: "3-5 years", value: 2 },
+        { label: "6-10 years", value: 3 },
+        { label: "11 years or more", value: 4 }
+    ];
+    const optionsForQuestion2 = [
+        { label: "Less than 2 years", value: 1 },
+        { label: "2-5 years", value: 2 },
+        { label: "6-10 years", value: 3 },
+        { label: "11 years or more", value: 4 }
+    ];
+    const optionsForQuestion3 = [
+        { label: "None", value: 1 },
+        { label: "Limited", value: 2 },
+        { label: "Good", value: 3 },
+        { label: "Extensive", value: 4 }
+    ];
+    const optionsForQuestion4 = [
+        { label: "Take lower than average risks expecting to earn lower than average returns", value: 1 },
+        { label: "Take average risks expecting to earn average returns", value: 2 },
+        { label: "Take above average risks expecting to earn above average returns", value: 3 }
+    ];
+    const optionsForQuestion5 = [
+        { label: "Bonds and/or bonds funds", value: 1 },
+        { label: "Stocks and/or stocks funds", value: 2 },
+        { label: "International securities and/or international funds", value: 3 }
+    ];
+    const optionsForQuestion6 = [
+        { label: "Sell all my shares", value: 1 },
+        { label: "Sell some of my shares", value: 2 },
+        { label: "Do nothing", value: 3 },
+        { label: "Buy more shares", value: 4 }
+    ];
+
     return (
-        <form onSubmit={handleRegister}>
-            <div>
-                <label>Investment Duration Score</label>
-                <input
-                    type="number"
-                    value={investmentDurationScore}
-                    onChange={(e) => setInvestmentDurationScore(e.target.value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-            </div>
-            <div>
-                <label>Withdrawal Spending Plan Score</label>
-                <input
-                    type="number"
-                    value={withdrawalSpendingPlanScore}
-                    onChange={(e) => setWithdrawalSpendingPlanScore(e.target.value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-            </div>
-            <div>
-                <label>Investment Knowledge Score</label>
-                <input
-                    type="number"
-                    value={investmentKnowledgeScore}
-                    onChange={(e) => setInvestmentKnowledgeScore(e.target.value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-            </div>
-            <div>
-                <label>Risk Reward Score</label>
-                <input
-                    type="number"
-                    value={riskRewardScore}
-                    onChange={(e) => setRiskRewardScore(e.target.value)}
-                    min="1"
-                    max="3"
-                    required
-                />
-            </div>
-            <div>
-                <label>Owned Investments Score</label>
-                <input
-                    type="number"
-                    value={ownedInvestmentsScore}
-                    onChange={(e) => setOwnedInvestmentsScore(e.target.value)}
-                    min="1"
-                    max="3"
-                    required
-                />
-            </div>
-            <div>
-                <label>Investment Personality Score</label>
-                <input
-                    type="number"
-                    value={investmentPersonalityScore}
-                    onChange={(e) => setInvestmentPersonalityScore(e.target.value)}
-                    min="1"
-                    max="4"
-                    required
-                />
-            </div>
+        <div>
+            <InvestorProfileForm
+                investmentDurationScore={investmentDurationScore}
+                setInvestmentDurationScore={setInvestmentDurationScore}
+                withdrawalSpendingPlanScore={withdrawalSpendingPlanScore}
+                setWithdrawalSpendingPlanScore={setWithdrawalSpendingPlanScore}
+                investmentKnowledgeScore={investmentKnowledgeScore}
+                setInvestmentKnowledgeScore={setInvestmentKnowledgeScore}
+                riskRewardScore={riskRewardScore}
+                setRiskRewardScore={setRiskRewardScore}
+                ownedInvestmentsScore={ownedInvestmentsScore}
+                setOwnedInvestmentsScore={setOwnedInvestmentsScore}
+                investmentPersonalityScore={investmentPersonalityScore}
+                setInvestmentPersonalityScore={setInvestmentPersonalityScore}
+                handleSubmit={handleRegister}
+                buttonText="Register"
+                message={message}
+                optionsForQuestion1={optionsForQuestion1}
+                optionsForQuestion2={optionsForQuestion2}
+                optionsForQuestion3={optionsForQuestion3}
+                optionsForQuestion4={optionsForQuestion4}
+                optionsForQuestion5={optionsForQuestion5}
+                optionsForQuestion6={optionsForQuestion6}
+            />
             <button type="button" onClick={handlePrevious}>Previous</button>
-            <button type="submit">Register</button>
-            {message && <p>{message}</p>}
-        </form>
+        </div>
     );
 };
 

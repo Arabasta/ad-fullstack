@@ -1,45 +1,55 @@
 package com.robotrader.spring.trading.strategy;
 
-import com.robotrader.spring.trading.algorithm.TradingAlgorithm;
-import com.robotrader.spring.trading.dto.LiveMarketData;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
+import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
 import com.robotrader.spring.trading.dto.TradeTransaction;
+import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.MarketDataService;
 import reactor.core.Disposable;
-import reactor.core.publisher.Flux;
+
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class LiveTradingStrategy implements TradingStrategy {
-    private LiveMarketData latestMarketData;
+    private LiveMarketDataDTO latestMarketData;
     private Disposable dataSubscription;
-    private List<TradeTransaction> tradeTransactions = new ArrayList<>();
+    private final TradePersistence tradePersistence;
+    private final CompletableFuture<Void> completionFuture = new CompletableFuture<>();
+
+    public LiveTradingStrategy(TradePersistence tradePersistence) {
+        this.tradePersistence = tradePersistence;
+    }
 
     @Override
-    public void execute(TradingAlgorithm tradingAlgorithm, MarketDataService marketDataService) {
-        dataSubscription = marketDataService.getLiveMarketDataFlux().subscribe(
-                data -> {
-                    this.latestMarketData = data;
-                    if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithm.getTicker()) ||
-                            latestMarketData.getTicker().equals(tradingAlgorithm.getTicker())) {
-                        tradingAlgorithm.setCurrentPrice(latestMarketData.getC());
-                        setupAndExecuteLiveTrade(tradingAlgorithm, marketDataService);
-                    }
-                },
-                error -> {
-                    System.err.println("Error in market data stream: " + error);
-                    error.printStackTrace();
-                },
-                () -> System.out.println("Market data stream completed")
-        );
+    public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
+        return CompletableFuture.runAsync(() -> {
+            dataSubscription = marketDataService.getLiveMarketDataFlux().subscribe(
+                    data -> {
+                        this.latestMarketData = data;
+                        if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithmBase.getTicker()) ||
+                                latestMarketData.getTicker().equals(tradingAlgorithmBase.getTicker())) {
+                            tradingAlgorithmBase.setCurrentPrice(latestMarketData.getC());
+                            setupAndExecuteLiveTrade(tradingAlgorithmBase, marketDataService);
+                        }
+                    },
+                    error -> {
+                        System.err.println("Error in market data stream: " + error);
+                        error.printStackTrace();
+                    },
+                    () -> System.out.println("Market data stream completed")
+            );
+            completionFuture.complete(null); // Complete when stream ends
+        });
     }
 
     @Override
     public void processTrade(TradeTransaction trade) {
-        tradeTransactions.add(trade); //todo: replace with S3 write
+        tradePersistence.saveTrade(trade);
     }
 
     // Polygon's API and websocket ticker format is different. eg. X:BTCUSD vs X:BTC-USD
@@ -51,14 +61,14 @@ public class LiveTradingStrategy implements TradingStrategy {
     // Polygon's websocket ticker subscription is X:BTC-USD but response object is BTC-USD......
     private String processResponseTicker(String ticker) { return "X:" + ticker; }
 
-    private void setupAndExecuteLiveTrade(TradingAlgorithm tradingAlgorithm, MarketDataService marketDataService) {
-        marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithm.getTicker()))
-                .doOnNext(data-> tradingAlgorithm.setPriceHistory(data))
-                .doOnNext(data -> tradingAlgorithm.setPricePredictions(getPricePredictions(data)))
+    private void setupAndExecuteLiveTrade(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
+        marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
+                .doOnNext(data-> tradingAlgorithmBase.setPriceHistory(data))
+                .doOnNext(data -> tradingAlgorithmBase.setPricePredictions(getPricePredictions(data)))
                 .doOnNext(data -> {
-                    TradeTransaction lastTransactionBeforeExecution = tradingAlgorithm.getLastTradeTransaction();
-                    tradingAlgorithm.executeLiveTrade();
-                    TradeTransaction newTransaction = tradingAlgorithm.getLastTradeTransaction();
+                    TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getLastTradeTransaction();
+                    tradingAlgorithmBase.executeLiveTrade();
+                    TradeTransaction newTransaction = tradingAlgorithmBase.getLastTradeTransaction();
 
                     // Only process the trade if a new transaction was created
                     if (newTransaction != null && !newTransaction.equals(lastTransactionBeforeExecution)) {
@@ -83,6 +93,7 @@ public class LiveTradingStrategy implements TradingStrategy {
 
     public void stop() {
         unsubscribeFromMarketData();
+        completionFuture.complete(null); // Complete on stop
     }
 
     // todo: is it possible to unsub for 1 ticker only? or need to resub
@@ -92,23 +103,7 @@ public class LiveTradingStrategy implements TradingStrategy {
         }
     }
 
-    public void printTrade(List<TradeTransaction> trades) {
-        TradeTransaction lastTrade = null;
-        BigDecimal totalProfit = BigDecimal.ZERO;
-        System.out.println("Trade Transactions: ");
-        if (trades != null && !trades.isEmpty()) {
-            for (TradeTransaction trade : trades) {
-                System.out.println(trade);
-                if (trade.getAction().equals("SELL")) {
-                    BigDecimal profitPerQty = trade.getTransactionPrice().subtract(lastTrade.getTransactionPrice());
-                    BigDecimal subtotalProfit = profitPerQty.multiply(trade.getTransactionQuantity());
-                    totalProfit = totalProfit.add(subtotalProfit);
-                    System.out.println("Profit: " + subtotalProfit);
-                } else if (trade.getAction().equals("BUY")) {
-                    lastTrade = trade;
-                }
-            }
-            System.out.println("Total Profit: " + totalProfit);
-        }
+    public List<ObjectNode> getTradeResults() {
+        return tradePersistence.getAllTrades();
     }
 }

@@ -1,13 +1,13 @@
 package com.robotrader.spring.utils;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 public class DateTimeUtil {
-    public static ZonedDateTime convertTimestampToZonedDateTime(Long timestamp) {
+    public static LocalDateTime convertTimestampToLocalDateTime(Long timestamp) {
         Instant i = Instant.ofEpochMilli(timestamp);
         ZoneId sgZone = ZoneId.of("Asia/Singapore");
-        return ZonedDateTime.ofInstant(i, sgZone);
+        return LocalDateTime.ofInstant(i, sgZone);
     }
 }

@@ -9,10 +9,7 @@ import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,30 +24,34 @@ public class TransactionControllerV1 {
         this.s3TransactionLogger = s3TransactionLogger;
     }
 
-    @GetMapping("/wallet/{count}")
-    public ResponseEntity<?> getWalletTransactions(Authentication authentication, @PathVariable int count) {
+    @GetMapping("/wallet")
+    public ResponseEntity<?> getWalletTransactions(Authentication authentication,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size) {
         if (s3TransactionLogger == null) {
-            ApiErrorResponse response = new ApiErrorResponse("error", "S3 Transaction Logging is disabled or not configured.",
+            ApiErrorResponse response = new ApiErrorResponse("error",
+                    "S3 Transaction Logging is disabled or not configured.",
                     "S3TransactionLogger bean is not available.");
             return ResponseEntity.status(503).body(response);
         }
         String username = authentication.getName();
-        List<ObjectNode> transactions = s3TransactionLogger.getWalletTransactions(username, count);
-        ApiResponse<List<ObjectNode>> apiResponse = new ApiResponse<>("success", "Transactions retrieved successfully", transactions);
-        return ResponseEntity.ok(apiResponse);
+        List<ObjectNode> transactions = s3TransactionLogger.getWalletTransactions(username, page, size);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Transactions retrieved successfully", transactions));
     }
 
-    @GetMapping("/portfolio/{portfolioType}/{count}")
-    public ResponseEntity<?> getPortfolioTransactions(Authentication authentication, @PathVariable PortfolioTypeEnum portfolioType,
-                                                      @PathVariable int count) {
+    @GetMapping("/portfolio")
+    public ResponseEntity<?> getPortfolioTransactions(Authentication authentication,
+                                                      @RequestParam PortfolioTypeEnum portfolioType,
+                                                      @RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int size) {
         if (s3TransactionLogger == null) {
-            ApiErrorResponse response = new ApiErrorResponse("error", "S3 Transaction Logging is disabled or not configured.",
+            ApiErrorResponse response = new ApiErrorResponse("error",
+                    "S3 Transaction Logging is disabled or not configured.",
                     "S3TransactionLogger bean is not available.");
             return ResponseEntity.status(503).body(response);
         }
         String username = authentication.getName();
-        List<ObjectNode> transactions = s3TransactionLogger.getPortfolioTransactions(username, portfolioType, count);
-        ApiResponse<List<ObjectNode>> apiResponse = new ApiResponse<>("success", "Transactions retrieved successfully", transactions);
-        return ResponseEntity.ok(apiResponse);
+        List<ObjectNode> transactions = s3TransactionLogger.getPortfolioTransactions(username, portfolioType, page, size);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Transactions retrieved successfully", transactions));
     }
 }

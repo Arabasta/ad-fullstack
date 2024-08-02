@@ -2,14 +2,16 @@ package com.robotrader.spring.trading.algorithm;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
+import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
-public class TradingAlgorithmOne extends TradingAlgorithm {
+public class TradingAlgorithmOne extends TradingAlgorithmBase {
     private BigDecimal atr;
+    public static final String ALGORITHM_TYPE = "TREND_FOLLOWING_ATR";
 
     public TradingAlgorithmOne(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         super(ticker, portfolioType, moneyPoolService);
@@ -72,7 +74,7 @@ public class TradingAlgorithmOne extends TradingAlgorithm {
 
             // Determine available capital
 //            BigDecimal availableCapital = isTest ? capitalTest : moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
-            BigDecimal availableCapital = capitalTest; //todo: delete this code and uncomment above once moneypool is setup
+            BigDecimal availableCapital = currentCapitalTest; //todo: delete this code and uncomment above once moneypool is setup
 
             // Calculate raw position size
             BigDecimal rawPositionSize = availableCapital.multiply(risk).divide(stopLossAmount, 8, RoundingMode.HALF_UP);

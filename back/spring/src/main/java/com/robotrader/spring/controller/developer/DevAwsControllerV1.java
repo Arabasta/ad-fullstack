@@ -20,7 +20,7 @@ public class DevAwsControllerV1 {
     private final Dotenv dotenv;
 
     @Autowired
-    public DevAwsControllerV1(S3Wipe s3Wipe, Dotenv dotenv) {
+    public DevAwsControllerV1(@Autowired(required = false) S3Wipe s3Wipe, Dotenv dotenv) {
         this.s3Wipe = s3Wipe;
         this.dotenv = dotenv;
     }

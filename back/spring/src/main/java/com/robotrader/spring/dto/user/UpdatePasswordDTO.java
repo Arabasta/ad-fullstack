@@ -8,7 +8,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdatePasswordDTO {
+
+    @NotBlank
+    private String oldPassword;
+
     @NotBlank
     @Size(min = 6, message = "Password must at least 6 characters")
-    private String password;
+    private String newPassword;
 }

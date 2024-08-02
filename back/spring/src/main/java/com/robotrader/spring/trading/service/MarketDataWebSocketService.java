@@ -2,7 +2,7 @@ package com.robotrader.spring.trading.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.robotrader.spring.trading.dto.LiveMarketData;
+import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
 import com.robotrader.spring.trading.interfaces.MarketDataWebSocketHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.socket.CloseStatus;
@@ -28,8 +28,8 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
     protected String apiKey;
     protected CompletableFuture<Void> authenticationFuture = new CompletableFuture<>();
     // Sink publisher can emit multiple elements and have multiple subscribers, with buffering of element
-    protected final Sinks.Many<LiveMarketData> marketDataSink = Sinks.many().multicast().onBackpressureBuffer();
-    protected final Flux<LiveMarketData> marketDataFlux = marketDataSink.asFlux();
+    protected final Sinks.Many<LiveMarketDataDTO> marketDataSink = Sinks.many().multicast().onBackpressureBuffer();
+    protected final Flux<LiveMarketDataDTO> marketDataFlux = marketDataSink.asFlux();
 
     @Override
     public abstract String getEventType();
@@ -147,7 +147,7 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
         }
     }
 
-    public Flux<LiveMarketData> getLiveMarketDataFlux() {
+    public Flux<LiveMarketDataDTO> getLiveMarketDataFlux() {
         return marketDataFlux;
     }
 }
