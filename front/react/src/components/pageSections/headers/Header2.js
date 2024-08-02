@@ -63,9 +63,7 @@ const Header = () => {
                         </Link>
 
                         <Link to="/profile">
-                            <Button w="full" variant="ghost">
-                                Profile
-                            </Button>
+                            <Button variant="ghost">Profile</Button>
                         </Link>
 
                         <Link to="/login">
