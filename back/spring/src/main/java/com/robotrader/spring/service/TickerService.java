@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TickerService implements ITickerService {
@@ -45,6 +46,20 @@ public class TickerService implements ITickerService {
     @Override
     public List<Ticker> getAllTickers() {
         return tickerRepository.findAll();
+    }
+
+    @Override
+    public List<String> getAllStockTickerName() {
+        return tickerRepository.findAllStockTicker().stream()
+                .map(ticker -> ticker.getTickerName())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getAllCrytpoTickerName() {
+        return tickerRepository.findAllCryptoTicker().stream()
+                .map(ticker -> ticker.getTickerName())
+                .collect(Collectors.toList());
     }
 
     @Override
