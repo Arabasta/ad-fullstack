@@ -1,9 +1,9 @@
 import React from 'react';
 import Header from "../components/pageSections/headers/Header";
-import CustomerName from "../components/common/CustomerName";
 import RecommendedPortfolioType from "../components/elements/alerts/info/RecommendedPortfolioType";
 import ProfileButtons from "../components/elements/buttons/ProfileButtons";
 import Footer from "../components/pageSections/footers/Footer";
+import ShowCustomerDetails from "../components/customer/ShowCustomerDetails";
 
 
 const ProfilePage = () => {
@@ -13,7 +13,7 @@ const ProfilePage = () => {
             <h2>Profile</h2>
             <p>Welcome to the Profile Page!</p>
 
-            <CustomerName />
+            <ShowCustomerDetails />
 
             <RecommendedPortfolioType />
             <ul className="nav">

@@ -7,12 +7,13 @@ import SettingsPage from "../pages/SettingsPage";
 import WalletTransactionHistoryPage from "../pages/wallet/WalletTransactionHistoryPage";
 import PortfolioTransactionHistoryPage from "../pages/portfolio/PortfolioTransactionHistoryPage";
 import CustomerDetailsPage from "../pages/CustomerDetailsPage";
+import ProfilePage from "../pages/ProfilePage";
 
 const naviRoutes = [
     <Route key="news" path="/news" element={<NewsPage />} />,
     <Route key="support" path="/support" element={<SupportPage />} />,
     <Route key="wallet" path="/wallet" element={<WalletPage />} />,
-    <Route key="settings" path="/settings" element={<SettingsPage />} />,
+    <Route key="profile" path="/profile" element={<ProfilePage />} />,
     <Route key="walletHistory" path="/wallet/history" element={<WalletTransactionHistoryPage />} />,
     // Temporary, to pass in portfolio type when portfolio pages are up
     <Route key="portfolioHistory" path="/portfolio/history" element={<PortfolioTransactionHistoryPage portfolioType="MODERATE" />} />,
