@@ -1,5 +1,5 @@
 import React from 'react';
-import RecommendedPortfolioType from "../../components/elements/alerts/info/RecommendedPortfolioType";
+import RecommendedPortfolioType from "../../components/elements/alerts/info/RecommendedPortfolioTypeInfoAlert";
 
 const RecommendedInvestorProfileTypePage = () => {
     return (

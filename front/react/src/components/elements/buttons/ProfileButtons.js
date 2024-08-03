@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import Button from './Button'; // Adjust the import path as needed
+import Button from "./Button";
 
 const ProfileButtons = ({ to, label }) => {
     const navigate = useNavigate();
