@@ -28,8 +28,8 @@ public class TradingContext {
         return strategy.getTradeResults();
     }
 
-    public void stop(MarketDataService marketDataService) {
-        strategy.stop(marketDataService);
+    public void stop() {
+        strategy.stop();
     }
 
 }

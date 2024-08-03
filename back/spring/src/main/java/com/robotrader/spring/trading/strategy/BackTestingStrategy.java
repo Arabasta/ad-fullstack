@@ -113,7 +113,7 @@ public class BackTestingStrategy implements TradingStrategy {
     }
 
     @Override
-    public void stop(MarketDataService marketDataService){
+    public void stop(){
 
     }
 }

@@ -19,10 +19,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -32,34 +29,17 @@ public class TradingApplicationService implements ITradingApplicationService {
     private final CryptoWebSocketService cryptoWebSocketService;
     private final StockWebSocketService stockWebSocketService;
     private final S3TransactionLogger s3TransactionLogger;
-    private TradingContext tradingContext;
+    private Map<TickerTypeEnum, TradingContext> tradingContexts = new EnumMap<>(TickerTypeEnum.class);
 
 
     @Autowired
-    public TradingApplicationService(MoneyPoolService moneyPoolService, MarketDataService marketDataService, CryptoWebSocketService cryptoWebSocketService, StockWebSocketService stockWebSocketService, S3TransactionLogger s3TransactionLogger) {
+    public TradingApplicationService(MoneyPoolService moneyPoolService, MarketDataService marketDataService, CryptoWebSocketService cryptoWebSocketService, StockWebSocketService stockWebSocketService, Optional<S3TransactionLogger> s3TransactionLogger) {
         this.moneyPoolService = moneyPoolService;
         this.marketDataService = marketDataService;
         this.cryptoWebSocketService = cryptoWebSocketService;
         this.stockWebSocketService = stockWebSocketService;
-        this.s3TransactionLogger = s3TransactionLogger;
+        this.s3TransactionLogger = s3TransactionLogger.orElse(null);
     }
-
-//    @Bean
-//    public CommandLineRunner commandLineRunner() {
-//        return args -> {
-
-//            runTradingAlgorithmBackTest("AAPL", PortfolioTypeEnum.AGGRESSIVE);
-//            runTradingAlgorithmBackTest("X:BTC-USD", PortfolioTypeEnum.AGGRESSIVE);
-
-//            List<String> stockTickers = Arrays.asList("AAPL","GOOGL");
-//            List<String> stockTickers = Arrays.asList("AAPL");
-//            List<String> cryptoTickers = Arrays.asList("X:BTC-USD","X:ETH-USD");
-//            List<String> cryptoTickers = Arrays.asList("X:BTC-USD");
-//            runTradingAlgorithmLive(stockTickers, PortfolioTypeEnum.AGGRESSIVE, stockWebSocketService);
-//            runTradingAlgorithmLive(cryptoTickers, PortfolioTypeEnum.AGGRESSIVE, cryptoWebSocketService);
-//        };
-//
-//    }
 
     @Override
     public BackTestResultDTO runTradingAlgorithmBackTest(String ticker, PortfolioTypeEnum portfolioType) {
@@ -82,7 +62,8 @@ public class TradingApplicationService implements ITradingApplicationService {
             case STOCKS -> marketDataWebSocketService = stockWebSocketService;
         }
 
-        tradingContext = new TradingContext(marketDataService);
+        TradingContext tradingContext = new TradingContext(marketDataService);
+        tradingContexts.put(tickerType, tradingContext);
         marketDataService.subscribeToLiveMarketData(tickers, marketDataWebSocketService);
         tradingContext.setStrategy(new LiveTradingStrategy(new ObjectStoreTradePersistence(Optional.ofNullable(s3TransactionLogger))));
         for (String ticker : tickers) {
@@ -93,7 +74,10 @@ public class TradingApplicationService implements ITradingApplicationService {
 
     @Override
     public void stopTradingAlgorithmLive() {
-        tradingContext.stop(marketDataService);
+        for (Map.Entry<TickerTypeEnum, TradingContext> entry : tradingContexts.entrySet()) {
+            entry.getValue().stop();
+        }
+        tradingContexts.clear();
     }
 
 

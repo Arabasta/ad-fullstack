@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
 import com.robotrader.spring.trading.interfaces.MarketDataWebSocketHandler;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -28,8 +30,11 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
     protected String apiKey;
     protected CompletableFuture<Void> authenticationFuture = new CompletableFuture<>();
     // Sink publisher can emit multiple elements and have multiple subscribers, with buffering of element
-    protected final Sinks.Many<LiveMarketDataDTO> marketDataSink = Sinks.many().multicast().onBackpressureBuffer();
-    protected final Flux<LiveMarketDataDTO> marketDataFlux = marketDataSink.asFlux();
+    protected Sinks.Many<LiveMarketDataDTO> marketDataSink;
+    protected Flux<LiveMarketDataDTO> marketDataFlux;
+    @Getter
+    @Setter
+    protected boolean isConnectedAndAuthenticated = false;
 
     @Override
     public abstract String getEventType();
@@ -70,6 +75,7 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
     }
 
     public void connect() {
+        resetMarketDataSink();
         WebSocketClient client = new StandardWebSocketClient();
         WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
         String endpoint = getWebSocketEndpoint();
@@ -96,6 +102,7 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
 
     public void subscribe(List<String> tickers) {
         authenticationFuture.thenRun(() -> {
+            isConnectedAndAuthenticated = true;
             try {
                 StringBuilder param = new StringBuilder("\"");
                 String prefix = getSubscriberPrefix();
@@ -147,7 +154,13 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
         }
     }
 
+    public void resetMarketDataSink() {
+        marketDataSink = Sinks.many().multicast().onBackpressureBuffer();
+        marketDataFlux = marketDataSink.asFlux();
+    }
+
     public Flux<LiveMarketDataDTO> getLiveMarketDataFlux() {
+        System.out.println("MarketDataWebSocketService: get live market data flux");
         return marketDataFlux;
     }
 }

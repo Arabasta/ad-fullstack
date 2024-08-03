@@ -76,11 +76,17 @@ public class MarketDataService {
         marketDataWebSocketService.subscribe(tickers);
     }
 
+    public boolean isConnectedAndAuthenticated(){
+        return marketDataWebSocketService.isConnectedAndAuthenticated();
+    }
+
     public void disconnectLiveMarketData() {
         marketDataWebSocketService.disconnect();
+        marketDataWebSocketService.setConnectedAndAuthenticated(false);
     }
 
     public Flux<LiveMarketDataDTO> getLiveMarketDataFlux() {
+        System.out.println("MarketDataService: Subscribing to live market data flux");
         return marketDataWebSocketService.getLiveMarketDataFlux();
     }
 }

@@ -19,32 +19,58 @@ public class LiveTradingStrategy implements TradingStrategy {
     private LiveMarketDataDTO latestMarketData;
     private Disposable dataSubscription;
     private final TradePersistence tradePersistence;
-    private final CompletableFuture<Void> completionFuture = new CompletableFuture<>();
+    private CompletableFuture<Void> completionFuture;
+    private MarketDataService marketDataService;
 
     public LiveTradingStrategy(TradePersistence tradePersistence) {
         this.tradePersistence = tradePersistence;
+        this.completionFuture = new CompletableFuture<>();
     }
 
     @Override
     public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
+        System.out.println("Executing live trading strategy");
+        this.marketDataService = marketDataService;
+        this.completionFuture = new CompletableFuture<>();
+
+        int timeoutSeconds = 10; // Timeout duration for connecting to live data
+        long startTime = System.currentTimeMillis();
+        System.out.println(marketDataService.isConnectedAndAuthenticated());
         return CompletableFuture.runAsync(() -> {
-            dataSubscription = marketDataService.getLiveMarketDataFlux().subscribe(
-                    data -> {
-                        this.latestMarketData = data;
-                        if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithmBase.getTicker()) ||
-                                latestMarketData.getTicker().equals(tradingAlgorithmBase.getTicker())) {
-                            tradingAlgorithmBase.setCurrentPrice(latestMarketData.getC());
-                            setupAndExecuteLiveTrade(tradingAlgorithmBase, marketDataService);
-                        }
-                    },
-                    error -> {
-                        System.err.println("Error in market data stream: " + error);
-                        error.printStackTrace();
-                    },
-                    () -> System.out.println("Market data stream completed")
-            );
-            completionFuture.complete(null); // Complete when stream ends
+            System.out.println("Subscribing to live market data flux");
+
+            while (!marketDataService.isConnectedAndAuthenticated()) {
+            try {
+                if ((System.currentTimeMillis() - startTime) / 1000 > timeoutSeconds) {
+                    throw new RuntimeException("WebSocket connection timed out");
+                }
+                System.out.println("Waiting for WebSocket connection...");
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+                }
+            System.out.println(marketDataService.isConnectedAndAuthenticated());
+            if (marketDataService.isConnectedAndAuthenticated()) {
+                dataSubscription = marketDataService.getLiveMarketDataFlux().subscribe(
+                        data -> {
+                            this.latestMarketData = data;
+                            if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithmBase.getTicker()) ||
+                                    latestMarketData.getTicker().equals(tradingAlgorithmBase.getTicker())) {
+                                tradingAlgorithmBase.setCurrentPrice(latestMarketData.getC());
+                                setupAndExecuteLiveTrade(tradingAlgorithmBase, marketDataService);
+                            }
+                        },
+                        error -> {
+                            System.err.println("Error in market data stream: " + error);
+                            error.printStackTrace();
+                        },
+                        () -> System.out.println("Market data stream completed")
+                );
+                completionFuture.complete(null); // Complete when stream ends
+            }
         });
+
     }
 
     @Override
@@ -92,7 +118,8 @@ public class LiveTradingStrategy implements TradingStrategy {
                 .collect(Collectors.toList()); //TODO: Predictions == history for now
     }
 
-    public void stop(MarketDataService marketDataService) {
+    @Override
+    public void stop() {
         unsubscribeFromFlux();
         completionFuture.complete(null); // Complete on stop
         marketDataService.disconnectLiveMarketData();

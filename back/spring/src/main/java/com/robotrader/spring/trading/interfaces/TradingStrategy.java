@@ -13,5 +13,5 @@ public interface TradingStrategy {
     void processTrade(TradeTransaction tradeTransaction);
     String processTicker(String ticker);
     List<ObjectNode> getTradeResults();
-    void stop(MarketDataService marketDataService);
+    void stop();
 }
