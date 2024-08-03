@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/admin/trading/livetrading")
@@ -25,10 +26,10 @@ public class LiveTradingControllerV1 {
     private final S3TransactionLogger s3TransactionLogger;
 
     @Autowired
-    public LiveTradingControllerV1(TickerService tickerService, TradingApplicationService tradingApplicationService, S3TransactionLogger s3TransactionLogger) {
+    public LiveTradingControllerV1(TickerService tickerService, TradingApplicationService tradingApplicationService, Optional<S3TransactionLogger> s3TransactionLogger) {
         this.tickerService = tickerService;
         this.tradingApplicationService = tradingApplicationService;
-        this.s3TransactionLogger = s3TransactionLogger;
+        this.s3TransactionLogger = s3TransactionLogger.orElse(null);
     }
 
     @GetMapping("/start")
