@@ -2,22 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button as CButton } from '@chakra-ui/react';
 
-/* Buttons Examples:
-Login, Logout, Register,
-Previous, Next, Last
-
-*/
-
 const Button = ({ variant, size, type, colorScheme, onClick, href, children, ...props }) => {
-
     return (
         <CButton variant={variant}
-                size={size}
-                type={type}
-                colorScheme={colorScheme}
+                 size={size}
+                 type={type}
+                 colorScheme={colorScheme}
                  href={href}
-                onClick={onClick}
-                {...props}>
+                 onClick={onClick}
+                 {...props}>
             {children}
         </CButton>
     );
@@ -34,13 +27,10 @@ Button.propTypes = {
 };
 
 Button.defaultProps = {
-    variant:'solid',
-    // include default colorScheme
-    size:'sm',
+    variant: 'solid',
+    size: 'sm',
     type: 'button',
     onClick: () => {},
 };
 
 export default Button;
-
-
