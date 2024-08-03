@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const FreeFormField = ({label, type, value, onChange, placeholder, required}) => {
+const FreeFormField = ({label, type, value, onChange, placeholder, required, color, width, size, borderRadius}) => {
     return (
         <div>
             {label && <label>{label}</label>}
@@ -11,6 +11,7 @@ const FreeFormField = ({label, type, value, onChange, placeholder, required}) =>
                 onChange={onChange}
                 placeholder={placeholder}
                 required={required}
+                style={{color, width, fontSize: size, borderRadius}}
             />
         </div>
     );
@@ -24,6 +25,10 @@ FreeFormField.propTypes = {
     onChange: PropTypes.func.isRequired,
     placeholder: PropTypes.string,
     required: PropTypes.bool,
+    color: PropTypes.string,
+    width: PropTypes.string,
+    size: PropTypes.string,
+    borderRadius: PropTypes.string,
 };
 
 FreeFormField.defaultProps = {
