@@ -13,7 +13,7 @@ const LoginForm = () => {
         e.preventDefault();
         try {
             await login(username, password);
-            navigate('/dashboard');
+            navigate('/');
         } catch (error) {
             setMessage('Invalid login please try again');
         }
