@@ -1,105 +1,147 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Button from "../../elements/buttons/Button";
+// src/Header.js
+import React from "react";
+import {
+    chakra,
+    Box,
+    Flex,
+    useColorModeValue,
+    VisuallyHidden,
+    HStack,
+    useDisclosure,
+    VStack,
+    IconButton,
+    CloseButton,
+} from "@chakra-ui/react";
 
-const Header = ({ logo, navLinks, user }) => {
+import { AiOutlineMenu } from "react-icons/ai";
+import { Logo } from "@choc-ui/logo";
+import Button from '../../../components/elements/buttons/Button'
+import {Link} from 'react-router-dom'
+
+const Header = () => {
+    const bg = useColorModeValue("white", "gray.800");
+    const mobileNav = useDisclosure();
+
     return (
-        <header style={styles.header}>
-            <div style={styles.logoContainer}>
-                {logo && <img src={logo} alt="Logo" style={styles.logo} />}
-            </div>
-            <nav style={styles.nav}>
-                <ul style={styles.navList}>
-                    {navLinks.map((link, index) => (
-                        <li key={index} style={styles.navItem}>
-                            <a href={link.href} style={styles.navLink}>
-                                {link.label}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
+        <chakra.header
+            bg={bg}
+            w="full"
+            px={{ base: 2, sm: 4 }}
+            py={4}
+            shadow="md"
+        >
+            <Flex alignItems="center" justifyContent="space-between" mx="auto">
+                <Flex>
+                    <chakra.a
+                        href="/"
+                        title="FourQuant.ai Home Page"
+                        display="flex"
+                        alignItems="center"
+                    >
+                        <Logo />
+                        <VisuallyHidden>FourQuant.ai</VisuallyHidden>
+                    </chakra.a>
+                    <chakra.h1 fontSize="xl" fontWeight="medium" ml="2">
+                        FourQuant.ai
+                    </chakra.h1>
+                </Flex>
+                <HStack display="flex" alignItems="center" spacing={1}>
+                    <HStack
+                        spacing={1}
+                        mr={1}
+                        color="brand.500"
+                        display={{ base: "none", md: "inline-flex" }}
+                    >
+                        <Button variant="ghost">Portfolio</Button>
 
-                <Button>
-                    Sign Out
-                </Button>
-            </nav>
+                        <Link to="/wallet">
+                            <Button variant="ghost">Wallet</Button>
+                        </Link>
 
-            <div style={styles.userProfile}>
-                {user && (
-                    <>
-                        <span style={styles.userName}>{user.name}</span>
-                        <img src={user.avatar} alt="User Avatar" style={styles.userAvatar} />
-                    </>
-                )}
-            </div>
-        </header>
+                        <Link to="/news">
+                            <Button variant="ghost">News</Button>
+                        </Link>
+
+                        <Link to="/profile">
+                            <Button variant="ghost">Profile</Button>
+                        </Link>
+
+                        <Link to="/login">
+                            <Button variant="ghost">Sign in</Button>
+                        </Link>
+                    </HStack>
+
+                    <Button colorScheme="brand" size="sm">
+                        Get Started
+                    </Button>
+                    <Box display={{ base: "inline-flex", md: "none" }}>
+                        <IconButton
+                            display={{ base: "flex", md: "none" }}
+                            aria-label="Open menu"
+                            fontSize="20px"
+                            color="gray.800"
+                            _dark={{ color: "inherit" }}
+                            variant="ghost"
+                            icon={<AiOutlineMenu />}
+                            onClick={mobileNav.onOpen}
+                        />
+
+                        <VStack
+                            pos="absolute"
+                            top={0}
+                            left={0}
+                            right={0}
+                            display={mobileNav.isOpen ? "flex" : "none"}
+                            flexDirection="column"
+                            p={2}
+                            pb={4}
+                            m={2}
+                            bg={bg}
+                            spacing={3}
+                            rounded="sm"
+                            shadow="sm"
+                        >
+                            <CloseButton
+                                aria-label="Close menu"
+                                onClick={mobileNav.onClose}
+                            />
+
+                            <Button w="full" variant="ghost">
+                                Portfolio
+                            </Button>
+
+                            <Link to="/wallet">
+                                <Button w="full" variant="ghost">
+                                    Wallet
+                                </Button>
+                            </Link>
+
+                            <Link to="/news">
+                                <Button w="full" variant="ghost">
+                                    News
+                                </Button>
+                            </Link>
+
+                            <Link to="/profile">
+                                <Button w="full" variant="ghost">
+                                    Profile
+                                </Button>
+                            </Link>
+
+                            <Link to="/login">
+                                <Button w="full" variant="ghost">
+                                    Sign in
+                                </Button>
+                            </Link>
+
+
+                        </VStack>
+                    </Box>
+                </HStack>
+            </Flex>
+        </chakra.header>
     );
 };
 
-Header.propTypes = {
-    logo: PropTypes.string,
-    navLinks: PropTypes.arrayOf(
-        PropTypes.shape({
-            href: PropTypes.string.isRequired,
-            label: PropTypes.string.isRequired,
-        })
-    ).isRequired,
-    user: PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        avatar: PropTypes.string.isRequired,
-    }),
-};
-
-Header.defaultProps = {
-    logo: '',
-    user: null,
-};
-
-const styles = {
-    header: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '10px 20px',
-        borderBottom: '1px solid #ddd',
-    },
-    logoContainer: {
-        flex: '0 1 auto',
-    },
-    logo: {
-        height: '40px',
-    },
-    nav: {
-        flex: '1 1 auto',
-        display: 'flex',
-        justifyContent: 'flex-end',
-    },
-    navList: {
-        listStyle: 'none',
-        display: 'flex',
-        margin: 0,
-        padding: 0,
-    },
-    navItem: {
-        margin: '0 10px',
-    },
-    navLink: {
-        textDecoration: 'none',
-        color: '#000',
-    },
-    userProfile: {
-        display: 'flex',
-        alignItems: 'center',
-    },
-    userName: {
-        marginLeft: '10px',
-        marginRight: '10px',
-    },
-    userAvatar: {
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-    },
-};
-
 export default Header;
+
