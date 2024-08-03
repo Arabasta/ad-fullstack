@@ -13,8 +13,8 @@ import PortfolioTransactionHistoryPage from "../pages/portfolio/PortfolioTransac
 
 
 const mainRoutes = [
-    <Route key="landing" path="/" element={<LandingPage />} />,
-    <Route key="home" path="/home" element={<HomePage />} />,
+    <Route key="landing" path="/landing" element={<LandingPage />} />,
+    <Route key="home" path="/" element={<HomePage />} />,
     <Route key="login" path="/news" element={<NewsPage />} />,
     <Route key="wallet" path="/wallet" element={<WalletPage />} />,
     <Route key="support" path="/support" element={<SupportPage />} />,
