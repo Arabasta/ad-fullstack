@@ -4,18 +4,19 @@ import RecommendedPortfolioType from "../components/elements/alerts/info/Recomme
 import ProfileButtons from "../components/elements/buttons/ProfileButtons";
 import Footer from "../components/pageSections/footers/Footer";
 import ShowCustomerDetails from "../components/customer/ShowCustomerDetails";
+import useCustomer from "../hooks/useCustomer";
 
 
 const ProfilePage = () => {
     return (
         <div>
-            <Header />
+            <Header/>
             <h2>Profile</h2>
             <p>Welcome to the Profile Page!</p>
 
-            <ShowCustomerDetails />
 
-            <RecommendedPortfolioType />
+
+            <RecommendedPortfolioType/>
             <ul className="nav">
                 <ProfileButtons to="/profile/account" label="Update Email and Password"/>
                 <ProfileButtons to="/profile/financialProfile" label="Update Financial Profile"/>
@@ -24,7 +25,7 @@ const ProfilePage = () => {
                 <ProfileButtons to="/profile/notification" label="Notification Settings"/>
             </ul>
 
-            <Footer />
+            <Footer/>
         </div>
     );
 }
