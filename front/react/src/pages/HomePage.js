@@ -1,18 +1,27 @@
 import React from 'react';
-import Header2 from "../components/pageSections/headers/Header2";
+import Header from "../components/pageSections/headers/Header";
 import ParagraphWithImageCard from "../components/elements/cards/ParagraphWithImageCard";
-import Footer2 from "../components/pageSections/footers/Footer2";
+import Footer from "../components/pageSections/footers/Footer";
 
 
 const HomePage = () => {
 
     return (
         <div>
-            <Header2 />
+            <Header />
             <main>
-                <ParagraphWithImageCard />
+                <ParagraphWithImageCard
+                    title="Turn Your Money into"
+                    subtitle="Assets"
+                    description="The secure way to buy, sell. Asking permission,
+                        not forgiveness. Millions use
+                        FourQuant.ai to diversify
+                        their portfolios."
+                    buttonText="Start Now"
+                    imageUrl="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1&auto=format&fit=crop&w=750&q=80"
+                />
             </main>
-            <Footer2 />
+            <Footer />
 
         </div>
     );

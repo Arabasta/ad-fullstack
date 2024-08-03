@@ -1,84 +1,169 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import FourQuantLogo from "../../../assets/images/fourquant-logo.jpg"
 
-const Footer = ({ navLinks, socialLinks }) => {
+import { Box, Stack, Flex, Image, HStack, Link, Divider, VStack, Icon, Text } from '@chakra-ui/react';
+import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
+import { FiTwitter } from 'react-icons/fi';
+import { GrInstagram } from 'react-icons/gr';
+
+const Footer = () => {
     return (
-        <footer style={styles.footer}>
-            <nav style={styles.nav}>
-                <ul style={styles.navList}>
-                    {navLinks.map((link, index) => (
-                        <li key={index} style={styles.navItem}>
-                            <a href={link.href} style={styles.navLink}>
-                                {link.label}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
-            </nav>
-            <div style={styles.socialLinks}>
-                {socialLinks.map((link, index) => (
-                    <a key={index} href={link.href} aria-label={link.label} style={styles.socialIcon}>
-                        {link.icon}
-                    </a>
-                ))}
-            </div>
-            <p style={styles.copyright}>
-                &copy; {new Date().getFullYear()} Company Name. All rights reserved.
-            </p>
-        </footer>
+        <Box
+            bg="white"
+            _dark={{
+                bg: "gray.600",
+            }}
+        >
+            <Stack
+                direction={{
+                    base: "column",
+                    lg: "row",
+                }}
+                w="full"
+                justify="space-between"
+                p={10}
+            >
+                <Flex justify="center">
+                    <Image
+                        src={FourQuantLogo}
+                        alt="Company Logo"
+                        rounded="lg"
+                        width={{
+                            base: "150px",
+                            lg: "200px",
+                        }}
+                        height={{
+                            base: "75px",
+                            lg: "100px",
+                        }}
+                        my={{
+                            base: 2,
+                            lg: 0,
+                        }}
+                    />
+                </Flex>
+                <HStack
+                    alignItems="start"
+                    flex={1}
+                    justify="space-around"
+                    fontSize={{
+                        base: "12px",
+                        md: "16px",
+                    }}
+                    color="gray.800"
+                    _dark={{
+                        color: "white",
+                    }}
+                    textAlign={{
+                        base: "center",
+                        md: "left",
+                    }}
+                >
+                    <Flex justify="start" direction="column">
+                        <Link textTransform="uppercase">Support</Link>
+                        <Link textTransform="uppercase">Some other Thing</Link>
+                    </Flex>
+                    <Flex justify="start" direction="column">
+                        <Link textTransform="uppercase">Services</Link>
+                        <Link textTransform="uppercase">MarketPlace and Fees</Link>
+                    </Flex>
+                </HStack>
+                <HStack
+                    alignItems="start"
+                    flex={1}
+                    justify="space-around"
+                    fontSize={{
+                        base: "12px",
+                        md: "16px",
+                    }}
+                    color="gray.800"
+                    _dark={{
+                        color: "white",
+                    }}
+                    textAlign={{
+                        base: "center",
+                        md: "left",
+                    }}
+                >
+                    <Flex justify="start" direction="column">
+                        <Link textTransform="uppercase">Show Case</Link>
+                        <Link textTransform="uppercase">Security</Link>
+                        <Link textTransform="uppercase">Trust and Safety</Link>
+                    </Flex>
+                    <Flex justify="start" direction="column">
+                        <Link textTransform="uppercase">About Us</Link>
+                        <Link textTransform="uppercase">Contact Us</Link>
+                        <Link textTransform="uppercase">Resources</Link>
+                    </Flex>
+                </HStack>
+            </Stack>
+            <Divider
+                w="95%"
+                mx="auto"
+                color="gray.600"
+                _dark={{
+                    color: "#F9FAFB",
+                }}
+                h="3.5px"
+            />
+            <VStack py={3}>
+                <HStack justify="center">
+                    <Link>
+                        <Icon
+                            color="gray.800"
+                            _dark={{
+                                color: "white",
+                            }}
+                            h="20px"
+                            w="20px"
+                            as={FaFacebookF}
+                        />
+                    </Link>
+                    <Link>
+                        <Icon
+                            color="gray.800"
+                            _dark={{
+                                color: "white",
+                            }}
+                            h="20px"
+                            w="20px"
+                            as={FiTwitter}
+                        />
+                    </Link>
+                    <Link>
+                        <Icon
+                            _dark={{
+                                color: "white",
+                            }}
+                            h="20px"
+                            w="20px"
+                            as={GrInstagram}
+                        />
+                    </Link>
+                    <Link>
+                        <Icon
+                            _dark={{
+                                color: "white",
+                            }}
+                            h="20px"
+                            w="20px"
+                            as={FaLinkedinIn}
+                        />
+                    </Link>
+                </HStack>
+
+                <Text
+                    textAlign="center"
+                    fontSize="smaller"
+                    _dark={{
+                        color: "white",
+                    }}
+                >
+                    &copy;Copyright. All rights reserved.
+                </Text>
+            </VStack>
+        </Box>
     );
-};
-
-Footer.propTypes = {
-    navLinks: PropTypes.arrayOf(
-        PropTypes.shape({
-            href: PropTypes.string.isRequired,
-            label: PropTypes.string.isRequired,
-        })
-    ).isRequired,
-    socialLinks: PropTypes.arrayOf(
-        PropTypes.shape({
-            href: PropTypes.string.isRequired,
-            label: PropTypes.string.isRequired,
-            icon: PropTypes.element.isRequired,
-        })
-    ).isRequired,
-};
-
-const styles = {
-    footer: {
-        padding: '20px',
-        borderTop: '1px solid #ddd',
-        textAlign: 'center',
-    },
-    nav: {
-        marginBottom: '20px',
-    },
-    navList: {
-        listStyle: 'none',
-        padding: 0,
-        display: 'flex',
-        justifyContent: 'center',
-    },
-    navItem: {
-        margin: '0 10px',
-    },
-    navLink: {
-        textDecoration: 'none',
-        color: '#000',
-    },
-    socialLinks: {
-        marginBottom: '20px',
-    },
-    socialIcon: {
-        margin: '0 10px',
-        color: '#000',
-        fontSize: '24px',
-    },
-    copyright: {
-        fontSize: '14px',
-        color: '#777',
-    },
 };
 
 export default Footer;
