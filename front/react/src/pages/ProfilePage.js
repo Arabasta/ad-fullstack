@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { ChakraProvider, Box, Flex, Heading, VStack, Text } from '@chakra-ui/react';
+import { ChakraProvider, Box, Flex, Heading, VStack, Text, Divider } from '@chakra-ui/react';
 import Header from "../components/pageSections/headers/Header";
-import RecommendedPortfolioType from "../components/elements/alerts/info/RecommendedPortfolioTypeInfoAlert";
-import ProfileButtons from "../components/elements/buttons/ProfileButtons";
 import Footer from "../components/pageSections/footers/Footer";
+import ProfileButtons from "../components/elements/buttons/ProfileButtons";
 import CustomerDetailsCard from "../components/elements/cards/CustomerDetailsCard";
 import CustomerService from "../services/CustomerService";
+import InvestorProfileService from "../services/InvestorProfileService";
 
 const ProfilePage = () => {
     const [customer, setCustomer] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [recommendedPortfolioType, setRecommendedPortfolioType] = useState('');
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchCustomerData = async () => {
             try {
-                const response = await CustomerService.getCustomer()
+                const response = await CustomerService.getCustomer();
                 setCustomer(response.data);
                 setLoading(false);
             } catch (error) {
@@ -23,7 +25,18 @@ const ProfilePage = () => {
             }
         };
 
+        const fetchInvestorProfile = async () => {
+            try {
+                const response = await InvestorProfileService.getInvestorProfile();
+                const profileData = response.data.data;
+                setRecommendedPortfolioType(profileData.recommendedPortfolioType);
+            } catch (error) {
+                setError('Error fetching investor profile');
+            }
+        };
+
         fetchCustomerData();
+        fetchInvestorProfile();
     }, []);
 
     if (loading) {
@@ -34,21 +47,18 @@ const ProfilePage = () => {
         <ChakraProvider>
             <Box>
                 <Header />
-                <Flex direction="column" align="center" mt={4}>
+                <Flex direction="column" align="center" mt={4} mb={8}>
                     <Heading as="h2" size="lg" mb={2}>Profile</Heading>
                     <Text>Welcome to the Profile Page!</Text>
                 </Flex>
 
-                <Flex direction="column" align="center" mt={4} mb={8}>
-                    <CustomerDetailsCard customer={customer} />
-                </Flex>
+                <Flex direction="row" align="center" justify="center" mt={4} mb={8} w="full" p={4}>
+                    <CustomerDetailsCard
+                        customer={customer}
+                        alertMessage={error ? error : `Your recommended portfolio type is: ${recommendedPortfolioType}`}
+                    />
 
-                <Flex direction="column" align="center" mb={8}>
-                    <RecommendedPortfolioType />
-                </Flex>
-
-                <Flex direction="column" align="center" mb={8}>
-                    <VStack spacing={4}>
+                    <VStack spacing={4} align="flex-start" ml={8}>
                         <ProfileButtons to="/profile/account" label="Update Email and Password" />
                         <ProfileButtons to="/profile/financialProfile" label="Update Financial Profile" />
                         <ProfileButtons to="/profile/address" label="Update Address" />
@@ -56,6 +66,8 @@ const ProfilePage = () => {
                         <ProfileButtons to="/profile/notification" label="Notification Settings" />
                     </VStack>
                 </Flex>
+
+                <Divider mb={8} />
 
                 <Footer />
             </Box>
