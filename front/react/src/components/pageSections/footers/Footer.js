@@ -1,4 +1,3 @@
-// src/Footer.js
 import React from 'react';
 import FourQuantLogo from "../../../assets/images/fourquant-logo.jpg"
 

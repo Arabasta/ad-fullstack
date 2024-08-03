@@ -1,15 +1,15 @@
 import React from 'react';
-import Header2 from "../components/pageSections/headers/Header2";
+import Header from "../components/pageSections/headers/Header";
 import CustomerName from "../components/common/CustomerName";
 import RecommendedPortfolioType from "../components/elements/alerts/info/RecommendedPortfolioType";
 import ProfileButtons from "../components/elements/buttons/ProfileButtons";
-import Footer2 from "../components/pageSections/footers/Footer2";
+import Footer from "../components/pageSections/footers/Footer";
 
 
 const ProfilePage = () => {
     return (
         <div>
-            <Header2 />
+            <Header />
             <h2>Profile</h2>
             <p>Welcome to the Profile Page!</p>
 
@@ -24,7 +24,7 @@ const ProfilePage = () => {
                 <ProfileButtons to="/profile/notification" label="Notification Settings"/>
             </ul>
 
-            <Footer2 />
+            <Footer />
         </div>
     );
 }
