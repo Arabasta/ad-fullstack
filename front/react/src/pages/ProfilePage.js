@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ChakraProvider, Box, Flex, Heading, VStack, Text } from '@chakra-ui/react';
 import Header from "../components/pageSections/headers/Header";
 import RecommendedPortfolioType from "../components/elements/alerts/info/RecommendedPortfolioTypeInfoAlert";
 import ProfileButtons from "../components/elements/buttons/ProfileButtons";
@@ -30,24 +31,35 @@ const ProfilePage = () => {
     }
 
     return (
-        <div>
-            <Header/>
-            <h2>Profile</h2>
-            <p>Welcome to the Profile Page!</p>
+        <ChakraProvider>
+            <Box>
+                <Header />
+                <Flex direction="column" align="center" mt={4}>
+                    <Heading as="h2" size="lg" mb={2}>Profile</Heading>
+                    <Text>Welcome to the Profile Page!</Text>
+                </Flex>
 
-            <CustomerDetailsCard customer={customer} />
+                <Flex direction="column" align="center" mt={4} mb={8}>
+                    <CustomerDetailsCard customer={customer} />
+                </Flex>
 
-            <RecommendedPortfolioType/>
-            <ul className="nav">
-                <ProfileButtons to="/profile/account" label="Update Email and Password"/>
-                <ProfileButtons to="/profile/financialProfile" label="Update Financial Profile"/>
-                <ProfileButtons to="/profile/address" label="Update Address"/>
-                <ProfileButtons to="/profile/investorProfile" label="Update Investor Profile"/>
-                <ProfileButtons to="/profile/notification" label="Notification Settings"/>
-            </ul>
+                <Flex direction="column" align="center" mb={8}>
+                    <RecommendedPortfolioType />
+                </Flex>
 
-            <Footer/>
-        </div>
+                <Flex direction="column" align="center" mb={8}>
+                    <VStack spacing={4}>
+                        <ProfileButtons to="/profile/account" label="Update Email and Password" />
+                        <ProfileButtons to="/profile/financialProfile" label="Update Financial Profile" />
+                        <ProfileButtons to="/profile/address" label="Update Address" />
+                        <ProfileButtons to="/profile/investorProfile" label="Update Investor Profile" />
+                        <ProfileButtons to="/profile/notification" label="Notification Settings" />
+                    </VStack>
+                </Flex>
+
+                <Footer />
+            </Box>
+        </ChakraProvider>
     );
 }
 
