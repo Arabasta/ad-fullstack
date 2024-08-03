@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import Button from "./Button";
+import Button from './Button'; // Adjust the import path as needed
 
 const ProfileButtons = ({ to, label }) => {
     const navigate = useNavigate();
@@ -11,9 +11,11 @@ const ProfileButtons = ({ to, label }) => {
     };
 
     return (
-        <Button onClick={handleClick}>
-            {label}
-        </Button>
+        <div>
+            <Button onClick={handleClick}>
+                {label}
+            </Button>
+        </div>
     );
 };
 
