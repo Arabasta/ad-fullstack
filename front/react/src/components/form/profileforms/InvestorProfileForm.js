@@ -1,5 +1,5 @@
 import React from 'react';
-import FormSelect from "../InvestProfile/FormSelect";
+import FormSelect from "../inputFields/FormSelect";
 import {Button} from "@chakra-ui/react";
 
 
