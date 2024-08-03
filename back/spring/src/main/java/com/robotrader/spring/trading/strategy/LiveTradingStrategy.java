@@ -35,39 +35,23 @@ public class LiveTradingStrategy implements TradingStrategy {
         this.marketDataService = marketDataService;
         this.completionFuture = new CompletableFuture<>();
 
-        int timeoutSeconds = 10; // Timeout duration for connecting to live data
-        long startTime = System.currentTimeMillis();
         return CompletableFuture.runAsync(() -> {
-
-            while (!marketDataService.isConnectedAndAuthenticated()) {
-            try {
-                if ((System.currentTimeMillis() - startTime) / 1000 > timeoutSeconds) {
-                    throw new RuntimeException("WebSocket connection timed out");
-                }
-                logger.debug("Waiting for WebSocket connection...");
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-                }
-            if (marketDataService.isConnectedAndAuthenticated()) {
-                dataSubscription = marketDataService.getLiveMarketDataFlux().subscribe(
-                        data -> {
-                            this.latestMarketData = data;
-                            if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithmBase.getTicker()) ||
-                                    latestMarketData.getTicker().equals(tradingAlgorithmBase.getTicker())) {
-                                tradingAlgorithmBase.setCurrentPrice(latestMarketData.getC());
-                                setupAndExecuteLiveTrade(tradingAlgorithmBase, marketDataService);
-                            }
-                        },
-                        error -> {
-                            logger.error("Error in market data stream: " + error);
-                            error.printStackTrace();
-                        },
-                        () -> logger.info("Market data stream completed")
-                );
-                completionFuture.complete(null); // Complete when stream ends
-            }
+            dataSubscription = marketDataService.getLiveMarketDataFlux().subscribe(
+                    data -> {
+                        this.latestMarketData = data;
+                        if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithmBase.getTicker()) ||
+                                latestMarketData.getTicker().equals(tradingAlgorithmBase.getTicker())) {
+                            tradingAlgorithmBase.setCurrentPrice(latestMarketData.getC());
+                            setupAndExecuteLiveTrade(tradingAlgorithmBase, marketDataService);
+                        }
+                    },
+                    error -> {
+                        logger.error("Error in market data stream: " + error);
+                        error.printStackTrace();
+                    },
+                    () -> logger.info("Market data stream completed")
+            );
+            completionFuture.complete(null); // Complete when stream ends
         });
 
     }
@@ -122,7 +106,6 @@ public class LiveTradingStrategy implements TradingStrategy {
     public void stop() {
         unsubscribeFromFlux();
         completionFuture.complete(null); // Complete on stop
-        marketDataService.disconnectLiveMarketData();
     }
 
     public void unsubscribeFromFlux() {

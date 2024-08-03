@@ -28,19 +28,16 @@ import java.util.concurrent.CompletableFuture;
 public class TradingApplicationService implements ITradingApplicationService {
     private final MoneyPoolService moneyPoolService;
     private final MarketDataService marketDataService;
-    private final CryptoWebSocketService cryptoWebSocketService;
-    private final StockWebSocketService stockWebSocketService;
     private final S3TransactionLogger s3TransactionLogger;
-    private Map<TickerTypeEnum, TradingContext> tradingContexts = new EnumMap<>(TickerTypeEnum.class);
+    private List<TradingContext> tradingContexts;
     private static final Logger logger = LoggerFactory.getLogger(TradingApplicationService.class);
 
     @Autowired
-    public TradingApplicationService(MoneyPoolService moneyPoolService, MarketDataService marketDataService, CryptoWebSocketService cryptoWebSocketService, StockWebSocketService stockWebSocketService, Optional<S3TransactionLogger> s3TransactionLogger) {
+    public TradingApplicationService(MoneyPoolService moneyPoolService, MarketDataService marketDataService, Optional<S3TransactionLogger> s3TransactionLogger) {
         this.moneyPoolService = moneyPoolService;
         this.marketDataService = marketDataService;
-        this.cryptoWebSocketService = cryptoWebSocketService;
-        this.stockWebSocketService = stockWebSocketService;
         this.s3TransactionLogger = s3TransactionLogger.orElse(null);
+        this.tradingContexts = new ArrayList<>();
     }
 
     @Override
@@ -58,15 +55,10 @@ public class TradingApplicationService implements ITradingApplicationService {
 
     @Override
     public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, TickerTypeEnum tickerType) {
-        MarketDataWebSocketService marketDataWebSocketService = null;
-        switch (tickerType) {
-            case CRYPTO -> marketDataWebSocketService = cryptoWebSocketService;
-            case STOCKS -> marketDataWebSocketService = stockWebSocketService;
-        }
 
         TradingContext tradingContext = new TradingContext(marketDataService);
-        tradingContexts.put(tickerType, tradingContext);
-        marketDataService.subscribeToLiveMarketData(tickers, marketDataWebSocketService);
+        tradingContexts.add(tradingContext);
+        marketDataService.subscribeToLiveMarketData(tickers, tickerType);
         tradingContext.setStrategy(new LiveTradingStrategy(new ObjectStoreTradePersistence(Optional.ofNullable(s3TransactionLogger))));
         for (String ticker : tickers) {
             TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
@@ -76,10 +68,11 @@ public class TradingApplicationService implements ITradingApplicationService {
 
     @Override
     public void stopTradingAlgorithmLive() {
-        for (Map.Entry<TickerTypeEnum, TradingContext> entry : tradingContexts.entrySet()) {
-            entry.getValue().stop();
+        for (TradingContext tradingContext : tradingContexts) {
+            tradingContext.stop();
         }
         tradingContexts.clear();
+        marketDataService.disconnectLiveMarketData();
     }
 
 

@@ -33,9 +33,6 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler {
     // Sink publisher can emit multiple elements and have multiple subscribers, with buffering of element
     protected Sinks.Many<LiveMarketDataDTO> marketDataSink;
     protected Flux<LiveMarketDataDTO> marketDataFlux;
-    @Getter
-    @Setter
-    protected boolean isConnectedAndAuthenticated = false;
     private static final Logger logger = LoggerFactory.getLogger(MarketDataWebSocketService.class);
 
     public abstract String getEventType();
@@ -102,7 +99,6 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler {
 
     public void subscribe(List<String> tickers) {
         authenticationFuture.thenRun(() -> {
-            isConnectedAndAuthenticated = true;
             try {
                 StringBuilder param = new StringBuilder("\"");
                 String prefix = getSubscriberPrefix();

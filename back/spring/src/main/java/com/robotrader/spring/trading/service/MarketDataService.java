@@ -1,5 +1,6 @@
 package com.robotrader.spring.trading.service;
 
+import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.trading.dto.HistoricalDataDTO;
 import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
 import com.robotrader.spring.trading.dto.TickerDataDTO;
@@ -18,13 +19,18 @@ import java.util.Map;
 public class MarketDataService {
     private final HistoricalDataApiService historicalDataApiService;
     private final TickerDataApiService tickerDataApiService;
+    private final WebSocketConnectionManager webSocketManager;
+    private final WebSocketServiceFactory webSocketFactory;
     private MarketDataWebSocketService marketDataWebSocketService;
 
     @Autowired
     public MarketDataService(HistoricalDataApiService historicalDataApiService,
-                             TickerDataApiService tickerDataApiService) {
+                             TickerDataApiService tickerDataApiService, WebSocketConnectionManager webSocketManager, WebSocketServiceFactory webSocketFactory) {
         this.historicalDataApiService = historicalDataApiService;
         this.tickerDataApiService = tickerDataApiService;
+        this.webSocketManager = webSocketManager;
+        this.webSocketFactory = webSocketFactory;
+        this.marketDataWebSocketService = marketDataWebSocketService;
     }
 
     public Mono<Map<String, List<Object>>> getHistoricalMarketData(String ticker) {
@@ -68,19 +74,15 @@ public class MarketDataService {
     }
 
 
-    public void subscribeToLiveMarketData(List<String> tickers, MarketDataWebSocketService marketDataWebSocketService) {
-        this.marketDataWebSocketService = marketDataWebSocketService;
+    public void subscribeToLiveMarketData(List<String> tickers, TickerTypeEnum tickerType) {
+        marketDataWebSocketService = webSocketFactory.createWebSocketService(tickerType);
+        webSocketManager.addWebSocketService(marketDataWebSocketService);
         marketDataWebSocketService.connect();
         marketDataWebSocketService.subscribe(tickers);
     }
 
-    public boolean isConnectedAndAuthenticated(){
-        return marketDataWebSocketService.isConnectedAndAuthenticated();
-    }
-
     public void disconnectLiveMarketData() {
-        marketDataWebSocketService.disconnect();
-        marketDataWebSocketService.setConnectedAndAuthenticated(false);
+        webSocketManager.disconnectAll();
     }
 
     public Flux<LiveMarketDataDTO> getLiveMarketDataFlux() {
