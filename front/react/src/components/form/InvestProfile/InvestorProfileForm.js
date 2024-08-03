@@ -1,5 +1,7 @@
 import React from 'react';
 import FormSelect from "../InvestProfile/FormSelect";
+import {Button} from "@chakra-ui/react";
+
 
 const InvestorProfileForm = ({
                                  investmentDurationScore, setInvestmentDurationScore,
@@ -55,7 +57,9 @@ const InvestorProfileForm = ({
                 options={optionsForQuestion6}
                 required
             />
-            <button type="submit">{buttonText}</button>
+            <Button type="submit" variant="solid" colorScheme="blue" size="md">
+                {buttonText}
+            </Button>
             {message && <p>{message}</p>}
         </form>
     );

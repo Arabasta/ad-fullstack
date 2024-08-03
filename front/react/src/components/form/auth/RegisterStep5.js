@@ -1,5 +1,6 @@
 import React from 'react';
 import InvestorProfileForm from "../InvestProfile/InvestorProfileForm";
+import {Button} from "@chakra-ui/react";
 
 const RegisterStep5 = ({
                            investmentDurationScore, setInvestmentDurationScore,
@@ -70,7 +71,9 @@ const RegisterStep5 = ({
                 optionsForQuestion5={optionsForQuestion5}
                 optionsForQuestion6={optionsForQuestion6}
             />
-            <button type="button" onClick={handlePrevious}>Previous</button>
+            <Button type="button" onClick={handlePrevious} variant="outline" colorScheme="gray" size="md" mt={4}>
+                Previous
+            </Button>
         </div>
     );
 };
