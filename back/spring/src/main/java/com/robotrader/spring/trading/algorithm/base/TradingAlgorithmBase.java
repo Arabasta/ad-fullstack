@@ -6,6 +6,8 @@ import com.robotrader.spring.service.MoneyPoolService;
 import com.robotrader.spring.utils.DateTimeUtil;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -34,6 +36,7 @@ public abstract class TradingAlgorithmBase {
     protected boolean isTest;
     protected final BigDecimal HIGH_PRICE_THRESHOLD = BigDecimal.valueOf(10000);
     protected TradeTransaction lastTradeTransaction;
+    private static final Logger logger = LoggerFactory.getLogger(TradingAlgorithmBase.class);
 
     public TradingAlgorithmBase(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         this.ticker = ticker;
@@ -62,57 +65,47 @@ public abstract class TradingAlgorithmBase {
     // Determining stop loss
     public abstract BigDecimal calculateStopLossPrice(BigDecimal currentPrice);
 
-    public void executeBackTest() {
-        isTest = true;
-        System.out.println("------ Back Test Execution ------");
+    public void execute(boolean isTest) {
+        if (isTest) {
+            this.isTest = true;
+            logger.info("------ Back Test Execution ------");
+        } else {
+            this.isTest = false;
+            logger.info("------ Live Trade Execution ------");
+        }
 
         boolean sellSignal = checkForSellSignal();
-        System.out.println("Sell signal: " + sellSignal);
+        logger.debug("Sell signal: {}", sellSignal);
 
-        if (sellSignal) {
+        if (sellSignal && isTest) {
             executeTradeBackTest("SELL");
             return; // Allow only 1 trade per execution.
-        }
-
-        boolean buySignal = checkForBuySignal();
-        System.out.println("Buy signal: " + buySignal);
-
-        if (buySignal) {
-            executeTradeBackTest("BUY");
-        }
-
-        System.out.println("Current price: " + currentPrice);
-        System.out.println("Profit target: " + profitTarget);
-        System.out.println("Stop loss: " + stopLossPrice);
-    }
-
-    public void executeLiveTrade() {
-        isTest = false;
-        System.out.println("------ Live Trade Execution ------");
-
-        boolean sellSignal = checkForSellSignal();
-        System.out.println("Sell signal: " + sellSignal);
-
-        if (sellSignal) {
+        } else if (sellSignal && !isTest) {
             executeTradeLive("SELL");
             return; // Allow only 1 trade per execution.
         }
 
-        // TODO: temporarily set to always true if tradeable, pending price predictions
-        checkForBuySignal();
         boolean buySignal = false;
-        if (isTradeable()) { buySignal = true; }
-        // TODO: temporarily set to always true if tradeable, pending price predictions
+        if (!isTest) {
+            // TODO: temporarily set to always true if tradeable, pending price predictions
+            checkForBuySignal();
 
-        System.out.println("Buy signal: " + buySignal);
+            if (isTradeable()) { buySignal = true; }
+            // TODO: temporarily set to always true if tradeable, pending price predictions. Should be just buySignal = checkForBuySignal();
+        } else {
+            buySignal = checkForBuySignal();
+        }
+        logger.debug("Buy signal: {}", buySignal);
 
-        if (buySignal) {
+        if (buySignal && isTest) {
+            executeTradeBackTest("BUY");
+        } else if (buySignal && !isTest) {
             executeTradeLive("BUY");
         }
 
-        System.out.println("Current price: " + currentPrice);
-        System.out.println("Profit target: " + profitTarget);
-        System.out.println("Stop loss: " + stopLossPrice);
+        logger.debug("Current price: {}", currentPrice);
+        logger.debug("Profit target: {}", profitTarget);
+        logger.debug("Stop loss: {}", stopLossPrice);
     }
 
     // Risk management. max trades/day, prediction confidence level, enough capital to buy position
@@ -132,8 +125,8 @@ public abstract class TradingAlgorithmBase {
 
         // Check if there's enough capital for the trade
         if (totalCost.compareTo(currentCapitalTest) > 0) { //TODO: use money pool for live trading
-            System.out.println("Position: " + position);
-            System.out.println("Not enough capital for the trade. Required: " + totalCost + ", Available: " + currentCapitalTest);
+            logger.debug("Position: {}", position);
+            logger.debug("Not enough capital for the trade. Required: {}, Available: {}", totalCost, currentCapitalTest);
             return false;
         }
         return true;
@@ -151,8 +144,8 @@ public abstract class TradingAlgorithmBase {
             currentCapitalTest = currentCapitalTest.add(currentPrice.multiply(position));
         }
 
-        System.out.println("Trade: " + lastTradeTransaction);
-        System.out.println("Capital:" + currentCapitalTest);
+        logger.debug("Trade: {}", lastTradeTransaction);
+        logger.debug("Capital:{}", currentCapitalTest);
     }
 
     public void executeTradeLive(String action) {
@@ -166,8 +159,8 @@ public abstract class TradingAlgorithmBase {
         else {
             currentCapitalTest = currentCapitalTest.add(currentPrice.multiply(position));
         }
-        System.out.println("Trade: " + lastTradeTransaction);
-        System.out.println("Capital:" + currentCapitalTest);
+        logger.debug("Trade: {}", lastTradeTransaction);
+        logger.debug("Capital:{}", currentCapitalTest);
     }
 
     public boolean isSellable() {

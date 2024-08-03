@@ -7,6 +7,8 @@ import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.MarketDataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.Disposable;
 
 import java.math.BigDecimal;
@@ -21,6 +23,7 @@ public class LiveTradingStrategy implements TradingStrategy {
     private final TradePersistence tradePersistence;
     private CompletableFuture<Void> completionFuture;
     private MarketDataService marketDataService;
+    private static final Logger logger = LoggerFactory.getLogger(LiveTradingStrategy.class);
 
     public LiveTradingStrategy(TradePersistence tradePersistence) {
         this.tradePersistence = tradePersistence;
@@ -29,28 +32,24 @@ public class LiveTradingStrategy implements TradingStrategy {
 
     @Override
     public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
-        System.out.println("Executing live trading strategy");
         this.marketDataService = marketDataService;
         this.completionFuture = new CompletableFuture<>();
 
         int timeoutSeconds = 10; // Timeout duration for connecting to live data
         long startTime = System.currentTimeMillis();
-        System.out.println(marketDataService.isConnectedAndAuthenticated());
         return CompletableFuture.runAsync(() -> {
-            System.out.println("Subscribing to live market data flux");
 
             while (!marketDataService.isConnectedAndAuthenticated()) {
             try {
                 if ((System.currentTimeMillis() - startTime) / 1000 > timeoutSeconds) {
                     throw new RuntimeException("WebSocket connection timed out");
                 }
-                System.out.println("Waiting for WebSocket connection...");
+                logger.debug("Waiting for WebSocket connection...");
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
                 }
-            System.out.println(marketDataService.isConnectedAndAuthenticated());
             if (marketDataService.isConnectedAndAuthenticated()) {
                 dataSubscription = marketDataService.getLiveMarketDataFlux().subscribe(
                         data -> {
@@ -62,10 +61,10 @@ public class LiveTradingStrategy implements TradingStrategy {
                             }
                         },
                         error -> {
-                            System.err.println("Error in market data stream: " + error);
+                            logger.error("Error in market data stream: " + error);
                             error.printStackTrace();
                         },
-                        () -> System.out.println("Market data stream completed")
+                        () -> logger.info("Market data stream completed")
                 );
                 completionFuture.complete(null); // Complete when stream ends
             }
@@ -93,7 +92,8 @@ public class LiveTradingStrategy implements TradingStrategy {
                 .doOnNext(data -> tradingAlgorithmBase.setPricePredictions(getPricePredictions(data)))
                 .doOnNext(data -> {
                     TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getLastTradeTransaction();
-                    tradingAlgorithmBase.executeLiveTrade();
+                    boolean isTest = false;
+                    tradingAlgorithmBase.execute(isTest);
                     TradeTransaction newTransaction = tradingAlgorithmBase.getLastTradeTransaction();
 
                     // Only process the trade if a new transaction was created
@@ -102,9 +102,9 @@ public class LiveTradingStrategy implements TradingStrategy {
                     }
                 })
                 .subscribe(
-                        data -> System.out.println("Historical data retrieved successfully."),
+                        data -> logger.info("Historical data retrieved successfully."),
                         error -> {
-                            System.err.println("Error during historical data retrieval: " + error.getMessage());
+                            logger.error("Error during historical data retrieval: {}", error.getMessage());
                             error.printStackTrace();
                         }
                 );

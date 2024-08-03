@@ -2,11 +2,14 @@ package com.robotrader.spring.trading.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.robotrader.spring.trading.dto.StockLiveDataDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class StockWebSocketService extends MarketDataWebSocketService {
     private static final String STOCK_WEBSOCKET_ENDPOINT = "wss://delayed.polygon.io/stocks";
+    private static final Logger logger = LoggerFactory.getLogger(StockWebSocketService.class);
 
     @Override
     public String getWebSocketEndpoint() {
@@ -42,7 +45,7 @@ public class StockWebSocketService extends MarketDataWebSocketService {
         stockData.setS(event.get("s").asLong());
         stockData.setE(event.get("e").asLong());
 
-        System.out.println("Stock Data: " + stockData);
+        logger.info("Stock Data: {}", stockData);
 
         marketDataSink.tryEmitNext(stockData);
     }

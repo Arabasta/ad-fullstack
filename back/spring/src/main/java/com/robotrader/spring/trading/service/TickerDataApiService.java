@@ -4,6 +4,8 @@ import com.robotrader.spring.exception.notFound.TickerNotFoundException;
 import com.robotrader.spring.service.TickerService;
 import com.robotrader.spring.trading.dto.TickerDataApiResponseDTO;
 import com.robotrader.spring.trading.dto.TickerDataDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -13,6 +15,7 @@ import reactor.core.publisher.Mono;
 public class TickerDataApiService {
     private final TickerService tickerService;
     private WebClient polygonWebClient;
+    private static final Logger logger = LoggerFactory.getLogger(TickerDataApiService.class);
 
     public TickerDataApiService(WebClient polygonWebClient, TickerService tickerService) {
         this.polygonWebClient = polygonWebClient;
@@ -31,23 +34,28 @@ public class TickerDataApiService {
                         .queryParam("limit", 1000)
                         .build())
                 .retrieve()
-                .onStatus(status -> status.is4xxClientError(), response ->
-                        Mono.error(new RuntimeException("4xx error")))
-                .onStatus(status -> status.is5xxServerError(), response ->
-                        Mono.error(new RuntimeException("5xx error")))
+                .onStatus(status -> status.is4xxClientError(), response -> {
+                    logger.error("4xx error occurred for ticker: {}", ticker);
+                    return Mono.error(new RuntimeException("4xx error"));
+                })
+                .onStatus(status -> status.is5xxServerError(), response -> {
+                    logger.error("5xx error occurred for ticker: {}", ticker);
+                    return Mono.error(new RuntimeException("5xx error"));
+                })
                 .bodyToMono(TickerDataApiResponseDTO.class)
-                .doOnNext(response -> System.out.println("API Response: " + response))
-                .doOnError(error -> System.err.println("Error in API call: " + error.getMessage()));
+                .doOnNext(response -> logger.info("API Response: {}", response))
+                .doOnError(error -> logger.error("Error in API call: {}", error.getMessage()));
 
         return dataStream
                 .flatMap(response -> {
                     if (response.getResults().isEmpty() || response.getResults().get(0) == null ) {
+                        logger.error("Ticker not found in API call: {}", ticker);
                         return Mono.error(new TickerNotFoundException("Ticker not found in API call: " + ticker));
                     }
                     return Mono.just(response);
                 })
                 .flatMapMany(response ->  Flux.fromIterable(response.getResults()))
                 .switchIfEmpty(Mono.error(new RuntimeException("No results found in the API response")))
-                .doOnError(error -> System.err.println("Error fetching ticker: " + error.getMessage() + ticker));
+                .doOnError(error -> logger.error("Error fetching ticker: {}{}", error.getMessage(), ticker));
     }
 }

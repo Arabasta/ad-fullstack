@@ -6,6 +6,8 @@ import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.MarketDataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 
 public class BackTestingStrategy implements TradingStrategy {
     private final TradePersistence tradePersistence;
+    private static final Logger logger = LoggerFactory.getLogger(BackTestingStrategy.class);
 
     public BackTestingStrategy(TradePersistence tradePersistence) {
         this.tradePersistence = tradePersistence;
@@ -28,9 +31,9 @@ public class BackTestingStrategy implements TradingStrategy {
                 .doOnNext(data -> runSimulation(tradingAlgorithmBase, data))
                 .doOnNext(data -> getTradeResults())
                 .toFuture()
-                .thenAccept(data -> System.out.println("Backtesting completed successfully."))
+                .thenAccept(data -> logger.info("Backtesting completed successfully."))
                 .exceptionally(error -> {
-                    System.err.println("Error during backtesting: " + error.getMessage());
+                    logger.error("Error during backtesting: {}", error.getMessage());
                     error.printStackTrace();
                     return null;
                 });
@@ -56,7 +59,8 @@ public class BackTestingStrategy implements TradingStrategy {
 
             tradingAlgorithmBase.setPricePredictions(new ArrayList<>(pricePredictions));
             tradingAlgorithmBase.setPriceHistory(new HashMap<>(marketDataHistory));
-            tradingAlgorithmBase.executeBackTest();
+            boolean isTest = true;
+            tradingAlgorithmBase.execute(isTest);
             pricePredictions.remove(0); // Remove the oldest price
             marketDataHistory.get("timestamp").remove(0);
             marketDataHistory.get("open").remove(0);
@@ -87,10 +91,10 @@ public class BackTestingStrategy implements TradingStrategy {
         // Printing of trades
         ObjectNode lastTrade = null;
         BigDecimal totalProfit = BigDecimal.ZERO;
-        System.out.println("Trade Transactions: ");
+        logger.info("Trade Transactions: ");
         if (trades != null && !trades.isEmpty()) {
             for (ObjectNode trade : trades) {
-                System.out.println(trade.toString());
+                logger.info(trade.toString());
                 String action = trade.get("action").asText();
                 if ("SELL".equals(action)) {
                     if (lastTrade != null) {
@@ -101,13 +105,13 @@ public class BackTestingStrategy implements TradingStrategy {
                         BigDecimal profitPerQty = sellPrice.subtract(buyPrice);
                         BigDecimal subtotalProfit = profitPerQty.multiply(quantity);
                         totalProfit = totalProfit.add(subtotalProfit);
-                        System.out.println("Profit: " + subtotalProfit);
+                        logger.info("Profit: " + subtotalProfit);
                     }
                 } else if ("BUY".equals(action)) {
                     lastTrade = trade;
                 }
             }
-            System.out.println("Total Profit: " + totalProfit);
+            logger.info("Total Profit: {}", totalProfit);
         }
         return trades;
     }

@@ -2,11 +2,14 @@ package com.robotrader.spring.trading.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.robotrader.spring.trading.dto.CryptoLiveDataDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CryptoWebSocketService extends MarketDataWebSocketService {
     private static final String CRYPTO_WEBSOCKET_ENDPOINT = "wss://socket.polygon.io/crypto";
+    private static final Logger logger = LoggerFactory.getLogger(CryptoWebSocketService.class);
 
     @Override
     public String getWebSocketEndpoint() {
@@ -39,7 +42,7 @@ public class CryptoWebSocketService extends MarketDataWebSocketService {
         cryptoData.setS(event.get("s").asLong());
         cryptoData.setE(event.get("e").asLong());
 
-        System.out.println("Crypto Data: " + cryptoData);
+        logger.info("Crypto Data: {}", cryptoData);
 
         marketDataSink.tryEmitNext(cryptoData);
     }

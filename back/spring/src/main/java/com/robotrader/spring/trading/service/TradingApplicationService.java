@@ -14,6 +14,8 @@ import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithmOne;
 import com.robotrader.spring.trading.strategy.TradingContext;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class TradingApplicationService implements ITradingApplicationService {
     private final StockWebSocketService stockWebSocketService;
     private final S3TransactionLogger s3TransactionLogger;
     private Map<TickerTypeEnum, TradingContext> tradingContexts = new EnumMap<>(TickerTypeEnum.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(TradingApplicationService.class);
 
     @Autowired
     public TradingApplicationService(MoneyPoolService moneyPoolService, MarketDataService marketDataService, CryptoWebSocketService cryptoWebSocketService, StockWebSocketService stockWebSocketService, Optional<S3TransactionLogger> s3TransactionLogger) {
@@ -102,7 +104,7 @@ public class TradingApplicationService implements ITradingApplicationService {
                 Field field = clazz.getField("ALGORITHM_TYPE");
                 String algorithmType = (String) field.get(null);
                 algorithmTypes.add(algorithmType);
-                System.out.println(clazz.getName() + ": " + algorithmType);
+                logger.info("{}: {}", clazz.getName(), algorithmType);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }

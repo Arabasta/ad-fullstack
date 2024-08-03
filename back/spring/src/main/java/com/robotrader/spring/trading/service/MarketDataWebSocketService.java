@@ -3,9 +3,10 @@ package com.robotrader.spring.trading.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
-import com.robotrader.spring.trading.interfaces.MarketDataWebSocketHandler;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 // Reference: https://www.geeksforgeeks.org/spring-boot-web-socket/
-public abstract class MarketDataWebSocketService extends TextWebSocketHandler implements MarketDataWebSocketHandler {
+public abstract class MarketDataWebSocketService extends TextWebSocketHandler {
     protected final ObjectMapper objectMapper = new ObjectMapper();
     WebSocketSession session ;
     @Value("${POLYGON_API_KEY}")
@@ -35,26 +36,24 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
     @Getter
     @Setter
     protected boolean isConnectedAndAuthenticated = false;
+    private static final Logger logger = LoggerFactory.getLogger(MarketDataWebSocketService.class);
 
-    @Override
     public abstract String getEventType();
-    @Override
     public abstract String getSubscriberPrefix();
-    @Override
     public abstract String getWebSocketEndpoint();
-    @Override
     public abstract void handleMarketData(JsonNode event);
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         super.afterConnectionEstablished(session);
+        logger.info("WebSocket connection established");
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
         authenticationFuture = new CompletableFuture<>();
-        System.out.println("WebSocket connection closed: " + status);
+        logger.info("WebSocket connection closed: {}", status);
     }
 
     @Override
@@ -70,7 +69,7 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
                 processEvent(jsonNode);
             }
         } catch (Exception e) {
-            System.out.println("Failed to parse message: " + e.getMessage());
+            logger.error("Failed to parse message: {}", e.getMessage());
         }
     }
 
@@ -82,15 +81,15 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
         client.execute(this, headers, URI.create(endpoint))
                 .thenAccept(webSocketSession -> {
                     this.session = webSocketSession;
-                    System.out.println("Connected to WebSocket server: " + getWebSocketEndpoint());
+                    logger.info("Connected to WebSocket server: {}", getWebSocketEndpoint());
                     try {
                         authenticate();
                     } catch (IOException e) {
-                        System.err.println("Failed to authenticate: " + e.getMessage());
+                        logger.error("Failed to authenticate: {}", e.getMessage());
                     }
                 })
                 .exceptionally(throwable -> {
-                    System.err.println("Failed to connect: " + throwable.getMessage());
+                    logger.error("Failed to connect: {}", throwable.getMessage());
                     return null;
                 });
     }
@@ -98,6 +97,7 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
     private void authenticate() throws IOException {
         String authMessage = "{\"action\":\"auth\",\"params\":\"" + apiKey + "\"}";
         session.sendMessage(new TextMessage(authMessage));
+        logger.info("Authenticating...");
     }
 
     public void subscribe(List<String> tickers) {
@@ -113,8 +113,9 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
                 param.append("\"");
                 String subscribeMessage = "{\"action\":\"subscribe\",\"params\":" + param + "}";
                 session.sendMessage(new TextMessage(subscribeMessage));
+                logger.info("Subscribing to {}", subscribeMessage);
             } catch (IOException e) {
-                System.err.println("Failed to subscribe: " + e.getMessage());
+                logger.error("Failed to subscribe: {}", e.getMessage());
             }
         });
     }
@@ -126,17 +127,18 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
         } else if (eventType.equals("status")) {
             handleStatusEvent(event);
         } else {
-            System.out.println("Unhandled event type: " + eventType);
+            logger.error("Unhandled event type: {}", eventType);
         }
     }
 
     private void handleStatusEvent(JsonNode event) {
         String status = event.get("status").asText();
         String message = event.get("message").asText();
-        System.out.println("Status: " + status + " - " + message);
+        logger.info("Status: {} - {}", status, message);
 
         // Only allow subscribe to run once authenticated
         if (status.equals("auth_success")) {
+            logger.info("Authenticated");
             authenticationFuture.complete(null);
         }
     }
@@ -145,12 +147,12 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
         if (session != null && session.isOpen()) {
             try {
                 session.close();
-                System.out.println("WebSocket disconnected");
+                logger.info("WebSocket disconnected");
             } catch (IOException e) {
-                System.err.println("Error while disconnecting: " + e.getMessage());
+                logger.error("Error while disconnecting: {}", e.getMessage());
             }
         } else {
-            System.out.println("WebSocket is not connected");
+            logger.info("WebSocket is not connected");
         }
     }
 
@@ -160,7 +162,6 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler im
     }
 
     public Flux<LiveMarketDataDTO> getLiveMarketDataFlux() {
-        System.out.println("MarketDataWebSocketService: get live market data flux");
         return marketDataFlux;
     }
 }

@@ -2,7 +2,6 @@ package com.robotrader.spring.trading.service;
 
 import com.robotrader.spring.trading.dto.HistoricalDataDTO;
 import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
-import com.robotrader.spring.trading.dto.TickerDataApiResponseDTO;
 import com.robotrader.spring.trading.dto.TickerDataDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ public class MarketDataService {
     private final HistoricalDataApiService historicalDataApiService;
     private final TickerDataApiService tickerDataApiService;
     private MarketDataWebSocketService marketDataWebSocketService;
-
 
     @Autowired
     public MarketDataService(HistoricalDataApiService historicalDataApiService,
@@ -86,7 +84,6 @@ public class MarketDataService {
     }
 
     public Flux<LiveMarketDataDTO> getLiveMarketDataFlux() {
-        System.out.println("MarketDataService: Subscribing to live market data flux");
         return marketDataWebSocketService.getLiveMarketDataFlux();
     }
 }
