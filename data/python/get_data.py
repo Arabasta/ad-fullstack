@@ -13,7 +13,7 @@ s3 = boto3.client('s3',
                   aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY'),
                   aws_session_token = os.getenv('AWS_SESSION_TOKEN'))
 
-stock_bucket_name = 'fourquant-stock-data'
+stock_bucket_name = os.getenv('AWS_STOCK_BUCKET_NAME')
 
 stock_data = PyTickerSymbols()
 sp500_yahoo_tickers = stock_data.get_sp_500_nyc_yahoo_tickers()
