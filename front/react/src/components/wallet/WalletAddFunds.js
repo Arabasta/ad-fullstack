@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import WalletService from '../../services/WalletService';
+import {chakra, Flex} from "@chakra-ui/react";
 
 // the onAddFunds function is passed as a prop
 // this function will be called when the deposit is done
@@ -11,7 +12,7 @@ const WalletAddFunds = ({ onAddFunds }) => {
     const handleDeposit = async () => {
         try {
             const amount = parseFloat(depositAmount);
-            if (isNaN(amount) || amount <= 0) {
+            if (amount <= 0) {
                 alert('Invalid amount');
                 return;
             }
@@ -28,13 +29,57 @@ const WalletAddFunds = ({ onAddFunds }) => {
 
     return (
         <div>
-            <input
-                type="number"
-                value={depositAmount}
-                onChange={(e) => setDepositAmount(e.target.value)}
-                placeholder="Enter amount"
-            />
-            <button onClick={handleDeposit}>Deposit</button>
+            <Flex
+                alignItems="center"
+                justifyContent="center"
+                py={2}
+                px={1}
+                bg="gray.200"
+                _dark={{bg: "gray.700"}}
+            >
+                <chakra.span
+                    fontWeight="bold"
+                    w="xs"
+                    color="gray.800"
+                    _dark={{color: "gray.200"}}>
+                    <Flex
+                        alignItems="center"
+                        justifyContent="space-around"
+                    margin=" 0">
+                        $
+                        <chakra.input
+                            type="number"
+                            value={depositAmount}
+                            onChange={(e) => setDepositAmount(e.target.value)}
+                            placeholder=" Enter amount"
+                        />
+
+                        <chakra.button
+                            onClick={handleDeposit}
+                            bg="gray.800"
+                            px="4"
+                            fontSize="sm"
+                            fontWeight="bold"
+                            color="white"
+                            py={1}
+                            rounded="lg"
+                            textTransform="uppercase"
+                            _hover={{
+                                bg: "gray.700",
+                                _dark: {bg: "gray.600"},
+                            }}
+                            _focus={{
+                                bg: "gray.700",
+                                _dark: {bg: "gray.600"},
+                                outline: "none",
+                            }}
+                        >
+                            Deposit
+                        </chakra.button>
+                    </Flex>
+
+                </chakra.span>
+            </Flex>
         </div>
     );
 };
