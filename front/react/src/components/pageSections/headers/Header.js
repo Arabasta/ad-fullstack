@@ -60,7 +60,6 @@ const Header = () => {
                         {isAuthenticated ? (
                             <>
                                 <Button variant="ghost">Portfolio</Button>
-                                {/* todo: finish portfolio page */}
                                 <Link to="/wallet">
                                     <Button variant="ghost">Wallet</Button>
                                 </Link>
