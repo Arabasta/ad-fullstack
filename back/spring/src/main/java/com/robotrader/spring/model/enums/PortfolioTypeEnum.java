@@ -1,6 +1,7 @@
 package com.robotrader.spring.model.enums;
 
-public enum PortfolioTypeEnum {
+public enum
+PortfolioTypeEnum {
     AGGRESSIVE,
     MODERATE,
     CONSERVATIVE

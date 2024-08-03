@@ -3,6 +3,7 @@ import WalletBalance from "../components/wallet/WalletBalance";
 import LogoutButton from "../components/form/auth/LogoutButton";
 import WalletAddFunds from "../components/wallet/WalletAddFunds";
 import useWallet from "../hooks/useWallet";
+import {Image} from "@chakra-ui/react";
 
 const DashboardPage = () => {
     // use the useWallet custom hook to get the wallet state and getWallet function
@@ -11,10 +12,12 @@ const DashboardPage = () => {
     return (
         <div>
             <h2>Dashboard</h2>
+            <Image/>
+
 
             {/* Pass the wallet state to the WalletBalance component */}
             {/* This will display the wallet balance */}
-            <WalletBalance wallet={wallet} />
+            <WalletBalance wallet={wallet}/>
 
             {/* Pass the getWallet function to be called when handleDeposit is done */}
             {/* This will update the WalletBalance component */}
@@ -23,7 +26,7 @@ const DashboardPage = () => {
             {/* you can omit this prop */}
             <WalletAddFunds onAddFunds={getWallet}/>
 
-            <LogoutButton />
+            <LogoutButton/>
         </div>
     );
 };

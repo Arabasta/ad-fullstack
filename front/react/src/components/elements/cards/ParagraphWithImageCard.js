@@ -1,93 +1,46 @@
 import React from 'react';
-import {
-    Flex,
-    Box,
-    chakra,
-    Link,
-} from '@chakra-ui/react'; // Make sure you have Chakra UI installed
+import { Flex, Box,chakra, Link } from '@chakra-ui/react'; // Make sure you have Chakra UI installed
+import PropTypes from 'prop-types';
 
-const CardComponent = () => {
+const CardComponent = ({title, subtitle, description, buttonText, imageUrl}) => {
     return (
         <Flex
             bg="#edf3f8"
             p={50}
             w="full"
             alignItems="center"
-            justifyContent="center"
-        >
+            justifyContent="center">
             <Box
                 bg="white"
-                mx={{
-                    lg: 8,
-                }}
-                display={{
-                    lg: "flex",
-                }}
-                maxW={{
-                    lg: "5xl",
-                }}
-                shadow={{
-                    lg: "lg",
-                }}
-                rounded={{
-                    lg: "lg",
-                }}
-            >
-                <Box
-                    w={{
-                        lg: "50%",
-                    }}
-                >
+                mx={{ lg: 8 }}
+                display={{ lg: "flex"}}
+                maxW={{lg: "5xl"}}
+                shadow={{lg: "lg"}}
+                rounded={{lg: "lg"}}>
+                <Box w={{lg: "50%"}}>
                     <Box
-                        h={{
-                            base: 64,
-                            lg: "full",
-                        }}
-                        rounded={{
-                            lg: "lg",
-                        }}
+                        h={{base: 64,lg: "full"}}
+                        rounded={{lg: "lg",}}
                         bgSize="cover"
-                        style={{
-                            backgroundImage:
-                                "url('https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1&auto=format&fit=crop&w=750&q=80')",
-                        }}
-                    />
+                        style={{backgroundImage:`url(${imageUrl})`}}/>
                 </Box>
 
                 <Box
                     py={12}
                     px={6}
-                    maxW={{
-                        base: "xl",
-                        lg: "5xl",
-                    }}
-                    w={{
-                        lg: "50%",
-                    }}
-                >
+                    maxW={{ base: "xl", lg: "5xl"}}
+                    w={{lg: "50%"}}>
                     <chakra.h2
-                        fontSize={{
-                            base: "2xl",
-                            md: "3xl",
-                        }}
+                        fontSize={{ base: "2xl", md: "3xl"}}
                         color="gray.800"
-                        fontWeight="bold"
-                    >
-                        Turn Your Money into {" "}
-                        <chakra.span
-                            color="brand.600"
-                        >
-                            Assets
+                        fontWeight="bold">
+                        {title}{" "}
+                        <chakra.span color="brand.600">
+                            {subtitle}
                         </chakra.span>
                     </chakra.h2>
-                    <chakra.p
-                        mt={4}
-                        color="gray.600"
-                    >
-                        The secure way to buy, sell. Asking permission,
-                        not forgiveness. Millions use
-                        FourQuant.ai to diversify
-                        their portfolios.
+                    <chakra.p mt={4} color="gray.600">
+                        {description}
                     </chakra.p>
 
                     <Box mt={8}>
@@ -98,17 +51,22 @@ const CardComponent = () => {
                             py={3}
                             fontWeight="semibold"
                             rounded="lg"
-                            _hover={{
-                                bg: "gray.800",
-                            }}
-                        >
-                            Start Now
+                            _hover={{ bg: "gray.800"}}>
+                            {buttonText}
                         </Link>
                     </Box>
                 </Box>
             </Box>
         </Flex>
     );
+};
+
+CardComponent.propTypes = {
+    title: PropTypes.string,
+    subtitle: PropTypes.string,
+    description: PropTypes.string,
+    buttonText: PropTypes.string,
+    imageUrl: PropTypes.string,
 };
 
 export default CardComponent;
