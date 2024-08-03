@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import FormSelect from "../InvestProfile/FormSelect";
+import {Button} from "@chakra-ui/react";
 
 const RegisterStep4 = ({
                            employmentStatus, setEmploymentStatus, annualIncome, setAnnualIncome, netWorth, setNetWorth,
@@ -31,93 +33,81 @@ const RegisterStep4 = ({
     }, [employmentStatus, sourceOfWealth, investmentObjective, investmentExperience]);
 
     return (
-        <form onSubmit={handleNext}>
-            <div>
-                <label>Employment Status</label>
-                <select
-                    value={employmentStatus}
-                    onChange={(e) => setEmploymentStatus(e.target.value)}
-                    required
-                >
-                    <option value="EMPLOYED">Employed</option>
-                    <option value="SELF_EMPLOYED">Self-Employed</option>
-                    <option value="UNEMPLOYED">Unemployed</option>
-                    <option value="RETIRED">Retired</option>
-                    <option value="STUDENT">Student</option>
-                    <option value="OTHER">Other</option>
-                </select>
+        <form onSubmit={handleNext} style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <FormSelect
+                label="Employment Status"
+                value={employmentStatus}
+                onChange={(value) => setEmploymentStatus(value.toString())}
+                options={[
+                    { label: 'Employed', value: 1 },
+                    { label: 'Self-Employed', value: 2 },
+                    { label: 'Unemployed', value: 3 },
+                    { label: 'Retired', value: 4 },
+                    { label: 'Student', value: 5 },
+                    { label: 'Other', value: 6 }
+                ]}
+                required
+            />
+            <FormSelect
+                label="Annual Income"
+                value={annualIncome}
+                onChange={setAnnualIncome}
+                options={incomeOptions}
+                required
+            />
+            <FormSelect
+                label="Net Worth"
+                value={netWorth}
+                onChange={setNetWorth}
+                options={netWorthOptions}
+                required
+            />
+            <FormSelect
+                label="Source of Wealth"
+                value={sourceOfWealth}
+                onChange={(value) => setSourceOfWealth(value.toString())}
+                options={[
+                    { label: 'Salary', value: 1 },
+                    { label: 'Business', value: 2 },
+                    { label: 'Investments', value: 3 },
+                    { label: 'Inheritance', value: 4 },
+                    { label: 'Other', value: 5 }
+                ]}
+                required
+            />
+            <FormSelect
+                label="Investment Objective"
+                value={investmentObjective}
+                onChange={(value) => setInvestmentObjective(value.toString())}
+                options={[
+                    { label: 'Growth', value: 1 },
+                    { label: 'Income', value: 2 },
+                    { label: 'Capital Preservation', value: 3 },
+                    { label: 'Speculation', value: 4 },
+                    { label: 'Other', value: 5 }
+                ]}
+                required
+            />
+            <FormSelect
+                label="Investment Experience"
+                value={investmentExperience}
+                onChange={(value) => setInvestmentExperience(value.toString())}
+                options={[
+                    { label: 'None', value: 1 },
+                    { label: 'Limited', value: 2 },
+                    { label: 'Moderate', value: 3 },
+                    { label: 'Extensive', value: 4 }
+                ]}
+                required
+            />
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
+                <Button type="button" onClick={handlePrevious} variant="outline" size="md">
+                    Previous
+                </Button>
+                <Button type="submit" variant="solid" colorScheme="blue" size="md">
+                    Next
+                </Button>
             </div>
-            <div>
-                <label>Annual Income</label>
-                <select
-                    value={annualIncome}
-                    onChange={(e) => setAnnualIncome(parseFloat(e.target.value))}
-                    required
-                >
-                    {incomeOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div>
-                <label>Net Worth</label>
-                <select
-                    value={netWorth}
-                    onChange={(e) => setNetWorth(parseFloat(e.target.value))}
-                    required
-                >
-                    {netWorthOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                            {option.label}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div>
-                <label>Source of Wealth</label>
-                <select
-                    value={sourceOfWealth}
-                    onChange={(e) => setSourceOfWealth(e.target.value)}
-                    required
-                >
-                    <option value="SALARY">Salary</option>
-                    <option value="BUSINESS">Business</option>
-                    <option value="INVESTMENTS">Investments</option>
-                    <option value="INHERITANCE">Inheritance</option>
-                    <option value="OTHER">Other</option>
-                </select>
-            </div>
-            <div>
-                <label>Investment Objective</label>
-                <select
-                    value={investmentObjective}
-                    onChange={(e) => setInvestmentObjective(e.target.value)}
-                    required
-                >
-                    <option value="GROWTH">Growth</option>
-                    <option value="INCOME">Income</option>
-                    <option value="CAPITAL_PRESERVATION">Capital Preservation</option>
-                    <option value="SPECULATION">Speculation</option>
-                    <option value="OTHER">Other</option>
-                </select>
-            </div>
-            <div>
-                <label>Investment Experience</label>
-                <select
-                    value={investmentExperience}
-                    onChange={(e) => setInvestmentExperience(e.target.value)}
-                    required
-                >
-                    <option value="NONE">None</option>
-                    <option value="LIMITED">Limited</option>
-                    <option value="MODERATE">Moderate</option>
-                    <option value="EXTENSIVE">Extensive</option>
-                </select>
-            </div>
-            <button type="button" onClick={handlePrevious}>Previous</button>
-            <button type="submit">Next</button>
         </form>
     );
 };
