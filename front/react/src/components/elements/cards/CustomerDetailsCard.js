@@ -13,7 +13,7 @@ import {
     Stack,
 } from '@chakra-ui/react';
 
-const CustomerDetailsCard = ({ customer }) => {
+const CustomerDetailsCard = ({ customer, alertMessage }) => {
     if (!customer) {
         return <p>Loading customer details...</p>;
     }
@@ -27,7 +27,7 @@ const CustomerDetailsCard = ({ customer }) => {
     return (
         <Center py={6}>
             <Box
-                maxW="270px"
+                maxW="320px"
                 w="full"
                 bg="gray.800"
                 boxShadow="2xl"
@@ -51,19 +51,25 @@ const CustomerDetailsCard = ({ customer }) => {
                     />
                 </Flex>
 
-                <Box p={6}>
-                    <Stack spacing={0} align="center" mb={5}>
-                        <Heading fontSize="2xl" fontWeight={500} color="white">
+                <Box p={6} textAlign="center">
+                    <Stack spacing={2} align="center" mb={5}>
+                        <Heading fontSize="xl" fontWeight={500} color="white">
                             {title}
                         </Heading>
                         <Text color="gray.300">{subtitle}</Text>
                     </Stack>
 
-                    <Stack spacing={0} align="center">
-                        <Text fontSize="sm" color="gray.300">
-                            {description}
-                        </Text>
-                    </Stack>
+                    <Text fontSize="sm" color="gray.300" mb={4}>
+                        {description}
+                    </Text>
+
+                    {alertMessage && (
+                        <Box mt={4} bg="gray.700" p={4} rounded="md">
+                            <Text fontSize="sm" color="gray.300">
+                                {alertMessage}
+                            </Text>
+                        </Box>
+                    )}
                 </Box>
             </Box>
         </Center>
@@ -77,6 +83,7 @@ CustomerDetailsCard.propTypes = {
         nationality: PropTypes.string.isRequired,
         mobileNumber: PropTypes.string.isRequired,
     }).isRequired,
+    alertMessage: PropTypes.string,
 };
 
 export default CustomerDetailsCard;
