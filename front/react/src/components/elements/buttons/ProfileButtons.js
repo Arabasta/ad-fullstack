@@ -11,11 +11,9 @@ const ProfileButtons = ({ to, label }) => {
     };
 
     return (
-        <div>
-            <Button onClick={handleClick}>
-                {label}
-            </Button>
-        </div>
+        <Button onClick={handleClick}>
+            {label}
+        </Button>
     );
 };
 
