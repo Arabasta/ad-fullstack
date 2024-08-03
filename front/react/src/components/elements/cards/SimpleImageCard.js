@@ -1,7 +1,7 @@
 import React from 'react';
 import { Flex, Box, chakra } from '@chakra-ui/react';
 
-const SimpleImageCard = ({ image, title, spanText, subText}) => {
+const SimpleImageCard = ({ image, title, spanText}) => {
     return (
         <Flex
             bg="#edf3f8"
