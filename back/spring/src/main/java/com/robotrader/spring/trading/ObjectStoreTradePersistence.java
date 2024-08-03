@@ -17,11 +17,17 @@ private final S3TransactionLogger s3TransactionLogger;
 
     @Override
     public void saveTrade(TradeTransaction tradeTransaction) {
-        s3TransactionLogger.logTradeTransaction(tradeTransaction);
+        if (s3TransactionLogger != null) {
+            s3TransactionLogger.logTradeTransaction(tradeTransaction);
+        }
+
     }
 
     @Override
     public List<ObjectNode> getAllTrades() {
-        return s3TransactionLogger.getAllTradeTransactions(Integer.MAX_VALUE);
+        if (s3TransactionLogger != null) {
+            return s3TransactionLogger.getAllTradeTransactions(Integer.MAX_VALUE);
+        }
+        return null;
     }
 }
