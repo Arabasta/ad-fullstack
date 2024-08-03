@@ -7,11 +7,11 @@ export default function SettingsPage() {
             <h2>Settings</h2>
             <p>Welcome to the settings page! For Test Only</p>
             <ul className="nav">
-                <ProfileButtons to="/settings/account" label="Account" />
-                <ProfileButtons to="/settings/financialProfile" label="Financial Profile" />
-                <ProfileButtons to={"/settings/address"} label={"Address"} />
-                <ProfileButtons to="/settings/preferenceForm" label="Preference Form" />
-                <ProfileButtons to="/settings/notification" label="Notifications" />
+                <ProfileButtons to="/profile/account" label="Account" />
+                <ProfileButtons to="/profile/financialProfile" label="Financial Profile" />
+                <ProfileButtons to="/profile/address" label={"Address"} />
+                <ProfileButtons to="/profile/investorProfile" label="Preference Form" />
+                <ProfileButtons to="/profile/notification" label="Notifications" />
             </ul>
         </div>
     );

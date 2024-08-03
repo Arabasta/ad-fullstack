@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import DashboardPage from '../pages/DashboardPage';
 import HomePage from '../pages/HomePage';
 import NewsPage from '../pages/NewsPage';
 import NotFoundPage from '../pages/error/NotFoundPage';
@@ -20,7 +19,7 @@ const mainRoutes = [
     <Route key="wallet" path="/wallet" element={<WalletPage />} />,
     <Route key="support" path="/support" element={<SupportPage />} />,
     <Route key="profile" path="/profile" element={<ProfilePage />} />,
-    <Route key="dashboard" path="/dashboard" element={<DashboardPage />} />,
+  //  <Route key="dashboard" path="/dashboard" element={<DashboardPage />} />,
     <Route key="wallethistory" path="/wallet/history" element={<WalletTransactionHistoryPage />} />,
     <Route key="portfoliohistory" path="/portfolio/history" element={<PortfolioTransactionHistoryPage/>} />,
     <Route key="recommended-portfolio-type" path="/recommended-portfolio-type" element={<RecommendedInvestorProfileTypePage />} />,

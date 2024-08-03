@@ -54,7 +54,7 @@ const PreferenceFormPage = () => {
 
     useEffect(() => {
         if (!isAuthenticated) {
-            setLoading(false); // 如果没有登录，停止加载并显示消息
+            setLoading(false);
         } else {
             const fetchProfile = async () => {
                 try {
