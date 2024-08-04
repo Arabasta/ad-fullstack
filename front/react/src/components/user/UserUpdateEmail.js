@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import UserService from '../../services/UserService';
 
-const UpdateEmail = ({ user, setUser }) => {
+const UpdateEmail = ({ user, updateUser }) => {
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -17,9 +17,9 @@ const UpdateEmail = ({ user, setUser }) => {
             await UserService.updateEmail({ email });
             setSuccess('Email updated successfully');
             setError('');
-            if (setUser) {
-                const updatedUser = { ...user, email };
-                setUser(updatedUser);
+
+            if (updateUser) {
+                updateUser({ ...user, email });
             }
         } catch (error) {
             console.error('Error updating email', error);
