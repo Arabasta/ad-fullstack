@@ -13,7 +13,7 @@ const PortfolioWithdrawFunds = ({ withdrawFunds, currentBalance }) => {
 
     const handleWithdraw = () => {
         if (amount > currentBalance) {
-            setError('Insufficient balance');
+            setError('Insufficient allocated balance');
         } else {
             withdrawFunds(amount);
         }
