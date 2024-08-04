@@ -1,6 +1,6 @@
 import React from 'react';
 import useFinancialProfile from '../../hooks/useFinancialProfile';
-import FinancialProfileForm from '../../components/form/FinancialProfileForm';
+import FinancialProfileForm from '../../components/form/profileforms/FinancialProfileForm';
 import UpdateFinancialProfileService from '../../services/UpdateFinancialProfileService';
 
 /**

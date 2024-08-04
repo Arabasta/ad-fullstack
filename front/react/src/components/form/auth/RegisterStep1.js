@@ -1,5 +1,6 @@
 import React from 'react';
 import FreeFormField from "../inputFields/FreeFormField";
+import {Button} from "@chakra-ui/react";
 
 const RegisterStep1 = ({ email, setEmail, username, setUsername, password, setPassword, handleNext }) => {
     return (
@@ -25,9 +26,12 @@ const RegisterStep1 = ({ email, setEmail, username, setUsername, password, setPa
                 onChange={(e) => setPassword(e.target.value)}
                 required
             />
-            <button type="submit">Next</button>
+            <Button type="submit" variant="solid" colorScheme="blue" size="md">
+                Next
+            </Button>
         </form>
     );
 };
 
 export default RegisterStep1;
+

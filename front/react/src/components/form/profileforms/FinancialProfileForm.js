@@ -33,6 +33,22 @@ const FinancialProfileForm = ({ financialProfile, onSubmit }) => {
         });
     };
 
+    const incomeOptions = [
+        { label: 'Below $20,000', value: 20000 },
+        { label: '$20,000 - $50,000', value: 50000 },
+        { label: '$50,001 - $100,000', value: 100000 },
+        { label: '$100,001 - $200,000', value: 200000 },
+        { label: 'Above $200,000', value: 200001 },
+    ];
+
+    const netWorthOptions = [
+        { label: 'Below $50,000', value: 50000 },
+        { label: '$50,000 - $100,000', value: 100000 },
+        { label: '$100,001 - $500,000', value: 500000 },
+        { label: '$500,001 - $1,000,000', value: 1000000 },
+        { label: 'Above $1,000,000', value: 1000001 },
+    ];
+
     return (
         <form onSubmit={handleSubmit}>
             <div>
@@ -51,19 +67,29 @@ const FinancialProfileForm = ({ financialProfile, onSubmit }) => {
             </div>
             <div>
                 <label>Annual Income</label>
-                <input
-                    type="number"
+                <select
                     value={annualIncome}
                     onChange={(e) => setAnnualIncome(parseFloat(e.target.value))}
-                />
+                >
+                    {incomeOptions.map(option => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
             </div>
             <div>
                 <label>Net Worth</label>
-                <input
-                    type="number"
+                <select
                     value={netWorth}
                     onChange={(e) => setNetWorth(parseFloat(e.target.value))}
-                />
+                >
+                    {netWorthOptions.map(option => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
+                </select>
             </div>
             <div>
                 <label>Source of Wealth</label>
