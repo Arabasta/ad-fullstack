@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import RulesService from "../services/RulesService";
 
-const useRules = () => {
+const useRulesByPortfolio = (portfolioType=null) => {
     const [rules, setRules] = useState({
-        portfolioType: '',
+        portfolioType: portfolioType,
         stopLossInitialValue: 0.0,
         stopLoss: 0.0,
         recurringAllocationAmount: 0.0,
         recurringAllocationDay: 0,
     });
 
-    const getRules = async () => {
+    const getRulesByPortfolio = async () => {
         try {
-            const response = await RulesService.getRules();
+            const response = await RulesService.getRulesByPortfolioType();
             const data = response.data.data;
             setRules({
-                portfolioTypeEnum: data.portfolioType,
+                portfolioType: data.portfolioType,
                 stopLossInitialValue: data.stopLossInitialValue,
                 stopLoss: data.stopLoss,
                 recurringAllocationAmount: data.recurringAllocationAmount,
@@ -27,10 +27,10 @@ const useRules = () => {
     };
 
     useEffect(() => {
-        getRules();
-    }, []); // no dependencies, only run once after initial render
+        getRulesByPortfolio();
+    }, [portfolioType]);
 
-    return { rules, getRules };
+    return { rules, getRulesByPortfolio };
 };
 
-export default useRules();
+export default useRulesByPortfolio();
