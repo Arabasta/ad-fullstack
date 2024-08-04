@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../config/context/AuthContext';
 
 const RedirectLoginPage = () => {
     // Use the AuthContext to access the user and logout function
