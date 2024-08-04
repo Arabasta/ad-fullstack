@@ -46,7 +46,6 @@ const ProfilePage = () => {
     return (
         <ChakraProvider>
             <Box>
-                <Header />
                 <Flex direction="column" align="center" mt={4} mb={8}>
                     <Heading as="h2" size="lg" mb={2}>Profile</Heading>
                     <Text>Welcome to the Profile Page!</Text>
@@ -69,7 +68,6 @@ const ProfilePage = () => {
 
                 <Divider mb={8} />
 
-                <Footer />
             </Box>
         </ChakraProvider>
     );

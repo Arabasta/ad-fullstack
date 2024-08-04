@@ -7,6 +7,7 @@ import mainRoutes from './routes/MainRoutes';
 import profileRoutes from './routes/ProfileRoutes';
 import NaviRoutes from './routes/NaviRoutes';
 import Header from "./components/pageSections/headers/Header";
+import Footer from "./components/pageSections/footers/Footer";
 
 const App = () => {
     return (
@@ -30,6 +31,7 @@ const AppContent = () => {
                     {profileRoutes}
                 </Routes>
             </ErrorBoundary>
+            <Footer />
         </>
     );
 };
