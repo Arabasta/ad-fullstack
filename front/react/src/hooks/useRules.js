@@ -3,7 +3,7 @@ import RulesService from "../services/RulesService";
 
 const useRules = () => {
     const [rules, setRules] = useState({
-        portfolioTypeEnum: '',
+        portfolioType: '',
         stopLossInitialValue: 0.0,
         stopLoss: 0.0,
         recurringAllocationAmount: 0.0,
@@ -15,7 +15,7 @@ const useRules = () => {
             const response = await RulesService.getRules();
             const data = response.data.data;
             setRules({
-                portfolioTypeEnum: data.portfolioTypeEnum,
+                portfolioTypeEnum: data.portfolioType,
                 stopLossInitialValue: data.stopLossInitialValue,
                 stopLoss: data.stopLoss,
                 recurringAllocationAmount: data.recurringAllocationAmount,
