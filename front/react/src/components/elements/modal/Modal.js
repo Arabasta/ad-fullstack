@@ -1,7 +1,7 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
-import ButtonCurrentlyForModalChangeNameLater from "../buttons/ButtonCurrentlyForModalChangeNameLater";
 import { useState } from "react";
 import Heading from "../../common/text/Heading";
+import ModalButton from "./ModalButton";
 
 const ModalCloseButton = ({ onClick }) => (
     <Button
@@ -80,9 +80,9 @@ const Modal = ({ triggerText, title, onClose, children }) => {
     };
     return (
         <>
-            <ButtonCurrentlyForModalChangeNameLater onClick={openModal}>
+            <ModalButton onClick={openModal}>
                 {triggerText}
-            </ButtonCurrentlyForModalChangeNameLater>
+            </ModalButton>
             {isOpen && (
                 <ModalOverlay onClose={closeModal}>
                     <ModalContent onClose={closeModal}>

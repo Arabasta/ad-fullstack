@@ -1,19 +1,12 @@
 import React from 'react';
-import useTransactionHistory from '../../hooks/useTransactionHistory';
-import TransactionHistoryListView from '../../components/listView/TransactionHistoryListView';
+import {Modal} from "../../components/elements/modal/Modal";
+import TransactionHistory from "../../components/feature/TransactionHistory";
 
 const PortfolioTransactionHistoryPage = ({ portfolioType }) => {
-    const { transactions, loadMoreTransactions, hasMore } = useTransactionHistory('portfolio', portfolioType);
-
     return (
-        <div>
-            <h2>{portfolioType} Portfolio Transaction History</h2>
-            <TransactionHistoryListView
-                transactions={transactions}
-                loadMoreTransactions={loadMoreTransactions}
-                hasMore={hasMore}
-            />
-        </div>
+        <Modal triggerText="View History" title="Portfolio History">
+            <TransactionHistory type="portfolio" portfolioType={portfolioType} />
+        </Modal>
     );
 };
 
