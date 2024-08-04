@@ -9,7 +9,6 @@ import Footer from "../components/pageSections/footers/Footer";
 const ProfilePage = () => {
     return (
         <div>
-            <Header />
             <h2>Profile</h2>
             <p>Welcome to the Profile Page!</p>
 

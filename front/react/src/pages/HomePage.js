@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from "../components/pageSections/headers/Header";
 import ParagraphWithImageCard from "../components/elements/cards/ParagraphWithImageCard";
 import Footer from "../components/pageSections/footers/Footer";
 
@@ -8,7 +7,6 @@ const HomePage = () => {
 
     return (
         <div>
-            <Header />
             <main>
                 <ParagraphWithImageCard
                     title="Turn Your Money into"
