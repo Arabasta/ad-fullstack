@@ -5,11 +5,10 @@ import ErrorBoundary from './components/elements/alerts/error/ErrorBoundary';
 import authRoutes from './routes/AuthRoutes';
 import mainRoutes from './routes/MainRoutes';
 import profileRoutes from './routes/ProfileRoutes';
+import NavigationBarRoutes from "./navbar/NavigationBarRoutes";
 import portfolioRoutes from './routes/PortfolioRoutes';
 import Header from "./components/pageSections/headers/Header";
 import Footer from "./components/pageSections/footers/Footer";
-import NavigationBarRoutes from "./navbar/NavigationBarRoutes";
-
 
 const App = () => {
     return (
