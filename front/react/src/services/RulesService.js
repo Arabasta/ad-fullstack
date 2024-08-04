@@ -1,11 +1,13 @@
 import axiosInstance from '../config/axios/axiosInstance';
 
-const getRules = async () => {
-    return await axiosInstance.get(`/v1/customer/rule`);
+const getRulesByPortfolioType = async (portfolioType) => {
+    return await axiosInstance.get(`/v1/customer/rule`, {
+        params: {portfolioType},
+    });
 };
 
-const updateRules = async (portfolioRules) => {
-    return await axiosInstance.post(`/v1/customer/rule/update`, {portfolioRules});
+const updateRulesByPortfolio = async (thisPortfolioRules) => {
+    return await axiosInstance.post(`/v1/customer/rule/update`, {thisPortfolioRules});
 };
 
 const resetStopLoss = async (toReset) => {
@@ -13,8 +15,8 @@ const resetStopLoss = async (toReset) => {
 };
 
 const RulesService = {
-    getRules,
-    updateRules,
+    getRulesByPortfolioType,
+    updateRulesByPortfolio,
     resetStopLoss
 };
 
