@@ -11,10 +11,9 @@ const mainRoutes = [
     <Route key="news" path="/news" element={<NewsPage />} />,
     <Route key="support" path="/support" element={<SupportPage />} />,
     <Route key="wallet" path="/wallet" element={<WalletPage />} />,
-    <Route key="profile" path="/profile" element={<ProfilePage />} />,
     <Route key="settings" path="/settings" element={<SettingsPage />} />,
+    <Route key="profile" path="/profile" element={<ProfilePage />} />,
     <Route key="customerDetails" path="/customer/details" element={<CustomerDetailsPage />} />
-
 ];
 
 export default mainRoutes;

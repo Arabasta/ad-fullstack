@@ -1,4 +1,4 @@
-import axiosInstance from '../config/axios/axiosInstance';
+import axiosInstance from '../../config/axios/axiosInstance';
 
 const getWalletTransactions = async (page, size) => {
     return await axiosInstance.get(`/v1/customer/log/s3/wallet`, {

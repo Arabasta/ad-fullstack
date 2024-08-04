@@ -1,6 +1,6 @@
 import React from 'react';
-import useTransactionHistory from '../../hooks/useTransactionHistory';
-import TransactionHistoryListView from "../../components/listView/TransactionHistoryListView";
+import useTransactionHistory from '../../../hooks/useTransactionHistory';
+import TransactionHistoryListView from "../../listView/TransactionHistoryListView";
 
 
 const WalletTransactionHistoryPageS3 = () => {

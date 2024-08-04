@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Text from '../common/Text';
+import Text from '../../components/common/text/Text';
 import { formatTimestamp } from '../../utils/formatTimestamp';
 
 const ListItem = ({ transaction }) => (
