@@ -125,6 +125,15 @@ public class UserService implements IUserService, UserDetailsService {
     }
 
     @Override
+    public User getUserByPortfolio(Portfolio portfolio) {
+        User user = userRepository.findByPortfolioId(portfolio.getId());
+        if (user == null) {
+            throw new UserNotFoundException("User not found");
+        }
+        return user;
+    }
+
+    @Override
     public EmailDTO getEmail(String username) {
         User user = getUserByUsername(username);
         return new EmailDTO(user.getEmail());
@@ -156,7 +165,6 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     @Transactional
     public void resetPassword(String username, ResetPasswordDTO resetPasswordDTO) {
-
         User user = getUserByUsername(username);
         user.setPassword(passwordEncoder.encode(resetPasswordDTO.getPassword()));
         save(user);
@@ -164,27 +172,24 @@ public class UserService implements IUserService, UserDetailsService {
             sesPasswordNotificationService.sendPasswordChangeNotification(username, user.getEmail());
     }
 
-    // todo: remove this and isDelete var
     @Override
     @Transactional
-    public void delete(String username) {
+    public void lockUser(String username) {
         User user = getUserByUsername(username);
-        user.setDeleted(true);
+        user.setRole(RoleEnum.ROLE_LOCKED);
+        save(user);
     }
 
     @Override
     @Transactional
-    public void restore(String username) {
+    public void unlockUser(String username) {
         User user = getUserByUsername(username);
-        user.setDeleted(false);
-    }
-
-    @Override
-    public User getUserByPortfolio(Portfolio portfolio) {
-        User user = userRepository.findByPortfolioId(portfolio.getId());
-        if (user == null) {
-            throw new UserNotFoundException("User not found");
+        if (user.getCustomer() != null) {
+            user.setRole(RoleEnum.ROLE_CUSTOMER);
+        } else {
+            user.setRole(RoleEnum.ROLE_ADMIN);
         }
-        return user;
+        save(user);
     }
+
 }

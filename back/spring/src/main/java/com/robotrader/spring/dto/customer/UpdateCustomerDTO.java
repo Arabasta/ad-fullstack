@@ -12,6 +12,10 @@ import lombok.Setter;
 public class UpdateCustomerDTO {
 
     @NotBlank
+    @Size(min = 1, max = 50, message = "Username must be between 1 to 50 characters")
+    private String username;
+
+    @NotBlank
     @Size(min = 1, max = 50, message = "First Name cannot be more than 50 characters")
     private String firstName;
 
