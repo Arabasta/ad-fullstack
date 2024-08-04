@@ -32,8 +32,11 @@ public class PortfolioService implements IPortfolioService {
     private final IRuleService ruleService;
     private final ICustomerService customerService;
     private final IWalletService walletService;
-    private final S3TransactionLogger s3TransactionLogger;
     private final UserService userService;
+    private final S3TransactionLogger s3TransactionLogger;
+    private final PortfolioTransactionLogService portfolioTransactionLogService;
+    private final SesPortfolioNotificationService sesPortfolioNotificationService;
+    private final WalletTransactionLogService walletTransactionLogService;
 
     @Autowired
     public PortfolioService(PortfolioRepository portfolioRepository, IRuleService ruleService,
@@ -44,7 +47,10 @@ public class PortfolioService implements IPortfolioService {
         this.customerService = customerService;
         this.walletService = walletService;
         this.s3TransactionLogger = s3TransactionLogger.orElse(null);
+        this.portfolioTransactionLogService = portfolioTransactionLogService;
         this.userService = userService;
+        this.sesPortfolioNotificationService = sesPortfolioNotificationService.orElse(null);
+        this.walletTransactionLogService = walletTransactionLogService;
     }
 
     @Override
@@ -160,7 +166,9 @@ public class PortfolioService implements IPortfolioService {
     @Transactional
     public void handleStopLoss(Portfolio portfolio) {
         stopLossWithdrawAllToWallet(portfolio);
-        // todo: send notification
+        if (sesPortfolioNotificationService != null)
+            sesPortfolioNotificationService.sendStopLossNotification(userService.getUserByPortfolio(portfolio).getUsername(),
+                    userService.getUserByPortfolio(portfolio).getEmail(), portfolio.getPortfolioType().toString());
     }
 
     @Override
@@ -181,7 +189,9 @@ public class PortfolioService implements IPortfolioService {
                 recurringAmount, portfolio.getCurrentValue(), "Recurring Allocation");
 
         addFundsToPortfolio(portfolio, recurringAmount);
-        // todo: send notification
+        if (sesPortfolioNotificationService != null)
+            sesPortfolioNotificationService.sendRecurringAllocationNotification(userService.getUserByPortfolio(portfolio).getUsername(),
+                    userService.getUserByPortfolio(portfolio).getEmail(), portfolio.getPortfolioType().toString(), recurringAmount);
     }
 
 }
