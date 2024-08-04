@@ -1,6 +1,5 @@
 import React from 'react';
 import ParagraphWithImageCard from "../components/elements/cards/ParagraphWithImageCard";
-import Footer from "../components/pageSections/footers/Footer";
 
 
 const HomePage = () => {
