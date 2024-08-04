@@ -12,7 +12,7 @@ const useRulesByPortfolio = (portfolioType=null) => {
 
     const getRulesByPortfolio = async () => {
         try {
-            const response = await RulesService.getRulesByPortfolioType();
+            const response = await RulesService.getRulesByPortfolioType(portfolioType);
             const data = response.data.data;
             setRules({
                 portfolioType: data.portfolioType,
