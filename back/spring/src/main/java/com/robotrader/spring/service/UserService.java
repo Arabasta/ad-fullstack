@@ -1,7 +1,6 @@
 package com.robotrader.spring.service;
 
-import com.robotrader.spring.aws.sns.SnsPasswordNotificationService;
-import com.robotrader.spring.aws.sns.SnsPortfolioNotificationService;
+import com.robotrader.spring.aws.ses.SesPasswordNotificationService;
 import com.robotrader.spring.dto.auth.RegistrationRequest;
 import com.robotrader.spring.dto.user.*;
 import com.robotrader.spring.exception.auth.InvalidPasswordException;
@@ -31,18 +30,15 @@ public class UserService implements IUserService, UserDetailsService {
     private final UserRepository userRepository;
     private final ICustomerService customerService;
     private final PasswordEncoder passwordEncoder;
-    private final SnsPortfolioNotificationService snsPortfolioNotificationService;
-    private final SnsPasswordNotificationService snsPasswordNotificationService;
+    private final SesPasswordNotificationService sesPasswordNotificationService;
 
     @Autowired
     public UserService(UserRepository userRepository, ICustomerService customerService, PasswordEncoder passwordEncoder,
-                       Optional<SnsPortfolioNotificationService> snsPortfolioNotificationService,
-                       Optional<SnsPasswordNotificationService> snsPasswordNotificationService) {
+                        Optional<SesPasswordNotificationService> sesPasswordNotificationService) {
         this.userRepository = userRepository;
         this.customerService = customerService;
         this.passwordEncoder = passwordEncoder;
-        this.snsPortfolioNotificationService = snsPortfolioNotificationService.orElse(null);
-        this.snsPasswordNotificationService = snsPasswordNotificationService.orElse(null);
+        this.sesPasswordNotificationService = sesPasswordNotificationService.orElse(null);
     }
 
     @Transactional
@@ -79,6 +75,10 @@ public class UserService implements IUserService, UserDetailsService {
                 .stream()
                 .map(user -> new UsersDTO(user.getUsername(), user.getEmail(), user.getRole()))
                 .collect(Collectors.toList());
+    }
+
+    public List<User> getAllAdminUsers() {
+        return userRepository.findAllByRole(RoleEnum.ROLE_ADMIN);
     }
 
     @Override
@@ -149,19 +149,22 @@ public class UserService implements IUserService, UserDetailsService {
         }
         user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
         save(user);
-        if (snsPasswordNotificationService != null)
-            snsPasswordNotificationService.sendPasswordChangeNotification(username);
+        if (sesPasswordNotificationService != null)
+            sesPasswordNotificationService.sendPasswordChangeNotification(username, user.getEmail());
     }
 
     @Override
     @Transactional
     public void resetPassword(String username, ResetPasswordDTO resetPasswordDTO) {
-        // todo: send email to verify password reset
+
         User user = getUserByUsername(username);
         user.setPassword(passwordEncoder.encode(resetPasswordDTO.getPassword()));
         save(user);
+        if (sesPasswordNotificationService != null)
+            sesPasswordNotificationService.sendPasswordChangeNotification(username, user.getEmail());
     }
 
+    // todo: remove this and isDelete var
     @Override
     @Transactional
     public void delete(String username) {

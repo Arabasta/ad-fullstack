@@ -1,20 +1,20 @@
 import axiosInstance from '../config/axios/axiosInstance';
 
 const getWalletTransactions = async (page, size) => {
-    return await axiosInstance.get(`/v1/transaction/wallet`, {
+    return await axiosInstance.get(`/v1/customer/log/s3/wallet`, {
         params: { page, size },
     });
 };
 
 const getPortfolioTransactions = async (portfolioType, page, size) => {
-    return await axiosInstance.get(`/v1/transaction/portfolio`, {
+    return await axiosInstance.get(`/v1/customer/log/portfolio`, {
         params: { portfolioType, page, size },
     });
 };
 
-const TransactionHistoryService = {
+const S3TransactionLogService = {
     getWalletTransactions,
     getPortfolioTransactions,
 };
 
-export default TransactionHistoryService;
+export default S3TransactionLogService;

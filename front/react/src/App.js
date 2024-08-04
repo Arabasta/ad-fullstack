@@ -4,9 +4,9 @@ import { AuthProvider } from './context/AuthContext';
 import ErrorBoundary from './components/elements/alerts/error/ErrorBoundary';
 import authRoutes from './routes/AuthRoutes';
 import mainRoutes from './routes/MainRoutes';
-import NavigationBarForWeb from './pages/NavigationBarForWeb';
+import NavigationBar from './navbar/NavigationBar';
 import profileRoutes from './routes/ProfileRoutes';
-import NaviRoutes from './routes/NaviRoutes';
+import navigationBarRoutesRoutes from './navbar/NavigationBarRoutes';
 
 const App = () => {
     return (
@@ -26,10 +26,10 @@ const AppContent = () => {
 
     return (
         <>
-            {!noNavRoutes.includes(location.pathname) && <NavigationBarForWeb />}
+            {!noNavRoutes.includes(location.pathname) && <NavigationBar />}
             <ErrorBoundary>
                 <Routes>
-                    {NaviRoutes}
+                    {navigationBarRoutesRoutes}
                     {authRoutes}
                     {mainRoutes}
                     {profileRoutes}

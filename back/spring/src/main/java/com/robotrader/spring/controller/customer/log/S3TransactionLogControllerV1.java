@@ -1,4 +1,4 @@
-package com.robotrader.spring.controller.customer;
+package com.robotrader.spring.controller.customer.log;
 
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/transaction")
-public class TransactionControllerV1 {
+@RequestMapping("/api/v1/customer/log/s3")
+public class S3TransactionLogControllerV1 {
 
     private final S3TransactionLogger s3TransactionLogger;
 
     @Autowired
-    public TransactionControllerV1(@Autowired(required = false) S3TransactionLogger s3TransactionLogger) {
+    public S3TransactionLogControllerV1(@Autowired(required = false) S3TransactionLogger s3TransactionLogger) {
         this.s3TransactionLogger = s3TransactionLogger;
     }
 
