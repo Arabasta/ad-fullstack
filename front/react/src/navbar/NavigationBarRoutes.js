@@ -6,7 +6,7 @@ import WalletPage from "../pages/WalletPage";
 import SettingsPage from "../pages/SettingsPage";
 import PortfolioTransactionHistoryPage from "../pages/portfolio/PortfolioTransactionHistoryPage";
 import CustomerDetailsPage from "../pages/CustomerDetailsPage";
-import WalletTransactionHistoryPage from "../pages/wallet/WalletTransactionHistoryPage";
+import WalletTransactionHistoryPage from "../archive/wallet/WalletTransactionHistoryPage";
 
 const mainRoutes = [
     <Route key="news" path="/news" element={<NewsPage />} />,

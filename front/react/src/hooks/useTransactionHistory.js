@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import S3TransactionLogService from '../services/S3TransactionLogService';
+import S3TransactionLogService from '../archive/wallet/S3TransactionLogService';
 import throttle from 'lodash.throttle';
 
 const useTransactionHistory = (type, portfolioType = null) => {

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import NavButton from "./components/NavButtons";
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../config/context/AuthContext';
 
 const NavigationBar = () => {
     const { isAuthenticated, logout } = useContext(AuthContext);

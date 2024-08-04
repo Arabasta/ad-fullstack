@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './config/context/AuthContext';
 import ErrorBoundary from './components/elements/alerts/error/ErrorBoundary';
 import authRoutes from './routes/AuthRoutes';
 import mainRoutes from './routes/MainRoutes';
