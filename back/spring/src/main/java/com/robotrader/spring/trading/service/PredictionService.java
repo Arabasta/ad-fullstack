@@ -8,6 +8,7 @@ import com.robotrader.spring.dto.ticker.TickerDTOListDTO;
 import com.robotrader.spring.exception.aws.TransactionRetrievalException;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.trading.dto.PredictionDTO;
+import com.robotrader.spring.trading.dto.PredictionDTOListDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseBytes;
@@ -20,7 +21,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 @Service
 public class PredictionService {
@@ -37,14 +37,16 @@ public class PredictionService {
     public PredictionDTO byTicker(TickerDTO tickerDTO) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         String tickerName = tickerDTO.getTickerName().toUpperCase();
+        // todo: call fastApi for updated predictions, instead of reading static predictions .json from s3.
         return mapper.readValue(readJsonFromS3Bucket(tickerName), PredictionDTO.class);
     }
 
-    public List<PredictionDTO> byTickerList(List<TickerDTO> tickerDTOList) throws IOException {
+    public PredictionDTOListDTO byTickerList(TickerDTOListDTO tickerDTOListDTO) throws IOException {
+        List<TickerDTO> tickerDTOList = tickerDTOListDTO.getTickerDTOList();
         if (tickerDTOList.isEmpty()) {
             throw new IOException("Ticker list is empty");
         }
-        return tickerDTOList.stream()
+        List<PredictionDTO> list = tickerDTOList.stream()
                 .map(tickerDTO -> {
                     try {
                         return byTicker(tickerDTO);
@@ -52,7 +54,8 @@ public class PredictionService {
                         throw new RuntimeException("Failed to fetch prediction for ticker: " + tickerDTO.getTickerName(), e);
                     }
                 })
-                .collect(Collectors.toList());
+                .toList();
+        return new PredictionDTOListDTO(list);
     }
 
     public TickerDTOListDTO getAvailableTickers() {
@@ -61,10 +64,10 @@ public class PredictionService {
          * todo: implement parsing through bucket/* directories to get prefix (stock, crypto, etc.)
          * todo: hardcoded prefix to make this method functional. to implement logic to check whether retrieved object is for stock or crypto, and set TicketTypeEnum accordingly.
          * */
-        String prefix = "stock";
+        String prefix = "stocks";
 
         TickerTypeEnum tickerTypeEnum = switch (prefix) {
-            case "stock" -> TickerTypeEnum.STOCKS;
+            case "stocks" -> TickerTypeEnum.STOCKS;
             case "crypto" -> TickerTypeEnum.CRYPTO;
             default ->
                     throw new TransactionRetrievalException(String.format("Cannot determine TickerType from %s", AWS_S3_MODEL_BUCKET_NAME));
@@ -79,7 +82,7 @@ public class PredictionService {
         return new TickerDTOListDTO(tickerDTOList);
     }
 
-    // todo: replace reading static predictions .json with calling fastApi for updated predictions.
+    // todo: to delete after implementing getting predictions from fastApi
     private String readJsonFromS3Bucket(String keyName) {
         try {
             AwsConfig config = new AwsConfig();
