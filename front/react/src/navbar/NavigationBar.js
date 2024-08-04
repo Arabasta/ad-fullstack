@@ -15,8 +15,6 @@ const NavigationBar = () => {
             <NavButton to="/profile" label="PROFILE" />
             <NavButton to="/support" label="SUPPORT" />
             <NavButton to="/wallet" label="WALLET" />
-            <NavButton to="/wallet/history" label="WALLET TX HISTORY" />
-            <NavButton to="/portfolio/history" label="PORTFOLIO TX HISTORY TEMPORARY" />
             <NavButton to="/customer/details" label="Customer Details"/>
             {isAuthenticated ? (
                 <li>

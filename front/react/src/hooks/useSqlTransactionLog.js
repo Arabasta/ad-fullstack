@@ -38,7 +38,8 @@ const useSqlTransactionLog = (type, portfolioType = null) => {
     }, [loading, hasMore, page, type, portfolioType]);
 
     useEffect(() => {
-        loadMoreTransactions();  // Load the first batch when the component mounts
+        loadMoreTransactions();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return { transactions, loadMoreTransactions, hasMore, loading };
