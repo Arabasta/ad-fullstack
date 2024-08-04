@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import UserService from '../../services/UserService';
 
-const UpdatePassword = ({ user, setUser }) => {
+const UpdatePassword = ({ user, updateUser }) => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [error, setError] = useState('');
@@ -14,9 +14,8 @@ const UpdatePassword = ({ user, setUser }) => {
             setError('');
             setNewPassword('');
             setOldPassword('');
-            if (setUser) {
-                const updatedUser = { ...user, password: newPassword };
-                setUser(updatedUser);
+            if (updateUser) {
+                updateUser({ ...user });
             }
         } catch (error) {
             console.error('Error updating password:', error);
