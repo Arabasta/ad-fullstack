@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import FormSelect from "../inputFields/FormSelect";
-import {Button} from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 
 const RegisterStep4 = ({
                            employmentStatus, setEmploymentStatus, annualIncome, setAnnualIncome, netWorth, setNetWorth,
@@ -30,7 +30,7 @@ const RegisterStep4 = ({
         if (!sourceOfWealth) setSourceOfWealth('SALARY');
         if (!investmentObjective) setInvestmentObjective('GROWTH');
         if (!investmentExperience) setInvestmentExperience('NONE');
-    }, [employmentStatus, sourceOfWealth, investmentObjective, investmentExperience]);
+    }, [employmentStatus, sourceOfWealth, investmentObjective, investmentExperience, setEmploymentStatus, setSourceOfWealth, setInvestmentObjective, setInvestmentExperience]);
 
     return (
         <form onSubmit={handleNext} style={{ maxWidth: '600px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
