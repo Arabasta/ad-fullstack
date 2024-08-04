@@ -3,6 +3,8 @@ package com.robotrader.spring.trading.algorithm;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,6 +14,7 @@ import java.util.Map;
 public class TradingAlgorithmOne extends TradingAlgorithmBase {
     private BigDecimal atr;
     public static final String ALGORITHM_TYPE = "TREND_FOLLOWING_ATR";
+    private static final Logger logger = LoggerFactory.getLogger(TradingAlgorithmOne.class);
 
     public TradingAlgorithmOne(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         super(ticker, portfolioType, moneyPoolService);
@@ -24,7 +27,7 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
             int window = 20; // TODO: Assumed prediction data size is 20 for now, depending on model output
             // Not enough prediction data, cannot trade
             if (pricePredictions.size() < window) {
-                System.out.println("Not enough price predictions");
+                logger.info("Not enough price predictions");
                 return false;
             }
 
@@ -32,19 +35,19 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
 
             // True if within the window the predicted price goes above the PT without dropping below the SL
             for (int i = 0; i < window; i++) {
-                System.out.println("Price predicted at t" + i + ": " + pricePredictions.get(i));
+                logger.debug("Price predicted at t{}: {}", i, pricePredictions.get(i));
                 if (pricePredictions.get(i).compareTo(stopLossPrice) < 0) {
-                    System.out.println("Price prediction: Predicted price below stop loss");
+                    logger.debug("Price prediction: Predicted price below stop loss");
                     return false;
                 }
                 if (pricePredictions.get(i).compareTo(profitTarget) > 0) {
-                    System.out.println("Price prediction: Predicted price above profit target");
+                    logger.debug("Price prediction: Predicted price above profit target");
                     return true;
                 }
             }
-            System.out.println("Price prediction: Predicted price did not hit the target or stop loss within the prediction window");
+            logger.debug("Price prediction: Predicted price did not hit the target or stop loss within the prediction window");
         }
-        System.out.println("Buy trade rules not met");
+        logger.info("Buy trade rules not met");
         return false;
     }
 
@@ -66,7 +69,7 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
         int atrPeriod = 14;
 
             if (priceHistory.get("close").size() < atrPeriod + 1) { // Need a atrPeriod + 1 window
-                System.out.println("Insufficient number of to make a trade decision, no. of data: " + atrPeriod);
+                logger.info("Insufficient number of to make a trade decision, no. of data: {}", atrPeriod);
                 return BigDecimal.ZERO;
             }
             atr = getATR(priceHistory, atrPeriod);
@@ -114,7 +117,7 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
             sum = sum.add(dailyMax);
         }
         BigDecimal atr = sum.divide(BigDecimal.valueOf(atrPeriod), RoundingMode.HALF_UP);
-        System.out.println("ATR: " + atr);
+        logger.debug("ATR: {}", atr);
         return atr;
     }
 

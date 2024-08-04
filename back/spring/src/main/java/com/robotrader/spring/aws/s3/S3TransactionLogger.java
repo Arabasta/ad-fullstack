@@ -74,6 +74,7 @@ public class S3TransactionLogger {
         BigDecimal transactionQuantity = tradeTransaction.getTransactionQuantity();
         BigDecimal transactionPrice = tradeTransaction.getTransactionPrice();
         BigDecimal transactionAmount = transactionPrice.multiply(transactionQuantity);
+        PortfolioTypeEnum portfolioType = tradeTransaction.getPortfolioType();
 
         String fileName = String.format("trades/%s/%s/%s-%s.json", timestamp, ticker, action, transactionId);
 
@@ -85,6 +86,7 @@ public class S3TransactionLogger {
         logEntry.put("transactionQuantity", transactionQuantity);
         logEntry.put("transactionPrice", transactionPrice);
         logEntry.put("transactionAmount", transactionAmount);
+        logEntry.put("portfolioType", portfolioType.name());
         s3Logger.s3PutObject(bucketName, fileName, logEntry.toString());
     }
 
@@ -102,8 +104,14 @@ public class S3TransactionLogger {
 
     public List<ObjectNode> getAllTradeTransactions(int size) {
         String bucketName = dotenv.get("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME");
-        String prefix = String.format("trade");
+        String prefix = String.format("trades");
         return getTransactionsWithoutPagination(bucketName, prefix, size);
+    }
+
+    public List<ObjectNode> getTradeTransactionsWithPagination(PortfolioTypeEnum portfolioType, int page, int size) {
+        String bucketName = dotenv.get("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME");
+        String prefix = String.format("trades");
+        return getTransactions(bucketName, prefix, page, size);
     }
 
     private List<ObjectNode> getTransactions(String bucketName, String prefix, int page, int size) {

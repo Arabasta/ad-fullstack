@@ -2,7 +2,6 @@ package com.robotrader.spring.trading.strategy;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
-import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.MarketDataService;
 
@@ -27,6 +26,10 @@ public class TradingContext {
 
     public List<ObjectNode> getTradeResults() {
         return strategy.getTradeResults();
+    }
+
+    public void stop() {
+        strategy.stop();
     }
 
 }

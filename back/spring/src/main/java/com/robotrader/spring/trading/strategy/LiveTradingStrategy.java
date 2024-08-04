@@ -7,6 +7,8 @@ import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.MarketDataService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.Disposable;
 
 import java.math.BigDecimal;
@@ -19,14 +21,20 @@ public class LiveTradingStrategy implements TradingStrategy {
     private LiveMarketDataDTO latestMarketData;
     private Disposable dataSubscription;
     private final TradePersistence tradePersistence;
-    private final CompletableFuture<Void> completionFuture = new CompletableFuture<>();
+    private CompletableFuture<Void> completionFuture;
+    private MarketDataService marketDataService;
+    private static final Logger logger = LoggerFactory.getLogger(LiveTradingStrategy.class);
 
     public LiveTradingStrategy(TradePersistence tradePersistence) {
         this.tradePersistence = tradePersistence;
+        this.completionFuture = new CompletableFuture<>();
     }
 
     @Override
     public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
+        this.marketDataService = marketDataService;
+        this.completionFuture = new CompletableFuture<>();
+
         return CompletableFuture.runAsync(() -> {
             dataSubscription = marketDataService.getLiveMarketDataFlux().subscribe(
                     data -> {
@@ -38,13 +46,14 @@ public class LiveTradingStrategy implements TradingStrategy {
                         }
                     },
                     error -> {
-                        System.err.println("Error in market data stream: " + error);
+                        logger.error("Error in market data stream: " + error);
                         error.printStackTrace();
                     },
-                    () -> System.out.println("Market data stream completed")
+                    () -> logger.info("Market data stream completed")
             );
             completionFuture.complete(null); // Complete when stream ends
         });
+
     }
 
     @Override
@@ -67,7 +76,8 @@ public class LiveTradingStrategy implements TradingStrategy {
                 .doOnNext(data -> tradingAlgorithmBase.setPricePredictions(getPricePredictions(data)))
                 .doOnNext(data -> {
                     TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getLastTradeTransaction();
-                    tradingAlgorithmBase.executeLiveTrade();
+                    boolean isTest = false;
+                    tradingAlgorithmBase.execute(isTest);
                     TradeTransaction newTransaction = tradingAlgorithmBase.getLastTradeTransaction();
 
                     // Only process the trade if a new transaction was created
@@ -76,12 +86,13 @@ public class LiveTradingStrategy implements TradingStrategy {
                     }
                 })
                 .subscribe(
-                        data -> System.out.println("Historical data retrieved successfully."),
+                        data -> logger.info("Historical data retrieved successfully."),
                         error -> {
-                            System.err.println("Error during historical data retrieval: " + error.getMessage());
+                            logger.error("Error during historical data retrieval: {}", error.getMessage());
                             error.printStackTrace();
                         }
                 );
+
     }
 
     public List<BigDecimal> getPricePredictions(Map<String, List<Object>> marketDataHistory) {
@@ -91,13 +102,13 @@ public class LiveTradingStrategy implements TradingStrategy {
                 .collect(Collectors.toList()); //TODO: Predictions == history for now
     }
 
+    @Override
     public void stop() {
-        unsubscribeFromMarketData();
+        unsubscribeFromFlux();
         completionFuture.complete(null); // Complete on stop
     }
 
-    // todo: is it possible to unsub for 1 ticker only? or need to resub
-    public void unsubscribeFromMarketData() {
+    public void unsubscribeFromFlux() {
         if (dataSubscription != null && !dataSubscription.isDisposed()) {
             dataSubscription.dispose();
         }

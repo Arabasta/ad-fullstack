@@ -1,60 +1,44 @@
-package com.robotrader.spring.trading.application;
+package com.robotrader.spring.trading.service;
 
+import com.robotrader.spring.aws.s3.S3TransactionLogger;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
+import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 import com.robotrader.spring.trading.MemoryStoreTradePersistence;
+import com.robotrader.spring.trading.ObjectStoreTradePersistence;
+import com.robotrader.spring.trading.interfaces.ITradingApplicationService;
 import com.robotrader.spring.trading.dto.BackTestResultDTO;
 import com.robotrader.spring.trading.strategy.BackTestingStrategy;
 import com.robotrader.spring.trading.strategy.LiveTradingStrategy;
-import com.robotrader.spring.trading.service.CryptoWebSocketService;
-import com.robotrader.spring.trading.service.MarketDataService;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithmOne;
-import com.robotrader.spring.trading.service.MarketDataWebSocketService;
-import com.robotrader.spring.trading.service.StockWebSocketService;
 import com.robotrader.spring.trading.strategy.TradingContext;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 public class TradingApplicationService implements ITradingApplicationService {
     private final MoneyPoolService moneyPoolService;
     private final MarketDataService marketDataService;
-    private final CryptoWebSocketService cryptoWebSocketService;
-    private final StockWebSocketService stockWebSocketService;
+    private final S3TransactionLogger s3TransactionLogger;
+    private List<TradingContext> tradingContexts;
+    private static final Logger logger = LoggerFactory.getLogger(TradingApplicationService.class);
 
     @Autowired
-    public TradingApplicationService(MoneyPoolService moneyPoolService, MarketDataService marketDataService, CryptoWebSocketService cryptoWebSocketService, StockWebSocketService stockWebSocketService) {
+    public TradingApplicationService(MoneyPoolService moneyPoolService, MarketDataService marketDataService, Optional<S3TransactionLogger> s3TransactionLogger) {
         this.moneyPoolService = moneyPoolService;
         this.marketDataService = marketDataService;
-        this.cryptoWebSocketService = cryptoWebSocketService;
-        this.stockWebSocketService = stockWebSocketService;
+        this.s3TransactionLogger = s3TransactionLogger.orElse(null);
+        this.tradingContexts = new ArrayList<>();
     }
-
-//    @Bean
-//    public CommandLineRunner commandLineRunner() {
-//        return args -> {
-
-//            runTradingAlgorithmBackTest("AAPL", PortfolioTypeEnum.AGGRESSIVE);
-//            runTradingAlgorithmBackTest("X:BTC-USD", PortfolioTypeEnum.AGGRESSIVE);
-
-//            List<String> stockTickers = Arrays.asList("AAPL","GOOGL");
-//            List<String> stockTickers = Arrays.asList("AAPL");
-//            List<String> cryptoTickers = Arrays.asList("X:BTC-USD","X:ETH-USD");
-//            List<String> cryptoTickers = Arrays.asList("X:BTC-USD");
-//            runTradingAlgorithmLive(stockTickers, PortfolioTypeEnum.AGGRESSIVE, stockWebSocketService);
-//            runTradingAlgorithmLive(cryptoTickers, PortfolioTypeEnum.AGGRESSIVE, cryptoWebSocketService);
-//        };
-//
-//    }
 
     @Override
     public BackTestResultDTO runTradingAlgorithmBackTest(String ticker, PortfolioTypeEnum portfolioType) {
@@ -70,19 +54,30 @@ public class TradingApplicationService implements ITradingApplicationService {
     }
 
     @Override
-    public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, MarketDataWebSocketService marketDataWebSocketService) {
+    public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, TickerTypeEnum tickerType) {
+
         TradingContext tradingContext = new TradingContext(marketDataService);
-        marketDataService.subscribeToLiveMarketData(tickers, marketDataWebSocketService);
-        tradingContext.setStrategy(new LiveTradingStrategy(new MemoryStoreTradePersistence())); //todo: change to object store
+        tradingContexts.add(tradingContext);
+        marketDataService.subscribeToLiveMarketData(tickers, tickerType);
+        tradingContext.setStrategy(new LiveTradingStrategy(new ObjectStoreTradePersistence(Optional.ofNullable(s3TransactionLogger))));
         for (String ticker : tickers) {
             TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
             tradingContext.executeTradingStrategy(tradingAlgorithmOne);
         }
     }
 
+    @Override
+    public void stopTradingAlgorithmLive() {
+        for (TradingContext tradingContext : tradingContexts) {
+            tradingContext.stop();
+        }
+        tradingContexts.clear();
+        marketDataService.disconnectLiveMarketData();
+    }
+
 
     @Override
-    @Scheduled(cron = "0 */10 * * * *") // Runs every 10 minutes
+    @Scheduled(cron = "0 */10 * * * *") // todo: Runs every 10 minutes
     public void runTradingAlgorithm() {
         try {
 
@@ -102,7 +97,7 @@ public class TradingApplicationService implements ITradingApplicationService {
                 Field field = clazz.getField("ALGORITHM_TYPE");
                 String algorithmType = (String) field.get(null);
                 algorithmTypes.add(algorithmType);
-                System.out.println(clazz.getName() + ": " + algorithmType);
+                logger.info("{}: {}", clazz.getName(), algorithmType);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }
