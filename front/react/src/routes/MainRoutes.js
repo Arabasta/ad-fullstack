@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import DashboardPage from '../pages/DashboardPage';
 import HomePage from '../pages/HomePage';
 import NewsPage from '../pages/NewsPage';
 import NotFoundPage from '../pages/error/NotFoundPage';
@@ -14,13 +13,13 @@ import PortfolioTransactionHistoryPage from "../pages/portfolio/PortfolioTransac
 
 
 const mainRoutes = [
-    <Route key="landing" path="/" element={<LandingPage />} />,
-    <Route key="home" path="/home" element={<HomePage />} />,
-    <Route key="login" path="/news" element={<NewsPage />} />,
+    <Route key="landing" path="/landing" element={<LandingPage />} />,
+    <Route key="home" path="/" element={<HomePage />} />,
+    <Route key="news" path="/news" element={<NewsPage />} />,
     <Route key="wallet" path="/wallet" element={<WalletPage />} />,
     <Route key="support" path="/support" element={<SupportPage />} />,
     <Route key="profile" path="/profile" element={<ProfilePage />} />,
-    <Route key="dashboard" path="/dashboard" element={<DashboardPage />} />,
+  //  <Route key="dashboard" path="/dashboard" element={<DashboardPage />} />,
     <Route key="wallethistory" path="/wallet/history" element={<WalletTransactionHistoryPage />} />,
     <Route key="portfoliohistory" path="/portfolio/history" element={<PortfolioTransactionHistoryPage/>} />,
     <Route key="recommended-portfolio-type" path="/recommended-portfolio-type" element={<RecommendedInvestorProfileTypePage />} />,

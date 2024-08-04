@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
     chakra,
     Box,
@@ -14,12 +14,14 @@ import {
 
 import { AiOutlineMenu } from "react-icons/ai";
 import { Logo } from "@choc-ui/logo";
-import Button from '../../../components/elements/buttons/Button'
-import {Link} from 'react-router-dom'
+import Button from '../../../components/elements/buttons/Button';
+import { Link } from 'react-router-dom';
+import { AuthContext } from "../../../context/AuthContext";
 
 const Header = () => {
     const bg = useColorModeValue("white", "gray.800");
     const mobileNav = useDisclosure();
+    const { isAuthenticated, logout } = useContext(AuthContext);
 
     return (
         <chakra.header
@@ -51,28 +53,37 @@ const Header = () => {
                         color="brand.500"
                         display={{ base: "none", md: "inline-flex" }}
                     >
-                        <Button variant="ghost">Portfolio</Button>
-
-                        <Link to="/wallet">
-                            <Button variant="ghost">Wallet</Button>
-                        </Link>
-
                         <Link to="/news">
                             <Button variant="ghost">News</Button>
                         </Link>
 
-                        <Link to="/profile">
-                            <Button variant="ghost">Profile</Button>
-                        </Link>
-
-                        <Link to="/login">
-                            <Button variant="ghost">Sign in</Button>
-                        </Link>
+                        {isAuthenticated ? (
+                            <>
+                                <Button variant="ghost">Portfolio</Button>
+                                <Link to="/wallet">
+                                    <Button variant="ghost">Wallet</Button>
+                                </Link>
+                                <Link to="/profile">
+                                    <Button variant="ghost">Profile</Button>
+                                </Link>
+                                <Button variant="ghost" onClick={logout}>Sign Out</Button>
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/login">
+                                    <Button variant="ghost">Sign in</Button>
+                                </Link>
+                                <Link to="/register">
+                                    <Button variant="ghost">Register</Button>
+                                </Link>
+                            </>
+                        )}
                     </HStack>
-
-                    <Button colorScheme="brand" size="sm">
-                        Get Started
-                    </Button>
+                    {!isAuthenticated && (
+                        <Button colorScheme="brand" size="sm">
+                            Get Started
+                        </Button>
+                    )}
                     <Box display={{ base: "inline-flex", md: "none" }}>
                         <IconButton
                             display={{ base: "flex", md: "none" }}
@@ -105,35 +116,44 @@ const Header = () => {
                                 onClick={mobileNav.onClose}
                             />
 
-                            <Button w="full" variant="ghost">
-                                Portfolio
-                            </Button>
-
-                            <Link to="/wallet">
-                                <Button w="full" variant="ghost">
-                                    Wallet
-                                </Button>
-                            </Link>
-
                             <Link to="/news">
                                 <Button w="full" variant="ghost">
                                     News
                                 </Button>
                             </Link>
 
-                            <Link to="/profile">
-                                <Button w="full" variant="ghost">
-                                    Profile
-                                </Button>
-                            </Link>
-
-                            <Link to="/login">
-                                <Button w="full" variant="ghost">
-                                    Sign in
-                                </Button>
-                            </Link>
-
-
+                            {isAuthenticated ? (
+                                <>
+                                    <Button w="full" variant="ghost">Portfolio</Button>
+                                    <Link to="/wallet">
+                                        <Button w="full" variant="ghost">
+                                            Wallet
+                                        </Button>
+                                    </Link>
+                                    <Link to="/profile">
+                                        <Button w="full" variant="ghost">
+                                            Profile
+                                        </Button>
+                                    </Link>
+                                    <Button w="full" variant="ghost" onClick={logout}>Sign Out</Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link to="/login">
+                                        <Button w="full" variant="ghost">
+                                            Sign in
+                                        </Button>
+                                    </Link>
+                                    <Link to="/register">
+                                        <Button w="full" variant="ghost">
+                                            Register
+                                        </Button>
+                                    </Link>
+                                    <Button w="full" colorScheme="brand">
+                                        Get Started
+                                    </Button>
+                                </>
+                            )}
                         </VStack>
                     </Box>
                 </HStack>
@@ -143,4 +163,3 @@ const Header = () => {
 };
 
 export default Header;
-

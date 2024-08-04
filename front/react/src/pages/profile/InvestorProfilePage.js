@@ -1,10 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import InvestorProfileService from "../../services/InvestorProfileService";
 import InvestorProfileForm from "../../components/form/InvestProfile/InvestorProfileForm";
-import { AuthContext } from '../../context/AuthContext';
 
 const PreferenceFormPage = () => {
-    const { isAuthenticated } = useContext(AuthContext);
     const [profile, setProfile] = useState({
         investmentDurationScore: 1,
         withdrawalSpendingPlanScore: 1,
@@ -53,14 +51,11 @@ const PreferenceFormPage = () => {
     ];
 
     useEffect(() => {
-        if (!isAuthenticated) {
-            setLoading(false); // 如果没有登录，停止加载并显示消息
-        } else {
             const fetchProfile = async () => {
                 try {
                     const response = await InvestorProfileService.getInvestorProfile();
-                    setProfile(response.data.data); // 确保访问到正确的数据结构
-                    setRecommendedPortfolioType(response.data.data.recommendedPortfolioType); // 设置之前的推荐投资组合
+                    setProfile(response.data.data);
+                    setRecommendedPortfolioType(response.data.data.recommendedPortfolioType);
                     setLoading(false);
                 } catch (error) {
                     setMessage('Error fetching investor profile');
@@ -69,16 +64,14 @@ const PreferenceFormPage = () => {
             };
 
             fetchProfile();
-        }
-    }, [isAuthenticated]);
+    }, []);
 
-    const handleUpdate = async (event) => {
-        event.preventDefault();
+    const handleUpdate = async () => {
         try {
             const response = await InvestorProfileService.updateInvestorProfile(profile);
             console.log("Updated profile:", profile);
             setMessage('Profile updated successfully');
-            setProfile(response.data.data); // 确保访问到正确的数据结构
+            setProfile(response.data.data);
             setRecommendedPortfolioType(response.data.data.recommendedPortfolioType);
         } catch (error) {
             console.error('Error updating profile:', error);
@@ -97,9 +90,7 @@ const PreferenceFormPage = () => {
         return <p>Loading...</p>;
     }
 
-    if (!isAuthenticated) {
-        return <p>Please log in to view this page.</p>;
-    }
+
 
     return (
         <div>

@@ -8,7 +8,7 @@ import WalletTransactionHistoryPage from "../pages/wallet/WalletTransactionHisto
 import PortfolioTransactionHistoryPage from "../pages/portfolio/PortfolioTransactionHistoryPage";
 import CustomerDetailsPage from "../pages/CustomerDetailsPage";
 
-const mainRoutes = [
+const naviRoutes = [
     <Route key="news" path="/news" element={<NewsPage />} />,
     <Route key="support" path="/support" element={<SupportPage />} />,
     <Route key="wallet" path="/wallet" element={<WalletPage />} />,
@@ -20,4 +20,4 @@ const mainRoutes = [
 
 ];
 
-export default mainRoutes;
+export default naviRoutes;

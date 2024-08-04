@@ -22,7 +22,7 @@ const AppContent = () => {
     const location = useLocation();
 
     //these routes not need navi bar
-    const noNavRoutes = ['/login', '/register', '/forgot-password'];
+    const noNavRoutes = ['/login', '/register', '/'];
 
     return (
         <>
