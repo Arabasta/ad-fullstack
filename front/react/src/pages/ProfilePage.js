@@ -56,6 +56,7 @@ const ProfilePage = () => {
                     />
 
                     <VStack spacing={4} align="flex-start" ml={8}>
+                        <ProfileButtons to="/profile/update-mobile-number" label="Update Mobile Number" />
                         <ProfileButtons to="/profile/account" label="Update Email and Password" />
                         <ProfileButtons to="/profile/financialProfile" label="Update Financial Profile" />
                         <ProfileButtons to="/profile/address" label="Update Address" />
