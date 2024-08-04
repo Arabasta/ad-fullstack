@@ -6,6 +6,7 @@ import authRoutes from './routes/AuthRoutes';
 import mainRoutes from './routes/MainRoutes';
 import profileRoutes from './routes/ProfileRoutes';
 import NaviRoutes from './routes/NaviRoutes';
+import portfolioRoutes from './routes/PortfolioRoutes';
 import Header from "./components/pageSections/headers/Header";
 import Footer from "./components/pageSections/footers/Footer";
 
@@ -29,6 +30,7 @@ const AppContent = () => {
                     {authRoutes}
                     {mainRoutes}
                     {profileRoutes}
+                    {portfolioRoutes}
                 </Routes>
             </ErrorBoundary>
             <Footer />
