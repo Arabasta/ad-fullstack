@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react';
 import PortfolioService from '../services/PortfolioService';
 
 const usePortfolio = (portfolioType) => {
-    const [portfolio, setPortfolio] = useState(null);
-
+    const [portfolio, setPortfolio] = useState({});
 
     const getPortfolio = async () => {
         try {
             const response = await PortfolioService.getPortfolio(portfolioType);
             setPortfolio(response.data.data);
         } catch (error) {
-            console.error('Error fetching portfolio data', error);        }
+            console.error('Error fetching portfolio data', error);
+        }
     };
 
     const addFunds = async (amount) => {
@@ -18,7 +18,7 @@ const usePortfolio = (portfolioType) => {
             const response = await PortfolioService.addFunds(portfolioType, amount);
             setPortfolio(response.data.data);
         } catch (error) {
-            console.error('Error fetching wallet data', error);
+            console.error('Error adding funds', error);
         }
     };
 
@@ -27,7 +27,8 @@ const usePortfolio = (portfolioType) => {
             const response = await PortfolioService.withdrawFunds(portfolioType, amount);
             setPortfolio(response.data.data);
         } catch (error) {
-            console.error('Error fetching wallet data', error);        }
+            console.error('Error withdrawing funds', error);
+        }
     };
 
     useEffect(() => {
