@@ -1,13 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import WalletService from '../../services/WalletService';
-import {chakra, Flex} from "@chakra-ui/react";
+import { Modal } from '../elements/modal/Modal';
+import { VStack } from '@chakra-ui/react';
+import ModalInput from "../elements/modal/ModalInput";
+import ModalButton from "../elements/modal/ModalButton";
+import BlackText from "../common/text/BlackText";
+import useBankDetails from '../../hooks/useBankDetails';
 
-// the onAddFunds function is passed as a prop
-// this function will be called when the deposit is done
-// this will update the wallet balance
-// this is optional, so if you have a page for adding funds only (that doesn't need to update the balance)
+// todo: edit bank details button, input text locked on step 2 by default
+// todo: maybe add a loading spinner
+// todo: add validation error message for invalid amoutn
+// todo: add Green success exclaimation mark thing for payment success
 const WalletAddFunds = ({ onAddFunds }) => {
+    const [step, setStep] = useState(1);
     const [depositAmount, setDepositAmount] = useState('');
+    const { bankDetails, getBankDetails } = useBankDetails();
+    const [paymentDetails, setPaymentDetails] = useState({
+        bankName: '',
+        accountNumber: '',
+        accountHolderName: '',
+    });
+
+    useEffect(() => {
+        const loadBankDetails = async () => {
+            await getBankDetails(); // Fetch bank details when the modal is opened
+            if (bankDetails) {
+                setPaymentDetails({
+                    bankName: bankDetails.bankName || '',
+                    accountNumber: bankDetails.accountNumber || '',
+                    accountHolderName: bankDetails.accountHolderName || '',
+                });
+            }
+        };
+        loadBankDetails();
+    }, [getBankDetails, bankDetails]);
+
+    const resetFields = () => {
+        setStep(1);
+        setDepositAmount('');
+        setPaymentDetails({
+            bankName: '',
+            accountNumber: '',
+            accountHolderName: '',
+        });
+    };
+
+    const handleNextStep = () => {
+        if (step === 1 && depositAmount > 0) {
+            setStep(step + 1);
+        } else if (step === 2) {
+            setStep(step + 1);
+        }
+    };
+
+    const handlePreviousStep = () => {
+        if (step > 1) {
+            setStep(step - 1);
+        }
+    };
 
     const handleDeposit = async () => {
         try {
@@ -17,70 +67,73 @@ const WalletAddFunds = ({ onAddFunds }) => {
                 return;
             }
 
-            // call the addFunds function from the WalletService
-            // this will call the /wallet/add-funds api endpoint
-            await WalletService.addFunds( amount );
-            onAddFunds(); // call the prop function if it exists
-            setDepositAmount('') // clear the input
+            // Simulate payment success and add funds to wallet
+            await WalletService.addFunds(amount);
+            onAddFunds(); // Update wallet balance
+            handleNextStep(); // Move to confirmation step
         } catch (error) {
             console.error('Error depositing money', error);
         }
     };
 
     return (
-        <div>
-            <Flex
-                alignItems="center"
-                justifyContent="center"
-                py={2}
-                px={1}
-                bg="gray.200"
-                _dark={{bg: "gray.700"}}
-            >
-                <chakra.span
-                    fontWeight="bold"
-                    w="xs"
-                    color="gray.800"
-                    _dark={{color: "gray.200"}}>
-                    <Flex
-                        alignItems="center"
-                        justifyContent="space-around"
-                    margin=" 0">
-                        $
-                        <chakra.input
+        <Modal
+            triggerText="Make Deposit"
+            title="Deposit Funds"
+            onClose={resetFields}
+        >
+            <VStack spacing={4} p={4}>
+                {step === 1 && (
+                    <>
+                        <BlackText>Enter the amount you want to deposit:</BlackText>
+                        <ModalInput
                             type="number"
                             value={depositAmount}
                             onChange={(e) => setDepositAmount(e.target.value)}
-                            placeholder=" Enter amount"
                         />
+                        <ModalButton onClick={handleNextStep}>
+                            Proceed to payment
+                        </ModalButton>
+                    </>
+                )}
 
-                        <chakra.button
-                            onClick={handleDeposit}
-                            bg="gray.800"
-                            px="4"
-                            fontSize="sm"
-                            fontWeight="bold"
-                            color="white"
-                            py={1}
-                            rounded="lg"
-                            textTransform="uppercase"
-                            _hover={{
-                                bg: "gray.700",
-                                _dark: {bg: "gray.600"},
-                            }}
-                            _focus={{
-                                bg: "gray.700",
-                                _dark: {bg: "gray.600"},
-                                outline: "none",
-                            }}
-                        >
-                            Deposit
-                        </chakra.button>
-                    </Flex>
+                {step === 2 && (
+                    <>
+                        <BlackText>Enter your payment details:</BlackText>
+                        <ModalInput
+                            type="text"
+                            value={paymentDetails.bankName}
+                            onChange={(e) => setPaymentDetails({ ...paymentDetails, bankName: e.target.value })}
+                            placeholder="Bank Name"
+                        />
+                        <ModalInput
+                            type="text"
+                            value={paymentDetails.accountNumber}
+                            onChange={(e) => setPaymentDetails({ ...paymentDetails, accountNumber: e.target.value })}
+                            placeholder="Account Number"
+                        />
+                        <ModalInput
+                            type="text"
+                            value={paymentDetails.accountHolderName}
+                            onChange={(e) => setPaymentDetails({ ...paymentDetails, accountHolderName: e.target.value })}
+                            placeholder="Account Holder Name"
+                        />
+                        <ModalButton onClick={handleDeposit}>
+                            Confirm Payment
+                        </ModalButton>
+                        <ModalButton onClick={handlePreviousStep}>
+                            Back
+                        </ModalButton>
+                    </>
+                )}
 
-                </chakra.span>
-            </Flex>
-        </div>
+                {step === 3 && (
+                    <>
+                        <BlackText>Payment successful!</BlackText>
+                    </>
+                )}
+            </VStack>
+        </Modal>
     );
 };
 

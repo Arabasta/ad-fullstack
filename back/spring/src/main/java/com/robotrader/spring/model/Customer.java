@@ -39,6 +39,10 @@ public class Customer {
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "bank_details_id")
+    private BankDetails bankDetails;
+
     @Length(min=7, max=15, message = "Please input a valid mobile number")
     @Column(nullable = false, length = 15)
     private String mobileNumber;
@@ -53,5 +57,4 @@ public class Customer {
 
     @Column(nullable = false, length = 50)
     private String nationality;
-
 }

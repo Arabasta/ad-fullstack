@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './config/context/AuthContext';
 import ErrorBoundary from './components/elements/alerts/error/ErrorBoundary';
 import authRoutes from './routes/AuthRoutes';
 import mainRoutes from './routes/MainRoutes';
 import profileRoutes from './routes/ProfileRoutes';
-import NaviRoutes from './routes/NaviRoutes';
+import NavigationBarRoutes from "./navbar/NavigationBarRoutes";
 import portfolioRoutes from './routes/PortfolioRoutes';
 import Header from "./components/pageSections/headers/Header";
 import Footer from "./components/pageSections/footers/Footer";
@@ -26,7 +26,7 @@ const AppContent = () => {
             <Header />
             <ErrorBoundary>
                 <Routes>
-                    {NaviRoutes}
+                    {NavigationBarRoutes}
                     {authRoutes}
                     {mainRoutes}
                     {profileRoutes}

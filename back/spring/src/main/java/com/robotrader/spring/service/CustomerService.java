@@ -5,6 +5,7 @@ import com.robotrader.spring.dto.customer.CustomerDetailsDTO;
 import com.robotrader.spring.dto.customer.MobileNumberDTO;
 import com.robotrader.spring.dto.customer.UpdateCustomerDTO;
 import com.robotrader.spring.exception.notFound.CustomerNotFoundException;
+import com.robotrader.spring.model.BankDetails;
 import com.robotrader.spring.model.Customer;
 import com.robotrader.spring.repository.CustomerRepository;
 import com.robotrader.spring.service.interfaces.*;
@@ -12,6 +13,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CustomerService implements ICustomerService {
@@ -57,9 +61,22 @@ public class CustomerService implements ICustomerService {
         customer.setInvestorProfile(investorProfileService.create(customerDTO.getInvestorProfile()));
         customer.setWallet(walletService.initBaseWallet());
         customer.setPortfolios(portfolioService.initBasePortfolios());
+        customer.setBankDetails(new BankDetails());
 
         save(customer);
         return customer;
+    }
+
+    @Override
+    public List<CustomerDetailsDTO> getCustomers() {
+        List<Customer> customers = customerRepository.findAll();
+        List<CustomerDetailsDTO> customerDetailsDTOS = new ArrayList<>();
+
+        for (Customer c : customers) {
+            customerDetailsDTOS.add(new CustomerDetailsDTO(c.getFirstName(), c.getLastName(),
+                    c.getNationality(), c.getMobileNumber()));
+        }
+        return customerDetailsDTOS;
     }
 
     @Override
@@ -84,18 +101,15 @@ public class CustomerService implements ICustomerService {
     @Transactional
     public MobileNumberDTO updateMobileNumber(String username, MobileNumberDTO mobileNumberDTO) {
         Customer customer = getCustomerByUsername(username);
-        // todo: check if mobile number is already in use
-        // todo: send sms to verify mobile number
         customer.setMobileNumber(mobileNumberDTO.getMobileNumber());
         save(customer);
         return mobileNumberDTO;
     }
 
-    // for admin
     @Override
     @Transactional
-    public UpdateCustomerDTO updateCustomer(String username, UpdateCustomerDTO updateCustomerDTO) {
-        Customer customer = getCustomerByUsername(username);
+    public UpdateCustomerDTO updateCustomer(UpdateCustomerDTO updateCustomerDTO) {
+        Customer customer = getCustomerByUsername(updateCustomerDTO.getUsername());
         customer.setFirstName(updateCustomerDTO.getFirstName());
         customer.setLastName(updateCustomerDTO.getLastName());
         customer.setNationality(updateCustomerDTO.getNationality());
