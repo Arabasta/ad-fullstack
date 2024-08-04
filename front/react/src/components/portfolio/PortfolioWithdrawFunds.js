@@ -5,7 +5,7 @@ const PortfolioWithdrawFunds = ({ withdrawFunds, currentBalance }) => {
     const [error, setError] = useState('');
 
     const handleAmountChange = (e) => {
-        setAmount(Number(e.target.value));
+        setAmount(e.target.value);
         if (error) {
             setError('');
         }
