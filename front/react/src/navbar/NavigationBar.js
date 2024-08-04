@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import NavButton from "../components/navigation/navBar/navLinks/NavButtons";
+import NavButton from "./components/NavButtons";
 import { AuthContext } from '../context/AuthContext';
 
-const NavigationBarForWeb = () => {
+const NavigationBar = () => {
     const { isAuthenticated, logout } = useContext(AuthContext);
 
     const handleLogout = () => {
@@ -32,4 +32,4 @@ const NavigationBarForWeb = () => {
     );
 };
 
-export default NavigationBarForWeb;
+export default NavigationBar;

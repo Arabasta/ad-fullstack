@@ -1,8 +1,8 @@
 package com.robotrader.spring.service.interfaces;
 
-import java.math.BigDecimal;
+import com.robotrader.spring.dto.paymentWithdrawal.PaymentRequestDTO;
+import com.robotrader.spring.dto.paymentWithdrawal.PaymentResponseDTO;
 
 public interface IPaymentService {
-    void processPayment(String username, BigDecimal amount);
-    void processWithdrawal(String username, BigDecimal amount);
+    PaymentResponseDTO processPayment(PaymentRequestDTO paymentRequestDTO);
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ListItem from './ListItem';
-import Separator from '../layout/Separator';
+import SeparatorBlack from '../layout/SeparatorBlack';
 
 const TransactionHistoryListView = ({ transactions, loadMoreTransactions, hasMore }) => {
     return (
@@ -21,7 +21,7 @@ const TransactionHistoryListView = ({ transactions, loadMoreTransactions, hasMor
                 {transactions.map((transaction, index) => (
                     <div key={index}>
                         <ListItem transaction={transaction} />
-                        <Separator />
+                        <SeparatorBlack />
                     </div>
                 ))}
             </InfiniteScroll>

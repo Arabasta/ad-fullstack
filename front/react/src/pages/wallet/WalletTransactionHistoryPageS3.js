@@ -3,7 +3,7 @@ import useTransactionHistory from '../../hooks/useTransactionHistory';
 import TransactionHistoryListView from "../../components/listView/TransactionHistoryListView";
 
 
-const WalletTransactionHistoryPage = () => {
+const WalletTransactionHistoryPageS3 = () => {
     const { transactions, loadMoreTransactions, hasMore } = useTransactionHistory('wallet');
 
     return (
@@ -18,4 +18,4 @@ const WalletTransactionHistoryPage = () => {
     );
 };
 
-export default WalletTransactionHistoryPage;
+export default WalletTransactionHistoryPageS3;
