@@ -6,16 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PredictionDTO {
+public class PredictionDTOListDTO {
     @NotNull
-    private String tickerName;
-    @NotNull
-    private List<BigDecimal> predictions;
+    private List<PredictionDTO> predictionDTOList;
 }
