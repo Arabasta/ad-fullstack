@@ -59,7 +59,9 @@ const Header = () => {
 
                         {isAuthenticated ? (
                             <>
-                                <Button variant="ghost">Portfolio</Button>
+                                <Link to="/portfolio">
+                                    <Button variant="ghost">Portfolio</Button>
+                                </Link>
                                 <Link to="/wallet">
                                     <Button variant="ghost">Wallet</Button>
                                 </Link>

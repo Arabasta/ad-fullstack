@@ -1,14 +1,11 @@
 import React from 'react';
-import Header from "../components/pageSections/headers/Header";
 import ParagraphWithImageCard from "../components/elements/cards/ParagraphWithImageCard";
-import Footer from "../components/pageSections/footers/Footer";
 
 
 const HomePage = () => {
 
     return (
         <div>
-            <Header />
             <main>
                 <ParagraphWithImageCard
                     title="Turn Your Money into"
@@ -21,7 +18,6 @@ const HomePage = () => {
                     imageUrl="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1&auto=format&fit=crop&w=750&q=80"
                 />
             </main>
-            <Footer />
 
         </div>
     );

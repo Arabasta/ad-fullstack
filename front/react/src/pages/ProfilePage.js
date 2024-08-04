@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { ChakraProvider, Box, Flex, Heading, VStack, Text, Divider } from '@chakra-ui/react';
-import Header from "../components/pageSections/headers/Header";
-import Footer from "../components/pageSections/footers/Footer";
 import ProfileButtons from "../components/elements/buttons/ProfileButtons";
 import CustomerDetailsCard from "../components/elements/cards/CustomerDetailsCard";
 import CustomerService from "../services/CustomerService";
@@ -46,7 +44,6 @@ const ProfilePage = () => {
     return (
         <ChakraProvider>
             <Box>
-                <Header />
                 <Flex direction="column" align="center" mt={4} mb={8}>
                     <Heading as="h2" size="lg" mb={2}>Profile</Heading>
                     <Text>Welcome to the Profile Page!</Text>
@@ -59,6 +56,7 @@ const ProfilePage = () => {
                     />
 
                     <VStack spacing={4} align="flex-start" ml={8}>
+                        <ProfileButtons to="/profile/update-mobile-number" label="Update Mobile Number" />
                         <ProfileButtons to="/profile/account" label="Update Email and Password" />
                         <ProfileButtons to="/profile/financialProfile" label="Update Financial Profile" />
                         <ProfileButtons to="/profile/address" label="Update Address" />
@@ -69,7 +67,6 @@ const ProfilePage = () => {
 
                 <Divider mb={8} />
 
-                <Footer />
             </Box>
         </ChakraProvider>
     );
