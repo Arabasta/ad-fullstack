@@ -27,10 +27,10 @@ const useRules = () => {
     };
 
     useEffect(() => {
-        getAddress();
+        getRules();
     }, []); // no dependencies, only run once after initial render
 
-    return { address, getAddress };
+    return { rules, getRules };
 };
 
-export default useAddress;
+export default useRules();
