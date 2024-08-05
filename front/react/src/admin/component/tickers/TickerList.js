@@ -1,5 +1,5 @@
 import React from 'react';
-import ActiveTickerItem from "./ActiveTickerItem";
+import ActiveTickerItem from './ActiveTickerItem';
 
 const TickerList = ({ tickers, onDelete }) => {
     return (
