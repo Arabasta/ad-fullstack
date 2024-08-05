@@ -40,7 +40,7 @@ const useLiveTrading = (portfolioType = '', tickerType = '') => {
         }
     }, [portfolioType, seeTransactions]);
 
-    return { transactions, startTrade, stopTrade, seeTransactions, setPortfolioType, setTickerType };
+    return { transactions, startTrade, stopTrade, seeTransactions };
 };
 
 export default useLiveTrading;
