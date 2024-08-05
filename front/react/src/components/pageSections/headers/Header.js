@@ -16,7 +16,7 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { Logo } from "@choc-ui/logo";
 import Button from '../../../components/elements/buttons/Button';
 import { Link } from 'react-router-dom';
-import { AuthContext } from "../../../context/AuthContext";
+import { AuthContext } from "../../../config/context/AuthContext";
 
 const Header = () => {
     const bg = useColorModeValue("white", "gray.800");

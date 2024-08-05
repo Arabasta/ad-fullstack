@@ -1,30 +1,34 @@
+import React from "react";
+import { Box, VStack } from "@chakra-ui/react";
 import useWallet from "../hooks/useWallet";
 import WalletAddFunds from "../components/wallet/WalletAddFunds";
 import WalletWithdrawFunds from "../components/wallet/WalletWithdrawFunds";
 import SimpleImageCard from "../components/elements/cards/SimpleImageCard";
-import creditCardLogo from "../assets/images/card-visa-background.jpg"
-import {formatCurrency} from "../utils/formatCurrency";
+import creditCardLogo from "../assets/images/card-visa-background.jpg";
+import { formatCurrency } from "../utils/formatCurrency";
+import { Modal } from "../components/elements/modal/Modal";
+import TransactionHistory from "../components/feature/TransactionHistory";
 
+// todo: WalletBalance thing redesign
 const WalletPage = () => {
-    // use the useWallet custom hook to get the wallet state and getWallet function
     const { wallet, getWallet } = useWallet();
 
     return (
-       <div>
-           <SimpleImageCard
-               image={creditCardLogo}
-               title="Wallet Balance: "
-               spanText={formatCurrency(wallet)}
-               />
-           {/* Pass the getWallet function to be called when handleDeposit is done */}
-           {/* This will update the WalletBalance component */}
-           {/* onAddFunds is a prop that is a function to be called when the deposit is done */}
-           {/* It is optional, so if you have a page for adding funds only (that doesn't need to update the balance) */}
-           {/* you can omit this prop */}
-           <WalletAddFunds onAddFunds={getWallet}/>
-           <WalletWithdrawFunds onWithdrawFunds={getWallet}/>
+        <Box p={6} maxW="800px" mx="auto">
+            <SimpleImageCard
+                image={creditCardLogo}
+                title="Wallet Balance: "
+                spanText={formatCurrency(wallet)}
+            />
+            <VStack spacing={4} mt={8}>
+                <WalletAddFunds onAddFunds={getWallet} />
+                <WalletWithdrawFunds onWithdrawFunds={getWallet} />
 
-       </div>
+                <Modal triggerText="View History" title="Wallet History">
+                    <TransactionHistory type="wallet" />
+                </Modal>
+            </VStack>
+        </Box>
     );
 };
 

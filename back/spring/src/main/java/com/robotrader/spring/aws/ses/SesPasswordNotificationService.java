@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
+// use ses
 @Service
 @ConditionalOnProperty(name = "ses.notifications.enabled", havingValue = "true")
 public class SesPasswordNotificationService {
@@ -27,7 +28,10 @@ public class SesPasswordNotificationService {
                         If you did not change your password, please contact our support immediately to secure your account.
 
                         Thank you,
-                        FourQuant.ai Team""",
+                        FourQuant.ai Team
+                        
+                        Please do not reply directly to this email. For any questions or concerns, please contact us at https://keiapp.me/support
+                        """,
                 username
         );
 

@@ -21,6 +21,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(BankDetailsNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleBankDetailsNotFoundException(BankDetailsNotFoundException ex) {
+        ApiErrorResponse response = new ApiErrorResponse("error", ex.getMessage(), null);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(AddressNotFoundException.class)
     public ResponseEntity<ApiErrorResponse> handleAddressNotFoundException(AddressNotFoundException ex) {
         ApiErrorResponse response = new ApiErrorResponse("error", ex.getMessage(), null);

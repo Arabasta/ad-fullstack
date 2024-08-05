@@ -11,8 +11,8 @@ import com.robotrader.spring.model.Portfolio;
 import com.robotrader.spring.model.Wallet;
 import com.robotrader.spring.repository.WalletRepository;
 import com.robotrader.spring.service.interfaces.ICustomerService;
-import com.robotrader.spring.service.interfaces.IPaymentService;
 import com.robotrader.spring.service.interfaces.IWalletService;
+import com.robotrader.spring.service.log.WalletTransactionLogService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -25,17 +25,20 @@ import java.util.Optional;
 public class WalletService implements IWalletService {
 
     private final WalletRepository walletRepository;
-    private final IPaymentService paymentService;
     private final ICustomerService customerService;
     private final S3TransactionLogger s3TransactionLogger;
+    private final WalletTransactionLogService walletTransactionLogService;
+    private final UserService userService;
 
     @Autowired
-    public WalletService(WalletRepository walletRepository, IPaymentService paymentService,
-                         @Lazy ICustomerService customerService, Optional<S3TransactionLogger> s3TransactionLogger) {
+    public WalletService(WalletRepository walletRepository, @Lazy ICustomerService customerService,
+                         Optional<S3TransactionLogger> s3TransactionLogger, WalletTransactionLogService walletTransactionLogService,
+                         @Lazy UserService userService) {
         this.walletRepository = walletRepository;
-        this.paymentService = paymentService;
         this.customerService = customerService;
         this.s3TransactionLogger = s3TransactionLogger.orElse(null);
+        this.walletTransactionLogService = walletTransactionLogService;
+        this.userService = userService;
     }
 
     @Override
@@ -80,10 +83,11 @@ public class WalletService implements IWalletService {
     public WalletTransactionResponseDTO addFundsToWallet(String username, WalletAddFundsDTO walletAddFundsDTO) {
         Wallet wallet = getWalletByUsername(username);
         BigDecimal amount = walletAddFundsDTO.getAmount();
-        paymentService.processPayment(username, amount);
         this.addAmountToWallet(wallet, amount);
         if (s3TransactionLogger != null) {
             s3TransactionLogger.logWalletTransaction(username, amount, wallet.getTotalBalance(), "Deposit");
+        } else {
+            walletTransactionLogService.log(userService.getUserByUsername(username), amount, wallet.getTotalBalance(), "Deposit");
         }
         return new WalletTransactionResponseDTO(amount, wallet.getTotalBalance());
     }
@@ -100,10 +104,11 @@ public class WalletService implements IWalletService {
     public WalletTransactionResponseDTO withdrawFundsFromWallet(String username, WalletWithdrawFundsDTO walletWithdrawFundsDTO) {
         Wallet wallet = getWalletByUsername(username);
         BigDecimal amount = walletWithdrawFundsDTO.getAmount();
-        paymentService.processWithdrawal(username, amount);
         this.withdrawAmountFromWallet(wallet, amount);
         if (s3TransactionLogger != null) {
             s3TransactionLogger.logWalletTransaction(username, amount, wallet.getTotalBalance(), "Withdrawal");
+        } else {
+            walletTransactionLogService.log(userService.getUserByUsername(username), amount, wallet.getTotalBalance(), "Withdrawal");
         }
         return new WalletTransactionResponseDTO(amount, wallet.getTotalBalance());
     }

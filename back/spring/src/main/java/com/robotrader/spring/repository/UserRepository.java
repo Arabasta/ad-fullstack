@@ -1,6 +1,7 @@
 package com.robotrader.spring.repository;
 
 import com.robotrader.spring.model.User;
+import com.robotrader.spring.model.enums.RoleEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByPortfolioId(@Param("portfolioId") Long portfolioId);
 
     List<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(String username, String email);
+
+    List<User> findAllByRole(RoleEnum roleEnum);
 }
