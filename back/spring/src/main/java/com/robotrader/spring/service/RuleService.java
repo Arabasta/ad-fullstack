@@ -53,7 +53,7 @@ public class RuleService implements IRuleService {
     @Override
     public PortfolioRuleDTO getRulesDTOByUsernameAndPortfolioType(String username, PortfolioTypeEnum portfolioType) {
         Rule rule = getRulesByUsernameAndPortfolioType(username, portfolioType);
-        return new PortfolioRuleDTO(portfolioType, rule.getStopLossInitialValue(), rule.getStopLossPercentage(),
+        return new PortfolioRuleDTO(portfolioType, rule.getStopLossPercentage(),
                 rule.getRecurringAllocationAmount(), rule.getRecurringAllocationDay());
     }
 

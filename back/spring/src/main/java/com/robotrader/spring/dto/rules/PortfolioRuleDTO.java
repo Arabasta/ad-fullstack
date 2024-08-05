@@ -18,11 +18,6 @@ public class PortfolioRuleDTO {
     @Enumerated(EnumType.STRING)
     private PortfolioTypeEnum portfolioType;
 
-    @DecimalMin(value = "0.0", message = "Recurring allocation must be greater than or equal to 0")
-    @DecimalMax(value = "1000000000.00", message = "Amount must be less than or equal to 1000000000.00")
-    @Digits(integer = 10, fraction = 2, message = "Recurring allocation must have at most 2 decimal places")
-    private BigDecimal stopLossInitialValue;
-
     @DecimalMin(value = "0.0", message = "Stop loss percentage must be greater than or equal to 0")
     @DecimalMax(value = "100.0", message = "Stop loss percentage must be less than or equal to 100")
     private Double stopLoss;
