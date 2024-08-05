@@ -15,7 +15,7 @@ const useUsers = (search = '') => {
 
     useEffect(() => {
         getUsers();
-    }, [search]);
+    }, [search,getUsers]);
 
     return { users, getUsers };
 };
