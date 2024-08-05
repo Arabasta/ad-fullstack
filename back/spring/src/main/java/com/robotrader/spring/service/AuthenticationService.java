@@ -30,7 +30,7 @@ public class AuthenticationService implements IAuthenticationService {
     @Override
     @Transactional
     public RegistrationResponse registerUser(RegistrationRequest registrationRequest, boolean isCustomer) {
-        final UserDetails userDetails = userService.create(registrationRequest, isCustomer);
+        final UserDetails userDetails = userService.create(registrationRequest, !isCustomer);
         final String jwtToken = jwtUtil.generateToken(userDetails);
         return new RegistrationResponse(jwtToken, userDetails.getUsername());
     }
