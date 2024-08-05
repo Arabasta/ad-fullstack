@@ -101,8 +101,8 @@ async def get():
 
 
 # Accepts Backend's PredictionDTO in RequestBody
-@app.get("/api/v1/predict/ticker/backtest")
-async def get(prediction_dto: PredictionDTO):
+@app.post("/api/v1/predict/ticker/backtest")
+async def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
     if prediction_dto.tickerDTO is None or prediction_dto.predictions is None:
         return None
     predictions = predictions_from_x_values(ticker_dto=prediction_dto.tickerDTO,
@@ -112,8 +112,8 @@ async def get(prediction_dto: PredictionDTO):
 
 
 # Accepts Backend's TickerDTO in RequestBody
-@app.get("/api/v1/predict/ticker/live")
-async def get(ticker_dto: TickerDTO):
+@app.post("/api/v1/predict/ticker/live")
+async def by_ticker_dto_live(ticker_dto: TickerDTO):
     ticker_name = ticker_dto.tickerName
     if ticker_name not in list(LOADED_MODELS):
         return None
@@ -127,8 +127,8 @@ async def get(ticker_dto: TickerDTO):
 
 # todo: not working yet. to fix / remove.
 # Accepts Backend's TickerDTOListDTO in RequestBody
-@app.get("/api/v1/predict/ticker_list/live")
-async def get(ticker_dto_list_dto: TickerDTOListDTO):
+@app.post("/api/v1/predict/ticker_list/live")
+async def by_ticker_dto_list_dto_live(ticker_dto_list_dto: TickerDTOListDTO):
     ticker_names_list = [tickerDTO.tickerName for tickerDTO in ticker_dto_list_dto.tickerDTOList]
     # Boolean for checking if all requested models were loaded
     all_ticker_models_loaded = all(ticker_name in ticker_names_list for ticker_name in list(LOADED_MODELS))
