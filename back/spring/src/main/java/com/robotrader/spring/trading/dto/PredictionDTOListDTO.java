@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PredictionDTOListDTO {
+public class PredictionDTOListDTO implements IPredictionServiceDTO {
     @NotNull
     private List<PredictionDTO> predictionDTOList;
 }

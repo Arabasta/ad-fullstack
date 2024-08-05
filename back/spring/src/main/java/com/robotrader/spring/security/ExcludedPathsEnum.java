@@ -14,6 +14,6 @@ public enum ExcludedPathsEnum {
     PREDICTION_PREDICT_TICKERS("/api/v1/admin/prediction/predict"),
     PREDICTION_AVAILABLE_TICKERS("/api/v1/admin/prediction/available"),
     PREDICTION_TICKER_LIVE("/api/v1/admin/prediction/ticker/live"),
-    PREDICTION_TICKER_LIST_LIVE("/api/v1/admin/prediction/ticker_list/live");
+    PREDICTION_TICKER_BACKTEST("/api/v1/admin/prediction/ticker/backtest");
     private final String path;
 }

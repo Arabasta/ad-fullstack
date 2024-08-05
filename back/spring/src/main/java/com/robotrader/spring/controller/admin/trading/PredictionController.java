@@ -30,6 +30,12 @@ public class PredictionController {
         return ResponseEntity.ok(new ApiResponse<>("success", "Available predicted TickerDTOs retrieved successfully", tickerDTOListDTO));
     }
 
+    @PostMapping("ticker/backtest")
+    public ResponseEntity<ApiResponse<PredictionDTO>> predict(@RequestBody PredictionDTO predictionDTO) {
+        PredictionDTO predictionDtoResults = predictionService.byPredictionDtoBacktest(predictionDTO);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Predicted backtest data successfully", predictionDtoResults));
+    }
+
     @PostMapping("ticker/live")
     public ResponseEntity<ApiResponse<PredictionDTO>> predict(@RequestBody TickerDTO tickerDTO) throws IOException {
         PredictionDTO predictionDTO = predictionService.byTickerDtoLive(tickerDTO);

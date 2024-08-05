@@ -5,7 +5,9 @@ import com.robotrader.spring.aws.s3.S3Logger;
 import com.robotrader.spring.dto.ticker.TickerDTO;
 import com.robotrader.spring.dto.ticker.TickerDTOListDTO;
 import com.robotrader.spring.exception.aws.TransactionRetrievalException;
+import com.robotrader.spring.model.Ticker;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
+import com.robotrader.spring.trading.dto.IPredictionServiceDTO;
 import com.robotrader.spring.trading.dto.PredictionDTO;
 import com.robotrader.spring.trading.dto.PredictionDTOListDTO;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.servlet.View;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
@@ -28,39 +31,23 @@ public class PredictionService {
 
     public PredictionService(@Value("${AWS_S3_MODEL_BUCKET_NAME}") String awsS3ModelBucketName,
                              @Value("${BACK_FASTAPI_URL}") String backFastapiUrl,
-                             WebClient.Builder webClientBuilder) {
+                             WebClient.Builder webClientBuilder, View error) {
         this.AWS_S3_MODEL_BUCKET_NAME = awsS3ModelBucketName;
         this.fastapiWebClient = webClientBuilder
                 .baseUrl(backFastapiUrl)
                 .build();
     }
 
-    private PredictionDTO byPredictionDtoBacktest(PredictionDTO predictionDTO) {
-        // todo: priority2
-        // backtest service will call this to pass historical prices to fastapi to perform prediction
-        // 1. Build PredictionDTO into json
-        // 2. Send json via HTTP Request to fastapi backend api
-        // 3. Wait for predictions, and return
-        return null;
+    public PredictionDTO byPredictionDtoBacktest(PredictionDTO predictionDTO) {
+        String api = "/api/v1/predict/ticker/backtest";
+        Mono<IPredictionServiceDTO> stream = fastapiMonoStream(api, predictionDTO);
+        return (PredictionDTO) stream.block();
     }
 
     public PredictionDTO byTickerDtoLive(TickerDTO tickerDTO) throws IOException {
         String api = "/api/v1/predict/ticker/live";
-        String tickerName = tickerDTO.getTickerName().toUpperCase();
-        Mono<PredictionDTO> stream = fastapiWebClient.post()
-                .uri(uriBuilder -> uriBuilder.path(api).build())
-                .bodyValue(tickerDTO)
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, response -> {
-                    logger.error("4xx error occurred for ticker: {}", tickerName);
-                    return Mono.error(new RuntimeException("4xx error"));
-                })
-                .onStatus(HttpStatusCode::is5xxServerError, response -> {
-                    logger.error("5xx error occurred for ticker: {}", tickerName);
-                    return Mono.error(new RuntimeException("5xx error"));
-                })
-                .bodyToMono(PredictionDTO.class);
-        return stream.block();
+        Mono<IPredictionServiceDTO> stream = fastapiMonoStream(api, tickerDTO);
+        return (PredictionDTO) stream.block();
     }
 
     // todo: low priority, since trading side are using individual TickerDTOs, not list.
@@ -106,5 +93,25 @@ public class PredictionService {
                 .toList();
 
         return new TickerDTOListDTO(tickerDTOList);
+    }
+
+    private Mono<IPredictionServiceDTO> fastapiMonoStream(String api, IPredictionServiceDTO dto) {
+        if (dto instanceof PredictionDTO || dto instanceof TickerDTO) {
+            return fastapiWebClient.post()
+                    .uri(uriBuilder -> uriBuilder.path(api).build())
+                    .bodyValue(dto)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::is4xxClientError, response -> {
+                        logger.error("4xx error occurred for object: {}", dto.toString());
+                        return Mono.error(new RuntimeException("4xx error"));
+                    })
+                    .onStatus(HttpStatusCode::is5xxServerError, response -> {
+                        logger.error("5xx error occurred for object: {}", dto.toString());
+                        return Mono.error(new RuntimeException("5xx error"));
+                    })
+                    .bodyToMono(IPredictionServiceDTO.class);
+        } else {
+            throw new RuntimeException("Object should be PredictionDTO or TickerDTO. Not accepted: " + dto.toString());
+        }
     }
 }
