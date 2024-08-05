@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import BackTestService from '../services/BackTestService';
 
 const TickerList = ({ tickerList, portfolioTypes }) => {
     const [selectedPortfolioType, setSelectedPortfolioType] = useState({});
@@ -12,10 +13,15 @@ const TickerList = ({ tickerList, portfolioTypes }) => {
         }));
     };
 
-    const handleRunBackTest = (tickerName) => {
+    const handleRunBackTest = async (tickerName) => {
         const portfolioType = selectedPortfolioType[tickerName];
         if (portfolioType) {
-            navigate(`/api/v1/admin/trading/backtest/${tickerName}?portfolioType=${portfolioType}`);
+            try {
+                const response = await BackTestService.runBackTest(tickerName, portfolioType);
+                navigate('/admin/backtest-result', { state: response.data.data });
+            } catch (error) {
+                console.error('Error running backtest', error);
+            }
         } else {
             alert('Please select a portfolio type');
         }
