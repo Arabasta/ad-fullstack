@@ -26,6 +26,7 @@ const mainRoutes = [
     <Route key="portfoliohistory" path="/portfolio/history" element={<PortfolioTransactionHistoryPage/>} />,
     <Route key="recommended-portfolio-type" path="/recommended-portfolio-type" element={<RecommendedInvestorProfileTypePage />} />,
     <Route key="not-found" path="*" element={<NotFoundPage />} />,
+    <Route key="support" path="/support" element={<SupportPage />} />,
 
 ];
 
