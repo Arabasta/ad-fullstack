@@ -9,7 +9,7 @@ const stopTrade = async () => {
 };
 
 const seeTransactions = async () => {
-    return await axiosInstance.get(`/v1/admin/trading/livetrading/transactions`, { amount });
+    return await axiosInstance.get(`/v1/admin/trading/livetrading/transactions`);
 };
 
 const LiveTradingService = {
