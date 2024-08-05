@@ -3,13 +3,14 @@ import LiveTradingService from '../services/LiveTradingService';
 
 const useLiveTrading = (portfolioType = '', tickerType = '') => {
     const [transactions, setTransactions] = useState([]);
+    const [message, setMessage] = useState('');
 
     const startTrade = useCallback(async () => {
         try {
             const response = await LiveTradingService.startTrade(portfolioType, tickerType);
             return response.data.data;
         } catch (error) {
-            console.error('Error starting trade', error);
+            setMessage('Error starting trade. please try again');
         }
     }, [portfolioType, tickerType]);
 
@@ -18,7 +19,7 @@ const useLiveTrading = (portfolioType = '', tickerType = '') => {
             const response = await LiveTradingService.stopTrade();
             return response.data.data;
         } catch (error) {
-            console.error('Error stopping trade', error);
+            setMessage('Error stopping trade. please try again');
         }
     }, []);
 
@@ -27,8 +28,7 @@ const useLiveTrading = (portfolioType = '', tickerType = '') => {
             const response = await LiveTradingService.seeTransactions(portfolioType, page, size);
             setTransactions(response.data.data);
         } catch (error) {
-            console.error('Error fetching transactions', error);
-        }
+            setMessage('Error fetching transactions. please try again');        }
     }, [portfolioType]);
 
     // Render transactions given portfolioType
