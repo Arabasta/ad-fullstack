@@ -13,14 +13,14 @@ const useTickers = () => {
     const fetchActiveTickers = async () => {
         setLoading(true);
         const result = await ManageTickersService.getActiveTickers();
-        setActiveTickers(result.data.tickerList);
+        setActiveTickers(result.data.tickerList || []);
         setLoading(false);
     };
 
     const fetchAvailableTickers = async () => {
         setLoading(true);
         const result = await ManageTickersService.getAvailableTickers();
-        setAvailableTickers(result.data.tickerList || []);
+        setAvailableTickers(result.data.tickerDTOList || []); // Ensure the correct path is used
         setLoading(false);
     };
 
