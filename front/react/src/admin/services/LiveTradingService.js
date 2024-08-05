@@ -1,4 +1,4 @@
-import axiosInstance from '../config/axios/axiosInstance';
+import axiosInstance from "../../config/axios/axiosInstance";
 
 const startTrade = async () => {
     return await axiosInstance.get(`/v1/admin/trading/livetrading/start`);
