@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import LiveTradingService from '../services/LiveTradingService';
 
 const useLiveTrading = (portfolioType = '', tickerType = '') => {
+    const [portfolioType, setPortfolioType] = useState(portfolioType);
+    const [tickerType, setTickerType] = useState(tickerType);
     const [transactions, setTransactions] = useState([]);
     const [message, setMessage] = useState('');
 
