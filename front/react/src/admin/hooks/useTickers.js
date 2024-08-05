@@ -20,7 +20,7 @@ const useTickers = () => {
     const fetchAvailableTickers = async () => {
         setLoading(true);
         const result = await ManageTickersService.getAvailableTickers();
-        setAvailableTickers(result.data.tickerList);
+        setAvailableTickers(result.data.tickerList || []);
         setLoading(false);
     };
 

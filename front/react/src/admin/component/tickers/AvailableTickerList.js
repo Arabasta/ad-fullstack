@@ -1,7 +1,7 @@
 import React from 'react';
 import AvailableTickerItem from './AvailableTickerItem';
 
-const AvailableTickerList = ({ tickers, onAdd }) => {
+const AvailableTickerList = ({ tickers = [], onAdd }) => {
     return (
         <div>
             {tickers.map(ticker => (
