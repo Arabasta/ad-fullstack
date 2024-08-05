@@ -15,7 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,38 +39,36 @@ public class PredictionService {
                 .build();
     }
 
-    public PredictionDTO byPredictionDtoBacktest(PredictionDTO predictionDTO) {
+    public Mono<PredictionDTO> byPredictionDtoBacktest(PredictionDTO predictionDTO) throws IOException {
         String api = "/api/v1/predict/ticker/backtest";
-        Mono<PredictionDTO> stream = fastapiMonoStream(api, predictionDTO, PredictionDTO.class);
-        return stream.block();
+        return fastapiMonoStream(api, predictionDTO, PredictionDTO.class);
     }
 
-    public PredictionDTO byTickerDtoLive(TickerDTO tickerDTO) throws IOException {
+    public Mono<PredictionDTO> byTickerDtoLive(TickerDTO tickerDTO) throws IOException {
         String api = "/api/v1/predict/ticker/live";
-        Mono<PredictionDTO> stream = fastapiMonoStream(api, tickerDTO, PredictionDTO.class);
-        return stream.block();
+        return fastapiMonoStream(api, tickerDTO, PredictionDTO.class);
     }
 
     // todo: low priority, since trading side are using individual TickerDTOs, not list.
-    public PredictionDTOListDTO byTickerDtoListDtoLive(TickerDTOListDTO tickerDTOListDTO) throws IOException {
-        // 1. Build TickerDTOListDTO into json
-        // 2. Send json via HTTP Request to fastapi backend api
-        // 3. Wait for predictions, and return
-        List<TickerDTO> tickerDTOList = tickerDTOListDTO.getTickerDTOList();
-        if (tickerDTOList.isEmpty()) {
-            throw new IOException("Ticker list is empty");
-        }
-        List<PredictionDTO> list = tickerDTOList.stream()
-                .map(tickerDTO -> {
-                    try {
-                        return byTickerDtoLive(tickerDTO);
-                    } catch (IOException e) {
-                        throw new RuntimeException("Failed to fetch prediction for ticker: " + tickerDTO.getTickerName(), e);
-                    }
-                })
-                .toList();
-        return new PredictionDTOListDTO(list);
-    }
+//    public PredictionDTOListDTO byTickerDtoListDtoLive(TickerDTOListDTO tickerDTOListDTO) throws IOException {
+//        // 1. Build TickerDTOListDTO into json
+//        // 2. Send json via HTTP Request to fastapi backend api
+//        // 3. Wait for predictions, and return
+//        List<TickerDTO> tickerDTOList = tickerDTOListDTO.getTickerDTOList();
+//        if (tickerDTOList.isEmpty()) {
+//            throw new IOException("Ticker list is empty");
+//        }
+//        List<PredictionDTO> list = tickerDTOList.stream()
+//                .map(tickerDTO -> {
+//                    try {
+//                        return byTickerDtoLive(tickerDTO);
+//                    } catch (IOException e) {
+//                        throw new RuntimeException("Failed to fetch prediction for ticker: " + tickerDTO.getTickerName(), e);
+//                    }
+//                })
+//                .toList();
+//        return new PredictionDTOListDTO(list);
+//    }
 
     public TickerDTOListDTO getAvailableTickers() {
         S3Logger logger = new S3Logger(new AwsConfig().s3Client());
@@ -93,9 +94,9 @@ public class PredictionService {
         return new TickerDTOListDTO(tickerDTOList);
     }
 
-    private <T extends IPredictionServiceDTO> Mono<T> fastapiMonoStream(String api, IPredictionServiceDTO dto, Class<T> responseType) {
+    private <T extends IPredictionServiceDTO> Mono<T> fastapiMonoStream(String api, IPredictionServiceDTO dto, Class<T> responseType) throws IOException {
         if (dto instanceof PredictionDTO || dto instanceof TickerDTO) {
-            return fastapiWebClient.post()
+            Mono<T> monoStream = fastapiWebClient.post()
                     .uri(uriBuilder -> uriBuilder.path(api).build())
                     .bodyValue(dto)
                     .retrieve()
@@ -108,8 +109,12 @@ public class PredictionService {
                         return Mono.error(new RuntimeException("5xx error"));
                     })
                     .bodyToMono(responseType);
+            // ref: https://projectreactor.io/docs/core/release/api/reactor/core/scheduler/Schedulers.html#boundedElastic--
+            return monoStream
+                    .subscribeOn(Schedulers.boundedElastic())
+                    .doOnError(error -> logger.error("Error fetching predictions: {}{}", error.getMessage(), dto));
         } else {
-            throw new RuntimeException("Object should be PredictionDTO or TickerDTO. Not accepted: " + dto.toString());
+            throw new IOException("Object should be PredictionDTO or TickerDTO. Not accepted: " + dto.toString());
         }
     }
 }

@@ -31,21 +31,21 @@ public class PredictionController {
     }
 
     @PostMapping("ticker/backtest")
-    public ResponseEntity<ApiResponse<PredictionDTO>> predict(@RequestBody PredictionDTO predictionDTO) {
-        PredictionDTO predictionDtoResults = predictionService.byPredictionDtoBacktest(predictionDTO);
+    public ResponseEntity<ApiResponse<PredictionDTO>> predict(@RequestBody PredictionDTO predictionDTO) throws IOException {
+        PredictionDTO predictionDtoResults = predictionService.byPredictionDtoBacktest(predictionDTO).block();
         return ResponseEntity.ok(new ApiResponse<>("success", "Predicted backtest data successfully", predictionDtoResults));
     }
 
     @PostMapping("ticker/live")
     public ResponseEntity<ApiResponse<PredictionDTO>> predict(@RequestBody TickerDTO tickerDTO) throws IOException {
-        PredictionDTO predictionDTO = predictionService.byTickerDtoLive(tickerDTO);
+        PredictionDTO predictionDTO = predictionService.byTickerDtoLive(tickerDTO).block();
         return ResponseEntity.ok(new ApiResponse<>("success", "Predicted TickerDTO successfully", predictionDTO));
     }
 
-    // todo: not tested. to see if needed.
-    @PostMapping("ticker_list/live")
-    public ResponseEntity<ApiResponse<PredictionDTOListDTO>> predict(@RequestBody TickerDTOListDTO tickerDTOListDTO) throws IOException {
-        PredictionDTOListDTO predictionDTOListDTO = predictionService.byTickerDtoListDtoLive(tickerDTOListDTO);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Predicted TickerDTOList successfully", predictionDTOListDTO));
-    }
+//    // todo: not tested. to see if needed.
+//    @PostMapping("ticker_list/live")
+//    public ResponseEntity<ApiResponse<PredictionDTOListDTO>> predict(@RequestBody TickerDTOListDTO tickerDTOListDTO) throws IOException {
+//        PredictionDTOListDTO predictionDTOListDTO = predictionService.byTickerDtoListDtoLive(tickerDTOListDTO);
+//        return ResponseEntity.ok(new ApiResponse<>("success", "Predicted TickerDTOList successfully", predictionDTOListDTO));
+//    }
 }
