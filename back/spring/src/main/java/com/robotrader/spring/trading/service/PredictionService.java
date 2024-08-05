@@ -117,32 +117,4 @@ public class PredictionService {
 
         return new TickerDTOListDTO(tickerDTOList);
     }
-
-    // todo: to delete after implementing getting predictions from fastApi
-    private String readJsonFromS3Bucket(String keyName) {
-        try {
-            AwsConfig config = new AwsConfig();
-            S3Client s3 = config.s3Client();
-
-            GetObjectRequest objectRequest = GetObjectRequest
-                    .builder()
-                    .key(keyName + ".json")
-                    .bucket(AWS_S3_PREDICTION_BUCKET_NAME)
-                    .build();
-
-            CompletableFuture<ResponseBytes<GetObjectResponse>> objectMapperCompletableFuture =
-                    CompletableFuture.supplyAsync(() -> s3.getObjectAsBytes(objectRequest));
-
-            byte[] data = objectMapperCompletableFuture.get().asByteArray();
-            return new String(data);
-
-        } catch (S3Exception e) {
-            System.err.println(e.awsErrorDetails().errorMessage());
-            throw new RuntimeException(e);
-
-        } catch (ExecutionException | InterruptedException e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
-    }
 }
