@@ -59,14 +59,10 @@ public class PredictionService {
     }
 
     public PredictionDTO byTickerDtoLive(TickerDTO tickerDTO) throws IOException {
-        // todo: priority1
-        // 1. Build TickerDTO into json
-        // 2. Send json via HTTP Request to fastapi backend api
-        // 3. Wait for predictions, and return
         String api = "/api/v1/predict/ticker/live";
         String tickerName = tickerDTO.getTickerName().toUpperCase();
         Mono<PredictionDTO> stream = fastapiWebClient.post()
-                .uri(api)
+                .uri(uriBuilder -> uriBuilder.path(api).build())
                 .bodyValue(tickerDTO)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response -> {
@@ -78,7 +74,6 @@ public class PredictionService {
                     return Mono.error(new RuntimeException("5xx error"));
                 })
                 .bodyToMono(PredictionDTO.class);
-        // todo: call fastApi for updated predictions, instead of reading static predictions .json from s3.
         return stream.block();
     }
 
