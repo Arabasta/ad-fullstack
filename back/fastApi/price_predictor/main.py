@@ -59,8 +59,8 @@ MODELS
 
 
 class TickerDTO(BaseModel):
-    tickerType: str = 'None'
-    tickerName: str = 'None'
+    tickerType: str
+    tickerName: str
 
 
 class TickerDTOListDTO(BaseModel):
@@ -105,42 +105,64 @@ async def get():
     return {"response": health}
 
 
+# todo: priority2
+# Accepts Backend's PredictionDTO in RequestBody
+@app.get("/api/v1/predict/backtest")
+async def get(prediction_dto: PredictionDTO):
+    return
+
+
+# todo: priority1
+# Accepts Backend's TickerDTO in RequestBody
+@app.get("/api/v1/predict/live")
+async def get(ticker_dto: TickerDTO) -> PredictionDTO:
+    ticker_name = ticker_dto.tickerName
+    if ticker_name not in LOADED_MODELS_TICKER_NAMES_LIST:
+        return PredictionDTO()
+    logger.info('--Start predictions--')
+    logger.info(f'--Predicting {ticker_name}--')
+    x_values = get_latest_ticker_api_data(ticker_name)
+    predictions = predict_from_model(ticker_name, x_values)
+    logger.info('--Finish predictions--')
+    return PredictionDTO(tickerDTO=ticker_dto, predictions=predictions)
+
+
 # Accepts Backend's TickerDTOListDTO in RequestBody
-@app.get("/api/v1/predict")
-async def get(ticker_dto_list_dto: TickerDTOListDTO):
+@app.get("/api/v1/predict/live")
+async def get(ticker_dto_list_dto: TickerDTOListDTO) -> PredictionDTOListDTO:
     ticker_names_list = [tickerDTO.tickerName for tickerDTO in ticker_dto_list_dto.tickerDTOList]
     # Boolean for checking if all requested models were loaded
     all_ticker_models_loaded = all(ticker_name in ticker_names_list for ticker_name in LOADED_MODELS_TICKER_NAMES_LIST)
     if not all_ticker_models_loaded:
         # todo: implement error logic. to return list of tickers that do not have trained models.
-        return {"response": "Error: Not all models are available"}
+        return PredictionDTOListDTO()
 
     predictions_dto_list = []
     logger.info('--Start predictions--')
     for tickerDTO in ticker_dto_list_dto.tickerDTOList:
         ticker_name = tickerDTO.tickerName
+        logger.info(f'--Predicting {ticker_name}--')
         x_values = get_latest_ticker_api_data(ticker_name)
         predictions = predict_from_model(ticker_name, x_values)
         predictions_dto_list.append(
             PredictionDTO(tickerDTO=tickerDTO,
                           predictions=predictions)
         )
-        logger.info(f'--Predicting {ticker_name}--')
     logger.info('--Finish predictions--')
     # return {"predictions": json.dumps(json_predictions)}
-    return {"response": PredictionDTOListDTO(predictionDTOList=predictions_dto_list)}
+    return PredictionDTOListDTO(predictionDTOList=predictions_dto_list)
 
 
 # Dev
 # todo: tested as working. to remove after dev.
-@app.get("/api/v1/test_load_all_pickle_models")
+@app.get("/api/v1/dev/load_all_pickle_models")
 async def test_load_all_pickle_models():
     load_all_pickle_models(LOADED_MODELS, AWS_S3_MODEL_BUCKET_NAME)
     return {"response": f'Loaded: {list(LOADED_MODELS)}'}
 
 
 # todo: tested as working. to remove after dev.
-@app.get("/api/v1/test_load_pickle_model")
+@app.get("/api/v1/dev/load_pickle_model")
 async def test_load_pickle_model(ticker_name, key):
     load_pickle_model(ticker_name, key, LOADED_MODELS, AWS_S3_MODEL_BUCKET_NAME)
     if ticker_name in list(LOADED_MODELS):
@@ -149,7 +171,7 @@ async def test_load_pickle_model(ticker_name, key):
 
 
 # todo: tested as working. to remove after dev.
-@app.get("/api/v1/test_get_latest_ticker_api_data")
+@app.get("/api/v1/dev/get_latest_ticker_api_data")
 async def test_get_latest_ticker_api_data(key):
     return {"response": get_latest_ticker_api_data(key)}  # {"latest": [223.4979, 223.0934, ... ]}
 
@@ -168,7 +190,7 @@ def get_s3_client():
 
 
 # Read and load models from S3 to RAM
-# todo: kiv. tried loading all models, took almost 1
+# todo: to refactor. taking around 2s per model.
 def load_all_pickle_models(dictionary, bucket_name):
     try:
         s3_client = get_s3_client()
@@ -177,7 +199,7 @@ def load_all_pickle_models(dictionary, bucket_name):
         response = s3_client.list_objects_v2(Bucket=bucket_name)
         if 'Contents' in response:
             # Extract the keys (filenames) and filter out non-.pkl files if needed
-            keys = [item['Key'] for item in response['Contents'] if item['Key'].endswith('.pkl')] # todo:to reinstate.
+            keys = [item['Key'] for item in response['Contents'] if item['Key'].endswith('.pkl')]  # todo:to reinstate.
             # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
             temp_keys = ['AAPL.pkl', 'ABBV.pkl', 'ADBE.pkl', 'AMZN.pkl', 'AVGO.pkl',
                          'COST.pkl', 'CVX.pkl', 'GOOG.pkl', 'GOOGL.pkl', 'HD.pkl',
