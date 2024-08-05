@@ -15,30 +15,20 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import software.amazon.awssdk.core.ResponseBytes;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class PredictionService {
 
-    private final String AWS_S3_PREDICTION_BUCKET_NAME;
     private final String AWS_S3_MODEL_BUCKET_NAME;
     private final WebClient fastapiWebClient;
     private static final Logger logger = LoggerFactory.getLogger(PredictionService.class);
 
-    public PredictionService(@Value("${AWS_S3_PREDICTION_BUCKET_NAME}") String awsS3PredictionBucketName,
-                             @Value("${AWS_S3_MODEL_BUCKET_NAME}") String awsS3ModelBucketName,
+    public PredictionService(@Value("${AWS_S3_MODEL_BUCKET_NAME}") String awsS3ModelBucketName,
                              @Value("${BACK_FASTAPI_URL}") String backFastapiUrl,
                              WebClient.Builder webClientBuilder) {
-        this.AWS_S3_PREDICTION_BUCKET_NAME = awsS3PredictionBucketName;
         this.AWS_S3_MODEL_BUCKET_NAME = awsS3ModelBucketName;
         this.fastapiWebClient = webClientBuilder
                 .baseUrl(backFastapiUrl)
