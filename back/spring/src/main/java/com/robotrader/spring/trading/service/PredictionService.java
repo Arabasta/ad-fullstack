@@ -1,6 +1,5 @@
 package com.robotrader.spring.trading.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.robotrader.spring.aws.AwsConfig;
 import com.robotrader.spring.aws.s3.S3Logger;
 import com.robotrader.spring.dto.ticker.TickerDTO;
@@ -12,9 +11,7 @@ import com.robotrader.spring.trading.dto.PredictionDTOListDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -25,7 +22,6 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
