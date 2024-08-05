@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import useLiveTrading from "../hooks/useLiveTrading";
+import Button from "../../components/elements/buttons/Button";
 
 // todo: convert list to table below
 // todo: format the transaction details (see API doc)
@@ -67,9 +68,9 @@ const LiveTrading = () => {
                     <option value="CRYPTO">CRYPTO</option>
                 </select>
             </label>
-            <button onClick={handleStartTrade}>Start Trade</button>
-            <button onClick={handleStopTrade}>Stop Trade</button>
-            <button onClick={handleSeeTransactions}>See Transactions</button>
+            <Button onClick={handleStartTrade}>Start Trade</Button>
+            <Button onClick={handleStopTrade}>Stop Trade</Button>
+            <Button onClick={handleSeeTransactions}>See Transactions</Button>
 
             <ul>
                 {transactions.map((transaction, index) => (
