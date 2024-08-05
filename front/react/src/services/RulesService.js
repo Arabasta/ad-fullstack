@@ -1,23 +1,25 @@
 import axiosInstance from '../config/axios/axiosInstance';
 
-const getRulesByPortfolioType = async (portfolioType) => {
-    return await axiosInstance.get(`/v1/customer/rule`, {
-        params: {portfolioType},
-    });
+const getRule = async (portfolioType) => {
+    const response = await axiosInstance.get(`/v1/customer/rule?portfolioType=${portfolioType}`);
+    return response.data.data;
 };
 
-const updateRulesByPortfolio = async (thisPortfolioRules) => {
-    return await axiosInstance.post(`/v1/customer/rule/update`, {thisPortfolioRules});
+const updateRule = async (ruleData) => {
+    const response = await axiosInstance.post('/v1/customer/rule/update', ruleData);
+    return response.data.data;
 };
 
-const resetStopLoss = async (toReset) => {
-    return await axiosInstance.post(`/v1/customer/rule/reset-stop-loss`, {toReset});
+const resetStopLoss = async (portfolioType) => {
+    const response = await axiosInstance.post('/v1/customer/rule/reset-stop-loss', { portfolioType, resetStopLossTrigger: true });
+    return response.data.data;
 };
 
-const RulesService = {
-    getRulesByPortfolioType,
-    updateRulesByPortfolio,
+const RuleService = {
+    getRule,
+    updateRule,
     resetStopLoss
 };
 
-export default RulesService;
+export default RuleService;
+

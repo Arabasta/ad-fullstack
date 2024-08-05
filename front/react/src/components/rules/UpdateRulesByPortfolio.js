@@ -1,77 +1,66 @@
-import React, {useEffect, useState} from 'react';
-import RulesService from "../../services/RulesService";
-import FreeFormField from "../form/inputFields/FreeFormField";
+import React, { useState } from 'react';
 
-const UpdateRulesByPortfolio = ({ rules, onUpdateRules }) => {
-    const [rulesValues, setRulesValues] = useState(rules);
+const UpdateRulesByPortfolio = ({ portfolioType, onUpdate }) => {
+    const [stopLossInitialValue, setStopLossInitialValue] = useState('');
+    const [stopLoss, setStopLoss] = useState('');
+    const [recurringAllocationAmount, setRecurringAllocationAmount] = useState('');
+    const [recurringAllocationDay, setRecurringAllocationDay] = useState('');
 
-    useEffect(() => {
-        setRulesValues(rules);
-    }, [rules]);
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setRulesValues({ ...rulesValues, [name]: value });
-    };
-
-    const handleRulesUpdate = async () => {
-        try {
-            // todo: add more robust validation
-            if (!rulesValues) {
-                alert('You have no rules to update.');
-                return;
-            }
-
-            await RulesService.updateRulesByPortfolio(rulesValues);
-            onUpdateRules();
-        } catch (error) {
-            console.error('Error updating rules', error);
-        }
+    const handleUpdate = () => {
+        const updatedRule = {
+            portfolioType,
+            stopLossInitialValue: parseFloat(stopLossInitialValue),
+            stopLoss: parseFloat(stopLoss),
+            recurringAllocationAmount: parseFloat(recurringAllocationAmount),
+            recurringAllocationDay: parseInt(recurringAllocationDay, 10),
+        };
+        onUpdate(updatedRule);
     };
 
     return (
         <div>
+            <h2>Update Rules for {portfolioType}</h2>
             <div>
-                <FreeFormField
-                    label="Stop Loss Initial Value"
-                    type="number"
-                    name="stopLossInitialValue"
-                    value={rulesValues.stopLossInitialValue}
-                    onChange={handleInputChange}
-                    placeholder="Enter Stop Loss Value"
-                />
+                <label>
+                    Stop Loss Initial Value:
+                    <input
+                        type="number"
+                        value={stopLossInitialValue}
+                        onChange={(e) => setStopLossInitialValue(e.target.value)}
+                    />
+                </label>
             </div>
             <div>
-                <FreeFormField
-                    label="Stop Loss Percentage"
-                    type="number"
-                    name="stopLossPercentage"
-                    value={rulesValues.stopLoss}
-                    onChange={handleInputChange}
-                    placeholder="Enter Stop Loss Percentage"
-                />
+                <label>
+                    Stop Loss:
+                    <input
+                        type="number"
+                        value={stopLoss}
+                        onChange={(e) => setStopLoss(e.target.value)}
+                    />
+                </label>
             </div>
             <div>
-                <FreeFormField
-                    label="Recurring Allocation Amount"
-                    type="number"
-                    name="recurringAllocationAmount"
-                    value={rulesValues.recurringAllocationAmount}
-                    onChange={handleInputChange}
-                    placeholder="Enter recurring amount to allocate to this portfolio"
-                />
+                <label>
+                    Recurring Allocation Amount:
+                    <input
+                        type="number"
+                        value={recurringAllocationAmount}
+                        onChange={(e) => setRecurringAllocationAmount(e.target.value)}
+                    />
+                </label>
             </div>
             <div>
-                <FreeFormField
-                    label="Recurring Allocation Day"
-                    type="text"
-                    name="recurringAllocationDay"
-                    value={rulesValues.recurringAllocationDay}
-                    onChange={handleInputChange}
-                    placeholder="Enter day for recurring allocation to take place"
-                />
+                <label>
+                    Recurring Allocation Day:
+                    <input
+                        type="number"
+                        value={recurringAllocationDay}
+                        onChange={(e) => setRecurringAllocationDay(e.target.value)}
+                    />
+                </label>
             </div>
-            <button onClick={handleRulesUpdate}>Update</button>
+            <button onClick={handleUpdate}>Update Rule</button>
         </div>
     );
 };

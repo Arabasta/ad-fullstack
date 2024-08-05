@@ -1,35 +1,20 @@
-import React, {useEffect, useState} from 'react';
-import RulesService from "../../services/RulesService";
+import React from 'react';
+import useRule from "../../hooks/useRule";
 
-const ResetStopLossTriggerByPortfolio = ({ rules, portfolioType}) => {
-    const [stopLossTrigger, setStopLossTrigger] = useState({
-        portfolioType: portfolioType,
-        resetStopLossTrigger: false,
-    });
+const ResetStopLossTriggerByPortfolio = ({ portfolioType }) => {
+    const {  loading, error, resetStopLoss } = useRule(portfolioType);
 
-    const [rulesValues, setRulesValues] = useState(rules);
-
-    useEffect(() => {
-        setRulesValues(rules);
-    }, [rules]);
-
-    const handleResetStopLossTrigger = async () => {
-        try {
-            if (!rulesValues) {
-                alert('You have no stop loss rules to reset');
-                return;
-            }
-            setStopLossTrigger({resetStopLossTrigger: true});
-            await RulesService.resetStopLoss(stopLossTrigger);
-
-        } catch (error) {
-            console.error('Error updating rules', error);
-        }
+    const handleReset = () => {
+        resetStopLoss();
     };
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error.message}</p>;
 
     return (
         <div>
-            <button onClick={handleResetStopLossTrigger}>Reset</button>
+            <h2>Reset Stop Loss Trigger for {portfolioType}</h2>
+            <button onClick={handleReset}>Reset Stop Loss</button>
         </div>
     );
 };
