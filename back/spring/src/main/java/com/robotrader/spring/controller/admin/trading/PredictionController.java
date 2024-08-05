@@ -1,7 +1,9 @@
 package com.robotrader.spring.controller.admin.trading;
 
 import com.robotrader.spring.dto.general.ApiResponse;
+import com.robotrader.spring.dto.ticker.TickerDTO;
 import com.robotrader.spring.dto.ticker.TickerDTOListDTO;
+import com.robotrader.spring.trading.dto.PredictionDTO;
 import com.robotrader.spring.trading.dto.PredictionDTOListDTO;
 import com.robotrader.spring.trading.service.PredictionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +33,15 @@ public class PredictionController {
         return ResponseEntity.ok(new ApiResponse<>("success", "Available predicted TickerDTOs retrieved successfully", tickerDTOListDTO));
     }
 
-    @GetMapping("predict")
-    public ResponseEntity<ApiResponse<PredictionDTOListDTO>> predict(@RequestBody TickerDTOListDTO tickerDTOListDTO) throws IOException {
-        PredictionDTOListDTO predictionDTOListDTO = predictionService.byTickerList(tickerDTOListDTO);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Predicted TickerDTOs successfully", predictionDTOListDTO));
+    @GetMapping("ticker/live")
+    public ResponseEntity<ApiResponse<PredictionDTO>> predict(@RequestBody TickerDTO tickerDTO) throws IOException {
+        PredictionDTO predictionDTO = predictionService.byTickerDtoLive(tickerDTO);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Predicted TickerDTO successfully", predictionDTO));
     }
 
+    @GetMapping("ticker_list/live")
+    public ResponseEntity<ApiResponse<PredictionDTOListDTO>> predict(@RequestBody TickerDTOListDTO tickerDTOListDTO) throws IOException {
+        PredictionDTOListDTO predictionDTOListDTO = predictionService.byTickerDtoListDtoLive(tickerDTOListDTO);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Predicted TickerDTOList successfully", predictionDTOListDTO));
+    }
 }
