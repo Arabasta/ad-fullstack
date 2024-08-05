@@ -24,15 +24,16 @@ const useLiveTrading = (portfolioType = '', tickerType = '') => {
         }
     }, []);
 
-    const seeTransactions = useCallback(async () => {
+    const seeTransactions = useCallback(async (page = 0, size = 10) => {
         try {
-            const response = await LiveTradingService.seeTransactions(portfolioType);
+            const response = await LiveTradingService.seeTransactions(portfolioType, page, size);
             setTransactions(response.data.data);
         } catch (error) {
             console.error('Error fetching transactions', error);
         }
     }, [portfolioType]);
 
+    // Render transactions given portfolioType
     useEffect(() => {
         if (portfolioType) {
             seeTransactions();
