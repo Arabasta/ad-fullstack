@@ -1,4 +1,3 @@
-import json
 import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
@@ -11,7 +10,6 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import ElasticNet
 from xgboost import XGBRegressor
-from sklearn.neural_network import MLPRegressor
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -49,8 +47,6 @@ REPO_ROOT_PATH = str(utils.get_repo_root())
 
 # IN-MEMORY DATA
 LOADED_MODELS = {}
-LOADED_MODELS_TICKER_NAMES_LIST = []
-
 
 # todo: to refactor models into dto folder. for some reason, they were not detected when imported from dto folder.
 '''
@@ -100,68 +96,66 @@ async def get():
         "PARENT_DIRECTORY_PATH": PARENT_DIRECTORY_PATH,
         "REPO_ROOT_PATH": REPO_ROOT_PATH,
         "LOADED_MODELS": LOADED_MODELS,
-        "LOADED_MODELS_TICKER_NAMES_LIST": LOADED_MODELS_TICKER_NAMES_LIST
     }
     return {"response": health}
 
 
-# todo: priority2
 # Accepts Backend's PredictionDTO in RequestBody
-@app.get("/api/v1/predict/backtest")
+@app.get("/api/v1/predict/ticker/backtest")
 async def get(prediction_dto: PredictionDTO):
-    return
+    if prediction_dto.tickerDTO is None or prediction_dto.predictions is None:
+        return None
+    predictions = predictions_from_x_values(ticker_dto=prediction_dto.tickerDTO,
+                                            x_values=prediction_dto.predictions)
+    return PredictionDTO(tickerDTO=prediction_dto.tickerDTO,
+                         predictions=predictions)
 
 
-# todo: priority1
 # Accepts Backend's TickerDTO in RequestBody
-@app.get("/api/v1/predict/live")
-async def get(ticker_dto: TickerDTO) -> PredictionDTO:
+@app.get("/api/v1/predict/ticker/live")
+async def get(ticker_dto: TickerDTO):
     ticker_name = ticker_dto.tickerName
-    if ticker_name not in LOADED_MODELS_TICKER_NAMES_LIST:
-        return PredictionDTO()
-    logger.info('--Start predictions--')
+    if ticker_name not in list(LOADED_MODELS):
+        return None
+    logger.info('--Start prediction--')
     logger.info(f'--Predicting {ticker_name}--')
-    x_values = get_latest_ticker_api_data(ticker_name)
-    predictions = predict_from_model(ticker_name, x_values)
-    logger.info('--Finish predictions--')
-    return PredictionDTO(tickerDTO=ticker_dto, predictions=predictions)
+    predictions = predictions_from_ticker_dto(ticker_dto)
+    logger.info('--Finish prediction--')
+    return PredictionDTO(tickerDTO=ticker_dto,
+                         predictions=predictions)
 
 
+# todo: not working yet. to fix / remove.
 # Accepts Backend's TickerDTOListDTO in RequestBody
-@app.get("/api/v1/predict/live")
-async def get(ticker_dto_list_dto: TickerDTOListDTO) -> PredictionDTOListDTO:
+@app.get("/api/v1/predict/ticker_list/live")
+async def get(ticker_dto_list_dto: TickerDTOListDTO):
     ticker_names_list = [tickerDTO.tickerName for tickerDTO in ticker_dto_list_dto.tickerDTOList]
     # Boolean for checking if all requested models were loaded
-    all_ticker_models_loaded = all(ticker_name in ticker_names_list for ticker_name in LOADED_MODELS_TICKER_NAMES_LIST)
+    all_ticker_models_loaded = all(ticker_name in ticker_names_list for ticker_name in list(LOADED_MODELS))
     if not all_ticker_models_loaded:
         # todo: implement error logic. to return list of tickers that do not have trained models.
-        return PredictionDTOListDTO()
-
+        return None
     predictions_dto_list = []
     logger.info('--Start predictions--')
     for tickerDTO in ticker_dto_list_dto.tickerDTOList:
-        ticker_name = tickerDTO.tickerName
-        logger.info(f'--Predicting {ticker_name}--')
-        x_values = get_latest_ticker_api_data(ticker_name)
-        predictions = predict_from_model(ticker_name, x_values)
-        predictions_dto_list.append(
-            PredictionDTO(tickerDTO=tickerDTO,
-                          predictions=predictions)
-        )
+        logger.info(f'--Predicting {tickerDTO.tickerName}--')
+        predictions = predictions_from_ticker_dto(tickerDTO)
+        predictions_dto_list.append(PredictionDTO(tickerDTO=tickerDTO,
+                                                  predictions=predictions))
     logger.info('--Finish predictions--')
     # return {"predictions": json.dumps(json_predictions)}
     return PredictionDTOListDTO(predictionDTOList=predictions_dto_list)
 
 
 # Dev
-# todo: tested as working. to remove after dev.
+# todo: method tested as working. to remove this api, and run the function using scheduler once / twice a day.
 @app.get("/api/v1/dev/load_all_pickle_models")
 async def test_load_all_pickle_models():
     load_all_pickle_models(LOADED_MODELS, AWS_S3_MODEL_BUCKET_NAME)
     return {"response": f'Loaded: {list(LOADED_MODELS)}'}
 
 
-# todo: tested as working. to remove after dev.
+# todo: method tested as working. to remove this api after dev.
 @app.get("/api/v1/dev/load_pickle_model")
 async def test_load_pickle_model(ticker_name, key):
     load_pickle_model(ticker_name, key, LOADED_MODELS, AWS_S3_MODEL_BUCKET_NAME)
@@ -170,7 +164,7 @@ async def test_load_pickle_model(ticker_name, key):
     return {"response": f'{ticker_name} loading failed!'}
 
 
-# todo: tested as working. to remove after dev.
+# todo: method tested as working. to remove this api after dev.
 @app.get("/api/v1/dev/get_latest_ticker_api_data")
 async def test_get_latest_ticker_api_data(key):
     return {"response": get_latest_ticker_api_data(key)}  # {"latest": [223.4979, 223.0934, ... ]}
@@ -231,6 +225,11 @@ def load_pickle_model(ticker_name, key, loaded_models_dict, bucket_name):
     loaded_models_dict[ticker_name] = pickle.loads(obj['Body'].read())
 
 
+def predictions_from_ticker_dto(ticker_dto):
+    x_values = get_latest_ticker_api_data(ticker_dto.tickerName)
+    return predictions_from_x_values(ticker_dto, x_values)
+
+
 # Read and load prices jsons from polygon API
 def get_latest_ticker_api_data(ticker_name):
     # todo: to consider redesigning pipeline to know the name and quantity of features required by the trained models.
@@ -264,7 +263,8 @@ def get_latest_ticker_api_data(ticker_name):
 
 
 # Pass parameters into models
-def predict_from_model(ticker_name, x_values):
+def predictions_from_x_values(ticker_dto, x_values):
+    ticker_name = ticker_dto.tickerName
     model = LOADED_MODELS[ticker_name]
     y_pred = model.predict(np.array(x_values).reshape(-1, 1))
     # todo: to import scaler used in model fitting, so can inverse the scaling on y_pred
