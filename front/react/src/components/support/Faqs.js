@@ -1,5 +1,6 @@
-// src/Faq.js
 import React from 'react';
+import FaqList from './FaqList';
+import Heading from "../common/text/Heading";
 
 const faqs = [
     {
@@ -51,13 +52,8 @@ const faqs = [
 const Faq = () => {
     return (
         <div>
-            <h1>Frequently Asked Questions</h1>
-            {faqs.map((faq, index) => (
-                <div key={index}>
-                    <h2>{faq.question}</h2>
-                    <p>{faq.answer}</p>
-                </div>
-            ))}
+            <Heading variant="h1">Frequently Asked Questions</Heading>
+            <FaqList faqs={faqs} />
         </div>
     );
 }

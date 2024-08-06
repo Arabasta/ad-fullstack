@@ -1,12 +1,12 @@
 import React from 'react';
-import Faq from "./Faqs";
+import Header from "../components/common/layout/Header";
+import Footer from "../components/common/layout/Footer";
+import Faq from "../components/support/Faqs";
 
 const SupportPage = () => {
     return (
         <div>
-            <h2>Support</h2>
-            <p>Welcome to the Support page! For Test Only</p>
-            <Faq/>
+            <Faq />
         </div>
     );
 };
