@@ -4,6 +4,7 @@ import usePortfolio from "../../hooks/usePortfolio";
 import PortfolioDetails from "../../components/portfolio/PortfolioDetails";
 import PortfolioAddFunds from "../../components/portfolio/PortfolioAddFunds";
 import PortfolioWithdrawFunds from "../../components/portfolio/PortfolioWithdrawFunds";
+import Heading from "../../components/common/text/Heading";
 
 const AggressivePage = () => {
     const { portfolio, addFunds, withdrawFunds } = usePortfolio('AGGRESSIVE');
@@ -15,7 +16,7 @@ const AggressivePage = () => {
 
     return (
         <div>
-            <h1>Aggressive Portfolio</h1>
+            <Heading>Aggressive Portfolio</Heading>
             <PortfolioDetails portfolio={portfolio} />
             <PortfolioAddFunds addFunds={addFunds} />
             <PortfolioWithdrawFunds withdrawFunds={withdrawFunds} currentBalance={portfolio.allocatedBalance} />
