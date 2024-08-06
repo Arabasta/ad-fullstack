@@ -1,15 +1,18 @@
 package com.robotrader.spring.trading.strategy;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
-import com.robotrader.spring.trading.service.MarketDataService;
+import com.robotrader.spring.trading.service.HistoricalMarketDataService;
+import com.robotrader.spring.trading.service.LiveMarketDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.Disposable;
+import reactor.core.publisher.Flux;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,27 +25,43 @@ public class LiveTradingStrategy implements TradingStrategy {
     private Disposable dataSubscription;
     private final TradePersistence tradePersistence;
     private CompletableFuture<Void> completionFuture;
-    private MarketDataService marketDataService;
+    private HistoricalMarketDataService historicalMarketDataService;
+    private LiveMarketDataService liveMarketDataService;
+    private TickerTypeEnum tickerType;
     private static final Logger logger = LoggerFactory.getLogger(LiveTradingStrategy.class);
 
-    public LiveTradingStrategy(TradePersistence tradePersistence) {
+    public LiveTradingStrategy(TradePersistence tradePersistence,
+                               HistoricalMarketDataService historicalMarketDataService,
+                               LiveMarketDataService liveMarketDataService,
+                               TickerTypeEnum tickerType) {
         this.tradePersistence = tradePersistence;
+        this.historicalMarketDataService = historicalMarketDataService;
+        this.liveMarketDataService = liveMarketDataService;
+        this.tickerType = tickerType;
         this.completionFuture = new CompletableFuture<>();
     }
 
     @Override
-    public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
-        this.marketDataService = marketDataService;
+    public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase) {
         this.completionFuture = new CompletableFuture<>();
 
         return CompletableFuture.runAsync(() -> {
-            dataSubscription = marketDataService.getLiveMarketDataFlux().subscribe(
+            Flux<LiveMarketDataDTO> dataFlux;
+            if (tickerType == TickerTypeEnum.CRYPTO) {
+                dataFlux = liveMarketDataService.getLiveCryptoDataFlux();
+            } else if (tickerType == TickerTypeEnum.STOCKS) {
+                dataFlux = liveMarketDataService.getLiveStocksDataFlux();
+            } else {
+                throw new IllegalArgumentException("Unsupported ticker type: " + tickerType);
+            }
+
+            dataSubscription = dataFlux.subscribe(
                     data -> {
                         this.latestMarketData = data;
                         if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithmBase.getTicker()) ||
                                 latestMarketData.getTicker().equals(tradingAlgorithmBase.getTicker())) {
                             tradingAlgorithmBase.setCurrentPrice(latestMarketData.getC());
-                            setupAndExecuteLiveTrade(tradingAlgorithmBase, marketDataService);
+                            setupAndExecuteLiveTrade(tradingAlgorithmBase);
                         }
                     },
                     error -> {
@@ -70,8 +89,8 @@ public class LiveTradingStrategy implements TradingStrategy {
     // Polygon's websocket ticker subscription is X:BTC-USD but response object is BTC-USD......
     private String processResponseTicker(String ticker) { return "X:" + ticker; }
 
-    private void setupAndExecuteLiveTrade(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
-        marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
+    private void setupAndExecuteLiveTrade(TradingAlgorithmBase tradingAlgorithmBase) {
+        historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
                 .doOnNext(data-> tradingAlgorithmBase.setPriceHistory(data))
                 .doOnNext(data -> tradingAlgorithmBase.setPricePredictions(getPricePredictions(data)))
                 .doOnNext(data -> {
