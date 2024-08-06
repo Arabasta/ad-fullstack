@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import LineChart from "../component/charts/LineChart";
+import '../../assets/styles/BackTestResultPage.css'
 
 const BackTestResultPage = () => {
     const location = useLocation();
@@ -48,7 +49,9 @@ const BackTestResultPage = () => {
                 ))}
             </ul>
 
-            <LineChart data={data} />
+            <div className="chart-container">
+                <LineChart data={data}/>
+            </div>
         </div>
     );
 };
