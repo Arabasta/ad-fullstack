@@ -44,6 +44,10 @@ const LineChart = ({ data , view, labels }) => {
                         size: 12
                     }
                 },
+
+                grid: {
+                    color: 'grey' // Grid color
+                }
             },
             'y-axis-2': {
                 type: 'linear',
@@ -64,9 +68,10 @@ const LineChart = ({ data , view, labels }) => {
                         size: 12
                     }
                 },
+
                 grid: {
-                    drawOnChartArea: false,
-                },
+                    color: 'grey' // Grid color
+                }
             },
 
             x: {
