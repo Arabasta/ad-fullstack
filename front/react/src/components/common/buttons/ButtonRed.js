@@ -11,8 +11,6 @@ const ButtonRed = ({ variant, size, type, colorScheme, onClick, href, children, 
             onClick={onClick}
             bg="red"
             color="white"
-            _hover={{ bg: 'gray.700' }}
-            _active={{ bg: 'gray.800' }}
             {...props}
         >
             {children}

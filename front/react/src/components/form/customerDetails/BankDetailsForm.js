@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { VStack, HStack, Box, Text } from '@chakra-ui/react';
+import { VStack, HStack, Box, useToast } from '@chakra-ui/react';
 import useBankDetails from "../../../hooks/useBankDetails";
 import ButtonRed from "../../common/buttons/ButtonRed";
 import GrayBoxCard from "../../common/cards/GrayBoxCard";
 import ButtonBlack from "../../common/buttons/ButtonBlack";
 import InputBoxWhite from "../../common/inputFields/InputBoxWhite";
+import Text from "../../common/text/Text";
 
+// todo: add validation and error message (on backend too) for empty fields
 const BankDetailsForm = ({ onSave, initialDetails = null }) => {
-    const { bankDetails, getBankDetails } = useBankDetails();
+    const { bankDetails, getBankDetails, updateBankDetails } = useBankDetails();
+    const toast = useToast();
+    const [isEditing, setIsEditing] = useState(false);
     const [details, setDetails] = useState({
         bankName: '',
         accountNumber: '',
         accountHolderName: '',
     });
-    const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         const loadBankDetails = async () => {
@@ -23,7 +26,7 @@ const BankDetailsForm = ({ onSave, initialDetails = null }) => {
         };
 
         loadBankDetails();
-    }, [initialDetails, getBankDetails]);
+    }, [initialDetails, getBankDetails, bankDetails]);
 
     useEffect(() => {
         if (bankDetails) {
@@ -45,8 +48,14 @@ const BankDetailsForm = ({ onSave, initialDetails = null }) => {
         }));
     };
 
-    const handleSave = () => {
-        onSave(details);
+    const handleSave = async () => {
+        await updateBankDetails(details);
+        toast({
+            title: "Bank Details Saved",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+        });
         setIsEditing(false);
     };
 
@@ -64,17 +73,17 @@ const BankDetailsForm = ({ onSave, initialDetails = null }) => {
                 {!isEditing ? (
                     <>
                         <Box>
-                            <HStack justifyContent="space-between">
+                            <HStack p={5} justifyContent="space-between">
                                 <Text flex="1">Bank Name:</Text>
-                                <Text flex="2">{details.bankName}</Text>
+                                <Text fontSize="lg" flex="2">{details.bankName}</Text>
                             </HStack>
-                            <HStack justifyContent="space-between">
+                            <HStack p={5} justifyContent="space-between">
                                 <Text flex="1">Account Number:</Text>
-                                <Text flex="2">{details.accountNumber}</Text>
+                                <Text fontSize="lg" flex="2">{details.accountNumber}</Text>
                             </HStack>
-                            <HStack justifyContent="space-between">
+                            <HStack p={5} justifyContent="space-between">
                                 <Text flex="1">Full Name:</Text>
-                                <Text flex="2">{details.accountHolderName}</Text>
+                                <Text fontSize="lg" flex="2">{details.accountHolderName}</Text>
                             </HStack>
                         </Box>
                         <ButtonBlack w="full" onClick={handleEditClick}>Edit</ButtonBlack>
@@ -82,7 +91,6 @@ const BankDetailsForm = ({ onSave, initialDetails = null }) => {
                 ) : (
                     <>
                         <VStack spacing={4} align="stretch">
-                            <Box>
                                 <Text>Bank Name</Text>
                                 <InputBoxWhite
                                     name="bankName"
@@ -92,8 +100,6 @@ const BankDetailsForm = ({ onSave, initialDetails = null }) => {
                                     p={4}
                                     fontSize="lg"
                                 />
-                            </Box>
-                            <Box>
                                 <Text>Account Number</Text>
                                 <InputBoxWhite
                                     name="accountNumber"
@@ -103,8 +109,6 @@ const BankDetailsForm = ({ onSave, initialDetails = null }) => {
                                     p={4}
                                     fontSize="lg"
                                 />
-                            </Box>
-                            <Box>
                                 <Text>Account Holder Name</Text>
                                 <InputBoxWhite
                                     name="accountHolderName"
@@ -114,12 +118,10 @@ const BankDetailsForm = ({ onSave, initialDetails = null }) => {
                                     p={4}
                                     fontSize="lg"
                                 />
-                            </Box>
                         </VStack>
                         <HStack justify="space-between">
                             <ButtonRed onClick={handleCancelClick} flex="1" ml={2}>Cancel</ButtonRed>
                             <ButtonBlack onClick={handleSave} flex="1" mr={2}>Save</ButtonBlack>
-
                         </HStack>
                     </>
                 )}
