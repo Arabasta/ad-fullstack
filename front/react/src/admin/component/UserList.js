@@ -3,7 +3,24 @@ import useUsers from '../hooks/useUsers';
 
 const UserList = () => {
     const [search, setSearch] = useState('');
-    const { users } = useUsers(search);
+    const { users, lockUser, unlockUser } = useUsers(search);
+    const [message, setMessage] = useState({});
+
+    const handleLock = async (username) => {
+        await lockUser(username);
+        setMessage((prevState) => ({
+            ...prevState,
+            [username]: 'User locked successfully',
+        }));
+    };
+
+    const handleUnlock = async (username) => {
+        await unlockUser(username);
+        setMessage((prevState) => ({
+            ...prevState,
+            [username]: 'User unlocked successfully',
+        }));
+    };
 
     return (
         <div>
@@ -19,6 +36,8 @@ const UserList = () => {
                     <th>Username</th>
                     <th>Email</th>
                     <th>Role</th>
+                    <th>Actions</th>
+                    <th>Message</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -27,6 +46,11 @@ const UserList = () => {
                         <td>{user.username}</td>
                         <td>{user.email}</td>
                         <td>{user.role}</td>
+                        <td>
+                            <button onClick={() => handleLock(user.username)}>Lock</button>
+                            <button onClick={() => handleUnlock(user.username)}>Unlock</button>
+                        </td>
+                        <td>{message[user.username]}</td>
                     </tr>
                 ))}
                 </tbody>
