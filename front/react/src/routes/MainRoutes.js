@@ -25,7 +25,9 @@ const mainRoutes = [
     <Route key="wallettransactionhistory" path="/wallet/history/s3" element={<WalletTransactionHistoryPageS3 />} />,
     <Route key="portfoliohistory" path="/portfolio/history" element={<PortfolioTransactionHistoryPage/>} />,
     <Route key="recommended-portfolio-type" path="/recommended-portfolio-type" element={<RecommendedInvestorProfileTypePage />} />,
-    <Route key="not-found" path="*" element={<NotFoundPage />} />
+    <Route key="not-found" path="*" element={<NotFoundPage />} />,
+    <Route key="support" path="/support" element={<SupportPage />} />,
+
 ];
 
 export default mainRoutes;
