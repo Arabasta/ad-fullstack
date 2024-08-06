@@ -5,10 +5,7 @@ import com.robotrader.spring.dto.user.UsersDTO;
 import com.robotrader.spring.service.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,7 +13,9 @@ import java.util.List;
 @RequestMapping("/api/v1/admin/manage-users")
 public class ManageUsersControllerV1 {
 
-    // todo : add actions for admin
+    // todo : add more actions for admin
+    // todo: add dto for lock / unlock if free
+    // todo : add response dtos too if free
     private final IUserService userService;
 
     @Autowired
@@ -34,4 +33,17 @@ public class ManageUsersControllerV1 {
 
         return ResponseEntity.ok(new ApiResponse<>("success", "Users retrieved successfully", users));
     }
+
+    @PostMapping("/lock")
+    public ResponseEntity<ApiResponse<Void>> lockUser(@RequestParam String username) {
+        userService.lockUser(username);
+        return ResponseEntity.ok(new ApiResponse<>("success", "User locked successfully", null));
+    }
+
+    @PostMapping("/unlock")
+    public ResponseEntity<ApiResponse<Void>> unlockUser(@RequestParam String username) {
+        userService.unlockUser(username);
+        return ResponseEntity.ok(new ApiResponse<>("success", "User unlocked successfully", null));
+    }
+
 }

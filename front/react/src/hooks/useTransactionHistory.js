@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import TransactionHistoryService from '../services/TransactionHistoryService';
+import S3TransactionLogService from '../archive/wallet/S3TransactionLogService';
 import throttle from 'lodash.throttle';
 
 const useTransactionHistory = (type, portfolioType = null) => {
@@ -19,9 +19,9 @@ const useTransactionHistory = (type, portfolioType = null) => {
             try {
                 let response;
                 if (type === 'wallet') {
-                    response = await TransactionHistoryService.getWalletTransactions(page, size);
+                    response = await S3TransactionLogService.getWalletTransactions(page, size);
                 } else if (type === 'portfolio' && portfolioType) {
-                    response = await TransactionHistoryService.getPortfolioTransactions(portfolioType, page, size);
+                    response = await S3TransactionLogService.getPortfolioTransactions(portfolioType, page, size);
                 }
 
                 const newTransactions = response.data.data;

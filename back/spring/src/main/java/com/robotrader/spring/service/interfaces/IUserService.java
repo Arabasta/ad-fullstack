@@ -20,7 +20,7 @@ public interface IUserService extends UserDetailsService {
     EmailDTO updateEmail(String username, EmailDTO emailDTO);
     void updatePassword(String username, UpdatePasswordDTO updatePasswordDTO);
     void resetPassword(String username, ResetPasswordDTO resetPasswordDTO);
-    void delete(String username);
-    void restore(String username);
     User getUserByPortfolio(Portfolio portfolio);
+    void lockUser(String username);
+    void unlockUser(String username);
 }
