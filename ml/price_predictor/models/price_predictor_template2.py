@@ -587,7 +587,7 @@ def save_model_as_local_file(stock, model):
 """### 5.1.3 Upload to S3 Bucket"""
 
 # imports
-!pip install boto3
+#!pip install boto3
 import boto3
 
 def upload_to_s3(stock, model_name):
