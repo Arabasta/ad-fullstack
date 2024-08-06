@@ -5,6 +5,7 @@ const useRule = (portfolioType) => {
     const [rule, setRule] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [message, setMessage] = useState('');
 
     const fetchRule = useCallback(async () => {
         setLoading(true);
@@ -24,9 +25,11 @@ const useRule = (portfolioType) => {
         setError(null);
         try {
             await RuleService.updateRule(ruleData);
-            await fetchRule();  // 更新后重新获取数据
+            await fetchRule();
+            setMessage(`Rules updated successfully`);
         } catch (err) {
             setError(err);
+            setMessage(`Failed to update rules`);
         } finally {
             setLoading(false);
         }
@@ -36,10 +39,12 @@ const useRule = (portfolioType) => {
         setLoading(true);
         setError(null);
         try {
-            await RuleService.resetStopLoss(portfolioType);
-            await fetchRule();  // 重置后重新获取数据
+            const response = await RuleService.resetStopLoss(portfolioType);
+            await fetchRule();
+            setMessage(response.message );
         } catch (err) {
             setError(err);
+            setMessage(err.response?.data?.message);
         } finally {
             setLoading(false);
         }
@@ -49,7 +54,7 @@ const useRule = (portfolioType) => {
         fetchRule();
     }, [fetchRule]);
 
-    return { rule, loading, error, updateRule, resetStopLoss };
+    return { rule, loading, error, message, updateRule, resetStopLoss };
 };
 
 export default useRule;

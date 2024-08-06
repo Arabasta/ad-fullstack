@@ -1,33 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const UpdateRulesByPortfolio = ({ portfolioType, onUpdate }) => {
-    const [stopLossInitialValue, setStopLossInitialValue] = useState('');
-    const [stopLoss, setStopLoss] = useState('');
-    const [recurringAllocationAmount, setRecurringAllocationAmount] = useState('');
-    const [recurringAllocationDay, setRecurringAllocationDay] = useState('');
+const UpdateRulesByPortfolio = ({ onUpdate, rule }) => {
+    const [formData, setFormData] = useState({});
+    const [validationMessage, setValidationMessage] = useState('');
 
-    const handleUpdate = () => {
-        const updatedRule = {
-            portfolioType,
-            stopLossInitialValue: parseFloat(stopLossInitialValue),
-            stopLoss: parseFloat(stopLoss),
-            recurringAllocationAmount: parseFloat(recurringAllocationAmount),
-            recurringAllocationDay: parseInt(recurringAllocationDay, 10),
-        };
-        onUpdate(updatedRule);
+    useEffect(() => {
+        if (rule) {
+            setFormData(rule);
+        }
+    }, [rule]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        // Validation logic
+        if (name === 'stopLoss') {
+            if (value < 0) {
+                setValidationMessage('Stop Loss cannot be negative.');
+                return;
+            } else if (value > 100) {
+                setValidationMessage('Stop Loss cannot be greater than 100.');
+                return;
+            } else {
+                setValidationMessage('');
+            }
+        }
+
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (validationMessage) {
+            return; // Prevent form submission if there's a validation message
+        }
+        onUpdate(formData);
     };
 
     return (
-        <div>
-            <h2>Update Rules for {portfolioType}</h2>
+        <form onSubmit={handleSubmit}>
             <div>
                 <label>
                     Stop Loss Initial Value:
-                    <input
-                        type="number"
-                        value={stopLossInitialValue}
-                        onChange={(e) => setStopLossInitialValue(e.target.value)}
-                    />
+                    <span>{formData.stopLossInitialValue || ''}</span>
                 </label>
             </div>
             <div>
@@ -35,18 +53,23 @@ const UpdateRulesByPortfolio = ({ portfolioType, onUpdate }) => {
                     Stop Loss:
                     <input
                         type="number"
-                        value={stopLoss}
-                        onChange={(e) => setStopLoss(e.target.value)}
+                        name="stopLoss"
+                        value={formData.stopLoss || ''}
+                        min="0"
+                        max="100"
+                        onChange={handleChange}
                     />
                 </label>
             </div>
+            {validationMessage && <p style={{ color: 'red' }}>{validationMessage}</p>}
             <div>
                 <label>
                     Recurring Allocation Amount:
                     <input
                         type="number"
-                        value={recurringAllocationAmount}
-                        onChange={(e) => setRecurringAllocationAmount(e.target.value)}
+                        name="recurringAllocationAmount"
+                        value={formData.recurringAllocationAmount || ''}
+                        onChange={handleChange}
                     />
                 </label>
             </div>
@@ -55,13 +78,14 @@ const UpdateRulesByPortfolio = ({ portfolioType, onUpdate }) => {
                     Recurring Allocation Day:
                     <input
                         type="number"
-                        value={recurringAllocationDay}
-                        onChange={(e) => setRecurringAllocationDay(e.target.value)}
+                        name="recurringAllocationDay"
+                        value={formData.recurringAllocationDay || ''}
+                        onChange={handleChange}
                     />
                 </label>
             </div>
-            <button onClick={handleUpdate}>Update Rule</button>
-        </div>
+            <button type="submit">Update Rule</button>
+        </form>
     );
 };
 

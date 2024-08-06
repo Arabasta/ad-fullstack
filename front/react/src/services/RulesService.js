@@ -22,4 +22,3 @@ const RuleService = {
 };
 
 export default RuleService;
-
