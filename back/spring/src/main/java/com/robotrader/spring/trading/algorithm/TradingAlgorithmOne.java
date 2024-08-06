@@ -76,8 +76,7 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
             stopLossPrice = calculateStopLossPrice(currentPrice);
 
             // Determine available capital
-//            BigDecimal availableCapital = isTest ? capitalTest : moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
-            BigDecimal availableCapital = currentCapitalTest; //todo: delete this code and uncomment above once moneypool is setup
+            BigDecimal availableCapital = isTest ? currentCapitalTest : moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
 
             // Calculate raw position size
             BigDecimal rawPositionSize = availableCapital.multiply(risk).divide(stopLossAmount, 8, RoundingMode.HALF_UP);

@@ -1,5 +1,6 @@
 package com.robotrader.spring.trading.algorithm.base;
 
+import com.robotrader.spring.model.MoneyPool;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
@@ -124,7 +125,8 @@ public abstract class TradingAlgorithmBase {
         BigDecimal totalCost = currentPrice.multiply(position);
 
         // Check if there's enough capital for the trade
-        if (totalCost.compareTo(currentCapitalTest) > 0) { //TODO: use money pool for live trading
+        BigDecimal poolBalance = moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
+        if (isTest && totalCost.compareTo(currentCapitalTest) > 0 || !isTest && totalCost.compareTo(poolBalance) > 0) {
             logger.debug("Position: {}", position);
             logger.debug("Not enough capital for the trade. Required: {}, Available: {}", totalCost, currentCapitalTest);
             return false;
@@ -137,12 +139,11 @@ public abstract class TradingAlgorithmBase {
         BigDecimal currentPrice = (BigDecimal) priceHistory.get("close").get(0);
 
         lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action, portfolioType);
+        BigDecimal transactionAmount = currentPrice.multiply(position);
         if (action.equals("BUY")) {
-            currentCapitalTest = currentCapitalTest.subtract(currentPrice.multiply(position));
+            transactionAmount = transactionAmount.negate();
         }
-        else {
-            currentCapitalTest = currentCapitalTest.add(currentPrice.multiply(position));
-        }
+        currentCapitalTest = currentCapitalTest.add(transactionAmount);
 
         logger.debug("Trade: {}", lastTradeTransaction);
         logger.debug("Capital:{}", currentCapitalTest);
@@ -151,16 +152,13 @@ public abstract class TradingAlgorithmBase {
     public void executeTradeLive(String action) {
         LocalDateTime dt = LocalDateTime.now();
         lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action, portfolioType);
+        BigDecimal newBalance = null;
+        if (action.equals("SELL")){
+            newBalance = moneyPoolService.updateTrade(lastTradeTransaction);
+        }
 
-        // TODO: replace below to use moneypool instead of capitalTest
-        if (action.equals("BUY")) {
-            currentCapitalTest = currentCapitalTest.subtract(currentPrice.multiply(position));
-        }
-        else {
-            currentCapitalTest = currentCapitalTest.add(currentPrice.multiply(position));
-        }
         logger.debug("Trade: {}", lastTradeTransaction);
-        logger.debug("Capital:{}", currentCapitalTest);
+        logger.debug("Capital:{}", newBalance);
     }
 
     public boolean isSellable() {

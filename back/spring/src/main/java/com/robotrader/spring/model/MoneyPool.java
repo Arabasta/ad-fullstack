@@ -40,7 +40,7 @@ public class MoneyPool {
 
     @NotNull(message = "Unit quantity cannot be null")
     @Min(value = 0, message = "Unit quantity must be greater than or equal to 0")
-    private Integer totalUnitQty;
+    private BigDecimal totalUnitQty;
 
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)

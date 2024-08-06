@@ -39,11 +39,13 @@ public class Portfolio {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal currentValue;
 
-    private Integer allocatedUnitQty;
+    @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal allocatedUnitQty;
 
     public Portfolio() {
         this.allocatedBalance = new BigDecimal(0);
-        this.allocatedUnitQty = 0;
+        this.allocatedUnitQty = new BigDecimal(0);
         this.currentValue = new BigDecimal(0);
     }
 

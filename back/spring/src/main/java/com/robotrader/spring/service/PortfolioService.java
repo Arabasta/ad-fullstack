@@ -41,12 +41,14 @@ public class PortfolioService implements IPortfolioService {
     private final PortfolioTransactionLogService portfolioTransactionLogService;
     private final SesPortfolioNotificationService sesPortfolioNotificationService;
     private final WalletTransactionLogService walletTransactionLogService;
+    private final MoneyPoolService moneyPoolService;
 
     @Autowired
     public PortfolioService(PortfolioRepository portfolioRepository, IRuleService ruleService,
                             @Lazy ICustomerService customerService, IWalletService walletService, Optional<S3TransactionLogger> s3TransactionLogger,
                             PortfolioTransactionLogService portfolioTransactionLogService, @Lazy UserService userService,
-                            Optional<SesPortfolioNotificationService> sesPortfolioNotificationService, WalletTransactionLogService walletTransactionLogService) {
+                            Optional<SesPortfolioNotificationService> sesPortfolioNotificationService, WalletTransactionLogService walletTransactionLogService,
+                            @Lazy MoneyPoolService moneyPoolService) {
         this.portfolioRepository = portfolioRepository;
         this.ruleService = ruleService;
         this.customerService = customerService;
@@ -56,6 +58,7 @@ public class PortfolioService implements IPortfolioService {
         this.userService = userService;
         this.sesPortfolioNotificationService = sesPortfolioNotificationService.orElse(null);
         this.walletTransactionLogService = walletTransactionLogService;
+        this.moneyPoolService = moneyPoolService;
     }
 
     @Override
@@ -159,6 +162,12 @@ public class PortfolioService implements IPortfolioService {
     public void addFundsToPortfolio(Portfolio portfolio, BigDecimal amount) {
         portfolio.setAllocatedBalance(portfolio.getAllocatedBalance().add(amount));
         portfolio.setCurrentValue(portfolio.getCurrentValue().add(amount));
+
+        BigDecimal moneyPoolUnitPrice = moneyPoolService.getUnitPriceByPortfolioType(portfolio.getPortfolioType());
+        BigDecimal newUnitsToAdd = amount.divide(moneyPoolUnitPrice);
+        moneyPoolService.updateTotalUnitQty(newUnitsToAdd, portfolio.getPortfolioType(), true);
+        portfolio.setAllocatedUnitQty(portfolio.getAllocatedUnitQty().add(newUnitsToAdd));
+
         ruleService.setStopLossInitialValue(portfolio.getRule(), portfolio.getCurrentValue());
         save(portfolio);
     }
@@ -166,8 +175,13 @@ public class PortfolioService implements IPortfolioService {
     @Override
     @Transactional
     public void removeFundsFromPortfolio(Portfolio portfolio, BigDecimal amount) {
-        if (portfolio.getAllocatedBalance().compareTo(amount) < 0)
+        if (portfolio.getCurrentValue().compareTo(amount) < 0)
             throw new InsufficientFundsException("Insufficient funds in portfolio");
+
+        BigDecimal moneyPoolUnitPrice = moneyPoolService.getUnitPriceByPortfolioType(portfolio.getPortfolioType());
+        BigDecimal unitsToSubtract = amount.divide(moneyPoolUnitPrice);
+        moneyPoolService.updateTotalUnitQty(unitsToSubtract, portfolio.getPortfolioType(), false);
+        portfolio.setAllocatedUnitQty(portfolio.getAllocatedUnitQty().subtract(unitsToSubtract));
 
         // remove from current value and reset allocated balance
         portfolio.setCurrentValue(portfolio.getCurrentValue().subtract(amount));
@@ -215,6 +229,21 @@ public class PortfolioService implements IPortfolioService {
         if (sesPortfolioNotificationService != null)
             sesPortfolioNotificationService.sendRecurringAllocationNotification(userService.getUserByPortfolio(portfolio).getUsername(),
                     userService.getUserByPortfolio(portfolio).getEmail(), portfolio.getPortfolioType().toString(), recurringAmount);
+    }
+
+    @Override
+    public List<Portfolio> findPortfolioByType(PortfolioTypeEnum portfolioTypeEnum) {
+        return portfolioRepository.findPortfolioByPortfolioType(portfolioTypeEnum);
+    }
+
+    @Override
+    @Transactional
+    public void updateTrade(BigDecimal newUnitPrice, PortfolioTypeEnum portfolioTypeEnum) {
+        findPortfolioByType(portfolioTypeEnum)
+                .stream()
+                .forEach(portfolio -> {
+                    portfolio.setCurrentValue(newUnitPrice.multiply(portfolio.getAllocatedBalance()));
+                });
     }
 
 }
