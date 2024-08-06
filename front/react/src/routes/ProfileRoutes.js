@@ -6,7 +6,7 @@ import InvestorProfilePage from "../pages/profile/InvestorProfilePage";
 import AddressPage from "../pages/profile/AddressPage";
 import {Route} from "react-router-dom";
 import UpdateCustomerPhoneNumber from "../components/customer/UpdateCustomerPhoneNumber";
-
+import BankDetailsPage from "../pages/profile/BankDetailsPage";
 
 const profileRoutes = [
     <Route key="account" path="/profile/account" element={<AccountPage />} />,
@@ -15,7 +15,7 @@ const profileRoutes = [
     <Route key="investor" path="/profile/investorProfile" element={<InvestorProfilePage />} />,
     <Route key="notification" path="/profile/notification" element={<NotificationPage />} />,
     <Route key="updatePhoneNum" path="/profile/update-mobile-number" element={<UpdateCustomerPhoneNumber />} />,
-
+    <Route key="bankDetails" path="/profile/bankDetails" element={<BankDetailsPage />} />,
 ];
 
 export default profileRoutes;

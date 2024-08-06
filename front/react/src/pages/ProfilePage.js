@@ -56,12 +56,13 @@ const ProfilePage = () => {
                     />
 
                     <VStack spacing={4} align="flex-start" ml={8}>
-                        <ProfileButtons to="/profile/update-mobile-number" label="Update Mobile Number" />
-                        <ProfileButtons to="/profile/account" label="Update Email and Password" />
-                        <ProfileButtons to="/profile/financialProfile" label="Update Financial Profile" />
-                        <ProfileButtons to="/profile/address" label="Update Address" />
-                        <ProfileButtons to="/profile/investorProfile" label="Update Investor Profile" />
-                        <ProfileButtons to="/profile/notification" label="Notification Settings" />
+                        <ProfileButtons to="/profile/account" label="Email and Password" />
+                        <ProfileButtons to="/profile/update-mobile-number" label="Phone Number" />
+                        <ProfileButtons to="/profile/address" label="Address" />
+                        <ProfileButtons to="/profile/bankDetails" label="Bank Details" />
+                        <ProfileButtons to="/profile/financialProfile" label="Financial Profile" />
+                        <ProfileButtons to="/profile/investorProfile" label="Investor Profile" />
+                        <ProfileButtons to="/profile/notification" label="Notifications" />
                     </VStack>
                 </Flex>
 

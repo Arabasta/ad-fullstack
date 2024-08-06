@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import useUsers from '../hooks/useUsers';
-import ModalList from '../../components/common/modal/ModalList';
-import ModalListItem from '../../components/common/modal/ModalListItem';
+import UnorderedList from '../../components/common/layout/list/UnorderedList';
+import ListItem from '../../components/common/layout/list/ListItem';
 import Button from '../../components/common/buttons/Button';
 import BlackText from '../../components/common/text/BlackText';
 import SearchInput from "../../components/common/inputFields/SearchInput";
@@ -36,9 +36,9 @@ const UserList = () => {
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search users"
             />
-            <ModalList>
+            <UnorderedList>
                 {users.map((user) => (
-                    <ModalListItem key={user.username}>
+                    <ListItem key={user.username}>
                         <BlackText variant="h5">{user.username}</BlackText>
                         <BlackText variant="p">{user.email}</BlackText>
                         <BlackText variant="p">{user.role}</BlackText>
@@ -47,9 +47,9 @@ const UserList = () => {
                             <Button onClick={() => handleUnlock(user.username)}>Unlock</Button>
                         </div>
                         <UserMessage message={message[user.username]} />
-                    </ModalListItem>
+                    </ListItem>
                 ))}
-            </ModalList>
+            </UnorderedList>
         </div>
     );
 };

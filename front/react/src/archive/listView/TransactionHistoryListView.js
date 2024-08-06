@@ -1,7 +1,7 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ListItem from './ListItem';
-import SeparatorBlack from '../../components/common/layout/SeparatorBlack';
+import SeparatorBlack from '../../components/common/layout/separator/SeparatorBlack';
 
 const TransactionHistoryListView = ({ transactions, loadMoreTransactions, hasMore }) => {
     return (

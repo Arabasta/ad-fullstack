@@ -2,9 +2,9 @@ import React from 'react';
 import { Text as ChakraText } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
-const Text = ({ variant, color, children, ...props }) => {
+const Text = ({ fontSize, variant, color, children, ...props }) => {
     return (
-        <ChakraText as={variant}  color={color} {...props}>
+        <ChakraText as={variant}  color={color} fontSize={fontSize} {...props}>
             {children}
         </ChakraText>
     );
@@ -19,6 +19,7 @@ Text.propTypes = {
 Text.defaultProps = {
     variant: 'p',
     color: 'white',
+    fontSize: 'md',
 };
 
 export default Text;

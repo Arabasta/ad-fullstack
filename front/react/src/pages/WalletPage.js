@@ -1,30 +1,35 @@
 import React from "react";
-import { Box, VStack } from "@chakra-ui/react";
+import {Box, HStack, VStack} from "@chakra-ui/react";
 import useWallet from "../hooks/useWallet";
-import WalletAddFunds from "../components/wallet/WalletAddFunds";
-import WalletWithdrawFunds from "../components/wallet/WalletWithdrawFunds";
-import SimpleImageCard from "../components/common/cards/SimpleImageCard";
-import creditCardLogo from "../assets/images/card-visa-background.jpg";
 import { formatCurrency } from "../utils/formatCurrency";
 import { Modal } from "../components/common/modal/Modal";
 import TransactionHistory from "../components/feature/TransactionHistory";
+import WalletAction from "../components/wallet/WalletAction";
+import BlackText from "../components/common/text/BlackText";
+import GrayText from "../components/common/text/GrayText";
+import WhiteBoxCard from "../components/common/cards/WhiteBoxCard";
 
-// todo: WalletBalance thing redesign
 const WalletPage = () => {
     const { wallet, getWallet } = useWallet();
 
     return (
-        <Box p={6} maxW="800px" mx="auto">
-            <SimpleImageCard
-                image={creditCardLogo}
-                title="Wallet Balance: "
-                spanText={formatCurrency(wallet)}
-            />
+        <Box p={4} maxW="500px" mx="auto"  borderRadius="lg" mt={6}>
             <VStack spacing={4} mt={8}>
-                <WalletAddFunds onAddFunds={getWallet} />
-                <WalletWithdrawFunds onWithdrawFunds={getWallet} />
 
-                <Modal triggerText="View History" title="Wallet History">
+                {/* Balance Display */}
+                <WhiteBoxCard>
+                    <GrayText fontSize="2xl" fontWeight="bold">Balance</GrayText>
+                    <BlackText fontSize="5xl" fontWeight="bold">{formatCurrency(wallet)}</BlackText>
+                </WhiteBoxCard>
+
+                {/* Withdraw and Deposit Buttons */}
+                <HStack w="full" justify="center" mt={4} mb={30}>
+                    <WalletAction type="deposit" onActionComplete={getWallet} />
+                    <WalletAction type="withdraw" onActionComplete={getWallet} />
+                </HStack>
+
+                {/* View History Button */}
+                <Modal triggerText="View Wallet History" title="Wallet History">
                     <TransactionHistory type="wallet" />
                 </Modal>
             </VStack>
