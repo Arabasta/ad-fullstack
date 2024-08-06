@@ -1,11 +1,11 @@
 import React from 'react';
 import useSqlTransactionLog from '../../hooks/useSqlTransactionLog';
-import SeparatorBlack from '../common/layout/SeparatorBlack';
-import SeparatorGrey from '../common/layout/SeparatorGrey';
-import ModalList from "../common/modal/ModalList";
-import ModalListItem from "../common/modal/ModalListItem";
+import SeparatorBlack from '../common/layout/separator/SeparatorBlack';
+import SeparatorGrey from '../common/layout/separator/SeparatorGrey';
+import UnorderedList from "../common/layout/list/UnorderedList";
+import ListItem from "../common/layout/list/ListItem";
 import BlackText from "../common/text/BlackText";
-import ModalButton from "../common/modal/ModalButton";
+import ButtonBlack from "../common/buttons/ButtonBlack";
 import {Flex} from "@chakra-ui/react";
 
 // todo: maybe rearrgange the text or something
@@ -24,24 +24,24 @@ const TransactionHistory = ({ type, portfolioType }) => {
     return (
         <>
             <SeparatorBlack />
-            <ModalList>
+            <UnorderedList>
                 {transactions.map((transaction) => (
-                    <ModalListItem key={transaction.id}>
+                    <ListItem key={transaction.id}>
                         <BlackText fontWeight="bold">
                             {transaction.transactionType} ${transaction.transactionAmount}
                         </BlackText>
                         <BlackText>Balance: ${transaction.totalAmount}</BlackText>
                         <BlackText>{formatTimestamp(transaction.timestamp)}</BlackText>
                         <SeparatorGrey />
-                    </ModalListItem>
+                    </ListItem>
                 ))}
-            </ModalList>
+            </UnorderedList>
             {loading && <BlackText>Loading more transactions...</BlackText>}
             {!loading && hasMore && (
                 <Flex justifyContent="center" mt={4}>
-                    <ModalButton onClick={loadMoreTransactions}>
+                    <ButtonBlack onClick={loadMoreTransactions}>
                         Load More
-                    </ModalButton>
+                    </ButtonBlack>
                 </Flex>
             )}
             {!hasMore && <BlackText>No more transactions to show</BlackText>}
