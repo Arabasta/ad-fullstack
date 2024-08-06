@@ -8,9 +8,6 @@ import WalletPage from "../pages/WalletPage";
 import SupportPage from "../pages/SupportPage";
 import ProfilePage from "../pages/ProfilePage";
 import RecommendedInvestorProfileTypePage from "../pages/auth/RecommendedInvestorProfileTypePage";
-import WalletTransactionHistoryPageS3 from "../archive/wallet/wallet/WalletTransactionHistoryPageS3";
-import PortfolioTransactionHistoryPage from "../pages/portfolio/PortfolioTransactionHistoryPage";
-import WalletTransactionHistoryPage from "../archive/wallet/WalletTransactionHistoryPage";
 
 
 const mainRoutes = [
