@@ -1,18 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button as CButton } from '@chakra-ui/react';
+import { Button as ChakraButton } from '@chakra-ui/react';
 
-const Button = ({ variant, size, type, colorScheme, onClick, href, children, ...props }) => {
+const Button = ({ bg, color, variant, size, type, colorScheme, onClick, href, children, ...props }) => {
     return (
-        <CButton variant={variant}
-                 size={size}
-                 type={type}
-                 colorScheme={colorScheme}
-                 href={href}
-                 onClick={onClick}
-                 {...props}>
+        <ChakraButton variant={variant}
+                    size={size}
+                    type={type}
+                    colorScheme={colorScheme}
+                    href={href}
+                    bg={bg}
+                    color={color}
+                    onClick={onClick}
+                    {...props}>
             {children}
-        </CButton>
+        </ChakraButton>
     );
 };
 

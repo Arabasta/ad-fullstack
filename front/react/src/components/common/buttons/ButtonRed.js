@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from './Button';
 
-const ButtonBlack = ({ variant, size, type, colorScheme, onClick, href, children, ...props }) => {
+const ButtonRed = ({ variant, size, type, colorScheme, onClick, href, children, ...props }) => {
     return (
         <Button
             size={size}
@@ -9,7 +9,7 @@ const ButtonBlack = ({ variant, size, type, colorScheme, onClick, href, children
             colorScheme={colorScheme}
             href={href}
             onClick={onClick}
-            bg="black"
+            bg="red"
             color="white"
             _hover={{ bg: 'gray.700' }}
             _active={{ bg: 'gray.800' }}
@@ -20,4 +20,4 @@ const ButtonBlack = ({ variant, size, type, colorScheme, onClick, href, children
     );
 };
 
-export default ButtonBlack;
+export default ButtonRed;
