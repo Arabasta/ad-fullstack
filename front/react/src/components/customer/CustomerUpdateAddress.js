@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import AddressService from "../../../services/AddressService";
+import AddressService from "../../services/AddressService";
 
 const CustomerUpdateAddress = ({ address, onUpdateAddress }) => {
     const [addressValues, setAddressValues] = useState(address);

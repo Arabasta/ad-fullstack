@@ -1,5 +1,5 @@
 import useAddress from "../../hooks/useAddress";
-import CustomerUpdateAddress from "../../components/form/customerDetails/CustomerUpdateAddress";
+import CustomerUpdateAddress from "../../components/customer/CustomerUpdateAddress";
 import React from "react";
 
 const AddressPage = () => {

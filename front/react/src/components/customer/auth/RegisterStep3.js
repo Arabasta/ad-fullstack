@@ -1,5 +1,5 @@
 import React from 'react';
-import FreeFormField from "../inputFields/FreeFormField";
+import FreeFormField from "../../common/inputFields/FreeFormField";
 import {Button} from "@chakra-ui/react";
 
 const RegisterStep3 = ({

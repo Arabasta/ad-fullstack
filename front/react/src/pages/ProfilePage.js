@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ChakraProvider, Box, Flex, Heading, VStack, Text, Divider } from '@chakra-ui/react';
-import ProfileButtons from "../components/elements/buttons/ProfileButtons";
-import CustomerDetailsCard from "../components/elements/cards/CustomerDetailsCard";
+import ProfileButtons from "../components/common/buttons/ProfileButtons";
+import CustomerDetailsCard from "../components/common/cards/CustomerDetailsCard";
 import CustomerService from "../services/CustomerService";
 import InvestorProfileService from "../services/InvestorProfileService";
 

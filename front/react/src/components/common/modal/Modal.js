@@ -1,6 +1,6 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
 import { useState } from "react";
-import Heading from "../../common/text/Heading";
+import Heading from "../text/Heading";
 import ModalButton from "./ModalButton";
 
 const ModalCloseButton = ({ onClick }) => (

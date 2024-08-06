@@ -1,5 +1,5 @@
 import React from 'react';
-import ParagraphWithImageCard from "../components/elements/cards/ParagraphWithImageCard";
+import ParagraphWithImageCard from "../components/common/cards/ParagraphWithImageCard";
 
 
 const HomePage = () => {

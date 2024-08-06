@@ -14,7 +14,7 @@ import {
 
 import { AiOutlineMenu } from "react-icons/ai";
 import { Logo } from "@choc-ui/logo";
-import Button from '../../../components/elements/buttons/Button';
+import Button from '../buttons/Button';
 import { Link } from 'react-router-dom';
 import { AuthContext } from "../../../config/context/AuthContext";
 
