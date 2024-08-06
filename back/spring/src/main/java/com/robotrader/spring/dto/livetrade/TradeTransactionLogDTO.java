@@ -22,5 +22,6 @@ public class TradeTransactionLogDTO {
     private LocalDateTime transactionDateTime;
     private BigDecimal transactionQuantity;
     private BigDecimal transactionPrice;
+    private BigDecimal transactionAmount;
     private PortfolioTypeEnum portfolioType;
 }

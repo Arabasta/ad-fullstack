@@ -53,6 +53,7 @@ public class TradeTransactionLogService implements ITradeTransactionLogService {
                 log.getTransactionDateTime(),
                 log.getTransactionQuantity(),
                 log.getTransactionPrice(),
+                log.getTransactionPrice().multiply(log.getTransactionQuantity()),
                 log.getPortfolioType()
         ));
     }
