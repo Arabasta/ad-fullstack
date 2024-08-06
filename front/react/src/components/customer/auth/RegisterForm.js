@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import useAuth from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import RegisterStep3 from './RegisterStep3';
-import RegisterStep4 from './RegisterStep4';
 import RegisterStep5 from "./RegisterStep5";
 import RegisterStep1New from "./RegisterStep1New";
 import RegisterStep2New from "./RegisterStep2New";
+import RegisterStep3New from "./RegisterStep3New";
+import RegisterStep4New from "./RegisterStep4New";
 
 const RegisterForm = () => {
     const [step, setStep] = useState(1);
@@ -98,7 +98,7 @@ const RegisterForm = () => {
             )}
 
             {step === 3 && (
-                <RegisterStep3
+                <RegisterStep3New
                     street={street}
                     setStreet={setStreet}
                     city={city}
@@ -115,7 +115,7 @@ const RegisterForm = () => {
             )}
 
             {step === 4 && (
-                <RegisterStep4
+                <RegisterStep4New
                     employmentStatus={employmentStatus}
                     setEmploymentStatus={setEmploymentStatus}
                     annualIncome={annualIncome}
