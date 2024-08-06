@@ -21,13 +21,14 @@ ChartJS.register(
     Legend
 );
 
-const LineChart = ({ data }) => {
+const LineChart = ({ data , view, labels }) => {
     const chartOptions = {
         responsive: true,
         scales: {
             'y-axis-1': {
                 type: 'linear',
                 position: 'left',
+                display: view === 'capital',
                 title: {
                     display: true,
                     text: 'Capital ($)',
@@ -46,7 +47,8 @@ const LineChart = ({ data }) => {
             },
             'y-axis-2': {
                 type: 'linear',
-                position: 'right',
+                position: 'left',
+                display: view === 'percentChange',
                 title: {
                     display: true,
                     text: 'Percent Change (%)',
@@ -70,7 +72,7 @@ const LineChart = ({ data }) => {
             x: {
                 title: {
                     display: true,
-                    text: 'Elapsed Time',
+                    text: `Elapsed Time (${labels[labels.length - 1]} minutes)`,
                     color: '#eee',
                     font: {
                         size: 14
@@ -80,6 +82,9 @@ const LineChart = ({ data }) => {
                     color: '#eee',
                     font: {
                         size: 12
+                    },
+                    callback: function(value, index, values) {
+                        return index === 0 || index === values.length - 1 ? this.getLabelForValue(value) : '';
                     }
                 }
             },
