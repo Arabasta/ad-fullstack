@@ -27,23 +27,30 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class TradingApplicationService implements ITradingApplicationService {
     private final MoneyPoolService moneyPoolService;
-    private final MarketDataService marketDataService;
+    private final HistoricalMarketDataService historicalMarketDataService;
+    private final LiveMarketDataService liveMarketDataService;
     private final S3TransactionLogger s3TransactionLogger;
     private List<TradingContext> tradingContexts;
     private static final Logger logger = LoggerFactory.getLogger(TradingApplicationService.class);
 
     @Autowired
-    public TradingApplicationService(MoneyPoolService moneyPoolService, MarketDataService marketDataService, Optional<S3TransactionLogger> s3TransactionLogger) {
+    public TradingApplicationService(MoneyPoolService moneyPoolService,
+                                     HistoricalMarketDataService historicalMarketDataService,
+                                     LiveMarketDataService liveMarketDataService,
+                                     Optional<S3TransactionLogger> s3TransactionLogger) {
         this.moneyPoolService = moneyPoolService;
-        this.marketDataService = marketDataService;
+        this.historicalMarketDataService = historicalMarketDataService;
+        this.liveMarketDataService = liveMarketDataService;
         this.s3TransactionLogger = s3TransactionLogger.orElse(null);
         this.tradingContexts = new ArrayList<>();
     }
 
     @Override
     public BackTestResultDTO runTradingAlgorithmBackTest(String ticker, PortfolioTypeEnum portfolioType) {
-        TradingContext tradingContext = new TradingContext(marketDataService);
-        tradingContext.setStrategy(new BackTestingStrategy(new MemoryStoreTradePersistence()));
+        TradingContext tradingContext = new TradingContext();
+        tradingContext.setStrategy(new BackTestingStrategy(
+                new MemoryStoreTradePersistence(), historicalMarketDataService));
+
         TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
         CompletableFuture<Void> future = tradingContext.executeTradingStrategy(tradingAlgorithmOne);
 
@@ -56,10 +63,14 @@ public class TradingApplicationService implements ITradingApplicationService {
     @Override
     public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, TickerTypeEnum tickerType) {
 
-        TradingContext tradingContext = new TradingContext(marketDataService);
+        TradingContext tradingContext = new TradingContext();
         tradingContexts.add(tradingContext);
-        marketDataService.subscribeToLiveMarketData(tickers, tickerType);
-        tradingContext.setStrategy(new LiveTradingStrategy(new ObjectStoreTradePersistence(Optional.ofNullable(s3TransactionLogger))));
+        if (!LiveMarketDataService.isRunning()){
+            liveMarketDataService.subscribeToLiveMarketData();
+        }
+        tradingContext.setStrategy(new LiveTradingStrategy(
+                new ObjectStoreTradePersistence(Optional.ofNullable(s3TransactionLogger)),
+                historicalMarketDataService, liveMarketDataService, tickerType));
         for (String ticker : tickers) {
             TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
             tradingContext.executeTradingStrategy(tradingAlgorithmOne);
@@ -72,7 +83,7 @@ public class TradingApplicationService implements ITradingApplicationService {
             tradingContext.stop();
         }
         tradingContexts.clear();
-        marketDataService.disconnectLiveMarketData();
+        liveMarketDataService.disconnectLiveMarketData();
     }
 
 
