@@ -127,28 +127,6 @@ async def by_ticker_dto_live(ticker_dto: TickerDTO):
                          predictions=predictions)
 
 
-# todo: not working yet. to fix / remove.
-# Accepts Backend's TickerDTOListDTO in RequestBody
-@app.post("/api/v1/predict/ticker_list/live")
-async def by_ticker_dto_list_dto_live(ticker_dto_list_dto: TickerDTOListDTO):
-    ticker_names_list = [tickerDTO.tickerName for tickerDTO in ticker_dto_list_dto.tickerDTOList]
-    # Boolean for checking if all requested models were loaded
-    all_ticker_models_loaded = all(ticker_name in ticker_names_list for ticker_name in list(LOADED_MODELS))
-    if not all_ticker_models_loaded:
-        # todo: implement error logic. to return list of tickers that do not have trained models.
-        return None
-    predictions_dto_list = []
-    logger.info('--Start predictions--')
-    for tickerDTO in ticker_dto_list_dto.tickerDTOList:
-        logger.info(f'--Predicting {tickerDTO.tickerName}--')
-        predictions = predictions_from_ticker_dto(tickerDTO)
-        predictions_dto_list.append(PredictionDTO(tickerDTO=tickerDTO,
-                                                  predictions=predictions))
-    logger.info('--Finish predictions--')
-    # return {"predictions": json.dumps(json_predictions)}
-    return PredictionDTOListDTO(predictionDTOList=predictions_dto_list)
-
-
 # Dev
 # todo: method tested as working. to remove this api, and run the function using scheduler once / twice a day.
 @app.get("/api/v1/dev/load_all_pickle_models")
@@ -249,19 +227,19 @@ def get_latest_ticker_api_data(ticker_name):
     # todo: logic to check if today is trading day. will not be able to get current prices on closed market day.
     # Datetime strings for api
     today = datetime.today().strftime('%Y-%m-%d')
-    yesterday_datetime = datetime.today() - timedelta(days=1)
-    yesterday = yesterday_datetime.strftime('%Y-%m-%d')
+    previous_datetime = datetime.today() - timedelta(days=4)
+    previous = previous_datetime.strftime('%Y-%m-%d')
 
     # Call polygon api
     data_request = polygon_client.list_aggs(
         ticker=ticker_name,
         multiplier=10,
         timespan='minute',
-        from_='2024-08-01',  # todo: use 'yesterday' after fixing
-        to='2024-08-02',  # todo: use 'today' after fixing
+        from_=previous,
+        to=today,
         adjusted=True,
         sort='desc',  # get most recent datapoints.
-        limit=78  # todo: do not hardcode. match quantity of features required by models.
+        limit=117  # todo: do not hardcode. match quantity of features required by models.
     )
     # Create DataFrame from polygon api json response for data processing.
     df_raw = pd.DataFrame(data_request)
@@ -282,9 +260,9 @@ def predictions_from_x_values(ticker_dto, x_values):
 
 
 def add_lagged_features(df_x_values, future_window):
-    # Select the data for the current stock
     df = df_x_values.copy()
     # Create lagged features for the past N periods
+    # todo: do not hardcode features required by models.
     for lag in range(1, future_window):
         df[f'lag_vwap_{lag}'] = df['vwap'].shift(lag)
     # Drop rows with NaN values created by the lagged features
