@@ -1,5 +1,5 @@
 import React from 'react';
-import FourQuantLogo from "../../../assets/images/fourquant-logo.jpg"
+import FourQuantLogo from "../../../assets/images/fourquant-logo.png"
 
 import { Box, Stack, Flex, Image, HStack, Link, Divider, VStack, Icon, Text } from '@chakra-ui/react';
 import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
@@ -33,8 +33,8 @@ const Footer = () => {
                             lg: "200px",
                         }}
                         height={{
-                            base: "75px",
-                            lg: "100px",
+                            base: "50px",
+                            lg: "80px",
                         }}
                         my={{
                             base: 2,
