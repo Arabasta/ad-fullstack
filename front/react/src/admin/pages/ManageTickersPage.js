@@ -1,8 +1,11 @@
-import React, {useState} from 'react';
-import useTickers from "../hooks/useTickers";
-import TickerList from "../component/tickers/TickerList";
-import AvailableTickerList from "../component/tickers/AvailableTickerList";
-
+import React, { useState } from 'react';
+import useTickers from '../hooks/useTickers';
+import TickerList from '../component/tickers/TickerList';
+import AvailableTickerList from '../component/tickers/AvailableTickerList';
+import Heading from '../../components/common/text/Heading';
+import Button from '../../components/common/buttons/Button';
+import BlackText from '../../components/common/text/BlackText';
+import UserMessage from "../../components/common/alerts/UserMessage";
 
 const ManageTickersPage = () => {
     const {
@@ -15,6 +18,7 @@ const ManageTickersPage = () => {
     } = useTickers();
 
     const [showAvailableTickers, setShowAvailableTickers] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const handleAddButtonClick = async () => {
         if (!showAvailableTickers) {
@@ -24,26 +28,32 @@ const ManageTickersPage = () => {
     };
 
     const handleAddTicker = async (ticker) => {
-        await addTicker(ticker);
-        setShowAvailableTickers(false); // Optionally hide the available tickers list after adding
+        try {
+            await addTicker(ticker);
+            setShowAvailableTickers(false); // Optionally hide the available tickers list after adding
+        } catch (error) {
+            setErrorMessage('Failed to add ticker. Please try again.');
+            console.error('Error adding ticker:', error);
+        }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <BlackText>Loading...</BlackText>;
 
     return (
         <div>
-            <h1>Manage Tickers</h1>
-            <button onClick={handleAddButtonClick}>
+            <Heading variant="h1">Manage Tickers</Heading>
+            <Button onClick={handleAddButtonClick}>
                 {showAvailableTickers ? 'Hide Available Tickers' : 'Add Ticker'}
-            </button>
-            <h2>Active Tickers</h2>
+            </Button>
+            <Heading variant="h2">Active Tickers</Heading>
             <TickerList tickers={activeTickers} onDelete={deleteTicker} />
             {showAvailableTickers && (
                 <div>
-                    <h2>Available Tickers</h2>
+                    <Heading variant="h2">Available Tickers</Heading>
                     <AvailableTickerList tickers={availableTickers} onAdd={handleAddTicker} />
                 </div>
             )}
+            {errorMessage && <UserMessage message={errorMessage} />}
         </div>
     );
 };
