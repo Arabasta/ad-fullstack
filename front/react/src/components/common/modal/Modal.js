@@ -1,7 +1,7 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
 import { useState } from "react";
 import Heading from "../text/Heading";
-import ModalButton from "./ModalButton";
+import ButtonBlack from "../buttons/ButtonBlack";
 
 const ModalCloseButton = ({ onClick }) => (
     <Button
@@ -70,19 +70,22 @@ const ModalHeader = ({ title, onClose }) => (
     </Flex>
 );
 
-const Modal = ({ triggerText, title, onClose, children }) => {
+const Modal = ({ triggerText, title, onClose, onOpen, children }) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    const openModal = () => setIsOpen(true);
+    const openModal = () => {
+        setIsOpen(true);
+        if(onOpen) onOpen();
+    }
     const closeModal = () => {
         setIsOpen(false);
         if (onClose) onClose();
     };
     return (
         <>
-            <ModalButton onClick={openModal}>
+            <ButtonBlack onClick={openModal}>
                 {triggerText}
-            </ModalButton>
+            </ButtonBlack>
             {isOpen && (
                 <ModalOverlay onClose={closeModal}>
                     <ModalContent onClose={closeModal}>
