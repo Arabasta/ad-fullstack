@@ -2,7 +2,7 @@ import React from 'react';
 import { Button as ChakraButton } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
-const ModalButton = ({ size, variant, children, ...props }) => {
+const ButtonBlack = ({ size, variant, children, ...props }) => {
     return (
         <ChakraButton
             size={size}
@@ -18,15 +18,15 @@ const ModalButton = ({ size, variant, children, ...props }) => {
     );
 };
 
-ModalButton.propTypes = {
+ButtonBlack.propTypes = {
     size: PropTypes.oneOf(['sm', 'md', 'lg']),
     variant: PropTypes.oneOf(['solid', 'outline', 'ghost', 'link']),
     children: PropTypes.node.isRequired,
 };
 
-ModalButton.defaultProps = {
+ButtonBlack.defaultProps = {
     size: 'md',
     variant: 'solid',
 };
 
-export default ModalButton;
+export default ButtonBlack;

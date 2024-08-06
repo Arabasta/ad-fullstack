@@ -1,7 +1,7 @@
-import { ListItem } from '@chakra-ui/react';
+import { ListItem as ChakraListItem } from '@chakra-ui/react';
 
-const ModalListItem = (props) => (
-    <ListItem
+const ListItem = (props) => (
+    <ChakraListItem
         bg="gray.100"
         p="10px"
         mb="10px"
@@ -11,4 +11,4 @@ const ModalListItem = (props) => (
     />
 );
 
-export default ModalListItem;
+export default ListItem;
