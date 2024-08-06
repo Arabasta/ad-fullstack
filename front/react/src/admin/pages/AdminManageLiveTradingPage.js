@@ -1,11 +1,12 @@
 import React from 'react';
-import LiveTrading from "../component/LiveTrading";
+import LiveTrading from '../component/LiveTrading';
+import Heading from "../../components/common/text/Heading";
 
 const AdminManageLiveTradingPage = () => {
     return (
-        <div>
-            <h1>Admin Live Trade Page</h1>
-            <LiveTrading/>
+        <div style={{ padding: '16px' }}>
+            <Heading variant="h1">Admin Live Trade Page</Heading>
+            <LiveTrading />
         </div>
     );
 };
