@@ -47,6 +47,8 @@ REPO_ROOT_PATH = str(utils.get_repo_root())
 
 # IN-MEMORY DATA
 LOADED_MODELS = {}
+LOADED_X_SCALERS = {}
+LOADED_Y_SCALERS = {}
 
 # todo: to refactor models into dto folder. for some reason, they were not detected when imported from dto folder.
 '''
@@ -106,7 +108,7 @@ async def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
     if prediction_dto.tickerDTO is None or prediction_dto.predictions is None:
         return None
     predictions = predictions_from_x_values(ticker_dto=prediction_dto.tickerDTO,
-                                            x_values=prediction_dto.predictions)
+                                            x_values=np.array(prediction_dto.predictions).reshape(1, -1))
     return PredictionDTO(tickerDTO=prediction_dto.tickerDTO,
                          predictions=predictions)
 
@@ -125,40 +127,18 @@ async def by_ticker_dto_live(ticker_dto: TickerDTO):
                          predictions=predictions)
 
 
-# todo: not working yet. to fix / remove.
-# Accepts Backend's TickerDTOListDTO in RequestBody
-@app.post("/api/v1/predict/ticker_list/live")
-async def by_ticker_dto_list_dto_live(ticker_dto_list_dto: TickerDTOListDTO):
-    ticker_names_list = [tickerDTO.tickerName for tickerDTO in ticker_dto_list_dto.tickerDTOList]
-    # Boolean for checking if all requested models were loaded
-    all_ticker_models_loaded = all(ticker_name in ticker_names_list for ticker_name in list(LOADED_MODELS))
-    if not all_ticker_models_loaded:
-        # todo: implement error logic. to return list of tickers that do not have trained models.
-        return None
-    predictions_dto_list = []
-    logger.info('--Start predictions--')
-    for tickerDTO in ticker_dto_list_dto.tickerDTOList:
-        logger.info(f'--Predicting {tickerDTO.tickerName}--')
-        predictions = predictions_from_ticker_dto(tickerDTO)
-        predictions_dto_list.append(PredictionDTO(tickerDTO=tickerDTO,
-                                                  predictions=predictions))
-    logger.info('--Finish predictions--')
-    # return {"predictions": json.dumps(json_predictions)}
-    return PredictionDTOListDTO(predictionDTOList=predictions_dto_list)
-
-
 # Dev
 # todo: method tested as working. to remove this api, and run the function using scheduler once / twice a day.
 @app.get("/api/v1/dev/load_all_pickle_models")
-async def test_load_all_pickle_models():
-    load_all_pickle_models(LOADED_MODELS, AWS_S3_MODEL_BUCKET_NAME)
+async def load_models():
+    load_all_pickle_files(AWS_S3_MODEL_BUCKET_NAME, LOADED_MODELS)
     return {"response": f'Loaded: {list(LOADED_MODELS)}'}
 
 
 # todo: method tested as working. to remove this api after dev.
 @app.get("/api/v1/dev/load_pickle_model")
 async def test_load_pickle_model(ticker_name, key):
-    load_pickle_model(ticker_name, key, LOADED_MODELS, AWS_S3_MODEL_BUCKET_NAME)
+    load_pickle_file(AWS_S3_MODEL_BUCKET_NAME, ticker_name, key, LOADED_MODELS)
     if ticker_name in list(LOADED_MODELS):
         return {"response": f'{ticker_name} loaded!'}
     return {"response": f'{ticker_name} loading failed!'}
@@ -185,15 +165,16 @@ def get_s3_client():
 
 # Read and load models from S3 to RAM
 # todo: to refactor. taking around 2s per model.
-def load_all_pickle_models(dictionary, bucket_name):
+def load_all_pickle_files(bucket_name, models_dict):
     try:
         s3_client = get_s3_client()
         # Retrieve the list of model files in the bucket
         # todo: include logic to loop through stocks bucket and crypto bucket
-        response = s3_client.list_objects_v2(Bucket=bucket_name)
+        response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix="model/")
         if 'Contents' in response:
             # Extract the keys (filenames) and filter out non-.pkl files if needed
-            keys = [item['Key'] for item in response['Contents'] if item['Key'].endswith('.pkl')]  # todo:to reinstate.
+            keys = [str(item['Key']).split("/")[1] for item in response['Contents'] if item['Key'].endswith('.pkl')]  # todo:to reinstate.
+            logger.info(keys)
             # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
             temp_keys = ['AAPL.pkl', 'ABBV.pkl', 'ADBE.pkl', 'AMZN.pkl', 'AVGO.pkl',
                          'COST.pkl', 'CVX.pkl', 'GOOG.pkl', 'GOOGL.pkl', 'HD.pkl',
@@ -207,8 +188,7 @@ def load_all_pickle_models(dictionary, bucket_name):
             logger.info('--Start loading models--')
             for key in keys:
                 ticker_name = str(key).split(".")[0]
-                load_pickle_model(ticker_name, key, dictionary, bucket_name)
-                logger.info(f'Loaded {key} model')
+                load_pickle_file(bucket_name, ticker_name, key, models_dict)
             logger.info('--Finish loading models--')
 
         else:
@@ -217,17 +197,24 @@ def load_all_pickle_models(dictionary, bucket_name):
         print(f"Failed to retrieve objects from the bucket: {str(e)}")
 
 
-def load_pickle_model(ticker_name, key, loaded_models_dict, bucket_name):
+def load_pickle_file(bucket_name, ticker_name, key, models_dict):
     # Set up S3 client
     s3_client = get_s3_client()
     # Read file from S3 bucket
-    obj = s3_client.get_object(Bucket=bucket_name, Key=key)
-    loaded_models_dict[ticker_name] = pickle.loads(obj['Body'].read())
+    obj = s3_client.get_object(Bucket=bucket_name, Key=f'model/{key}')
+    models_dict[ticker_name] = pickle.loads(obj['Body'].read())
+    logger.info(f'Loaded {key} model')
+    obj = s3_client.get_object(Bucket=bucket_name, Key=f'x_scaler/{key}')
+    LOADED_X_SCALERS[ticker_name] = pickle.loads(obj['Body'].read())
+    logger.info(f'Loaded {key} x_scaler')
+    obj = s3_client.get_object(Bucket=bucket_name, Key=f'y_scaler/{key}')
+    LOADED_Y_SCALERS[ticker_name] = pickle.loads(obj['Body'].read())
+    logger.info(f'Loaded {key} y_scaler')
 
 
 def predictions_from_ticker_dto(ticker_dto):
     x_values = get_latest_ticker_api_data(ticker_dto.tickerName)
-    return predictions_from_x_values(ticker_dto, x_values)
+    return predictions_from_x_values(ticker_dto, np.array(x_values))
 
 
 # Read and load prices jsons from polygon API
@@ -240,25 +227,25 @@ def get_latest_ticker_api_data(ticker_name):
     # todo: logic to check if today is trading day. will not be able to get current prices on closed market day.
     # Datetime strings for api
     today = datetime.today().strftime('%Y-%m-%d')
-    yesterday_datetime = datetime.today() - timedelta(days=1)
-    yesterday = yesterday_datetime.strftime('%Y-%m-%d')
+    previous_datetime = datetime.today() - timedelta(days=4)
+    previous = previous_datetime.strftime('%Y-%m-%d')
 
     # Call polygon api
     data_request = polygon_client.list_aggs(
         ticker=ticker_name,
         multiplier=10,
         timespan='minute',
-        from_='2024-08-01',  # todo: use 'yesterday' after fixing
-        to='2024-08-02',  # todo: use 'today' after fixing
+        from_=previous,
+        to=today,
         adjusted=True,
         sort='desc',  # get most recent datapoints.
-        limit=78  # todo: do not hardcode. match quantity of features required by models.
+        limit=117  # todo: do not hardcode. match quantity of features required by models.
     )
-
     # Create DataFrame from polygon api json response for data processing.
     df_raw = pd.DataFrame(data_request)
-    df_features = df_raw.vwap.iloc[::-1]  # todo: do not hardcode. match features required by models.
-    arr_features = list(df_features.iloc[:39].values)
+    # todo: do not hardcode features required by models.
+    df_features = add_lagged_features(df_raw[['vwap']].iloc[::-1], 39)
+    arr_features = df_features.iloc[:39].values
     return arr_features
 
 
@@ -266,9 +253,21 @@ def get_latest_ticker_api_data(ticker_name):
 def predictions_from_x_values(ticker_dto, x_values):
     ticker_name = ticker_dto.tickerName
     model = LOADED_MODELS[ticker_name]
-    y_pred = model.predict(np.array(x_values).reshape(-1, 1))
-    # todo: to import scaler used in model fitting, so can inverse the scaling on y_pred
-    return list(y_pred)
+    scaled_x_values = LOADED_X_SCALERS[ticker_name].transform(x_values)
+    y_pred = model.predict(np.array(scaled_x_values))
+    inverse_scaled_y_pred = LOADED_Y_SCALERS[ticker_name].inverse_transform(y_pred.reshape(-1, 1)).flatten()
+    return list(inverse_scaled_y_pred)
+
+
+def add_lagged_features(df_x_values, future_window):
+    df = df_x_values.copy()
+    # Create lagged features for the past N periods
+    # todo: do not hardcode features required by models.
+    for lag in range(1, future_window):
+        df[f'lag_vwap_{lag}'] = df['vwap'].shift(lag)
+    # Drop rows with NaN values created by the lagged features
+    df.dropna(inplace=True)
+    return df
 
 
 '''
