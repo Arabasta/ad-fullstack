@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal} from "../../components/elements/modal/Modal";
+import {Modal} from "../../components/common/modal/Modal";
 import TransactionHistory from "../../components/feature/TransactionHistory";
 
 const PortfolioTransactionHistoryPage = ({ portfolioType }) => {

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { IoMdAlert } from "react-icons/io";
-import InvestorProfileService from "../../../../services/InvestorProfileService";
+import InvestorProfileService from "../../services/InvestorProfileService";
 import {
     Box,
     Flex,

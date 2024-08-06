@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useLiveTrading from "../hooks/useLiveTrading";
-import Button from "../../components/elements/buttons/Button";
+import Button from "../../components/common/buttons/Button";
 
 // todo: convert list to table below
 // todo: format the transaction details (see API doc)

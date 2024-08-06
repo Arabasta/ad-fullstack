@@ -1,11 +1,11 @@
 import React from 'react';
 import {Route} from "react-router-dom";
-import NewsPage from "../pages/NewsPage";
-import SupportPage from "../pages/SupportPage";
-import WalletPage from "../pages/WalletPage";
-import SettingsPage from "../pages/SettingsPage";
-import CustomerDetailsPage from "../pages/CustomerDetailsPage";
-import ProfilePage from "../pages/ProfilePage";
+import NewsPage from "../../../pages/NewsPage";
+import SupportPage from "../../../pages/SupportPage";
+import WalletPage from "../../../pages/WalletPage";
+import SettingsPage from "../../../pages/SettingsPage";
+import CustomerDetailsPage from "../../../pages/CustomerDetailsPage";
+import ProfilePage from "../../../pages/ProfilePage";
 
 const mainRoutes = [
     <Route key="news" path="/news" element={<NewsPage />} />,
