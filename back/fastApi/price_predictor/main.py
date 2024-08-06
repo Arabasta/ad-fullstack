@@ -180,7 +180,8 @@ def load_all_pickle_files(bucket_name, models_dict):
                          'COST.pkl', 'CVX.pkl', 'GOOG.pkl', 'GOOGL.pkl', 'HD.pkl',
                          'JNJ.pkl', 'JPM.pkl', 'LLY.pkl', 'MA.pkl', 'META.pkl',
                          'MRK.pkl', 'MSFT.pkl', 'NVDA.pkl', 'PEP.pkl', 'PG.pkl',
-                         'TSLA.pkl', 'UNH.pkl', 'XOM.pkl']  # V and BRK.B not in source data.
+                         'TSLA.pkl', 'UNH.pkl', 'XOM.pkl', 'X:XRPUSD.pkl', 'X:SOLUSD.pkl',
+                         'X:ETHUSD.pkl', 'X:DOGEUSD.pkl', 'X:BTCUSD.pkl', 'X:ADAUSD.pkl']
 
             # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
             keys = list(set(keys) & set(temp_keys))
