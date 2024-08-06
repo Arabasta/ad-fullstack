@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import WalletService from '../../services/WalletService';
-import { Modal } from '../elements/modal/Modal';
+import { Modal } from '../common/modal/Modal';
 import { VStack } from '@chakra-ui/react';
-import ModalInput from "../elements/modal/ModalInput";
-import ModalButton from "../elements/modal/ModalButton";
+import ModalInput from "../common/modal/ModalInput";
+import ModalButton from "../common/modal/ModalButton";
 import BlackText from "../common/text/BlackText";
 import useBankDetails from '../../hooks/useBankDetails';
 

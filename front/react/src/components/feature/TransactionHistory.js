@@ -1,11 +1,11 @@
 import React from 'react';
 import useSqlTransactionLog from '../../hooks/useSqlTransactionLog';
-import SeparatorBlack from '../layout/SeparatorBlack';
-import SeparatorGrey from '../layout/SeparatorGrey';
-import ModalList from "../elements/modal/ModalList";
-import ModalListItem from "../elements/modal/ModalListItem";
+import SeparatorBlack from '../common/layout/SeparatorBlack';
+import SeparatorGrey from '../common/layout/SeparatorGrey';
+import ModalList from "../common/modal/ModalList";
+import ModalListItem from "../common/modal/ModalListItem";
 import BlackText from "../common/text/BlackText";
-import ModalButton from "../elements/modal/ModalButton";
+import ModalButton from "../common/modal/ModalButton";
 import {Flex} from "@chakra-ui/react";
 
 // todo: maybe rearrgange the text or something

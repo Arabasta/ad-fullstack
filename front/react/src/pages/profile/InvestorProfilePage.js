@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import InvestorProfileService from "../../services/InvestorProfileService";
-import InvestorProfileForm from "../../components/form/profileforms/InvestorProfileForm";
+import InvestorProfileForm from "../../components/customer/profileforms/InvestorProfileForm";
 import { AuthContext } from '../../config/context/AuthContext';
 
 const PreferenceFormPage = () => {

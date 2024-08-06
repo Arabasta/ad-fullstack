@@ -1,10 +1,12 @@
 import React from 'react';
-import UserList from "../component/UserList";
+import UserList from '../component/UserList';
+import Heading from "../../components/common/text/Heading";
+
 
 const AdminPage = () => {
     return (
         <div>
-            <h1>Manage Users</h1>
+            <Heading variant="h1">Manage Users</Heading>
             <UserList />
         </div>
     );

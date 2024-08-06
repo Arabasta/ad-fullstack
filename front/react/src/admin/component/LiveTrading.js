@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import useLiveTrading from "../hooks/useLiveTrading";
-import Button from "../../components/elements/buttons/Button";
+import useLiveTrading from '../hooks/useLiveTrading';
+import FormSelect from "../../components/common/inputFields/FormSelect";
+import Button from "../../components/common/buttons/Button";
 
-// todo: convert list to table below
-// todo: format the transaction details (see API doc)
+
 const LiveTrading = () => {
     const [portfolioType, setPortfolioType] = useState('');
     const [tickerType, setTickerType] = useState('');
-    const {transactions, startTrade, stopTrade, seeTransactions,} = useLiveTrading(portfolioType, tickerType);
+    const { transactions, startTrade, stopTrade, seeTransactions } = useLiveTrading(portfolioType, tickerType);
 
     const handleStartTrade = async () => {
         try {
@@ -41,33 +41,29 @@ const LiveTrading = () => {
         }
     };
 
-    const handlePortfolioTypeChange = (e) => {
-        const portfolioType = e.target.value;
-        setPortfolioType(portfolioType);
-    };
-
-    const handleTickerTypeChange = (e) => {
-        const tickerType = e.target.value;
-        setTickerType(tickerType);
-    };
-
     return (
         <div>
-            <label>
-                Portfolio Type:
-                <select value={portfolioType} onChange={handlePortfolioTypeChange}>
-                    <option value="AGGRESSIVE">AGGRESSIVE</option>
-                    <option value="MODERATE">MODERATE</option>
-                    <option value="CONSERVATIVE">CONSERVATIVE</option>
-                </select>
-            </label>
-            <label>
-                Ticker Type:
-                <select value={tickerType} onChange={handleTickerTypeChange}>
-                    <option value="STOCKS">STOCKS</option>
-                    <option value="CRYPTO">CRYPTO</option>
-                </select>
-            </label>
+            <FormSelect
+                label="Portfolio Type"
+                value={portfolioType}
+                onChange={(value) => setPortfolioType(value)}
+                options={[
+                    { label: 'AGGRESSIVE', value: 'AGGRESSIVE' },
+                    { label: 'MODERATE', value: 'MODERATE' },
+                    { label: 'CONSERVATIVE', value: 'CONSERVATIVE' }
+                ]}
+                required
+            />
+            <FormSelect
+                label="Ticker Type"
+                value={tickerType}
+                onChange={(value) => setTickerType(value)}
+                options={[
+                    { label: 'STOCKS', value: 'STOCKS' },
+                    { label: 'CRYPTO', value: 'CRYPTO' }
+                ]}
+                required
+            />
             <Button onClick={handleStartTrade}>Start Trade</Button>
             <Button onClick={handleStopTrade}>Stop Trade</Button>
             <Button onClick={handleSeeTransactions}>See Transactions</Button>

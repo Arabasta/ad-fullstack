@@ -1,5 +1,5 @@
 import React from 'react';
-import ProfileButtons from "../components/elements/buttons/ProfileButtons";
+import ProfileButtons from "../components/common/buttons/ProfileButtons";
 
 export default function SettingsPage() {
     return (

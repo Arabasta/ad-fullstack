@@ -1,36 +1,55 @@
 import React, { useState } from 'react';
 import useUsers from '../hooks/useUsers';
+import ModalList from '../../components/common/modal/ModalList';
+import ModalListItem from '../../components/common/modal/ModalListItem';
+import Button from '../../components/common/buttons/Button';
+import BlackText from '../../components/common/text/BlackText';
+import SearchInput from "../../components/common/inputFields/SearchInput";
+import UserMessage from "../../components/common/alerts/UserMessage";
+
 
 const UserList = () => {
     const [search, setSearch] = useState('');
-    const { users } = useUsers(search);
+    const { users, lockUser, unlockUser } = useUsers(search);
+    const [message, setMessage] = useState({});
+
+    const handleLock = async (username) => {
+        await lockUser(username);
+        setMessage((prevState) => ({
+            ...prevState,
+            [username]: 'User locked successfully',
+        }));
+    };
+
+    const handleUnlock = async (username) => {
+        await unlockUser(username);
+        setMessage((prevState) => ({
+            ...prevState,
+            [username]: 'User unlocked successfully',
+        }));
+    };
 
     return (
         <div>
-            <input
-                type="text"
+            <SearchInput
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search users"
             />
-            <table>
-                <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                </tr>
-                </thead>
-                <tbody>
+            <ModalList>
                 {users.map((user) => (
-                    <tr key={user.username}>
-                        <td>{user.username}</td>
-                        <td>{user.email}</td>
-                        <td>{user.role}</td>
-                    </tr>
+                    <ModalListItem key={user.username}>
+                        <BlackText variant="h5">{user.username}</BlackText>
+                        <BlackText variant="p">{user.email}</BlackText>
+                        <BlackText variant="p">{user.role}</BlackText>
+                        <div>
+                            <Button onClick={() => handleLock(user.username)}>Lock</Button>
+                            <Button onClick={() => handleUnlock(user.username)}>Unlock</Button>
+                        </div>
+                        <UserMessage message={message[user.username]} />
+                    </ModalListItem>
                 ))}
-                </tbody>
-            </table>
+            </ModalList>
         </div>
     );
 };

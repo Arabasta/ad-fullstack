@@ -3,10 +3,10 @@ import { Box, VStack } from "@chakra-ui/react";
 import useWallet from "../hooks/useWallet";
 import WalletAddFunds from "../components/wallet/WalletAddFunds";
 import WalletWithdrawFunds from "../components/wallet/WalletWithdrawFunds";
-import SimpleImageCard from "../components/elements/cards/SimpleImageCard";
+import SimpleImageCard from "../components/common/cards/SimpleImageCard";
 import creditCardLogo from "../assets/images/card-visa-background.jpg";
 import { formatCurrency } from "../utils/formatCurrency";
-import { Modal } from "../components/elements/modal/Modal";
+import { Modal } from "../components/common/modal/Modal";
 import TransactionHistory from "../components/feature/TransactionHistory";
 
 // todo: WalletBalance thing redesign
