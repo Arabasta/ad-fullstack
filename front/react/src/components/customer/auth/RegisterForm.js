@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import useAuth from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import RegisterStep5 from "./RegisterStep5";
 import RegisterStep1New from "./RegisterStep1New";
 import RegisterStep2New from "./RegisterStep2New";
 import RegisterStep3New from "./RegisterStep3New";
 import RegisterStep4New from "./RegisterStep4New";
+import RegisterStep5New from "./RegisterStep5New";
 
 const RegisterForm = () => {
     const [step, setStep] = useState(1);
@@ -134,7 +134,7 @@ const RegisterForm = () => {
             )}
 
             {step === 5 && (
-                <RegisterStep5
+                <RegisterStep5New
                     investmentDurationScore={investmentDurationScore}
                     setInvestmentDurationScore={setInvestmentDurationScore}
                     withdrawalSpendingPlanScore={withdrawalSpendingPlanScore}
