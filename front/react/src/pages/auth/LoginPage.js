@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import useAuth from "../../hooks/useAuth";
 import {useNavigate} from "react-router-dom";
+import LoginForm from "../../components/customer/auth/LoginForm";
 
-const LoginForm = () => {
+const LoginPage = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -13,36 +14,22 @@ const LoginForm = () => {
         e.preventDefault();
         try {
             await login(username, password);
+            // todo: later change to dashboard
             navigate('/');
         } catch (error) {
             setMessage('Invalid login please try again');
         }
     };
 
+    // todo: failure or success alert
     return (
-        <div>
-            <form onSubmit={handleLogin}>
-                <div>
-                    <label>Username</label>
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-                <button type="submit">Login</button>
-                {message && <p>{message}</p>}
-            </form>
-        </div>
+        <LoginForm username={username}
+              password={password}
+              setUsername={setUsername}
+              setPassword={setPassword}
+              method={handleLogin}
+              message={message}/>
     );
 };
 
-export default LoginForm;
+export default LoginPage;
