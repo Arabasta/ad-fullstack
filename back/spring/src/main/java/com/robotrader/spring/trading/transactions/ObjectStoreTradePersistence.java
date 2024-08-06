@@ -1,4 +1,4 @@
-package com.robotrader.spring.trading;
+package com.robotrader.spring.trading.transactions;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.robotrader.spring.aws.s3.S3TransactionLogger;

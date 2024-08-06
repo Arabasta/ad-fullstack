@@ -4,8 +4,10 @@ import com.robotrader.spring.aws.s3.S3TransactionLogger;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
-import com.robotrader.spring.trading.MemoryStoreTradePersistence;
-import com.robotrader.spring.trading.ObjectStoreTradePersistence;
+import com.robotrader.spring.service.log.TradeTransactionLogService;
+import com.robotrader.spring.trading.transactions.DatabaseStoreTradePersistence;
+import com.robotrader.spring.trading.transactions.MemoryStoreTradePersistence;
+import com.robotrader.spring.trading.transactions.ObjectStoreTradePersistence;
 import com.robotrader.spring.trading.interfaces.ITradingApplicationService;
 import com.robotrader.spring.trading.dto.BackTestResultDTO;
 import com.robotrader.spring.trading.strategy.BackTestingStrategy;
@@ -29,6 +31,7 @@ public class TradingApplicationService implements ITradingApplicationService {
     private final MoneyPoolService moneyPoolService;
     private final HistoricalMarketDataService historicalMarketDataService;
     private final LiveMarketDataService liveMarketDataService;
+    private final TradeTransactionLogService tradeTransactionLogService;
     private final S3TransactionLogger s3TransactionLogger;
     private List<TradingContext> tradingContexts;
     private static final Logger logger = LoggerFactory.getLogger(TradingApplicationService.class);
@@ -36,11 +39,12 @@ public class TradingApplicationService implements ITradingApplicationService {
     @Autowired
     public TradingApplicationService(MoneyPoolService moneyPoolService,
                                      HistoricalMarketDataService historicalMarketDataService,
-                                     LiveMarketDataService liveMarketDataService,
+                                     LiveMarketDataService liveMarketDataService, TradeTransactionLogService tradeTransactionLogService,
                                      Optional<S3TransactionLogger> s3TransactionLogger) {
         this.moneyPoolService = moneyPoolService;
         this.historicalMarketDataService = historicalMarketDataService;
         this.liveMarketDataService = liveMarketDataService;
+        this.tradeTransactionLogService = tradeTransactionLogService;
         this.s3TransactionLogger = s3TransactionLogger.orElse(null);
         this.tradingContexts = new ArrayList<>();
     }
@@ -69,7 +73,7 @@ public class TradingApplicationService implements ITradingApplicationService {
             liveMarketDataService.subscribeToLiveMarketData();
         }
         tradingContext.setStrategy(new LiveTradingStrategy(
-                new ObjectStoreTradePersistence(Optional.ofNullable(s3TransactionLogger)),
+                new DatabaseStoreTradePersistence(tradeTransactionLogService),
                 historicalMarketDataService, liveMarketDataService, tickerType));
         for (String ticker : tickers) {
             TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
