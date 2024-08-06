@@ -1,5 +1,5 @@
 import React from 'react';
-import InvestorProfileForm from "../profileforms/InvestorProfileForm";
+import InvestorProfileForm from "../../components/customer/profileforms/InvestorProfileForm";
 import {Button} from "@chakra-ui/react";
 
 const RegisterStep5 = ({

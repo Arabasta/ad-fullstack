@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import useAuth from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import RegisterStep1 from './RegisterStep1';
-import RegisterStep2 from './RegisterStep2';
-import RegisterStep3 from './RegisterStep3';
-import RegisterStep4 from './RegisterStep4';
-import RegisterStep5 from "./RegisterStep5";
+import RegisterStep1New from "./RegisterStep1New";
+import RegisterStep2New from "./RegisterStep2New";
+import RegisterStep3New from "./RegisterStep3New";
+import RegisterStep4New from "./RegisterStep4New";
+import RegisterStep5New from "./RegisterStep5New";
 
 const RegisterForm = () => {
     const [step, setStep] = useState(1);
@@ -71,19 +71,19 @@ const RegisterForm = () => {
     return (
         <div>
             {step === 1 && (
-                <RegisterStep1
+                <RegisterStep1New
                     email={email}
                     setEmail={setEmail}
                     username={username}
                     setUsername={setUsername}
                     password={password}
                     setPassword={setPassword}
-                    handleNext={handleNext}
+                    method={handleNext}
                 />
             )}
 
             {step === 2 && (
-                <RegisterStep2
+                <RegisterStep2New
                     mobileNumber={mobileNumber}
                     setMobileNumber={setMobileNumber}
                     firstName={firstName}
@@ -98,7 +98,7 @@ const RegisterForm = () => {
             )}
 
             {step === 3 && (
-                <RegisterStep3
+                <RegisterStep3New
                     street={street}
                     setStreet={setStreet}
                     city={city}
@@ -115,7 +115,7 @@ const RegisterForm = () => {
             )}
 
             {step === 4 && (
-                <RegisterStep4
+                <RegisterStep4New
                     employmentStatus={employmentStatus}
                     setEmploymentStatus={setEmploymentStatus}
                     annualIncome={annualIncome}
@@ -134,7 +134,7 @@ const RegisterForm = () => {
             )}
 
             {step === 5 && (
-                <RegisterStep5
+                <RegisterStep5New
                     investmentDurationScore={investmentDurationScore}
                     setInvestmentDurationScore={setInvestmentDurationScore}
                     withdrawalSpendingPlanScore={withdrawalSpendingPlanScore}

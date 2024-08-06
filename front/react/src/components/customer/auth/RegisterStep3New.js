@@ -8,18 +8,18 @@ import {
     FormControl,
     FormLabel,
     InputGroup,
-    InputLeftAddon,
     Input,
-    Avatar,
-    Icon,
 } from '@chakra-ui/react';
-import { FaUser } from 'react-icons/fa';
-import { RiLockPasswordLine } from "react-icons/ri";
 
 import Heading from "../../common/text/Heading";
 import Text from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
-const LoginForm = ({username, setUsername, password, setPassword, method, message}) => {
+import Autocomplete from "../../feature/Autocomplete";
+import Countries from "./Countries";
+const RegisterStep3Form = ({
+                               street, setStreet, city, setCity, postalCode, setPostalCode,
+                               country, setCountry, unitNo, setUnitNo, handlePrevious, handleNext
+                           }) => {
     return (
         <Box
             bg="brand.600"
@@ -39,7 +39,7 @@ const LoginForm = ({username, setUsername, password, setPassword, method, messag
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
                             <Heading color="brand.100" fontSize="5xl" fontWeight="md" lineHeight="10">
-                                Login
+                                Register
                             </Heading>
                             <Text
                                 mt={1}
@@ -47,13 +47,13 @@ const LoginForm = ({username, setUsername, password, setPassword, method, messag
                                 color="gray.600"
                                 _dark={{ color: "gray.400" }}
                             >
-                                Welcome back
+                                We're half way there.
                             </Text>
                         </Box>
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
-                            onSubmit={method}
+                            onSubmit={handleNext}
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
@@ -74,42 +74,22 @@ const LoginForm = ({username, setUsername, password, setPassword, method, messag
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Username
+                                            City
                                         </FormLabel>
 
                                         <InputGroup size="sm">
-                                            <InputLeftAddon
-                                                bg="gray.50"
-                                                _dark={{ bg: "brand.100" }}
-                                                color="gray.500"
-                                                rounded="md"
-                                            >
-                                                <Avatar
-                                                    boxSize={3}
-                                                    bg="brand.100"
-                                                    _dark={{ bg: "brand.100" }}
-                                                    icon={
-                                                        <Icon
-                                                            as={FaUser}
-                                                            boxSize={6}
-                                                            mt={2}
-                                                            rounded="full"
-                                                            color="gray.300"
-                                                            _dark={{ color: "gray.700" }}
-                                                        />
-                                                    }
-                                                />
-                                            </InputLeftAddon>
                                             <Input
                                                 type="text"
-                                                value={username}
-                                                placeholder="Username"
-                                                onChange={(e) => setUsername(e.target.value)}
+                                                value={city}
+                                                placeholder="required"
+                                                onChange={(e) => setCity(e.target.value)}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
+                                                required
                                             />
                                         </InputGroup>
                                     </FormControl>
+
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
                                         <FormLabel
                                             fontSize="md"
@@ -117,41 +97,77 @@ const LoginForm = ({username, setUsername, password, setPassword, method, messag
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Password
+                                            Unit Number
                                         </FormLabel>
 
                                         <InputGroup size="sm">
-                                            <InputLeftAddon
-                                                bg="gray.50"
-                                                _dark={{ bg: "brand.100" }}
-                                                color="gray.500"
-                                                rounded="md"
-                                            >
-                                                <Avatar
-                                                    boxSize={3}
-                                                    bg="brand.100"
-                                                    _dark={{ bg: "brand.100" }}
-                                                    icon={
-                                                        <Icon
-                                                            as={RiLockPasswordLine}
-                                                            boxSize={6}
-                                                            mt={2}
-                                                            rounded="full"
-                                                            color="gray.300"
-                                                            _dark={{ color: "gray.700" }}
-                                                        />
-                                                    }
-                                                />
-                                            </InputLeftAddon>
                                             <Input
-                                                type="password"
-                                                value={password}
-                                                placeholder="Password"
-                                                onChange={(e) => setPassword(e.target.value)}
+                                                type="text"
+                                                value={unitNo}
+                                                placeholder="required"
+                                                onChange={(e) => setUnitNo(e.target.value)}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
+                                                required
                                             />
                                         </InputGroup>
+                                    </FormControl>
+
+                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Street
+                                        </FormLabel>
+
+                                        <InputGroup size="sm">
+                                            <Input
+                                                type="text"
+                                                value={street}
+                                                placeholder="required"
+                                                onChange={(e) => setStreet(e.target.value)}
+                                                focusBorderColor="brand.400"
+                                                rounded="md"
+                                                required
+                                            />
+                                        </InputGroup>
+                                    </FormControl>
+
+                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Postal Code
+                                        </FormLabel>
+
+                                        <InputGroup size="sm">
+                                            <Input
+                                                type="text"
+                                                value={postalCode}
+                                                placeholder="Password"
+                                                onChange={(e) => setPostalCode(e.target.value)}
+                                                focusBorderColor="brand.400"
+                                                rounded="md"
+                                                required
+                                            />
+                                        </InputGroup>
+                                    </FormControl>
+
+                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                        <FormLabel fontSize="md" fontWeight="md" color="gray.700" _dark={{ color: "gray.50" }}>
+                                            Country
+                                        </FormLabel>
+                                        <Autocomplete
+                                            value={country}
+                                            onChange={(e) => setCountry(e.target.value)}
+                                            category={Countries}
+                                        />
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
@@ -163,18 +179,24 @@ const LoginForm = ({username, setUsername, password, setPassword, method, messag
                                 textAlign="right"
                             >
                                 <Button
+                                    type="button"
+                                    onClick={handlePrevious}
+                                    colorScheme="brand"
+                                    _focus={{ shadow: "" }}
+                                    fontWeight="md"
+                                >
+                                    Back
+                                </Button>
+                                <Button
                                     type="submit"
                                     colorScheme="brand"
                                     _focus={{ shadow: "" }}
                                     fontWeight="md"
                                 >
-                                    Login
+                                    Next
                                 </Button>
                             </Box>
-
                         </chakra.form>
-                        {message && <Text>{message}</Text>}
-
                     </GridItem>
                 </SimpleGrid>
             </Box>
@@ -182,4 +204,4 @@ const LoginForm = ({username, setUsername, password, setPassword, method, messag
     );
 };
 
-export default LoginForm;
+export default RegisterStep3Form;
