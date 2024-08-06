@@ -1,5 +1,5 @@
 import React from 'react';
-import FourQuantLogo from "../../../assets/images/fourquant-logo.png"
+import FourQuantLogo from "../../assets/images/fourquant-logo.png"
 
 import { Box, Stack, Flex, Image, HStack, Link, Divider, VStack, Icon, Text } from '@chakra-ui/react';
 import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
