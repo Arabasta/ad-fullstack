@@ -242,7 +242,7 @@ public class PortfolioService implements IPortfolioService {
         findPortfolioByType(portfolioTypeEnum)
                 .stream()
                 .forEach(portfolio -> {
-                    portfolio.setCurrentValue(newUnitPrice.multiply(portfolio.getAllocatedBalance()));
+                    portfolio.setCurrentValue(newUnitPrice.multiply(portfolio.getAllocatedUnitQty()));
                 });
     }
 
