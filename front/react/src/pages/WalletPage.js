@@ -4,7 +4,7 @@ import useWallet from "../hooks/useWallet";
 import { formatCurrency } from "../utils/formatCurrency";
 import { Modal } from "../components/common/modal/Modal";
 import TransactionHistory from "../components/feature/TransactionHistory";
-import WalletAction from "../components/feature/WalletAction";
+import WalletAction from "../components/wallet/WalletAction";
 import BlackText from "../components/common/text/BlackText";
 import GrayText from "../components/common/text/GrayText";
 import WhiteBoxCard from "../components/common/cards/WhiteBoxCard";
