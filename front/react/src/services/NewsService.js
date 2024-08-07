@@ -10,6 +10,8 @@ const getAllNews = async () => {
     }
 };
 
-export default {
+const newsService = {
     getAllNews,
 };
+
+export default newsService;
