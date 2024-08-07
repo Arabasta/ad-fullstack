@@ -65,8 +65,8 @@ const Header = () => {
                                 <Link to="/wallet">
                                     <Button variant="ghost">Wallet</Button>
                                 </Link>
-                                <Link to="/profile">
-                                    <Button variant="ghost">Profile</Button>
+                                <Link to="/settings">
+                                    <Button variant="ghost">Settings</Button>
                                 </Link>
                                 <Button variant="ghost" onClick={logout}>Sign Out</Button>
                             </>
