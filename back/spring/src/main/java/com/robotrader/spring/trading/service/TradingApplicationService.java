@@ -5,6 +5,7 @@ import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 import com.robotrader.spring.service.log.TradeTransactionLogService;
+import com.robotrader.spring.trading.algorithm.TradingAlgorithmTwo;
 import com.robotrader.spring.trading.transactions.DatabaseStoreTradePersistence;
 import com.robotrader.spring.trading.transactions.MemoryStoreTradePersistence;
 import com.robotrader.spring.trading.transactions.ObjectStoreTradePersistence;
@@ -55,6 +56,7 @@ public class TradingApplicationService implements ITradingApplicationService {
         tradingContext.setStrategy(new BackTestingStrategy(
                 new MemoryStoreTradePersistence(), historicalMarketDataService));
 
+        // todo: make algo selection modular
         TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
         CompletableFuture<Void> future = tradingContext.executeTradingStrategy(tradingAlgorithmOne);
 
@@ -76,7 +78,8 @@ public class TradingApplicationService implements ITradingApplicationService {
                 new DatabaseStoreTradePersistence(tradeTransactionLogService),
                 historicalMarketDataService, liveMarketDataService, tickerType));
         for (String ticker : tickers) {
-            TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
+            // todo: make algo selection modular
+            TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmTwo(ticker, portfolioType, moneyPoolService);
             tradingContext.executeTradingStrategy(tradingAlgorithmOne);
         }
     }

@@ -39,6 +39,7 @@ public class TradeTransactionLogService implements ITradeTransactionLogService {
         logEntry.setTransactionQuantity(tradeTransaction.getTransactionQuantity());
         logEntry.setPortfolioType(tradeTransaction.getPortfolioType());
         logEntry.setTransactionDateTime(tradeTransaction.getTransactionDateTime());
+        logEntry.setTransactionAmount(tradeTransaction.getTransactionAmount());
 
         save(logEntry);
     }
@@ -53,7 +54,7 @@ public class TradeTransactionLogService implements ITradeTransactionLogService {
                 log.getTransactionDateTime(),
                 log.getTransactionQuantity(),
                 log.getTransactionPrice(),
-                log.getTransactionPrice().multiply(log.getTransactionQuantity()),
+                log.getTransactionAmount(),
                 log.getPortfolioType()
         ));
     }

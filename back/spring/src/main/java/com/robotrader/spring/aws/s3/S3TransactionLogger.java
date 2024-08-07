@@ -71,7 +71,7 @@ public class S3TransactionLogger {
         String timestamp = tradeTransaction.getTransactionDateTime().format(DATE_TIME_FORMATTER);
         BigDecimal transactionQuantity = tradeTransaction.getTransactionQuantity();
         BigDecimal transactionPrice = tradeTransaction.getTransactionPrice();
-        BigDecimal transactionAmount = transactionPrice.multiply(transactionQuantity);
+        BigDecimal transactionAmount = tradeTransaction.getTransactionAmount();
         PortfolioTypeEnum portfolioType = tradeTransaction.getPortfolioType();
 
         String fileName = String.format("trades/%s/%s/%s-%s.json", timestamp, ticker, action, transactionId);

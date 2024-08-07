@@ -15,6 +15,7 @@ public class TradeTransaction {
     private LocalDateTime transactionDateTime;
     private BigDecimal transactionQuantity;
     private BigDecimal transactionPrice;
+    private BigDecimal transactionAmount;
     private PortfolioTypeEnum portfolioType;
 
     public TradeTransaction() {}
@@ -28,6 +29,7 @@ public class TradeTransaction {
         this.transactionQuantity = transactionQuantity;
         this.transactionPrice = transactionPrice;
         this.portfolioType = portfolioType;
+        this.transactionAmount = transactionPrice.multiply(transactionQuantity);
     }
 
     @Override
@@ -39,7 +41,7 @@ public class TradeTransaction {
                 ", transactionDateTime=" + transactionDateTime +
                 ", transactionQuantity=" + transactionQuantity +
                 ", transactionPrice=" + transactionPrice +
-                ", transactionAmount=" + transactionPrice.multiply(transactionQuantity) +
+                ", transactionAmount=" + transactionAmount +
                 ", portfolioType=" + portfolioType +
                 '}';
     }
