@@ -13,7 +13,7 @@ const getFinancialProfile = async () => {
 const updateFinancialProfile = async (financialProfile) => {
     try {
         const response = await axiosInstance.put(`/v1/customer/financial-profile/update`, financialProfile);
-        return response.data;
+        return response.data.data;
     } catch (error) {
         console.error('Error updating financial profile', error);
         throw error;
