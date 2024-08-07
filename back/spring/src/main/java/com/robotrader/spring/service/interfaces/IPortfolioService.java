@@ -6,6 +6,7 @@ import com.robotrader.spring.dto.portfolio.PortfolioTransactionResponseDTO;
 import com.robotrader.spring.dto.portfolio.PortfolioWithdrawFundsDTO;
 import com.robotrader.spring.model.Portfolio;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
+import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,4 +25,9 @@ public interface IPortfolioService {
     void handleStopLoss(Portfolio portfolio);
     void stopLossWithdrawAllToWallet(Portfolio portfolio);
     void handleRecurringAllocation(Portfolio portfolio);
+
+    List<Portfolio> findPortfolioByType(PortfolioTypeEnum portfolioTypeEnum);
+
+    @Transactional
+    void updateTrade(BigDecimal newUnitPrice, PortfolioTypeEnum portfolioTypeEnum);
 }

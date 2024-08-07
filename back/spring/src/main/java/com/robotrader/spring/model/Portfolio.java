@@ -1,6 +1,7 @@
 package com.robotrader.spring.model;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
+import com.robotrader.spring.model.log.PortfolioHistoryLog;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -30,20 +31,22 @@ public class Portfolio {
     @NotNull(message = "Amount cannot be null")
     @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
     @DecimalMax(value = "1000000000.00", message = "Amount must be less than or equal to 1000000000.00")
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal allocatedBalance;
 
     @NotNull(message = "Amount cannot be null")
     @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
     @DecimalMax(value = "1000000000.00", message = "Amount must be less than or equal to 1000000000.00")
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal currentValue;
 
-    private Integer allocatedUnitQty;
+    @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
+    @Column(nullable = false, precision = 16, scale = 4)
+    private BigDecimal allocatedUnitQty;
 
     public Portfolio() {
         this.allocatedBalance = new BigDecimal(0);
-        this.allocatedUnitQty = 0;
+        this.allocatedUnitQty = new BigDecimal(0);
         this.currentValue = new BigDecimal(0);
     }
 

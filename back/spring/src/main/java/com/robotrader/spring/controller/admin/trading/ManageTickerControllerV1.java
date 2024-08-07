@@ -6,7 +6,7 @@ import com.robotrader.spring.dto.ticker.TickerDTOListDTO;
 import com.robotrader.spring.dto.ticker.TickerListDTO;
 import com.robotrader.spring.model.Ticker;
 import com.robotrader.spring.service.TickerService;
-import com.robotrader.spring.trading.service.MarketDataService;
+import com.robotrader.spring.trading.service.HistoricalMarketDataService;
 import com.robotrader.spring.trading.service.PredictionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +18,13 @@ import java.util.List;
 @RequestMapping("/api/v1/admin/trading/tickers")
 public class ManageTickerControllerV1 {
     private final TickerService tickerService;
-    private final MarketDataService marketDataService;
+    private final HistoricalMarketDataService historicalMarketDataService;
     private final PredictionService predictionService;
 
     @Autowired
-    public ManageTickerControllerV1(TickerService tickerService, MarketDataService marketDataService, PredictionService predictionService) {
+    public ManageTickerControllerV1(TickerService tickerService, HistoricalMarketDataService historicalMarketDataService, PredictionService predictionService) {
         this.tickerService = tickerService;
-        this.marketDataService = marketDataService;
+        this.historicalMarketDataService = historicalMarketDataService;
         this.predictionService = predictionService;
     }
 

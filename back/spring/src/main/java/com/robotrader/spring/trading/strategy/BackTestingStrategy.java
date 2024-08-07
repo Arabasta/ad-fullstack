@@ -5,7 +5,8 @@ import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
-import com.robotrader.spring.trading.service.MarketDataService;
+import com.robotrader.spring.trading.service.HistoricalMarketDataService;
+import com.robotrader.spring.trading.service.LiveMarketDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,15 +20,18 @@ import java.util.stream.Collectors;
 
 public class BackTestingStrategy implements TradingStrategy {
     private final TradePersistence tradePersistence;
+    private final HistoricalMarketDataService historicalMarketDataService;
     private static final Logger logger = LoggerFactory.getLogger(BackTestingStrategy.class);
 
-    public BackTestingStrategy(TradePersistence tradePersistence) {
+    public BackTestingStrategy(TradePersistence tradePersistence,
+                               HistoricalMarketDataService historicalMarketDataService) {
         this.tradePersistence = tradePersistence;
+        this.historicalMarketDataService = historicalMarketDataService;
     }
 
     @Override
-    public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase, MarketDataService marketDataService) {
-        return marketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
+    public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase) {
+        return historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
                 .doOnNext(data -> runSimulation(tradingAlgorithmBase, data))
                 .doOnNext(data -> getTradeResults())
                 .toFuture()

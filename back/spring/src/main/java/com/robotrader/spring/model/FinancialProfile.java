@@ -29,12 +29,12 @@ public class FinancialProfile {
 
     @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
     @DecimalMax(value = "1000000000.00", message = "Amount must be less than or equal to 1000000000.00")
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 12, scale = 2)
     private BigDecimal annualIncome;
 
     @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
     @DecimalMax(value = "1000000000.00", message = "Amount must be less than or equal to 1000000000.00")
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 12, scale = 2)
     private BigDecimal netWorth;
 
     @Enumerated(EnumType.STRING)

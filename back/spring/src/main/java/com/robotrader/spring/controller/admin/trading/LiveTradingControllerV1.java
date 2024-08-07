@@ -4,11 +4,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.robotrader.spring.aws.s3.S3TransactionLogger;
 import com.robotrader.spring.dto.general.ApiErrorResponse;
 import com.robotrader.spring.dto.general.ApiResponse;
+import com.robotrader.spring.dto.livetrade.TradeTransactionLogDTO;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.TickerService;
+import com.robotrader.spring.service.log.TradeTransactionLogService;
 import com.robotrader.spring.trading.service.TradingApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +27,13 @@ import java.util.Optional;
 public class LiveTradingControllerV1 {
     private final TickerService tickerService;
     private final TradingApplicationService tradingApplicationService;
-    private final S3TransactionLogger s3TransactionLogger;
+    private final TradeTransactionLogService tradeTransactionLogService;
 
     @Autowired
-    public LiveTradingControllerV1(TickerService tickerService, TradingApplicationService tradingApplicationService, Optional<S3TransactionLogger> s3TransactionLogger) {
+    public LiveTradingControllerV1(TickerService tickerService, TradingApplicationService tradingApplicationService, TradeTransactionLogService tradeTransactionLogService) {
         this.tickerService = tickerService;
         this.tradingApplicationService = tradingApplicationService;
-        this.s3TransactionLogger = s3TransactionLogger.orElse(null);
+        this.tradeTransactionLogService = tradeTransactionLogService;
     }
 
     @GetMapping("/start")
@@ -50,18 +54,9 @@ public class LiveTradingControllerV1 {
         return ResponseEntity.ok(new ApiResponse<>("success", "Live trading stopped successfully", null));
     }
 
-
     @GetMapping("/transactions")
-    public ResponseEntity<?> viewTradeTransactions(@RequestParam PortfolioTypeEnum portfolioType,
-                                                   @RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "10") int size) {
-        if (s3TransactionLogger == null) {
-            ApiErrorResponse response = new ApiErrorResponse("error",
-                    "S3 Transaction Logging is disabled or not configured.",
-                    "S3TransactionLogger bean is not available.");
-            return ResponseEntity.status(503).body(response);
-        }
-        List<ObjectNode> transactions = s3TransactionLogger.getTradeTransactionsWithPagination(portfolioType, page, size);
-        return ResponseEntity.ok(new ApiResponse<>("success", "Transactions retrieved successfully", transactions));
+    public ResponseEntity<ApiResponse<Page<TradeTransactionLogDTO>>> getTradeTransactionsLogs(Pageable pageable) {
+        Page<TradeTransactionLogDTO> logs = tradeTransactionLogService.getTradeTransactionLogs(pageable);
+        return ResponseEntity.ok(new ApiResponse<>("success", "Trade transaction logs retrieved successfully", logs));
     }
 }

@@ -17,6 +17,7 @@ import com.robotrader.spring.service.interfaces.ICustomerService;
 import com.robotrader.spring.service.interfaces.IPortfolioService;
 import com.robotrader.spring.service.interfaces.IRuleService;
 import com.robotrader.spring.service.interfaces.IWalletService;
+import com.robotrader.spring.service.log.PortfolioHistoryLogService;
 import com.robotrader.spring.service.log.PortfolioTransactionLogService;
 import com.robotrader.spring.service.log.WalletTransactionLogService;
 import jakarta.transaction.Transactional;
@@ -39,14 +40,17 @@ public class PortfolioService implements IPortfolioService {
     private final UserService userService;
     private final S3TransactionLogger s3TransactionLogger;
     private final PortfolioTransactionLogService portfolioTransactionLogService;
+    private final PortfolioHistoryLogService portfolioHistoryLogService;
     private final SesPortfolioNotificationService sesPortfolioNotificationService;
     private final WalletTransactionLogService walletTransactionLogService;
+    private final MoneyPoolService moneyPoolService;
 
     @Autowired
     public PortfolioService(PortfolioRepository portfolioRepository, IRuleService ruleService,
                             @Lazy ICustomerService customerService, IWalletService walletService, Optional<S3TransactionLogger> s3TransactionLogger,
-                            PortfolioTransactionLogService portfolioTransactionLogService, @Lazy UserService userService,
-                            Optional<SesPortfolioNotificationService> sesPortfolioNotificationService, WalletTransactionLogService walletTransactionLogService) {
+                            PortfolioTransactionLogService portfolioTransactionLogService, @Lazy UserService userService, PortfolioHistoryLogService portfolioHistoryLogService,
+                            Optional<SesPortfolioNotificationService> sesPortfolioNotificationService, WalletTransactionLogService walletTransactionLogService,
+                            @Lazy MoneyPoolService moneyPoolService) {
         this.portfolioRepository = portfolioRepository;
         this.ruleService = ruleService;
         this.customerService = customerService;
@@ -54,8 +58,10 @@ public class PortfolioService implements IPortfolioService {
         this.s3TransactionLogger = s3TransactionLogger.orElse(null);
         this.portfolioTransactionLogService = portfolioTransactionLogService;
         this.userService = userService;
+        this.portfolioHistoryLogService = portfolioHistoryLogService;
         this.sesPortfolioNotificationService = sesPortfolioNotificationService.orElse(null);
         this.walletTransactionLogService = walletTransactionLogService;
+        this.moneyPoolService = moneyPoolService;
     }
 
     @Override
@@ -159,6 +165,12 @@ public class PortfolioService implements IPortfolioService {
     public void addFundsToPortfolio(Portfolio portfolio, BigDecimal amount) {
         portfolio.setAllocatedBalance(portfolio.getAllocatedBalance().add(amount));
         portfolio.setCurrentValue(portfolio.getCurrentValue().add(amount));
+
+        BigDecimal moneyPoolUnitPrice = moneyPoolService.getUnitPriceByPortfolioType(portfolio.getPortfolioType());
+        BigDecimal newUnitsToAdd = amount.divide(moneyPoolUnitPrice);
+        moneyPoolService.updateTotalUnitQty(newUnitsToAdd, portfolio.getPortfolioType(), true);
+        portfolio.setAllocatedUnitQty(portfolio.getAllocatedUnitQty().add(newUnitsToAdd));
+
         ruleService.setStopLossInitialValue(portfolio.getRule(), portfolio.getCurrentValue());
         save(portfolio);
     }
@@ -166,8 +178,13 @@ public class PortfolioService implements IPortfolioService {
     @Override
     @Transactional
     public void removeFundsFromPortfolio(Portfolio portfolio, BigDecimal amount) {
-        if (portfolio.getAllocatedBalance().compareTo(amount) < 0)
+        if (portfolio.getCurrentValue().compareTo(amount) < 0)
             throw new InsufficientFundsException("Insufficient funds in portfolio");
+
+        BigDecimal moneyPoolUnitPrice = moneyPoolService.getUnitPriceByPortfolioType(portfolio.getPortfolioType());
+        BigDecimal unitsToSubtract = amount.divide(moneyPoolUnitPrice);
+        moneyPoolService.updateTotalUnitQty(unitsToSubtract, portfolio.getPortfolioType(), false);
+        portfolio.setAllocatedUnitQty(portfolio.getAllocatedUnitQty().subtract(unitsToSubtract));
 
         // remove from current value and reset allocated balance
         portfolio.setCurrentValue(portfolio.getCurrentValue().subtract(amount));
@@ -217,4 +234,22 @@ public class PortfolioService implements IPortfolioService {
                     userService.getUserByPortfolio(portfolio).getEmail(), portfolio.getPortfolioType().toString(), recurringAmount);
     }
 
+    @Override
+    public List<Portfolio> findPortfolioByType(PortfolioTypeEnum portfolioTypeEnum) {
+        return portfolioRepository.findPortfolioByPortfolioType(portfolioTypeEnum);
+    }
+
+    @Override
+    @Transactional
+    public void updateTrade(BigDecimal newUnitPrice, PortfolioTypeEnum portfolioTypeEnum) {
+        findPortfolioByType(portfolioTypeEnum)
+                .stream()
+                .forEach(portfolio -> {
+                    if (!portfolio.getAllocatedUnitQty().equals(BigDecimal.ZERO)) {
+                        portfolio.setCurrentValue(newUnitPrice.multiply(portfolio.getAllocatedUnitQty()));
+                        save(portfolio);
+                        portfolioHistoryLogService.log(portfolio);
+                    }
+                });
+    }
 }

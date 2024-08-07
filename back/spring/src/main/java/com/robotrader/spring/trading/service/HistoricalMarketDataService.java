@@ -16,21 +16,15 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class MarketDataService {
+public class HistoricalMarketDataService {
     private final HistoricalDataApiService historicalDataApiService;
     private final TickerDataApiService tickerDataApiService;
-    private final WebSocketConnectionManager webSocketManager;
-    private final WebSocketServiceFactory webSocketFactory;
-    private MarketDataWebSocketService marketDataWebSocketService;
 
     @Autowired
-    public MarketDataService(HistoricalDataApiService historicalDataApiService,
-                             TickerDataApiService tickerDataApiService, WebSocketConnectionManager webSocketManager, WebSocketServiceFactory webSocketFactory) {
+    public HistoricalMarketDataService(HistoricalDataApiService historicalDataApiService,
+                                       TickerDataApiService tickerDataApiService) {
         this.historicalDataApiService = historicalDataApiService;
         this.tickerDataApiService = tickerDataApiService;
-        this.webSocketManager = webSocketManager;
-        this.webSocketFactory = webSocketFactory;
-        this.marketDataWebSocketService = marketDataWebSocketService;
     }
 
     public Mono<Map<String, List<Object>>> getHistoricalMarketData(String ticker) {
@@ -73,19 +67,4 @@ public class MarketDataService {
                 });
     }
 
-
-    public void subscribeToLiveMarketData(List<String> tickers, TickerTypeEnum tickerType) {
-        marketDataWebSocketService = webSocketFactory.createWebSocketService(tickerType);
-        webSocketManager.addWebSocketService(marketDataWebSocketService);
-        marketDataWebSocketService.connect();
-        marketDataWebSocketService.subscribe(tickers);
-    }
-
-    public void disconnectLiveMarketData() {
-        webSocketManager.disconnectAll();
-    }
-
-    public Flux<LiveMarketDataDTO> getLiveMarketDataFlux() {
-        return marketDataWebSocketService.getLiveMarketDataFlux();
-    }
 }
