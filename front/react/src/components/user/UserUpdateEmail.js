@@ -12,7 +12,7 @@ const UpdateEmail = ({ user, updateUser }) => {
         }
     }, [user]);
 
-    const handleUpdateEmail = async () => {
+    const handleUpdateEmail2 = async () => {
         try {
             await UserService.updateEmail({ email });
             setSuccess('Email updated successfully');
@@ -38,7 +38,7 @@ const UpdateEmail = ({ user, updateUser }) => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
-                <button onClick={handleUpdateEmail}>Update Email</button>
+                <button onClick={handleUpdateEmail2}>Update Email</button>
             </div>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {success && <p style={{ color: 'green' }}>{success}</p>}
