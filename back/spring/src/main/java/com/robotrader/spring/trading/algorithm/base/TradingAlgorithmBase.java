@@ -1,6 +1,5 @@
 package com.robotrader.spring.trading.algorithm.base;
 
-import com.robotrader.spring.model.MoneyPool;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
@@ -11,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ public abstract class TradingAlgorithmBase {
     protected String ticker;
     protected final MoneyPoolService moneyPoolService;
     protected PortfolioTypeEnum portfolioType;
-    protected BigDecimal algoRisk;
+    protected BigDecimal baseAlgoRisk;
     protected static final BigDecimal AGGRESSIVE_RISK = BigDecimal.valueOf(0.0005);
     protected static final BigDecimal MODERATE_RISK = BigDecimal.valueOf(0.0003);
     protected static final BigDecimal CONSERVATIVE_RISK = BigDecimal.valueOf(0.0001);
@@ -45,14 +45,14 @@ public abstract class TradingAlgorithmBase {
         this.moneyPoolService = moneyPoolService;
         currentCapitalTest = BigDecimal.valueOf(1000000);
         initialCapitalTest = currentCapitalTest;
-        setAlgoRisk(portfolioType);
+        setBaseAlgoRisk(portfolioType);
     }
 
-    public void setAlgoRisk(PortfolioTypeEnum portfolioType) {
+    public void setBaseAlgoRisk(PortfolioTypeEnum portfolioType) {
         switch (portfolioType) {
-            case AGGRESSIVE -> algoRisk = AGGRESSIVE_RISK;
-            case MODERATE -> algoRisk = MODERATE_RISK;
-            case CONSERVATIVE -> algoRisk = CONSERVATIVE_RISK;
+            case AGGRESSIVE -> baseAlgoRisk = AGGRESSIVE_RISK;
+            case MODERATE -> baseAlgoRisk = MODERATE_RISK;
+            case CONSERVATIVE -> baseAlgoRisk = CONSERVATIVE_RISK;
         }
     }
 
@@ -117,7 +117,7 @@ public abstract class TradingAlgorithmBase {
         }
 
         // Calculate the position size
-        position = positionSizing(algoRisk);
+        position = positionSizing(baseAlgoRisk);
         if (position.equals(BigDecimal.ZERO)) {
             return false;
         }
@@ -146,19 +146,18 @@ public abstract class TradingAlgorithmBase {
         currentCapitalTest = currentCapitalTest.add(transactionAmount);
 
         logger.debug("Trade: {}", lastTradeTransaction);
-        logger.debug("Capital:{}", currentCapitalTest);
+        logger.debug("New Capital:{}", currentCapitalTest);
     }
 
     public void executeTradeLive(String action) {
         LocalDateTime dt = LocalDateTime.now();
         lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action, portfolioType);
-        BigDecimal newBalance = null;
-        if (action.equals("SELL")){
-            newBalance = moneyPoolService.updateTrade(lastTradeTransaction);
-        }
+        BigDecimal initialBalance = moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
+        BigDecimal newBalance = moneyPoolService.updateTrade(lastTradeTransaction);
 
         logger.debug("Trade: {}", lastTradeTransaction);
-        logger.debug("Capital:{}", newBalance);
+        logger.debug("Initial Capital:{}", initialBalance);
+        logger.debug("New Capital:{}", newBalance);
     }
 
     public boolean isSellable() {
@@ -170,8 +169,25 @@ public abstract class TradingAlgorithmBase {
         return currentPrice.compareTo(stopLossPrice) < 0;
     }
 
-    protected boolean openTrade() {
+    public boolean openTrade() {
         // Only allow 1 open trade per stock
         return lastTradeTransaction != null && lastTradeTransaction.getAction().equals("BUY");
     }
+
+    public BigDecimal calculateAdjustedRisk(BigDecimal baseRisk, BigDecimal stopLossAmount, BigDecimal currentPrice) {
+        BigDecimal stopLossPercentage = stopLossAmount.divide(currentPrice, 8, RoundingMode.HALF_UP);
+
+        if (stopLossPercentage.compareTo(BigDecimal.valueOf(0.005)) < 0) { // If stop loss is less than 0.5%
+            return baseRisk.multiply(BigDecimal.valueOf(0.2)); // Reduce risk to 20% of base risk
+        } else if (stopLossPercentage.compareTo(BigDecimal.valueOf(0.01)) < 0) { // If stop loss is less than 1%
+            return baseRisk.multiply(BigDecimal.valueOf(0.4)); // Reduce risk to 40% of base risk
+        } else if (stopLossPercentage.compareTo(BigDecimal.valueOf(0.02)) < 0) { // If stop loss is less than 2%
+            return baseRisk.multiply(BigDecimal.valueOf(0.6)); // Reduce risk to 60% of base risk
+        } else if (stopLossPercentage.compareTo(BigDecimal.valueOf(0.03)) < 0) { // If stop loss is less than 3%
+            return baseRisk.multiply(BigDecimal.valueOf(0.8)); // Reduce risk to 80% of base risk
+        }
+
+        return baseRisk; // Otherwise, use the base risk
+    }
+
 }
