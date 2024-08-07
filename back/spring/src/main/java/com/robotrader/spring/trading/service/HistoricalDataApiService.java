@@ -15,7 +15,8 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class HistoricalDataApiService {
-    private WebClient polygonWebClient;
+    private final WebClient polygonWebClient;
+    private static final String ENDPOINT_PATH = "/v2/aggs/ticker/{stocksTicker}/range/{multiplier}/{timespan}/{from}/{to}";
     private static final String MULTIPLIER = "10";
     private static final String TIMESPAN = "minute";
     private static final Logger logger = LoggerFactory.getLogger(HistoricalDataApiService.class);
@@ -25,7 +26,7 @@ public class HistoricalDataApiService {
     }
 
     public Flux<HistoricalDataDTO> getMarketDataByTicker(String ticker) {
-        String path = "/v2/aggs/ticker/{stocksTicker}/range/{multiplier}/{timespan}/{from}/{to}";
+        String path = ENDPOINT_PATH;
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String toDate = LocalDate.now().format(df);
         String fromDate = LocalDate.parse(toDate, df).minusWeeks(1).format(df);
