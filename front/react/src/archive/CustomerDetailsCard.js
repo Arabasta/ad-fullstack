@@ -87,3 +87,30 @@ CustomerDetailsCard.propTypes = {
 };
 
 export default CustomerDetailsCard;
+
+/*
+* Previous use
+
+<ChakraProvider>
+    <Box>
+        <Flex direction="column" align="center" mt={4} mb={8}>
+            <Heading as="h2" size="lg" mb={2}>Profile</Heading>
+            <Text>Welcome to the Profile Page!</Text>
+        </Flex>
+
+        <Flex direction="row" align="center" justify="center" mt={4} mb={8} w="full" p={4}>
+            <CustomerDetailsCard
+                customer={customer}
+                alertMessage={error ? error : `Your recommended portfolio type is: ${recommendedPortfolioType}`}
+            />
+
+            <VStack spacing={4} align="flex-start" ml={8}>
+            </VStack>
+        </Flex>
+
+        <Divider mb={8} />
+
+    </Box>
+</ChakraProvider>
+*
+* */
