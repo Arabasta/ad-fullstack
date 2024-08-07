@@ -1,10 +1,6 @@
 import {useState, useCallback, useEffect} from 'react';
 import logService from '../services/SqlTransactionLogService';
 
-// portfolio type is optional
-// if type is wallet, calls getWalletTransactions
-// if type is portfolio, calls getPortfolioTransactions
-// processes response in the same way
 const useSqlTransactionLog = (type, portfolioType = null) => {
     const [transactions, setTransactions] = useState([]);
     const [page, setPage] = useState(0);
