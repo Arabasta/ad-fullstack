@@ -97,32 +97,46 @@ async def get():
     return {"response": health}
 
 
+# todo: put try catch block
 # Accepts Backend's PredictionDTO in RequestBody
 # Note: List<Decimal> must be >= FEATURE_COUNT, which will be used to create lag features and reshaped for predictions.
 @app.post("/api/v1/predict/ticker/backtest")
 async def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
-    if prediction_dto.tickerDTO is None or prediction_dto.predictions is None:
-        return None
-    if len(prediction_dto.predictions) < FEATURE_COUNT:
-        raise ValueError(f"Please input more than {FEATURE_COUNT} datapoints")
-    x_values = add_lagged_features(df_x_values=pd.DataFrame(prediction_dto.predictions, columns=[FEATURE]),
-                                   future_window=FEATURE_COUNT)
-    predictions = predictions_from_x_values(ticker_dto=prediction_dto.tickerDTO,
-                                            x_values=x_values)
+    predictions = []
+    try:
+        if prediction_dto.tickerDTO is None or prediction_dto.predictions is None:
+            return None
+        if len(prediction_dto.predictions) < FEATURE_COUNT:
+            raise ValueError(f"Please input more than {FEATURE_COUNT} datapoints")
+        x_values = add_lagged_features(df_x_values=pd.DataFrame(prediction_dto.predictions, columns=[FEATURE]),
+                                       future_window=FEATURE_COUNT)
+        predictions = predictions_from_x_values(ticker_dto=prediction_dto.tickerDTO,
+                                                x_values=x_values)
+    except Exception:
+        logger.error(f"Exception occurred at predictions:{prediction_dto}")
+    else:
+        predictions = []
     return PredictionDTO(tickerDTO=prediction_dto.tickerDTO,
                          predictions=predictions)
 
 
+# todo: put try catch block
 # Accepts Backend's TickerDTO in RequestBody
 @app.post("/api/v1/predict/ticker/live")
 async def by_ticker_dto_live(ticker_dto: TickerDTO):
-    ticker_name = ticker_dto.tickerName
-    if ticker_name not in list(LOADED_MODELS):
-        return None
-    logger.info('--Start prediction--')
-    logger.info(f'--Predicting {ticker_name}--')
-    predictions = predictions_from_ticker_dto(ticker_dto)
-    logger.info('--Finish prediction--')
+    predictions = []
+    try:
+        ticker_name = ticker_dto.tickerName
+        if ticker_name not in list(LOADED_MODELS):
+            return None
+        logger.info('--Start prediction--')
+        logger.info(f'--Predicting {ticker_name}--')
+        predictions = predictions_from_ticker_dto(ticker_dto)
+        logger.info('--Finish prediction--')
+    except Exception:
+        logger.error(f"Exception occurred at predictions:{ticker_dto}")
+    else:
+        predictions = []
     return PredictionDTO(tickerDTO=ticker_dto,
                          predictions=predictions)
 
