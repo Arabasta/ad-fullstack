@@ -17,6 +17,7 @@ import com.robotrader.spring.service.interfaces.ICustomerService;
 import com.robotrader.spring.service.interfaces.IPortfolioService;
 import com.robotrader.spring.service.interfaces.IRuleService;
 import com.robotrader.spring.service.interfaces.IWalletService;
+import com.robotrader.spring.service.log.PortfolioHistoryLogService;
 import com.robotrader.spring.service.log.PortfolioTransactionLogService;
 import com.robotrader.spring.service.log.WalletTransactionLogService;
 import jakarta.transaction.Transactional;
@@ -39,6 +40,7 @@ public class PortfolioService implements IPortfolioService {
     private final UserService userService;
     private final S3TransactionLogger s3TransactionLogger;
     private final PortfolioTransactionLogService portfolioTransactionLogService;
+    private final PortfolioHistoryLogService portfolioHistoryLogService;
     private final SesPortfolioNotificationService sesPortfolioNotificationService;
     private final WalletTransactionLogService walletTransactionLogService;
     private final MoneyPoolService moneyPoolService;
@@ -46,7 +48,7 @@ public class PortfolioService implements IPortfolioService {
     @Autowired
     public PortfolioService(PortfolioRepository portfolioRepository, IRuleService ruleService,
                             @Lazy ICustomerService customerService, IWalletService walletService, Optional<S3TransactionLogger> s3TransactionLogger,
-                            PortfolioTransactionLogService portfolioTransactionLogService, @Lazy UserService userService,
+                            PortfolioTransactionLogService portfolioTransactionLogService, @Lazy UserService userService, PortfolioHistoryLogService portfolioHistoryLogService,
                             Optional<SesPortfolioNotificationService> sesPortfolioNotificationService, WalletTransactionLogService walletTransactionLogService,
                             @Lazy MoneyPoolService moneyPoolService) {
         this.portfolioRepository = portfolioRepository;
@@ -56,6 +58,7 @@ public class PortfolioService implements IPortfolioService {
         this.s3TransactionLogger = s3TransactionLogger.orElse(null);
         this.portfolioTransactionLogService = portfolioTransactionLogService;
         this.userService = userService;
+        this.portfolioHistoryLogService = portfolioHistoryLogService;
         this.sesPortfolioNotificationService = sesPortfolioNotificationService.orElse(null);
         this.walletTransactionLogService = walletTransactionLogService;
         this.moneyPoolService = moneyPoolService;
@@ -242,9 +245,11 @@ public class PortfolioService implements IPortfolioService {
         findPortfolioByType(portfolioTypeEnum)
                 .stream()
                 .forEach(portfolio -> {
-                    portfolio.setCurrentValue(newUnitPrice.multiply(portfolio.getAllocatedUnitQty()));
-                    save(portfolio);
+                    if (!portfolio.getAllocatedUnitQty().equals(BigDecimal.ZERO)) {
+                        portfolio.setCurrentValue(newUnitPrice.multiply(portfolio.getAllocatedUnitQty()));
+                        save(portfolio);
+                        portfolioHistoryLogService.log(portfolio);
+                    }
                 });
     }
-
 }
