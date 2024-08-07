@@ -22,7 +22,7 @@ public class Rule {
     @DecimalMin(value = "0.0", message = "Recurring allocation must be greater than or equal to 0")
     @DecimalMax(value = "1000000000.00", message = "Amount must be less than or equal to 1000000000.00")
     @Digits(integer = 10, fraction = 2, message = "Recurring allocation must have at most 2 decimal places")
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 12, scale = 2)
     private BigDecimal stopLossInitialValue;
 
     @DecimalMin(value = "0.0", message = "Stop loss percentage must be greater than or equal to 0")
@@ -32,7 +32,7 @@ public class Rule {
     @DecimalMin(value = "0.0", message = "Recurring allocation must be greater than or equal to 0")
     @DecimalMax(value = "1000000000.00", message = "Amount must be less than or equal to 1000000000.00")
     @Digits(integer = 10, fraction = 2, message = "Recurring allocation must have at most 2 decimal places")
-    @Column(precision = 10, scale = 2)
+    @Column(precision = 12, scale = 2)
     private BigDecimal recurringAllocationAmount;
 
     @Min(value = 1, message = "Recurring allocation day must be at least 1")
