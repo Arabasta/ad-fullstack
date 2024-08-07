@@ -10,6 +10,7 @@ import portfolioRoutes from './routes/PortfolioRoutes';
 import Header from "./components/common/layout/Header";
 import Footer from "./components/common/layout/Footer";
 import AdminRoutes from "./admin/Routes/adminRoutes";
+import settingRoutes from "./routes/SettingRoutes";
 
 const App = () => {
     return (
@@ -30,6 +31,7 @@ const AppContent = () => {
                     {NavigationBarRoutes}
                     {authRoutes}
                     {mainRoutes}
+                    {settingRoutes}
                     {profileRoutes}
                     {portfolioRoutes}
                     {AdminRoutes}

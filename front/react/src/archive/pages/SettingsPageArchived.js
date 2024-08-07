@@ -1,7 +1,7 @@
 import React from 'react';
-import ProfileButtons from "../components/common/buttons/ProfileButtons";
+import ProfileButtons from "../../components/common/buttons/ProfileButtons";
 
-export default function SettingsPage() {
+export default function SettingsPageArchived() {
     return (
         <div>
             <h2>Settings</h2>
