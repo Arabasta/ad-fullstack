@@ -10,7 +10,7 @@ const NewsList = ({ news }) => {
                 <NewsItem
                     key={index}
                     title={article.title}
-                    url={article.articleUrl}
+                    url={article.article_url}
                     author={article.author}
                 />
             ))}
@@ -22,7 +22,7 @@ NewsList.propTypes = {
     news: PropTypes.arrayOf(
         PropTypes.shape({
             title: PropTypes.string.isRequired,
-            articleUrl: PropTypes.string.isRequired,
+            article_url: PropTypes.string.isRequired,
             author: PropTypes.string,
         })
     ).isRequired,
