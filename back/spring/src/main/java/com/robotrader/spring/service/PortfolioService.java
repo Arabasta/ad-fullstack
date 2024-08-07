@@ -243,6 +243,7 @@ public class PortfolioService implements IPortfolioService {
                 .stream()
                 .forEach(portfolio -> {
                     portfolio.setCurrentValue(newUnitPrice.multiply(portfolio.getAllocatedUnitQty()));
+                    save(portfolio);
                 });
     }
 
