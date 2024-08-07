@@ -20,7 +20,6 @@ import Button from "../../../../components/common/buttons/Button";
 
 
 const EditUserDetailsForm = ({
-                                 //password, setPassword,
                                  method}) => {
 
     const { user, updateUser, loading } = useUser();
