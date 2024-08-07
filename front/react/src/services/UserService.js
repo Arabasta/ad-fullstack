@@ -11,8 +11,8 @@ const updateEmail = async (email) => {
         return response.data;
 };
 
-const updatePassword = async (passWords) => {
-        const response = await axiosInstance.put(`/v1/user/update-password`, passWords);
+const updatePassword = async (passwords) => {
+        const response = await axiosInstance.put(`/v1/user/update-password`, passwords);
         return response.data;
 
 };
