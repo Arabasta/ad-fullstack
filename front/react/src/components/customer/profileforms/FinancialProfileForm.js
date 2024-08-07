@@ -21,7 +21,7 @@ const FinancialProfileForm = ({ financialProfile, onSubmit }) => {
     const [investmentObjective, setInvestmentObjective] = useState(financialProfile.investmentObjective || 'GROWTH');
     const [investmentExperience, setInvestmentExperience] = useState(financialProfile.investmentExperience || 'NONE');
 
-    const handleSubmit = (e) => {
+    const handleSubmit2 = (e) => {
         e.preventDefault();
         onSubmit({
             employmentStatus,
@@ -50,7 +50,7 @@ const FinancialProfileForm = ({ financialProfile, onSubmit }) => {
     ];
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit2}>
             <div>
                 <label>Employment Status</label>
                 <select
