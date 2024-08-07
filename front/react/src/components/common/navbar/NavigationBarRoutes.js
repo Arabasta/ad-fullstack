@@ -3,7 +3,6 @@ import {Route} from "react-router-dom";
 import NewsPage from "../../../pages/NewsPage";
 import SupportPage from "../../../pages/SupportPage";
 import WalletPage from "../../../pages/WalletPage";
-import SettingsPageArchived from "../../../archive/pages/SettingsPageArchived";
 import CustomerDetailsPage from "../../../pages/CustomerDetailsPage";
 import SettingsPage from "../../../pages/settings/SettingsPage";
 
