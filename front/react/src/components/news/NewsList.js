@@ -11,7 +11,7 @@ const NewsList = ({ news }) => {
                     key={index}
                     title={article.title}
                     description={article.description}
-                    url={article.articleUrl} // Updated to match your DTO
+                    url={article.articleUrl}
                     author={article.author}
                     imageUrl={article.imageUrl}
                     publishedUtc={article.publishedUtc}
@@ -26,7 +26,7 @@ NewsList.propTypes = {
         PropTypes.shape({
             title: PropTypes.string.isRequired,
             description: PropTypes.string.isRequired,
-            articleUrl: PropTypes.string.isRequired, // Updated to match your DTO
+            articleUrl: PropTypes.string.isRequired,
             author: PropTypes.string,
             imageUrl: PropTypes.string,
             publishedUtc: PropTypes.string,
