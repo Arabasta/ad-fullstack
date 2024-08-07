@@ -7,6 +7,7 @@ import boto3
 import os
 import pickle
 import numpy as np
+from pydantic import BaseModel
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import ElasticNet
 from xgboost import XGBRegressor
@@ -17,16 +18,15 @@ from fastapi.responses import RedirectResponse
 from polygon import RESTClient
 
 import pandas as pd
-from pydantic import BaseModel
 
-import service.utils as utils
+from service import utils as utils
 
-logger = logging.getLogger('uvicorn')
 
+# Load
 app = FastAPI(docs_url="/documentation", redoc_url=None)
-
-# Load env variables to instance
+logger = logging.getLogger('uvicorn')
 load_dotenv()
+
 
 '''
 Constants
@@ -50,6 +50,7 @@ LOADED_MODELS = {}
 LOADED_X_SCALERS = {}
 LOADED_Y_SCALERS = {}
 
+
 # todo: to refactor models into dto folder. for some reason, they were not detected when imported from dto folder.
 '''
 MODELS
@@ -61,17 +62,9 @@ class TickerDTO(BaseModel):
     tickerName: str
 
 
-class TickerDTOListDTO(BaseModel):
-    tickerDTOList: List[TickerDTO]
-
-
 class PredictionDTO(BaseModel):
     tickerDTO: TickerDTO
     predictions: List[Decimal]
-
-
-class PredictionDTOListDTO(BaseModel):
-    predictionDTOList: List[PredictionDTO]
 
 
 '''
@@ -173,7 +166,8 @@ def load_all_pickle_files(bucket_name, models_dict):
         response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix="model/")
         if 'Contents' in response:
             # Extract the keys (filenames) and filter out non-.pkl files if needed
-            keys = [str(item['Key']).split("/")[1] for item in response['Contents'] if item['Key'].endswith('.pkl')]  # todo:to reinstate.
+            keys = [str(item['Key']).split("/")[1] for item in response['Contents'] if
+                    item['Key'].endswith('.pkl')]  # todo:to reinstate.
             logger.info(keys)
             # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
             temp_keys = ['AAPL.pkl', 'ABBV.pkl', 'ADBE.pkl', 'AMZN.pkl', 'AVGO.pkl',
