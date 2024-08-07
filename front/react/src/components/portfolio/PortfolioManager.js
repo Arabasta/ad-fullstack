@@ -1,18 +1,24 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import usePortfolio from "../../hooks/usePortfolio";
-import PortfolioDetails from "../../components/portfolio/PortfolioDetails";
+import { useNavigate, useParams } from 'react-router-dom';
 import PortfolioAddFunds from "../../components/portfolio/PortfolioAddFunds";
 import PortfolioWithdrawFunds from "../../components/portfolio/PortfolioWithdrawFunds";
 import Heading from "../../components/common/text/Heading";
+import usePortfolio from "../../hooks/usePortfolio";
+import PortfolioDetails from "../../components/portfolio/PortfolioDetails";
+import portfolioTypes from "./portfolioTypes";
 
-const PortfolioManager = ({ portfolioType, title }) => {
-    const { portfolio, addFunds, withdrawFunds } = usePortfolio(portfolioType);
+const PortfolioManager = () => {
+    const { portfolioType } = useParams();
+    const { portfolio, addFunds, withdrawFunds } = usePortfolio(portfolioType.toUpperCase());
+    //pass the portfolio type the hook, then the hook could handle different portfolio type
     const navigate = useNavigate();
 
     const handleNavigateToRules = () => {
-        navigate('/portfolio/rules', { state: { portfolioType } });
+        navigate('/portfolio/rules', { state: { portfolioType: portfolioType.toUpperCase() } });
     };
+
+    const selectedPortfolioType = portfolioTypes.find(pt => pt.type.toLowerCase() === portfolioType);
+    const title = selectedPortfolioType ? selectedPortfolioType.title : 'Portfolio';
 
     return (
         <div>
