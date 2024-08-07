@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Box,
     SimpleGrid,
@@ -22,6 +22,15 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
     const [sourceOfWealth, setSourceOfWealth] = useState(financialProfile.sourceOfWealth);
     const [investmentObjective, setInvestmentObjective] = useState(financialProfile.investmentObjective);
     const [investmentExperience, setInvestmentExperience] = useState(financialProfile.investmentExperience);
+
+    useEffect(() => {
+        setEmploymentStatus(financialProfile.employmentStatus);
+        setAnnualIncome(financialProfile.annualIncome);
+        setNetWorth(financialProfile.netWorth);
+        setSourceOfWealth(financialProfile.sourceOfWealth);
+        setInvestmentObjective(financialProfile.investmentObjective);
+        setInvestmentExperience(financialProfile.investmentExperience);
+    }, [financialProfile]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -63,6 +72,7 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
         { label: 'Above $1,000,000', value: 1000001 },
     ];
 
+    /*
     const sourceOfWealthOptions = [
         { label: 'Salary', value: 1 },
         { label: 'Business', value: 2 },
@@ -70,6 +80,7 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
         { label: 'Inheritance', value: 4 },
         { label: 'Other', value: 5 }
     ]
+     */
 
     const investmentExperienceOptions = [
         { label: 'None', value: 1 },
@@ -120,6 +131,7 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
 
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
+                            onsubmit={handleSubmit}
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
@@ -155,12 +167,12 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                             value={employmentStatus}
                                             onChange={(value) => setEmploymentStatus(value.toString())}
                                             options={[
-                                                { label: 'Employed', value: 1 },
-                                                { label: 'Self-Employed', value: 2 },
-                                                { label: 'Unemployed', value: 3 },
-                                                { label: 'Retired', value: 4 },
-                                                { label: 'Student', value: 5 },
-                                                { label: 'Other', value: 6 }
+                                                { label: 'Employed', value: 0 },
+                                                { label: 'Self-Employed', value: 1 },
+                                                { label: 'Unemployed', value: 2 },
+                                                { label: 'Retired', value: 3 },
+                                                { label: 'Student', value: 4 },
+                                                { label: 'Other', value: 5 }
                                             ]}
                                             required
                                         />
@@ -232,7 +244,13 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                             rounded="md"
                                             value={sourceOfWealth}
                                             onChange={setSourceOfWealth}
-                                            options={sourceOfWealthOptions}
+                                            options={[
+                                                { label: 'Salary', value: 0 },
+                                                { label: 'Business', value: 1 },
+                                                { label: 'Investments', value: 2 },
+                                                { label: 'Inheritance', value: 3 },
+                                                { label: 'Other', value: 4 }
+                                            ]}
                                             required
                                         />
                                     </FormControl>
