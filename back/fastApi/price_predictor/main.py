@@ -19,7 +19,7 @@ from polygon import RESTClient
 
 import pandas as pd
 
-from .service import utils
+from service import utils as utils
 
 
 # Load
