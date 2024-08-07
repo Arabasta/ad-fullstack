@@ -3,7 +3,7 @@ from typing import List
 
 from pydantic import BaseModel, ConfigDict
 
-from . import TickerDTO
+from back.fastApi.price_predictor.dto import TickerDTO
 
 
 class PredictionDTO(BaseModel):
