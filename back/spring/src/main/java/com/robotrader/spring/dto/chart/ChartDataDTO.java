@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ChartDataDTO {
-    private List<Integer> labels;
+    private List<?> labels;
     private List<ChartDatasetDTO> datasets;
 }
 
