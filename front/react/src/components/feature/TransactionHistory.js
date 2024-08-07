@@ -11,6 +11,7 @@ import {Flex} from "@chakra-ui/react";
 // todo: maybe rearrgange the text or something
 // todo: better date format
 const TransactionHistory = ({ type, portfolioType }) => {
+    // useSqlTransactionLog is a custom hook that fetches transaction logs from the backend
     const { transactions, loadMoreTransactions, hasMore, loading } = useSqlTransactionLog(type, portfolioType);
 
     const formatTimestamp = (timestampArray) => {
