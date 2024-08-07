@@ -98,7 +98,7 @@ async def get():
 
 
 # Accepts Backend's PredictionDTO in RequestBody
-# Note: Datapoints must be divisible by FEATURE_COUNT, which will be reshaped as x_values for predictions.
+# Note: List<Decimal> must be >= FEATURE_COUNT, which will be used to create lag features and reshaped for predictions.
 @app.post("/api/v1/predict/ticker/backtest")
 async def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
     if prediction_dto.tickerDTO is None or prediction_dto.predictions is None:
@@ -156,12 +156,11 @@ async def load_all_pickle_files(bucket_name, models_dict):
     try:
         s3_client = get_s3_client()
         # Retrieve the list of model files in the bucket
-        # todo: include logic to loop through stocks bucket and crypto bucket
         response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix="model/")
         if 'Contents' in response:
             # Extract the keys (filenames) and filter out non-.pkl files if needed
             keys = [str(item['Key']).split("/")[1] for item in response['Contents'] if
-                    item['Key'].endswith('.pkl')]  # todo:to reinstate.
+                    item['Key'].endswith('.pkl')]  # todo:to reinstate all keys after optimisation.
             logger.info(keys)
             # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
             temp_keys = ['AAPL.pkl', 'ABBV.pkl', 'ADBE.pkl', 'AMZN.pkl', 'AVGO.pkl',
@@ -206,11 +205,8 @@ async def load_pickle_file(bucket_name, ticker_name, key, models_dict):
 # Read and load prices jsons from polygon API
 def get_latest_ticker_api_data(ticker_name):
     # todo: to consider redesigning pipeline to know the name and quantity of features required by the trained models.
-    # todo: handle non-trading day requests (in polygon's response {}, it will contain "resultsCount": 0).
     # Build polygon client
     polygon_client = RESTClient(api_key=POLYGON_API_KEY)
-
-    # todo: logic to check if today is trading day. will not be able to get current prices on closed market day.
     # Datetime strings for api
     today = datetime.today().strftime('%Y-%m-%d')
     previous_datetime = datetime.today() - timedelta(days=4)
@@ -229,11 +225,8 @@ def get_latest_ticker_api_data(ticker_name):
     )
     # Create DataFrame from polygon api json response for data processing.
     df_raw = pd.DataFrame(data_request)
-    # todo: do not hardcode features required by models.
     df_features = add_lagged_features(df_raw[[FEATURE]].iloc[::-1], FEATURE_COUNT)
-    logger.info('df_features', df_features)  # todo: to remove logger after dev.
     arr_features = df_features.iloc[:FEATURE_COUNT].values
-    logger.info('arr_features', arr_features)  # todo: to remove logger after dev.
     return arr_features
 
 
@@ -241,7 +234,6 @@ def get_latest_ticker_api_data(ticker_name):
 def add_lagged_features(df_x_values, future_window):
     df = df_x_values.copy()
     for lag_count in range(1, future_window):
-        # todo: do not hardcode features required by models
         df[f'lag_{FEATURE}_{lag_count}'] = df[FEATURE].shift(lag_count)
     df.dropna(inplace=True)
     return df
@@ -256,7 +248,6 @@ def predictions_from_ticker_dto(ticker_dto):
 def predictions_from_x_values(ticker_dto, x_values):
     ticker_name = ticker_dto.tickerName
     model = LOADED_MODELS[ticker_name]
-    logger.info('x_values', x_values)
     scaled_x_values = LOADED_X_SCALERS[ticker_name].transform(x_values)
     y_pred = model.predict(np.array(scaled_x_values))
     inverse_scaled_y_pred = LOADED_Y_SCALERS[ticker_name].inverse_transform(y_pred.reshape(-1, 1)).flatten()
