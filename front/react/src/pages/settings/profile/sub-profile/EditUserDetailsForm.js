@@ -166,6 +166,7 @@ const EditUserDetailsForm = ({
                                                 rounded="md"
                                             />
                                         </InputGroup>
+
                                         <Button
                                             type="button"
                                             onClick={handleUpdateMobileNumber}
@@ -189,13 +190,14 @@ const EditUserDetailsForm = ({
                                 _dark={{ bg: "#121212" }}
                                 textAlign="right"
                             >
+                                {/* todo: make button return back to main settings page */}
                                 <Button
                                     type="submit"
                                     colorScheme="brand"
                                     _focus={{ shadow: "" }}
                                     fontWeight="md"
                                 >
-                                    Next
+                                    Return
                                 </Button>
                             </Box>
                         </chakra.form>
