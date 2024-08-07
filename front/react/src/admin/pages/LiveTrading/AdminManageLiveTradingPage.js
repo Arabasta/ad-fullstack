@@ -1,6 +1,6 @@
 import React from 'react';
-import LiveTrading from '../component/LiveTrading';
-import Heading from "../../components/common/text/Heading";
+import LiveTrading from '../../component/LiveTrading';
+import Heading from "../../../components/common/text/Heading";
 
 const AdminManageLiveTradingPage = () => {
     return (
