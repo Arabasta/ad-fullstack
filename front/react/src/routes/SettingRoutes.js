@@ -1,6 +1,6 @@
 import React from 'react';
 import {Route} from "react-router-dom";
-import EditProfilePage from "../pages/settings/profile/editSettingsMain";
+import EditProfilePage from "../pages/settings/profile/EditProfileMain";
 import EditBankPage from "../pages/settings/bank/editBankDetails";
 import EditNotificationsPage from "../pages/settings/notifications/editNotifications";
 import EditUserDetails from "../pages/settings/profile/sub-profile/EditUserDetails";
