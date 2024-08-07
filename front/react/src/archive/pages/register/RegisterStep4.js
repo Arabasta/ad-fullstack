@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import FormSelect from "../../components/common/inputFields/FormSelect";
+import FormSelect from "../../../components/common/inputFields/FormSelect";
 import { Button } from "@chakra-ui/react";
 
 const RegisterStep4 = ({
