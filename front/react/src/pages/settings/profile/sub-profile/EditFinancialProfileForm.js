@@ -12,6 +12,7 @@ import Heading from "../../../../components/common/text/Heading";
 import Text from "../../../../components/common/text/Text";
 import Button from "../../../../components/common/buttons/Button";
 import FormSelect from "../../../../components/common/inputFields/FormSelect";
+import {Link} from "react-router-dom";
 
 const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
     const [employmentStatus, setEmploymentStatus] = useState(financialProfile.employmentStatus);
@@ -99,12 +100,12 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
 
     return (
         <Box
-            bg="brand.600"
+            bg="brand.400"
             _dark={{ bg: "#111" }}
             p={10}
         >
             <Box
-                bg="brand.400"
+                bg="brand.100"
                 _dark={{ bg: "#111" }}
                 p={30}
             >
@@ -115,7 +116,7 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                 >
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
-                            <Heading color="brand.100" fontSize="5xl" fontWeight="md" lineHeight="10">
+                            <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
                                 Update
                             </Heading>
                             <Text
@@ -124,7 +125,7 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                 color="gray.600"
                                 _dark={{ color: "gray.400" }}
                             >
-                                details.
+                                your details.
                             </Text>
                         </Box>
                     </GridItem>
@@ -147,7 +148,10 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                 p={{ sm: 6 }}
                             >
                                 <SimpleGrid columns={6} spacing={6}>
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl
+                                        color="brand.600"
+                                        borderColor="brand.300"
+                                        as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -159,7 +163,6 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                         <FormSelect
                                             placeholder="Select option"
                                             mt={1}
-                                            focusBorderColor="brand.400"
                                             shadow="sm"
                                             size="sm"
                                             w="full"
@@ -175,10 +178,13 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                                 { label: 'Other', value: 5 }
                                             ]}
                                             required
+
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl
+                                        color="brand.600"
+                                        as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -201,7 +207,8 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 4]}>
+                                    <FormControl color="brand.600"
+                                                 as={GridItem} colSpan={[6, 4]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -225,7 +232,8 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600"
+                                                 as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -255,7 +263,8 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600"
+                                                 as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -279,7 +288,8 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600"
+                                                 as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -301,6 +311,14 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                             options={investmentExperienceOptions}
                                             required
                                         />
+                                        <Button
+                                            onClick={handleSubmit}
+                                            colorScheme="brand"
+                                            _focus={{ shadow: "" }}
+                                            fontWeight="md"
+                                        >
+                                            Update
+                                        </Button>
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
@@ -312,14 +330,17 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                 _dark={{ bg: "#121212" }}
                                 textAlign="right"
                             >
-                                <Button
-                                    onClick={handleSubmit}
-                                    colorScheme="brand"
-                                    _focus={{ shadow: "" }}
-                                    fontWeight="md"
-                                >
-                                    Update
-                                </Button>
+                                <Link to="/settings/profile">
+                                    <Button
+                                        type="button"
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md"
+                                    >
+                                        Return
+                                    </Button>
+                                </Link>
+
                             </Box>
                         </chakra.form>
                     </GridItem>
