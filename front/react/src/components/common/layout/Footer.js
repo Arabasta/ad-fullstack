@@ -27,14 +27,13 @@ const Footer = () => {
                     <Image
                         src={FourQuantLogo}
                         alt="Company Logo"
-                        rounded="lg"
                         width={{
-                            base: "150px",
-                            lg: "200px",
+                            base: "200px",
+                            lg: "300px",
                         }}
                         height={{
-                            base: "50px",
-                            lg: "80px",
+                            base: "70px",
+                            lg: "100px",
                         }}
                         my={{
                             base: 2,
