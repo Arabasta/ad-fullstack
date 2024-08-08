@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import useAuth from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@chakra-ui/react";
 import RegisterStep1New from "./RegisterStep1New";
 import RegisterStep2New from "./RegisterStep2New";
 import RegisterStep3New from "./RegisterStep3New";
@@ -36,9 +37,44 @@ const RegisterForm = () => {
     const [message, setMessage] = useState('');
     const { register } = useAuth();
     const navigate = useNavigate();
+    const toast = useToast();
+
+    const toastOptions = {
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+    }
+
+    const validateStep = () => {
+        switch (step) {
+            case 1:
+                return email && username && password;
+            case 2:
+                return mobileNumber && firstName && lastName && nationality;
+            case 3:
+                return street && city && postalCode && country;
+            case 4:
+                return employmentStatus && annualIncome && netWorth && sourceOfWealth &&
+                    investmentObjective && investmentExperience;
+            case 5:
+                return investmentDurationScore && withdrawalSpendingPlanScore &&
+                    investmentKnowledgeScore && riskRewardScore && ownedInvestmentsScore &&
+                    investmentPersonalityScore;
+            default:
+                return false;
+        }
+    };
 
     const handleNext = (e) => {
         e.preventDefault();
+        if (!validateStep()) {
+            toast(toastOptions);
+            return;
+        }
+
         setStep(step + 1);
     };
 
@@ -49,6 +85,12 @@ const RegisterForm = () => {
 
     const handleRegister = async (e) => {
         e.preventDefault();
+
+        if (!validateStep()) {
+            toast(toastOptions);
+            return;
+        }
+
         try {
             await register({
                 userDetails: { username, password, email },
@@ -62,9 +104,37 @@ const RegisterForm = () => {
                         investmentPersonalityScore }
                 }
             });
+            toast({
+                title: "Registration successful",
+                description: "You have been successfully registered.",
+                status: "",
+                duration: 2000,
+                isClosable: true,
+                position: "top",
+            });
             navigate('/');
         } catch (error) {
             setMessage('An error occurred, please try again.');
+            if (error.response && error.response.data && error.response.data.message) {
+                toast({
+                    title: "Registration failed",
+                    description: error.response.data.message,
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "top",
+                });
+            } else {
+                console.error('Error during registration', error);
+                toast({
+                    title: "An unexpected error occurred",
+                    description: "Please try again.",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "top",  // Toast appears from the top
+                });
+            }
         }
     };
 

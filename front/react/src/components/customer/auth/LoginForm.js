@@ -167,7 +167,6 @@ const LoginForm = ({
                             >
                                 <Button
                                     type="submit"
-                                    colorScheme="brand"
                                     _focus={{ shadow: "" }}
                                     fontWeight="md"
                                 >

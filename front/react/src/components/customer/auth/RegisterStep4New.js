@@ -50,12 +50,12 @@ const RegisterStep4Form = ({
 
     return (
         <Box
-            bg="brand.600"
+            bg="brand.400"
             _dark={{ bg: "#111" }}
             p={10}
         >
             <Box
-                bg="brand.400"
+                bg="brand.100"
                 _dark={{ bg: "#111" }}
                 p={30}
             >
@@ -98,7 +98,7 @@ const RegisterStep4Form = ({
                                 p={{ sm: 6 }}
                             >
                                 <SimpleGrid columns={6} spacing={6}>
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -129,7 +129,7 @@ const RegisterStep4Form = ({
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -153,7 +153,7 @@ const RegisterStep4Form = ({
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 4]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 4]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -177,7 +177,7 @@ const RegisterStep4Form = ({
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -207,7 +207,7 @@ const RegisterStep4Form = ({
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -237,7 +237,7 @@ const RegisterStep4Form = ({
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
