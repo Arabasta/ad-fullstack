@@ -31,6 +31,7 @@ const ManageTickersPage = () => {
         try {
             await addTicker(ticker);
             setShowAvailableTickers(false); // Optionally hide the available tickers list after adding
+            setErrorMessage(''); // Clear any previous error messages
         } catch (error) {
             setErrorMessage('Failed to add ticker. Please try again.');
             console.error('Error adding ticker:', error);

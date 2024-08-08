@@ -3,7 +3,6 @@ package com.robotrader.spring.trading.interfaces;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.trading.dto.BackTestResultDTO;
-import com.robotrader.spring.trading.service.MarketDataService;
 
 import java.util.List;
 

@@ -4,8 +4,11 @@ import com.robotrader.spring.aws.s3.S3TransactionLogger;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
-import com.robotrader.spring.trading.MemoryStoreTradePersistence;
-import com.robotrader.spring.trading.ObjectStoreTradePersistence;
+import com.robotrader.spring.service.log.TradeTransactionLogService;
+import com.robotrader.spring.trading.algorithm.TradingAlgorithmTwo;
+import com.robotrader.spring.trading.transactions.DatabaseStoreTradePersistence;
+import com.robotrader.spring.trading.transactions.MemoryStoreTradePersistence;
+import com.robotrader.spring.trading.transactions.ObjectStoreTradePersistence;
 import com.robotrader.spring.trading.interfaces.ITradingApplicationService;
 import com.robotrader.spring.trading.dto.BackTestResultDTO;
 import com.robotrader.spring.trading.strategy.BackTestingStrategy;
@@ -27,23 +30,33 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class TradingApplicationService implements ITradingApplicationService {
     private final MoneyPoolService moneyPoolService;
-    private final MarketDataService marketDataService;
+    private final HistoricalMarketDataService historicalMarketDataService;
+    private final LiveMarketDataService liveMarketDataService;
+    private final TradeTransactionLogService tradeTransactionLogService;
     private final S3TransactionLogger s3TransactionLogger;
     private List<TradingContext> tradingContexts;
     private static final Logger logger = LoggerFactory.getLogger(TradingApplicationService.class);
 
     @Autowired
-    public TradingApplicationService(MoneyPoolService moneyPoolService, MarketDataService marketDataService, Optional<S3TransactionLogger> s3TransactionLogger) {
+    public TradingApplicationService(MoneyPoolService moneyPoolService,
+                                     HistoricalMarketDataService historicalMarketDataService,
+                                     LiveMarketDataService liveMarketDataService, TradeTransactionLogService tradeTransactionLogService,
+                                     Optional<S3TransactionLogger> s3TransactionLogger) {
         this.moneyPoolService = moneyPoolService;
-        this.marketDataService = marketDataService;
+        this.historicalMarketDataService = historicalMarketDataService;
+        this.liveMarketDataService = liveMarketDataService;
+        this.tradeTransactionLogService = tradeTransactionLogService;
         this.s3TransactionLogger = s3TransactionLogger.orElse(null);
         this.tradingContexts = new ArrayList<>();
     }
 
     @Override
     public BackTestResultDTO runTradingAlgorithmBackTest(String ticker, PortfolioTypeEnum portfolioType) {
-        TradingContext tradingContext = new TradingContext(marketDataService);
-        tradingContext.setStrategy(new BackTestingStrategy(new MemoryStoreTradePersistence()));
+        TradingContext tradingContext = new TradingContext();
+        tradingContext.setStrategy(new BackTestingStrategy(
+                new MemoryStoreTradePersistence(), historicalMarketDataService));
+
+        // todo: make algo selection modular
         TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
         CompletableFuture<Void> future = tradingContext.executeTradingStrategy(tradingAlgorithmOne);
 
@@ -56,12 +69,17 @@ public class TradingApplicationService implements ITradingApplicationService {
     @Override
     public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, TickerTypeEnum tickerType) {
 
-        TradingContext tradingContext = new TradingContext(marketDataService);
+        TradingContext tradingContext = new TradingContext();
         tradingContexts.add(tradingContext);
-        marketDataService.subscribeToLiveMarketData(tickers, tickerType);
-        tradingContext.setStrategy(new LiveTradingStrategy(new ObjectStoreTradePersistence(Optional.ofNullable(s3TransactionLogger))));
+        if (!LiveMarketDataService.isRunning()){
+            liveMarketDataService.subscribeToLiveMarketData();
+        }
+        tradingContext.setStrategy(new LiveTradingStrategy(
+                new DatabaseStoreTradePersistence(tradeTransactionLogService),
+                historicalMarketDataService, liveMarketDataService, tickerType));
         for (String ticker : tickers) {
-            TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
+            // todo: make algo selection modular
+            TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmTwo(ticker, portfolioType, moneyPoolService);
             tradingContext.executeTradingStrategy(tradingAlgorithmOne);
         }
     }
@@ -72,7 +90,7 @@ public class TradingApplicationService implements ITradingApplicationService {
             tradingContext.stop();
         }
         tradingContexts.clear();
-        marketDataService.disconnectLiveMarketData();
+        liveMarketDataService.disconnectLiveMarketData();
     }
 
 
