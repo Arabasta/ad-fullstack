@@ -116,7 +116,7 @@ const SettingPageGrid = ({customer, portfolioType}) => {
                             <SmallCardWithTextAndButton title="Profile" directToThisPath="/settings/profile">
                                 Let us know more about you to better tailor the trading experience according to your investing persona.
                             </SmallCardWithTextAndButton>
-                            <SmallCardWithTextAndButton title="Bank Details" directToThisPath="/settings/bank" >
+                            <SmallCardWithTextAndButton title="Bank Details" directToThisPath="/settings/profile/bankDetails" >
                             Manage all your banking details in one place with a
                                 single integration, simplifying reporting and reconciliation.
                             </SmallCardWithTextAndButton>

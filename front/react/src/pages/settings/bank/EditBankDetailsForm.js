@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { VStack, HStack, Box, useToast } from '@chakra-ui/react';
 import useBankDetails from "../../../hooks/useBankDetails";
-import ButtonRed from "../../common/buttons/ButtonRed";
-import GrayBoxCard from "../../common/cards/GrayBoxCard";
-import ButtonBlack from "../../common/buttons/ButtonBlack";
-import InputBoxWhite from "../../common/inputFields/InputBoxWhite";
-import Text from "../../common/text/Text";
+import ButtonRed from "../../../components/common/buttons/ButtonRed";
+import GrayBoxCard from "../../../components/common/cards/GrayBoxCard";
+import ButtonBlack from "../../../components/common/buttons/ButtonBlack";
+import InputBoxWhite from "../../../components/common/inputFields/InputBoxWhite";
+import Text from "../../../components/common/text/Text";
 
 // todo: add validation and error message (on backend too) for empty fields
-const BankDetailsForm = ({ onSave, initialDetails = null }) => {
+const EditBankDetailsForm = ({ initialDetails = null }) => {
     const { bankDetails, getBankDetails, updateBankDetails } = useBankDetails();
     const toast = useToast();
     const [isEditing, setIsEditing] = useState(false);
@@ -130,4 +130,4 @@ const BankDetailsForm = ({ onSave, initialDetails = null }) => {
     );
 };
 
-export default BankDetailsForm;
+export default EditBankDetailsForm;

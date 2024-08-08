@@ -49,7 +49,7 @@ const WalletAction = ({ type, onActionComplete }) => {
                 });
                 // Redirect to Bank Details Page after 5 seconds
                 setTimeout(() => {
-                    navigate('/profile/bankDetails');
+                    navigate('/settings/profile/bankDetails');
                 }, 5000);
             }
         }
