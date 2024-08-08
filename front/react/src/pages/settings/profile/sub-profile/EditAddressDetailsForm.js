@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Box,
     SimpleGrid,
@@ -11,42 +11,49 @@ import {
     Input,
 } from '@chakra-ui/react';
 
-import UserService from "../../../../services/UserService";
+import useAddress from "../../../../hooks/useAddress";
+import AddressService from "../../../../services/AddressService";
 import Heading from "../../../../components/common/text/Heading";
 import Text from "../../../../components/common/text/Text";
 import Button from "../../../../components/common/buttons/Button";
-import useUser from "../../../../hooks/useUser";
+import Autocomplete from "../../../../components/feature/Autocomplete";
+import Countries from "../../../../components/customer/auth/Countries";
 import {Link} from "react-router-dom";
 
-
-const EditPasswordDetailsForm = () => {
-    const { user, updateUser, loading } = useUser();
-    const [oldPassword, setOldPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
+const EditAddressDetailsForm = () => {
+    const { address, getAddress } = useAddress();
+    const [addressValues, setAddressValues] = useState(address);
 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const handleUpdatePassword = async () => {
+    useEffect(() => {
+        setAddressValues(address);
+    }, [address]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setAddressValues({ ...addressValues, [name]: value });
+    };
+
+    const handleAddressUpdate = async () => {
         try {
-            await UserService.updatePassword({ oldPassword, newPassword });
-            setSuccess('Password updated successfully');
-            setError('');
-            setNewPassword('');
-            setOldPassword('');
-            if (updateUser) {
-                updateUser({ ...user });
+            // todo: add more robust validation
+            if (!addressValues) {
+                alert('You have no address to update.');
+                return;
             }
+
+            await AddressService.updateAddress(addressValues);
+            getAddress();
+            setSuccess('Address updated successfully');
+            setError('');
         } catch (error) {
-            console.error('Error updating password:', error);
-            setError('Error updating password');
+            console.error('Error updating address', error);
+            setError('Error updating mobile number');
             setSuccess('');
         }
     };
-
-    if (loading) {
-        return <p>Loading...</p>;
-    }
 
     return (
         <Box
@@ -101,16 +108,18 @@ const EditPasswordDetailsForm = () => {
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Old Password
+                                            City
                                         </FormLabel>
 
                                         <InputGroup size="sm">
                                             <Input
-                                                type="password"
-                                                placeholder="old password"
-                                                onChange={(e) => setOldPassword(e.target.value)}
+                                                type="text"
+                                                name="city"
+                                                value={addressValues.city}
+                                                placeholder="Enter city"
                                                 borderColor="brand.300"
-                                                focusBorderColor="brand.400"
+                                                onChange={handleInputChange}
+                                                focusBorderColor="brand.500"
                                                 rounded="md"
                                             />
                                         </InputGroup>
@@ -123,36 +132,101 @@ const EditPasswordDetailsForm = () => {
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            New Password
+                                            Unit Number
                                         </FormLabel>
 
                                         <InputGroup size="sm">
                                             <Input
-                                                type="password"
-                                                placeholder="new password"
-                                                onChange={(e) => setNewPassword(e.target.value)}
+                                                type="text"
+                                                name="unitNo"
+                                                value={addressValues.unitNo}
+                                                placeholder="Enter unit number"
+                                                onChange={handleInputChange}
                                                 borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
+                                                required
                                             />
                                         </InputGroup>
+                                    </FormControl>
+
+                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Street
+                                        </FormLabel>
+
+                                        <InputGroup size="sm">
+                                            <Input
+                                                type="text"
+                                                name="street"
+                                                value={addressValues.street}
+                                                placeholder="required"
+                                                onChange={handleInputChange}
+                                                borderColor="brand.300"
+                                                focusBorderColor="brand.400"
+                                                rounded="md"
+                                                required
+                                            />
+                                        </InputGroup>
+                                    </FormControl>
+
+                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Postal Code
+                                        </FormLabel>
+
+                                        <InputGroup size="sm">
+                                            <Input
+                                                type="text"
+                                                name="postalCode"
+                                                value={addressValues.postalCode}
+                                                placeholder="Enter your postal code"
+                                                onChange={handleInputChange}
+                                                borderColor="brand.300"
+                                                focusBorderColor="brand.400"
+                                                rounded="md"
+                                                required
+                                            />
+                                        </InputGroup>
+                                    </FormControl>
+
+                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                        <FormLabel fontSize="md" fontWeight="md" color="gray.700" _dark={{ color: "gray.50" }}>
+                                            Country
+                                        </FormLabel>
+                                        <Autocomplete
+                                            name="country"
+                                            value={addressValues.country}
+                                            onChange={handleInputChange}
+                                            category={Countries}
+                                        />
+
                                         <Button
+                                            onClick={handleAddressUpdate}
                                             type="button"
-                                            onClick={handleUpdatePassword}
                                             colorScheme="brand"
                                             _focus={{ shadow: "" }}
                                             fontWeight="md"
                                         >
                                             Update
                                         </Button>
-
                                         {/* change this to toast / alert */}
                                         {error && <p style={{ color: 'red' }}>{error}</p>}
                                         {success && <p style={{ color: 'green' }}>{success}</p>}
                                     </FormControl>
 
-
                                 </SimpleGrid>
+
                             </Stack>
                             <Box
                                 px={{ base: 4, sm: 6 }}
@@ -173,7 +247,6 @@ const EditPasswordDetailsForm = () => {
                                 </Link>
                             </Box>
                         </chakra.form>
-
                     </GridItem>
                 </SimpleGrid>
             </Box>
@@ -181,4 +254,4 @@ const EditPasswordDetailsForm = () => {
     );
 };
 
-export default EditPasswordDetailsForm;
+export default EditAddressDetailsForm;

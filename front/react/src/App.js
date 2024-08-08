@@ -12,6 +12,8 @@ import Footer from "./components/common/layout/Footer";
 import AdminRoutes from "./admin/Routes/adminRoutes";
 import settingRoutes from "./routes/SettingRoutes";
 
+import { Button, useColorMode} from "@chakra-ui/react";
+
 const App = () => {
     return (
         <Router>
@@ -22,10 +24,18 @@ const App = () => {
     );
 };
 
+
 const AppContent = () => {
+    const { colorMode, toggleColorMode } = useColorMode();
+
     return (
         <>
             <Header />
+
+            <Button onClick={toggleColorMode}>
+                Toggle {colorMode === "light" ? "Dark" : "Light"}
+            </Button>
+
             <ErrorBoundary>
                 <Routes>
                     {NavigationBarRoutes}

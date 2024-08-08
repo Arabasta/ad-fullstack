@@ -12,8 +12,8 @@ const Button = ({ bg, color, variant, size, type, colorScheme, onClick, href, ch
                     bg={bg}
                     color={color}
                     onClick={onClick}
-                    _hover={{ bg: 'gray.700' }}
-                    _active={{ bg: 'gray.800' }}
+                    _hover={{ bg: 'gray.400' }}
+                    _active={{ bg: 'gray.400' }}
                     {...props}>
             {children}
         </ChakraButton>

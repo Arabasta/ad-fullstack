@@ -8,20 +8,19 @@ import {
 import Heading from "../../../components/common/text/Heading";
 import Text from "../../../components/common/text/Text";
 import Button from "../../../components/common/buttons/Button";
-import ProfileButtons from "../../../components/common/buttons/ProfileButtons";
 import SmallCardWithTextAndButton from "../../../components/common/cards/SmallCardWithTextAndButton";
+import { Link } from 'react-router-dom';
+import SeparatorBlack from "../../../components/common/layout/separator/SeparatorGrey";
 
-// todo: make button go back to home page
-
-const ProfileMainPage = ({method}) => {
+const ProfileMainPage = () => {
     return (
         <Box
-            bg="brand.600"
+            bg="brand.400"
             _dark={{ bg: "#111" }}
             p={10}
         >
             <Box
-                bg="brand.400"
+                bg="brand.100"
                 _dark={{ bg: "#111" }}
                 p={30}
             >
@@ -33,7 +32,7 @@ const ProfileMainPage = ({method}) => {
 
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
-                            <Heading color="brand.100" fontSize="5xl" fontWeight="md" lineHeight="10">
+                            <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
                                 Update
                             </Heading>
                             <Text
@@ -58,22 +57,25 @@ const ProfileMainPage = ({method}) => {
                             >
                                 <SimpleGrid columns={3} spacing={6}>
                                     <GridItem colSpan={[3, 2]}>
-                                        <ProfileButtons to="/profile/account" label="Email and Password" />
-                                        <ProfileButtons to="/profile/update-mobile-number" label="Phone Number" />
-                                        <ProfileButtons to="/profile/address" label="Address" />
-                                        <ProfileButtons to="/profile/financialProfile" label="Financial Profile" />
-                                        <ProfileButtons to="/profile/investorProfile" label="Investor Profile" />
-
                                         <SmallCardWithTextAndButton title="Email" directToThisPath="/settings/profile/user">
                                         </SmallCardWithTextAndButton>
+                                        <SeparatorBlack/>
+
                                         <SmallCardWithTextAndButton title="Change Password" directToThisPath="/settings/profile/password">
                                         </SmallCardWithTextAndButton>
+                                        <SeparatorBlack/>
+
                                         <SmallCardWithTextAndButton title="Address" directToThisPath="/settings/profile/address">
                                         </SmallCardWithTextAndButton>
+                                        <SeparatorBlack/>
+
                                         <SmallCardWithTextAndButton title="Financial Profile" directToThisPath="/settings/profile/financialProfile">
                                         </SmallCardWithTextAndButton>
+                                        <SeparatorBlack/>
+
                                         <SmallCardWithTextAndButton title="Investor Profile" directToThisPath="/settings/profile/investorProfile">
                                         </SmallCardWithTextAndButton>
+                                        <SeparatorBlack/>
 
                                     </GridItem>
                                 </SimpleGrid>
@@ -85,14 +87,17 @@ const ProfileMainPage = ({method}) => {
                                 _dark={{ bg: "#121212" }}
                                 textAlign="right"
                             >
-                                <Button
-                                    type="button"
-                                    colorScheme="brand"
-                                    _focus={{ shadow: "" }}
-                                    fontWeight="md"
-                                >
-                                    Return
-                                </Button>
+                                <Link to="/settings">
+                                    <Button
+                                        type="button"
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md"
+                                    >
+                                        Return
+                                    </Button>
+                                </Link>
+
                             </Box>
 
 
