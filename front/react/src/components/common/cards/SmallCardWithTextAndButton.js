@@ -1,25 +1,10 @@
-import {Box, chakra, Flex, Icon} from "@chakra-ui/react";
-import {FaCheck} from "react-icons/fa";
+import {Box, chakra, Flex} from "@chakra-ui/react";
 import {Link} from "react-router-dom";
 import Button from "../buttons/Button";
 import React from "react";
 
 const SmallCardWithTextAndButton = ({ title, children, directToThisPath }) => (
     <Flex>
-        <Flex shrink={0}>
-            <Icon
-                boxSize={5}
-                mt={1}
-                mr={2}
-                color="brand.500"
-                _dark={{
-                    color: "brand.300",
-                }}
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                as={FaCheck}
-            />
-        </Flex>
         <Box ml={4}>
             <Link to={directToThisPath}>
                 <Button
