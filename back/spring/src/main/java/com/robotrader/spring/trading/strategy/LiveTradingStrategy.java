@@ -28,6 +28,7 @@ public class LiveTradingStrategy implements TradingStrategy {
     private HistoricalMarketDataService historicalMarketDataService;
     private LiveMarketDataService liveMarketDataService;
     private TickerTypeEnum tickerType;
+    private TradingAlgorithmBase tradingAlgorithm;
     private static final Logger logger = LoggerFactory.getLogger(LiveTradingStrategy.class);
 
     public LiveTradingStrategy(TradePersistence tradePersistence,
@@ -42,7 +43,8 @@ public class LiveTradingStrategy implements TradingStrategy {
     }
 
     @Override
-    public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase) {
+    public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithm) {
+        this.tradingAlgorithm = tradingAlgorithm;
         this.completionFuture = new CompletableFuture<>();
 
         return CompletableFuture.runAsync(() -> {
@@ -58,10 +60,10 @@ public class LiveTradingStrategy implements TradingStrategy {
             dataSubscription = dataFlux.subscribe(
                     data -> {
                         this.latestMarketData = data;
-                        if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithmBase.getTicker()) ||
-                                latestMarketData.getTicker().equals(tradingAlgorithmBase.getTicker())) {
-                            tradingAlgorithmBase.setCurrentPrice(latestMarketData.getC());
-                            setupAndExecuteLiveTrade(tradingAlgorithmBase);
+                        if (processResponseTicker(latestMarketData.getTicker()).equals(tradingAlgorithm.getTicker()) ||
+                                latestMarketData.getTicker().equals(tradingAlgorithm.getTicker())) {
+                            tradingAlgorithm.setCurrentPrice(latestMarketData.getC());
+                            setupAndExecuteLiveTrade(tradingAlgorithm);
                         }
                     },
                     error -> {
@@ -123,6 +125,7 @@ public class LiveTradingStrategy implements TradingStrategy {
 
     @Override
     public void stop() {
+        tradingAlgorithm.stopLiveTrade();
         unsubscribeFromFlux();
         completionFuture.complete(null); // Complete on stop
     }
