@@ -18,6 +18,7 @@ import Text from "../../../../components/common/text/Text";
 import Button from "../../../../components/common/buttons/Button";
 import Autocomplete from "../../../../components/feature/Autocomplete";
 import Countries from "../../../../components/customer/auth/Countries";
+import {Link} from "react-router-dom";
 
 const EditAddressDetailsForm = () => {
     const { address, getAddress } = useAddress();
@@ -56,12 +57,12 @@ const EditAddressDetailsForm = () => {
 
     return (
         <Box
-            bg="brand.600"
+            bg="brand.400"
             _dark={{ bg: "#111" }}
             p={10}
         >
             <Box
-                bg="brand.400"
+                bg="brand.100"
                 _dark={{ bg: "#111" }}
                 p={30}
             >
@@ -72,7 +73,7 @@ const EditAddressDetailsForm = () => {
                 >
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
-                            <Heading color="brand.100" fontSize="5xl" fontWeight="md" lineHeight="10">
+                            <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
                                 Update
                             </Heading>
                             <Text
@@ -116,8 +117,9 @@ const EditAddressDetailsForm = () => {
                                                 name="city"
                                                 value={addressValues.city}
                                                 placeholder="Enter city"
+                                                borderColor="brand.300"
                                                 onChange={handleInputChange}
-                                                focusBorderColor="brand.400"
+                                                focusBorderColor="brand.500"
                                                 rounded="md"
                                             />
                                         </InputGroup>
@@ -140,6 +142,7 @@ const EditAddressDetailsForm = () => {
                                                 value={addressValues.unitNo}
                                                 placeholder="Enter unit number"
                                                 onChange={handleInputChange}
+                                                borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
@@ -164,6 +167,7 @@ const EditAddressDetailsForm = () => {
                                                 value={addressValues.street}
                                                 placeholder="required"
                                                 onChange={handleInputChange}
+                                                borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
@@ -188,6 +192,7 @@ const EditAddressDetailsForm = () => {
                                                 value={addressValues.postalCode}
                                                 placeholder="Enter your postal code"
                                                 onChange={handleInputChange}
+                                                borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
@@ -205,8 +210,23 @@ const EditAddressDetailsForm = () => {
                                             onChange={handleInputChange}
                                             category={Countries}
                                         />
+
+                                        <Button
+                                            onClick={handleAddressUpdate}
+                                            type="button"
+                                            colorScheme="brand"
+                                            _focus={{ shadow: "" }}
+                                            fontWeight="md"
+                                        >
+                                            Update
+                                        </Button>
+                                        {/* change this to toast / alert */}
+                                        {error && <p style={{ color: 'red' }}>{error}</p>}
+                                        {success && <p style={{ color: 'green' }}>{success}</p>}
                                     </FormControl>
+
                                 </SimpleGrid>
+
                             </Stack>
                             <Box
                                 px={{ base: 4, sm: 6 }}
@@ -215,18 +235,16 @@ const EditAddressDetailsForm = () => {
                                 _dark={{ bg: "#121212" }}
                                 textAlign="right"
                             >
-                                <Button
-                                    onClick={handleAddressUpdate}
-                                    type="button"
-                                    colorScheme="brand"
-                                    _focus={{ shadow: "" }}
-                                    fontWeight="md"
-                                >
-                                    Update
-                                </Button>
-                                {/* change this to toast / alert */}
-                                {error && <p style={{ color: 'red' }}>{error}</p>}
-                                {success && <p style={{ color: 'green' }}>{success}</p>}
+                                <Link to="/settings/profile">
+                                    <Button
+                                        type="button"
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md"
+                                    >
+                                        Return
+                                    </Button>
+                                </Link>
                             </Box>
                         </chakra.form>
                     </GridItem>
