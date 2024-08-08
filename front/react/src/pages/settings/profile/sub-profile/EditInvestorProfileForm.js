@@ -14,6 +14,7 @@ import Button from "../../../../components/common/buttons/Button";
 import FormSelect from "../../../../components/common/inputFields/FormSelect";
 import InvestorProfileService from "../../../../services/InvestorProfileService";
 import {AuthContext} from "../../../../config/context/AuthContext";
+import {Link} from "react-router-dom";
 
 const EditInvestorProfileForm = () => {
     const { isAuthenticated } = useContext(AuthContext);
@@ -116,12 +117,12 @@ const EditInvestorProfileForm = () => {
 
     return (
         <Box
-            bg="brand.600"
+            bg="brand.400"
             _dark={{ bg: "#111" }}
             p={10}
         >
             <Box
-                bg="brand.400"
+                bg="brand.100"
                 _dark={{ bg: "#111" }}
                 p={30}
             >
@@ -132,7 +133,7 @@ const EditInvestorProfileForm = () => {
                 >
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
-                            <Heading color="brand.100" fontSize="5xl" fontWeight="md" lineHeight="10">
+                            <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
                                 Update
                             </Heading>
                             <Text
@@ -141,7 +142,7 @@ const EditInvestorProfileForm = () => {
                                 color="gray.600"
                                 _dark={{ color: "gray.400" }}
                             >
-                                details.
+                                your details.
                             </Text>
                         </Box>
                     </GridItem>
@@ -164,7 +165,7 @@ const EditInvestorProfileForm = () => {
                                 p={{ sm: 6 }}
                             >
                                 <SimpleGrid columns={6} spacing={6}>
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -188,7 +189,7 @@ const EditInvestorProfileForm = () => {
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -211,7 +212,7 @@ const EditInvestorProfileForm = () => {
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 4]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 4]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -235,7 +236,7 @@ const EditInvestorProfileForm = () => {
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -259,7 +260,7 @@ const EditInvestorProfileForm = () => {
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -283,7 +284,7 @@ const EditInvestorProfileForm = () => {
                                         />
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -305,6 +306,16 @@ const EditInvestorProfileForm = () => {
                                             options={optionsForQuestion6}
                                             required
                                         />
+                                        <Button
+                                            onClick={handleUpdate}
+                                            colorScheme="brand"
+                                            _focus={{ shadow: "" }}
+                                            fontWeight="md"
+                                        >
+                                            Update
+                                        </Button>
+                                        {message && <p>{message}</p> && <p>Updated Recommend Portfolio Type: {recommendedPortfolioType}</p>}
+
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
@@ -316,15 +327,16 @@ const EditInvestorProfileForm = () => {
                                 _dark={{ bg: "#121212" }}
                                 textAlign="right"
                             >
-                                <Button
-                                    onClick={handleUpdate}
-                                    colorScheme="brand"
-                                    _focus={{ shadow: "" }}
-                                    fontWeight="md"
-                                >
-                                    Update
-                                </Button>
-                                {message && <p>{message}</p> && <p>Updated Recommend Portfolio Type: {recommendedPortfolioType}</p>}
+                                <Link to="/settings/profile">
+                                    <Button
+                                        type="button"
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md"
+                                    >
+                                        Return
+                                    </Button>
+                                </Link>
 
                             </Box>
                         </chakra.form>
