@@ -22,12 +22,12 @@ const RegisterStep3Form = ({
                            }) => {
     return (
         <Box
-            bg="brand.600"
+            bg="brand.400"
             _dark={{ bg: "#111" }}
             p={10}
         >
             <Box
-                bg="brand.400"
+                bg="brand.100"
                 _dark={{ bg: "#111" }}
                 p={30}
             >
@@ -38,7 +38,7 @@ const RegisterStep3Form = ({
                 >
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
-                            <Heading color="brand.100" fontSize="5xl" fontWeight="md" lineHeight="10">
+                            <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
                                 Register
                             </Heading>
                             <Text
@@ -150,7 +150,7 @@ const RegisterStep3Form = ({
                                             <Input
                                                 type="text"
                                                 value={postalCode}
-                                                placeholder="Password"
+                                                placeholder="required"
                                                 onChange={(e) => setPostalCode(e.target.value)}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
