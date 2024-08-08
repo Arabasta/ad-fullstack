@@ -19,10 +19,17 @@ const UpdateMobileNumber = () => {
             setSuccess('Mobile number updated successfully');
             setError('');
         } catch (error) {
-            console.error('Error updating mobile number', error);
-            setError('Error updating mobile number');
-            setSuccess('');
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            } else {
+                console.error(`Error updating mobile number`, error);
+                setError('An unexpected error occurred. Please try again.');
+            }
         }
+    };
+
+    const handleMobileNumberChange = (e) => {
+        setMobileNumber(e.target.value);
     };
 
     if (loading) {
@@ -34,10 +41,11 @@ const UpdateMobileNumber = () => {
             <h1>Update Mobile Number</h1>
             <div>
                 <input
-                    type="text"
+                    type="tel"
                     placeholder="New Mobile Number"
                     value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value)}
+                    onChange={handleMobileNumberChange}
+                    pattern="\d*"
                 />
                 <button onClick={handleUpdateMobileNumber}>Update Mobile Number</button>
             </div>

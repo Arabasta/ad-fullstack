@@ -22,9 +22,12 @@ const UpdateEmail = ({ user, updateUser }) => {
                 updateUser({ ...user, email });
             }
         } catch (error) {
-            console.error('Error updating email', error);
-            setError('Error updating email');
-            setSuccess('');
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            } else {
+                console.error(`Error updating email`, error);
+                setError('An unexpected error occurred. Please try again.');
+            }
         }
     };
 
