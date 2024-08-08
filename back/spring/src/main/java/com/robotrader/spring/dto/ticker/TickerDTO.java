@@ -1,5 +1,6 @@
 package com.robotrader.spring.dto.ticker;
 
+import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.trading.dto.IPredictionServiceDTO;
 import jakarta.persistence.EnumType;
@@ -19,4 +20,7 @@ public class TickerDTO implements IPredictionServiceDTO {
 
     @NotBlank
     private String tickerName;
+
+    @Enumerated(EnumType.STRING)
+    private PortfolioTypeEnum portfolioType;
 }
