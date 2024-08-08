@@ -18,7 +18,7 @@ const SettingPageGrid = ({customer, portfolioType}) => {
 
     return (
         <Flex
-            bg="#edf3f8"
+            bg="brand.400"
             _dark={{
                 bg: "#3e3e3e",
             }}
