@@ -34,7 +34,6 @@ Constants
 # AWS
 AWS_S3_ACCESS_KEY_ID = os.getenv('AWS_S3_ACCESS_KEY_ID')
 AWS_S3_SECRET_ACCESS_KEY = os.getenv('AWS_S3_SECRET_ACCESS_KEY')
-AWS_S3_REGION = os.getenv('AWS_S3_REGION')
 AWS_S3_PREDICTION_BUCKET_NAME = os.getenv('AWS_S3_PREDICTION_BUCKET_NAME')
 AWS_S3_MODEL_BUCKET_NAME = os.getenv('AWS_S3_MODEL_BUCKET_NAME')
 
@@ -76,7 +75,7 @@ API
 
 @app.get("/")
 async def redirect_to_documentation():
-    return RedirectResponse("http://localhost:8000/documentation")
+    return RedirectResponse(url="/documentation")
 
 
 # todo: for dev. to delete before submission.
@@ -86,7 +85,6 @@ async def get():
     health = {
         "AWS_S3_ACCESS_KEY_ID": AWS_S3_ACCESS_KEY_ID,
         "AWS_S3_SECRET_ACCESS_KEY": AWS_S3_SECRET_ACCESS_KEY,
-        "AWS_S3_REGION": AWS_S3_REGION,
         "AWS_S3_PREDICTION_BUCKET_NAME": AWS_S3_PREDICTION_BUCKET_NAME,
         "AWS_S3_MODEL_BUCKET_NAME": AWS_S3_MODEL_BUCKET_NAME,
         "POLYGON_API_KEY": POLYGON_API_KEY,
@@ -112,10 +110,8 @@ async def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
                                        future_window=FEATURE_COUNT)
         predictions = predictions_from_x_values(ticker_dto=prediction_dto.tickerDTO,
                                                 x_values=x_values)
-    except Exception:
-        logger.error(f"Exception occurred at predictions:{prediction_dto}")
-    else:
-        predictions = []
+    except Exception as err:
+        logger.error(f"Exception occurred at backtest predictions for {prediction_dto.tickerDTO.tickerName}\n: {err}")
     return PredictionDTO(tickerDTO=prediction_dto.tickerDTO,
                          predictions=predictions)
 
@@ -133,10 +129,8 @@ async def by_ticker_dto_live(ticker_dto: TickerDTO):
         logger.info(f'--Predicting {ticker_name}--')
         predictions = predictions_from_ticker_dto(ticker_dto)
         logger.info('--Finish prediction--')
-    except Exception:
-        logger.error(f"Exception occurred at predictions:{ticker_dto}")
-    else:
-        predictions = []
+    except Exception as err:
+        logger.error(f"Exception occurred at live predictions for {ticker_dto.tickerName}\n: {err}")
     return PredictionDTO(tickerDTO=ticker_dto,
                          predictions=predictions)
 
