@@ -19,15 +19,18 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import Heading from "../../common/text/Heading";
 import Text from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
-const LoginForm = ({username, setUsername, password, setPassword, method, message}) => {
+const LoginForm = ({
+                       username, setUsername,
+                       password, setPassword,
+                       method}) => {
     return (
         <Box
-            bg="brand.600"
+            bg="brand.400"
             _dark={{ bg: "#111" }}
             p={10}
         >
             <Box
-                bg="brand.400"
+                bg="brand.100"
                 _dark={{ bg: "#111" }}
                 p={30}
             >
@@ -79,7 +82,7 @@ const LoginForm = ({username, setUsername, password, setPassword, method, messag
 
                                         <InputGroup size="sm">
                                             <InputLeftAddon
-                                                bg="gray.50"
+                                                bg="brand.100"
                                                 _dark={{ bg: "brand.100" }}
                                                 color="gray.500"
                                                 rounded="md"
@@ -94,7 +97,7 @@ const LoginForm = ({username, setUsername, password, setPassword, method, messag
                                                             boxSize={6}
                                                             mt={2}
                                                             rounded="full"
-                                                            color="gray.300"
+                                                            color="gray.700"
                                                             _dark={{ color: "gray.700" }}
                                                         />
                                                     }
@@ -122,7 +125,7 @@ const LoginForm = ({username, setUsername, password, setPassword, method, messag
 
                                         <InputGroup size="sm">
                                             <InputLeftAddon
-                                                bg="gray.50"
+                                                bg="brand.100"
                                                 _dark={{ bg: "brand.100" }}
                                                 color="gray.500"
                                                 rounded="md"
@@ -137,7 +140,7 @@ const LoginForm = ({username, setUsername, password, setPassword, method, messag
                                                             boxSize={6}
                                                             mt={2}
                                                             rounded="full"
-                                                            color="gray.300"
+                                                            color="gray.700"
                                                             _dark={{ color: "gray.700" }}
                                                         />
                                                     }
@@ -171,10 +174,7 @@ const LoginForm = ({username, setUsername, password, setPassword, method, messag
                                     Login
                                 </Button>
                             </Box>
-
                         </chakra.form>
-                        {message && <Text>{message}</Text>}
-
                     </GridItem>
                 </SimpleGrid>
             </Box>
