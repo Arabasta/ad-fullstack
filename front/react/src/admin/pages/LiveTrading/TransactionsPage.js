@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ListItem } from '@chakra-ui/react';
 import useLiveTrading from "../../hooks/useLiveTrading";
@@ -14,9 +14,13 @@ const TransactionsPage = () => {
     const queryParams = new URLSearchParams(location.search);
     const portfolioType = queryParams.get('portfolioType');
 
-    useEffect(() => {
+    const fetchTransactions = useCallback(() => {
         getLiveTradingTransactions(portfolioType);
     }, [portfolioType, getLiveTradingTransactions]);
+
+    useEffect(() => {
+        fetchTransactions();
+    }, [fetchTransactions]);
 
     const formatTimestamp = (timestampArray) => {
         if (Array.isArray(timestampArray) && timestampArray.length >= 6) {
