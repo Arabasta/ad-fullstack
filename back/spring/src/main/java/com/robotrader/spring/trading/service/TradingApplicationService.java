@@ -1,5 +1,6 @@
 package com.robotrader.spring.trading.service;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.robotrader.spring.aws.s3.S3TransactionLogger;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
@@ -24,8 +25,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class TradingApplicationService implements ITradingApplicationService {
@@ -51,19 +56,44 @@ public class TradingApplicationService implements ITradingApplicationService {
     }
 
     @Override
-    public BackTestResultDTO runTradingAlgorithmBackTest(String ticker, PortfolioTypeEnum portfolioType) {
-        TradingContext tradingContext = new TradingContext();
-        tradingContext.setStrategy(new BackTestingStrategy(
-                new MemoryStoreTradePersistence(), historicalMarketDataService));
+    public BackTestResultDTO runTradingAlgorithmBackTest(List<String> tickers, PortfolioTypeEnum portfolioType) {
+        // Use AtomicReference for mutable BigDecimal
+        AtomicReference<BigDecimal> combinedInitialCapital = new AtomicReference<>(BigDecimal.ZERO);
+        List<ObjectNode> combinedTradeResults = Collections.synchronizedList(new ArrayList<>());
 
-        // todo: make algo selection modular
-        TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
-        CompletableFuture<Void> future = tradingContext.executeTradingStrategy(tradingAlgorithmOne);
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-        future.join(); // Waits for future to complete
+        for (String ticker : tickers) {
+            TradingContext tradingContext = new TradingContext();
+            tradingContext.setStrategy(new BackTestingStrategy(
+                    new MemoryStoreTradePersistence(), historicalMarketDataService));
 
-        BackTestResultDTO result = new BackTestResultDTO(tradingAlgorithmOne.getInitialCapitalTest(), tradingContext.getTradeResults());
-        return result;
+            TradingAlgorithmBase tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
+
+            // Execute the trading strategy asynchronously
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                tradingContext.executeTradingStrategy(tradingAlgorithm).join();
+                // Update combinedInitialCapital using AtomicReference
+                combinedInitialCapital.updateAndGet(current -> current.add(tradingAlgorithm.getInitialCapitalTest()));
+                // Add trade results to synchronized list
+                combinedTradeResults.addAll(tradingContext.getTradeResults());
+            });
+
+            futures.add(future);
+        }
+
+        // Wait for all futures to complete
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        combinedTradeResults.sort(Comparator
+                .comparing((ObjectNode result) -> result.get("ticker").asText())
+                .thenComparing(result -> LocalDateTime.parse(result.get("transactionDateTime").asText(), dtf))
+        );
+
+        // Create the combined BackTestResultDTO
+        BackTestResultDTO combinedResult = new BackTestResultDTO(combinedInitialCapital.get(), combinedTradeResults);
+        return combinedResult;
     }
 
     @Override

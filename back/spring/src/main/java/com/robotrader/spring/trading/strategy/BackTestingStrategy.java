@@ -6,7 +6,6 @@ import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.HistoricalMarketDataService;
-import com.robotrader.spring.trading.service.LiveMarketDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

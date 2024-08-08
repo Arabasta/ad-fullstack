@@ -24,7 +24,7 @@ public class ChartService implements IChartService {
 
     @Override
     public ChartDataDTO transformBackTestDTOtoChartDataDTO(BackTestResultDTO backTestResult) {
-        List<Integer> labels = new ArrayList<>();
+        List<LocalDateTime> labels = new ArrayList<>();
         List<BigDecimal> capitalAbsoluteData = new ArrayList<>();
         List<BigDecimal> capitalPercentChangeData = new ArrayList<>();
 
@@ -33,21 +33,22 @@ public class ChartService implements IChartService {
         BigDecimal cumulativePercentChange = BigDecimal.ZERO;
         capitalAbsoluteData.add(initialCapital);
         capitalPercentChangeData.add(cumulativePercentChange);
-        labels.add(0);
 
         List<ObjectNode> tradeTransactionList = backTestResult.getTradeResults();
+
+        if (!tradeTransactionList.isEmpty()) {
+            ObjectNode firstTransaction = tradeTransactionList.get(0);
+            LocalDateTime initialTime = LocalDateTime.parse(firstTransaction.get("transactionDateTime").asText(), DATE_TIME_FORMATTER);
+            labels.add(initialTime);
+        }
 
         for (int i = 1; i < tradeTransactionList.size(); i++) {
             if (tradeTransactionList.get(i).get("action").asText().equals("SELL")) {
                 ObjectNode buyTransaction = tradeTransactionList.get(i - 1);
                 ObjectNode sellTransaction = tradeTransactionList.get(i);
-
-                LocalDateTime firstTradeTime = LocalDateTime.parse(buyTransaction.get("transactionDateTime").asText(), DATE_TIME_FORMATTER);
                 LocalDateTime lastTradeTime = LocalDateTime.parse(sellTransaction.get("transactionDateTime").asText(), DATE_TIME_FORMATTER);
 
-                Duration elapsedTime = Duration.between(firstTradeTime, lastTradeTime);
-                int elapsedMinutes = (int) elapsedTime.toMinutes();
-                labels.add(elapsedMinutes);
+                labels.add(lastTradeTime);
 
                 BigDecimal buyPrice = new BigDecimal(buyTransaction.get("transactionPrice").asText());
                 BigDecimal sellPrice = new BigDecimal(sellTransaction.get("transactionPrice").asText());
