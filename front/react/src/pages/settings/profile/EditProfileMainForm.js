@@ -8,7 +8,6 @@ import {
 import Heading from "../../../components/common/text/Heading";
 import Text from "../../../components/common/text/Text";
 import Button from "../../../components/common/buttons/Button";
-import ProfileButtons from "../../../components/common/buttons/ProfileButtons";
 import SmallCardWithTextAndButton from "../../../components/common/cards/SmallCardWithTextAndButton";
 import { Link } from 'react-router-dom';
 import SeparatorBlack from "../../../components/common/layout/separator/SeparatorGrey";
@@ -58,8 +57,6 @@ const ProfileMainPage = () => {
                             >
                                 <SimpleGrid columns={3} spacing={6}>
                                     <GridItem colSpan={[3, 2]}>
-                                        <ProfileButtons to="/profile/financialProfile" label="Financial Profile" />
-
                                         <SmallCardWithTextAndButton title="Email" directToThisPath="/settings/profile/user">
                                         </SmallCardWithTextAndButton>
                                         <SeparatorBlack/>
