@@ -16,11 +16,10 @@ import Heading from "../../../../components/common/text/Heading";
 import Text from "../../../../components/common/text/Text";
 import Button from "../../../../components/common/buttons/Button";
 import useUser from "../../../../hooks/useUser";
+import {Link} from "react-router-dom";
 
 
-const EditPasswordDetailsForm = ({
-                                 //password, setPassword,
-                                 method}) => {
+const EditPasswordDetailsForm = () => {
     const { user, updateUser, loading } = useUser();
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -51,12 +50,12 @@ const EditPasswordDetailsForm = ({
 
     return (
         <Box
-            bg="brand.600"
+            bg="brand.400"
             _dark={{ bg: "#111" }}
             p={10}
         >
             <Box
-                bg="brand.400"
+                bg="brand.100"
                 _dark={{ bg: "#111" }}
                 p={30}
             >
@@ -67,8 +66,8 @@ const EditPasswordDetailsForm = ({
                 >
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
-                            <Heading color="brand.100" fontSize="5xl" fontWeight="md" lineHeight="10">
-                                Update.
+                            <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
+                                Update
                             </Heading>
                             <Text
                                 mt={1}
@@ -76,12 +75,12 @@ const EditPasswordDetailsForm = ({
                                 color="gray.600"
                                 _dark={{ color: "gray.400" }}
                             >
+                                your details.
                             </Text>
                         </Box>
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
-                            onSubmit={method}
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
@@ -110,6 +109,7 @@ const EditPasswordDetailsForm = ({
                                                 type="password"
                                                 placeholder="old password"
                                                 onChange={(e) => setOldPassword(e.target.value)}
+                                                borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                             />
@@ -131,6 +131,7 @@ const EditPasswordDetailsForm = ({
                                                 type="password"
                                                 placeholder="new password"
                                                 onChange={(e) => setNewPassword(e.target.value)}
+                                                borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                             />
@@ -160,14 +161,16 @@ const EditPasswordDetailsForm = ({
                                 _dark={{ bg: "#121212" }}
                                 textAlign="right"
                             >
-                                <Button
-                                    type="button"
-                                    colorScheme="brand"
-                                    _focus={{ shadow: "" }}
-                                    fontWeight="md"
-                                >
-                                    Return
-                                </Button>
+                                <Link to="/settings/profile">
+                                    <Button
+                                        type="button"
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md"
+                                    >
+                                        Return
+                                    </Button>
+                                </Link>
                             </Box>
                         </chakra.form>
 
