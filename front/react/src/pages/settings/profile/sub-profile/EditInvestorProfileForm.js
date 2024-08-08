@@ -72,7 +72,7 @@ const EditInvestorProfileForm = () => {
                 try {
                     const response = await InvestorProfileService.getInvestorProfile();
                     setProfile(response.data.data);
-                    setRecommendedPortfolioType(response.data.data.recommendedPortfolioType); // 设置之前的推荐投资组合
+                    setRecommendedPortfolioType(response.data.data.recommendedPortfolioType);
                     setLoading(false);
                 } catch (error) {
                     setMessage('Error fetching investor profile');
