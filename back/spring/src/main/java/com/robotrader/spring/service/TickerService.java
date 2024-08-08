@@ -3,6 +3,7 @@ package com.robotrader.spring.service;
 import com.robotrader.spring.dto.ticker.TickerDTO;
 import com.robotrader.spring.exception.notFound.TickerNotFoundException;
 import com.robotrader.spring.model.Ticker;
+import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.repository.TickerRepository;
 import com.robotrader.spring.service.interfaces.ITickerService;
 import jakarta.transaction.Transactional;
@@ -50,14 +51,14 @@ public class TickerService implements ITickerService {
 
     @Override
     public List<String> getAllStockTickerName() {
-        return tickerRepository.findAllStockTicker().stream()
+        return tickerRepository.findByTickerType(TickerTypeEnum.STOCKS).stream()
                 .map(ticker -> ticker.getTickerName())
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<String> getAllCrytpoTickerName() {
-        return tickerRepository.findAllCryptoTicker().stream()
+        return tickerRepository.findByTickerType(TickerTypeEnum.CRYPTO).stream()
                 .map(ticker -> ticker.getTickerName())
                 .collect(Collectors.toList());
     }
