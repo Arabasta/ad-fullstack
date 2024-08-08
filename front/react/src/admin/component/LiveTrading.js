@@ -4,37 +4,21 @@ import useLiveTrading from "../hooks/useLiveTrading";
 
 const LiveTrading = () => {
     const navigate = useNavigate();
-    const { message, startLiveTrading, stopLiveTrading, getLiveTradingTransactions } = useLiveTrading();
+    const { message, status, startLiveTrading, stopLiveTrading, getLiveTradingTransactions } = useLiveTrading();
     const [portfolioType, setPortfolioType] = useState('AGGRESSIVE');
     const [tickerType, setTickerType] = useState('CRYPTO');
-    const [error, setError] = useState(null);
 
     const handleStartLiveTrading = async () => {
-        setError(null);
-        try {
-            await startLiveTrading(portfolioType, tickerType);
-        } catch (err) {
-            setError(err.message);
-        }
+        await startLiveTrading(portfolioType, tickerType);
     };
 
     const handleStopLiveTrading = async () => {
-        setError(null);
-        try {
-            await stopLiveTrading();
-        } catch (err) {
-            setError(err.message);
-        }
+        await stopLiveTrading();
     };
 
     const handleGetTransactions = async () => {
-        setError(null);
-        try {
-            await getLiveTradingTransactions(portfolioType);
-            navigate(`/admin/transactions?portfolioType=${portfolioType}`);
-        } catch (err) {
-            setError(err.message);
-        }
+        await getLiveTradingTransactions(portfolioType);
+        navigate(`/admin/transactions?portfolioType=${portfolioType}`);
     };
 
     return (
@@ -60,8 +44,11 @@ const LiveTrading = () => {
             <button onClick={handleStopLiveTrading}>Stop Live Trading</button>
             <button onClick={handleGetTransactions}>Get Transactions</button>
 
-            {message && <p>Message: {message}</p>}
-            {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+            {message && (
+                <p style={{ color: status === 'success' ? 'green' : 'red' }}>
+                    {message}
+                </p>
+            )}
         </div>
     );
 };
