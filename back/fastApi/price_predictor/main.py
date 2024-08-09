@@ -74,7 +74,7 @@ class PredictionDTO(BaseModel):
     predictions: List[Decimal]
 
 
-class ExceptionDTO(BaseModel):
+class FastapiException(Exception):
     status_code: int
     detail: str
 
@@ -105,18 +105,16 @@ def get() -> Type[HealthDTO]:
 # Accepts Backend's PredictionDTO in RequestBody
 # Note: List<Decimal> must be >= FEATURE_COUNT, which will be used to create lag features and reshaped for predictions.
 @app.post("/api/v1/predict/ticker/backtest")
-def by_prediction_dto_backtest(prediction_dto: PredictionDTO) -> PredictionDTO | ExceptionDTO:
+def by_prediction_dto_backtest(prediction_dto: PredictionDTO) -> PredictionDTO:
     predictions = []
     try:
         # Exception handling
         if len(list(LOADED_MODELS)) == 0:
-            return ExceptionDTO(status_code=503, detail=f"No models ready. Please try api `load_all_pickle_models`.")
+            raise EOFError(f"No models ready. Please try api `load_all_pickle_models`.")
         if prediction_dto.tickerDTO.tickerName is None or prediction_dto.predictions is None:
-            return ExceptionDTO(status_code=400,
-                                detail=f"tickerDTO.tickerName or predictions attributes cannot be null")
+            raise IOError(f"tickerDTO.tickerName or predictions attributes cannot be null")
         if len(prediction_dto.predictions) < FEATURE_COUNT:
-            return ExceptionDTO(status_code=400,
-                                detail=f"Please input more than {FEATURE_COUNT} predictions datapoints")
+            raise IOError(f"Please input more than {FEATURE_COUNT} predictions datapoints")
         # Prediction logic
         x_values = add_lagged_features(df_x_values=pd.DataFrame(prediction_dto.predictions, columns=[FEATURE]),
                                        future_window=FEATURE_COUNT)
@@ -130,16 +128,15 @@ def by_prediction_dto_backtest(prediction_dto: PredictionDTO) -> PredictionDTO |
 
 # Accepts Backend's TickerDTO in RequestBody
 @app.post("/api/v1/predict/ticker/live")
-def by_ticker_dto_live(ticker_dto: TickerDTO) -> PredictionDTO | ExceptionDTO:
+def by_ticker_dto_live(ticker_dto: TickerDTO) -> PredictionDTO:
     predictions = []
     try:
         ticker_name = ticker_dto.tickerName.strip()
         # Exception handling
-        if ticker_name is None or ticker_name is "":
-            return ExceptionDTO(status_code=400,
-                                detail=f"tickerName cannot be empty")
+        if ticker_name is None or ticker_name == "":
+            raise IOError(f"tickerName cannot be empty")
         if ticker_name not in list(LOADED_MODELS):
-            return ExceptionDTO(status_code=400, detail=f"{ticker_name} not in available models: {list(LOADED_MODELS)}")
+            raise FileNotFoundError(f"{ticker_name} not in available models: {list(LOADED_MODELS)}")
         # Prediction logic
         logger.info('--Start prediction--')
         logger.info(f'--Predicting {ticker_name}--')
@@ -182,12 +179,17 @@ def load_all_pickle_files(bucket_name, models_dict):
             keys = [str(item['Key']).split("/")[1] for item in response['Contents'] if
                     item['Key'].endswith('.pkl')]  # todo:to reinstate all keys after optimisation.
             # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
+            # temp_keys = ['AAPL.pkl', 'ABBV.pkl', 'ADBE.pkl', 'AMZN.pkl', 'AVGO.pkl',
+            #              'COST.pkl', 'CVX.pkl', 'GOOG.pkl', 'GOOGL.pkl', 'HD.pkl',
+            #              'JNJ.pkl', 'JPM.pkl', 'LLY.pkl', 'MA.pkl', 'META.pkl',
+            #              'MRK.pkl', 'MSFT.pkl', 'NVDA.pkl', 'PEP.pkl', 'PG.pkl',
+            #              'TSLA.pkl', 'UNH.pkl', 'XOM.pkl', 'X:XRPUSD.pkl', 'X:SOLUSD.pkl',
+            #              'X:ETHUSD.pkl', 'X:DOGEUSD.pkl', 'X:BTCUSD.pkl', 'X:ADAUSD.pkl']
             temp_keys = ['AAPL.pkl', 'ABBV.pkl', 'ADBE.pkl', 'AMZN.pkl', 'AVGO.pkl',
                          'COST.pkl', 'CVX.pkl', 'GOOG.pkl', 'GOOGL.pkl', 'HD.pkl',
                          'JNJ.pkl', 'JPM.pkl', 'LLY.pkl', 'MA.pkl', 'META.pkl',
                          'MRK.pkl', 'MSFT.pkl', 'NVDA.pkl', 'PEP.pkl', 'PG.pkl',
-                         'TSLA.pkl', 'UNH.pkl', 'XOM.pkl', 'X:XRPUSD.pkl', 'X:SOLUSD.pkl',
-                         'X:ETHUSD.pkl', 'X:DOGEUSD.pkl', 'X:BTCUSD.pkl', 'X:ADAUSD.pkl']
+                         'TSLA.pkl', 'UNH.pkl', 'XOM.pkl', 'X:ETHUSD.pkl', 'X:ADAUSD.pkl']
 
             # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
             keys = list(set(keys) & set(temp_keys))
