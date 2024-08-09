@@ -21,7 +21,7 @@ public class Ticker {
     @Enumerated(EnumType.STRING)
     private TickerTypeEnum tickerType;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String tickerName;
 
     @Enumerated(EnumType.STRING)
