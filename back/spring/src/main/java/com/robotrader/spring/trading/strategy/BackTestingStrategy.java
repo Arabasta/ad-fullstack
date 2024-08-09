@@ -127,30 +127,40 @@ public class BackTestingStrategy implements TradingStrategy {
     }
 
     public Mono<PredictionDTO> getPricePredictions(Map<String, List<Object>> marketDataHistory, String tickerName) {
-//        List<Object> objects = marketDataHistory.get("close");
-//        return objects.stream()
-//                .map(price -> (BigDecimal) price)
-//                .collect(Collectors.toList()); //TODO: Predictions == history for now
+        List<BigDecimal> historicalPrices = marketDataHistory.get("close").stream()
+                .map(price -> (BigDecimal) price)
+                .collect(Collectors.toList());
 
         PredictionDTO predictionDTO = new PredictionDTO();
-        List<BigDecimal> historicalVW = marketDataHistory.get("vw").subList(0, MIN_INPUT_SIZE + 1)
-                .stream()
-                .map(obj -> new BigDecimal(obj.toString()))
-                .collect(Collectors.toList());
-        System.out.println("Input data: " + historicalVW);
-        predictionDTO.setPredictions(historicalVW);
+        predictionDTO.setPredictions(historicalPrices);
+
         TickerDTO tickerDTO = new TickerDTO();
-        tickerDTO.setTickerName(processTicker(tickerName));
+        tickerDTO.setTickerName(tickerName);
         tickerDTO.setTickerType(TickerTypeEnum.STOCKS);
         tickerDTO.setPortfolioType(PortfolioTypeEnum.AGGRESSIVE);
         predictionDTO.setTickerDTO(tickerDTO);
-        Mono<PredictionDTO> predictionDTOMono;
-        try {
-            predictionDTOMono = predictionService.byPredictionDtoBacktest(predictionDTO);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return predictionDTOMono;
+
+        return Mono.just(predictionDTO);
+        // todo: replace above with below code for deployment. Above code doesn't require fast api prediction server to be set up
+//        PredictionDTO predictionDTO = new PredictionDTO();
+//        List<BigDecimal> historicalVW = marketDataHistory.get("vw").subList(0, MIN_INPUT_SIZE + 1)
+//                .stream()
+//                .map(obj -> new BigDecimal(obj.toString()))
+//                .collect(Collectors.toList());
+//        System.out.println("Input data: " + historicalVW);
+//        predictionDTO.setPredictions(historicalVW);
+//        TickerDTO tickerDTO = new TickerDTO();
+//        tickerDTO.setTickerName(processTicker(tickerName));
+//        tickerDTO.setTickerType(TickerTypeEnum.STOCKS);
+//        tickerDTO.setPortfolioType(PortfolioTypeEnum.AGGRESSIVE);
+//        predictionDTO.setTickerDTO(tickerDTO);
+//        Mono<PredictionDTO> predictionDTOMono;
+//        try {
+//            predictionDTOMono = predictionService.byPredictionDtoBacktest(predictionDTO);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return predictionDTOMono;
     }
 
     @Override
@@ -181,6 +191,7 @@ public class BackTestingStrategy implements TradingStrategy {
                 }
             }
             logger.info("Total Profit: {}", totalProfit);
+            logger.info("TOtal number of trades: {}", trades.size());
         } else {
             logger.info("No trade transactions");
         }
