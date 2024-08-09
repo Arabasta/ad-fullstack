@@ -20,10 +20,17 @@ const addFunds = async (portfolioType, amount) => {
     });
 };
 
+const seePortfolioPerformanceChart = async(portfolioType) => {
+    return await axiosInstance.get(`/v1/customer/portfolio/chart`, {
+        params: { portfolioType }
+    });
+}
+
 const PortfolioService = {
     getPortfolio,
     withdrawFunds,
-    addFunds
+    addFunds,
+    seePortfolioPerformanceChart
 };
 
 export default PortfolioService;
