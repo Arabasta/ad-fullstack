@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Table, Thead, Tbody, Tr, Th, Td, Button, Input, Text, VStack } from '@chakra-ui/react';
+import { Box, Table, Thead, Tbody, Tr, Th, Td, Button, Input, Text } from '@chakra-ui/react';
 import useUsers from '../hooks/useUsers';
-import UserMessage from "../../components/common/alerts/UserMessage";
 
 const UserList = () => {
     const [search, setSearch] = useState('');
