@@ -1,6 +1,6 @@
 import React from 'react';
 import FaqList from './FaqList';
-import { Box, Flex, chakra, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, chakra } from '@chakra-ui/react';
 
 const faqs = [
     {
@@ -52,7 +52,7 @@ const faqs = [
 const Faq = () => {
     return (
         <Flex
-            bg={useColorModeValue("gray.200", "gray.600")}
+            bg="#666db3"
             p={20}
             w="auto"
             justifyContent="center"
@@ -60,7 +60,7 @@ const Faq = () => {
         >
             <Box
                 py={12}
-                bg={useColorModeValue("white", "gray.900")}
+                bg="white"
                 rounded="xl"
                 shadow="base"
                 w="100%"
@@ -73,7 +73,7 @@ const Faq = () => {
                             lineHeight="8"
                             fontWeight="extrabold"
                             letterSpacing="tight"
-                            color={useColorModeValue("gray.900", "gray.100")}
+                            color="gray.900"
                         >
                             Frequently Asked Questions
                         </chakra.h2>
@@ -82,9 +82,9 @@ const Faq = () => {
                             maxW="2xl"
                             fontSize="xl"
                             mx={{ lg: "auto" }}
-                            color={useColorModeValue("gray.500", "gray.300")}
+                            color="gray.500"
                         >
-                            Here are some common questions and answers.
+                            Discover answers to some of the most commonly asked questions
                         </chakra.p>
                     </Box>
 
