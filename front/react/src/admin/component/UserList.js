@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
+import { Box, Table, Thead, Tbody, Tr, Th, Td, Button, Input, Text, VStack } from '@chakra-ui/react';
 import useUsers from '../hooks/useUsers';
-import UnorderedList from '../../components/common/layout/list/UnorderedList';
-import ListItem from '../../components/common/layout/list/ListItem';
-import Button from '../../components/common/buttons/Button';
-import BlackText from '../../components/common/text/BlackText';
-import SearchInput from "../../components/common/inputFields/SearchInput";
 import UserMessage from "../../components/common/alerts/UserMessage";
-
 
 const UserList = () => {
     const [search, setSearch] = useState('');
@@ -30,27 +25,56 @@ const UserList = () => {
     };
 
     return (
-        <div>
-            <SearchInput
+        <Box>
+            <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search users"
+                placeholder="Search"
+                mb={4}
+                size="md"
             />
-            <UnorderedList>
-                {users.map((user) => (
-                    <ListItem key={user.username}>
-                        <BlackText variant="h5">{user.username}</BlackText>
-                        <BlackText variant="p">{user.email}</BlackText>
-                        <BlackText variant="p">{user.role}</BlackText>
-                        <div>
-                            <Button onClick={() => handleLock(user.username)}>Lock</Button>
-                            <Button onClick={() => handleUnlock(user.username)}>Unlock</Button>
-                        </div>
-                        <UserMessage message={message[user.username]} />
-                    </ListItem>
-                ))}
-            </UnorderedList>
-        </div>
+            <Table variant="simple">
+                <Thead>
+                    <Tr>
+                        <Th>Username</Th>
+                        <Th>Email</Th>
+                        <Th>Role</Th>
+                        <Th>Action</Th>
+                    </Tr>
+                </Thead>
+                <Tbody>
+                    {users.map((user) => (
+                        <Tr key={user.username}>
+                            <Td>{user.username}</Td>
+                            <Td>{user.email}</Td>
+                            <Td>{user.role}</Td>
+                            <Td>
+                                <Button
+                                    colorScheme="red"
+                                    size="sm"
+                                    onClick={() => handleLock(user.username)}
+                                    mr={2}
+                                >
+                                    Lock
+                                </Button>
+                                <Button
+                                    colorScheme="green"
+                                    size="sm"
+                                    onClick={() => handleUnlock(user.username)}
+                                >
+                                    Unlock
+                                </Button>
+                                {message[user.username] && (
+                                    <Text mt={2} color="green.500" fontSize="sm">
+                                        {message[user.username]}
+                                    </Text>
+                                )}
+                            </Td>
+                        </Tr>
+                    ))}
+                </Tbody>
+            </Table>
+        </Box>
     );
 };
 
