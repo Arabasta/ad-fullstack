@@ -1,78 +1,54 @@
 import React, { useState } from 'react';
-import useLiveTrading from '../hooks/useLiveTrading';
-import FormSelect from "../../components/common/inputFields/FormSelect";
-import Button from "../../components/common/buttons/Button";
-
+import { useNavigate } from 'react-router-dom';
+import useLiveTrading from "../hooks/useLiveTrading";
 
 const LiveTrading = () => {
-    const [portfolioType, setPortfolioType] = useState('');
-    const [tickerType, setTickerType] = useState('');
-    const { transactions, startTrade, stopTrade, seeTransactions } = useLiveTrading(portfolioType, tickerType);
+    const navigate = useNavigate();
+    const { message, status, startLiveTrading, stopLiveTrading, getLiveTradingTransactions } = useLiveTrading();
+    const [portfolioType, setPortfolioType] = useState('AGGRESSIVE');
+    const [tickerType, setTickerType] = useState('CRYPTO');
 
-    const handleStartTrade = async () => {
-        try {
-            if (tickerType === '') {
-                alert('You have not selected a ticker type');
-                return;
-            }
-            await startTrade();
-        } catch (error) {
-            console.error('Error starting trade', error);
-        }
+    const handleStartLiveTrading = async () => {
+        await startLiveTrading(portfolioType, tickerType);
     };
 
-    const handleStopTrade = async () => {
-        try {
-            await stopTrade();
-        } catch (error) {
-            console.error('Error stopping trade', error);
-        }
+    const handleStopLiveTrading = async () => {
+        await stopLiveTrading();
     };
 
-    const handleSeeTransactions = async () => {
-        try {
-            if (portfolioType === '') {
-                alert('You have not selected a portfolio type');
-                return;
-            }
-            await seeTransactions();
-        } catch (error) {
-            console.error('Error seeing transactions', error);
-        }
+    const handleGetTransactions = async () => {
+        await getLiveTradingTransactions(portfolioType);
+        navigate(`/admin/transactions?portfolioType=${portfolioType}`);
     };
 
     return (
         <div>
-            <FormSelect
-                label="Portfolio Type"
-                value={portfolioType}
-                onChange={(value) => setPortfolioType(value)}
-                options={[
-                    { label: 'AGGRESSIVE', value: 'AGGRESSIVE' },
-                    { label: 'MODERATE', value: 'MODERATE' },
-                    { label: 'CONSERVATIVE', value: 'CONSERVATIVE' }
-                ]}
-                required
-            />
-            <FormSelect
-                label="Ticker Type"
-                value={tickerType}
-                onChange={(value) => setTickerType(value)}
-                options={[
-                    { label: 'STOCKS', value: 'STOCKS' },
-                    { label: 'CRYPTO', value: 'CRYPTO' }
-                ]}
-                required
-            />
-            <Button onClick={handleStartTrade}>Start Trade</Button>
-            <Button onClick={handleStopTrade}>Stop Trade</Button>
-            <Button onClick={handleSeeTransactions}>See Transactions</Button>
+            <div>
+                <label>
+                    Portfolio Type:
+                    <select value={portfolioType} onChange={(e) => setPortfolioType(e.target.value)}>
+                        <option value="AGGRESSIVE">Aggressive</option>
+                        <option value="CONSERVATIVE">Conservative</option>
+                        <option value="BALANCED">Balanced</option>
+                    </select>
+                </label>
+                <label>
+                    Ticker Type:
+                    <select value={tickerType} onChange={(e) => setTickerType(e.target.value)}>
+                        <option value="CRYPTO">Crypto</option>
+                        <option value="STOCKS">Stocks</option>
+                    </select>
+                </label>
+            </div>
+            <button onClick={handleStartLiveTrading}>Start Live Trading</button>
+            <button onClick={handleStopLiveTrading}>Stop Live Trading</button>
+            <button onClick={handleGetTransactions}>Get Transactions</button>
 
-            <ul>
-                {transactions.map((transaction, index) => (
-                    <li key={index}>{transaction}</li>
-                ))}
-            </ul>
+            {message && (
+                <p style={{ color: status === 'success' ? 'green' : 'red' }}>
+                    {message}
+                </p>
+            )}
         </div>
     );
 };

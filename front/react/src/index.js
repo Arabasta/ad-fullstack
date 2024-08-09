@@ -4,7 +4,7 @@ import './assets/styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import {ChakraProvider, extendTheme, ColorModeScript} from "@chakra-ui/react";
 
 const colors = {
     brand: {
@@ -21,7 +21,7 @@ const colors = {
     }
 };
 const config = {
-    initialColorMode: "dark",
+    initialColorMode: "light",
     useSystemColorMode: false
 };
 
@@ -31,6 +31,7 @@ const theme = extendTheme({ colors, config });
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
       <ChakraProvider theme={theme}>
+          <ColorModeScript initialColorMode={theme.config.initialColorMode}/>
           <App />
       </ChakraProvider>
 );

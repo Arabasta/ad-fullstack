@@ -19,7 +19,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from "../../../config/context/AuthContext";
 
 const Header = () => {
-    const bg = useColorModeValue("white", "gray.800");
+    const bg = useColorModeValue("white", "white");
     const mobileNav = useDisclosure();
     const { isAuthenticated, logout } = useContext(AuthContext);
 
@@ -50,25 +50,25 @@ const Header = () => {
                     <HStack
                         spacing={1}
                         mr={1}
-                        color="brand.500"
+                        color="brand.100"
                         display={{ base: "none", md: "inline-flex" }}
                     >
                         <Link to="/news">
-                            <Button variant="ghost">News</Button>
+                            <Button>News</Button>
                         </Link>
 
                         {isAuthenticated ? (
                             <>
                                 <Link to="/portfolio">
-                                    <Button variant="ghost">Portfolio</Button>
+                                    <Button>Portfolio</Button>
                                 </Link>
                                 <Link to="/wallet">
-                                    <Button variant="ghost">Wallet</Button>
+                                    <Button>Wallet</Button>
                                 </Link>
                                 <Link to="/settings">
-                                    <Button variant="ghost">Settings</Button>
+                                    <Button>Settings</Button>
                                 </Link>
-                                <Button variant="ghost" onClick={logout}>Sign Out</Button>
+                                <Button onClick={logout}>Sign Out</Button>
                             </>
                         ) : (
                             <>

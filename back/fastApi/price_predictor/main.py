@@ -34,7 +34,6 @@ Constants
 # AWS
 AWS_S3_ACCESS_KEY_ID = os.getenv('AWS_S3_ACCESS_KEY_ID')
 AWS_S3_SECRET_ACCESS_KEY = os.getenv('AWS_S3_SECRET_ACCESS_KEY')
-AWS_S3_REGION = os.getenv('AWS_S3_REGION')
 AWS_S3_PREDICTION_BUCKET_NAME = os.getenv('AWS_S3_PREDICTION_BUCKET_NAME')
 AWS_S3_MODEL_BUCKET_NAME = os.getenv('AWS_S3_MODEL_BUCKET_NAME')
 
@@ -75,18 +74,17 @@ API
 
 
 @app.get("/")
-async def redirect_to_documentation():
-    return RedirectResponse("http://localhost:8000/documentation")
+def redirect_to_documentation():
+    return RedirectResponse(url="/documentation")
 
 
 # todo: for dev. to delete before submission.
 # To check list of tickers that are available for predictions, with trained models loaded
 @app.get("/api/v1/health")
-async def get():
+def get():
     health = {
         "AWS_S3_ACCESS_KEY_ID": AWS_S3_ACCESS_KEY_ID,
         "AWS_S3_SECRET_ACCESS_KEY": AWS_S3_SECRET_ACCESS_KEY,
-        "AWS_S3_REGION": AWS_S3_REGION,
         "AWS_S3_PREDICTION_BUCKET_NAME": AWS_S3_PREDICTION_BUCKET_NAME,
         "AWS_S3_MODEL_BUCKET_NAME": AWS_S3_MODEL_BUCKET_NAME,
         "POLYGON_API_KEY": POLYGON_API_KEY,
@@ -97,32 +95,42 @@ async def get():
     return {"response": health}
 
 
+# todo: put try catch block
 # Accepts Backend's PredictionDTO in RequestBody
 # Note: List<Decimal> must be >= FEATURE_COUNT, which will be used to create lag features and reshaped for predictions.
 @app.post("/api/v1/predict/ticker/backtest")
-async def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
-    if prediction_dto.tickerDTO is None or prediction_dto.predictions is None:
-        return None
-    if len(prediction_dto.predictions) < FEATURE_COUNT:
-        raise ValueError(f"Please input more than {FEATURE_COUNT} datapoints")
-    x_values = add_lagged_features(df_x_values=pd.DataFrame(prediction_dto.predictions, columns=[FEATURE]),
-                                   future_window=FEATURE_COUNT)
-    predictions = predictions_from_x_values(ticker_dto=prediction_dto.tickerDTO,
-                                            x_values=x_values)
+def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
+    predictions = []
+    try:
+        if prediction_dto.tickerDTO is None or prediction_dto.predictions is None:
+            return None
+        if len(prediction_dto.predictions) < FEATURE_COUNT:
+            raise ValueError(f"Please input more than {FEATURE_COUNT} datapoints")
+        x_values = add_lagged_features(df_x_values=pd.DataFrame(prediction_dto.predictions, columns=[FEATURE]),
+                                       future_window=FEATURE_COUNT)
+        predictions = predictions_from_x_values(ticker_dto=prediction_dto.tickerDTO,
+                                                x_values=x_values)
+    except Exception as err:
+        logger.error(f"Exception occurred at backtest predictions for {prediction_dto.tickerDTO.tickerName}\n: {err}")
     return PredictionDTO(tickerDTO=prediction_dto.tickerDTO,
                          predictions=predictions)
 
 
+# todo: put try catch block
 # Accepts Backend's TickerDTO in RequestBody
 @app.post("/api/v1/predict/ticker/live")
-async def by_ticker_dto_live(ticker_dto: TickerDTO):
-    ticker_name = ticker_dto.tickerName
-    if ticker_name not in list(LOADED_MODELS):
-        return None
-    logger.info('--Start prediction--')
-    logger.info(f'--Predicting {ticker_name}--')
-    predictions = predictions_from_ticker_dto(ticker_dto)
-    logger.info('--Finish prediction--')
+def by_ticker_dto_live(ticker_dto: TickerDTO):
+    predictions = []
+    try:
+        ticker_name = ticker_dto.tickerName
+        if ticker_name not in list(LOADED_MODELS):
+            return None
+        logger.info('--Start prediction--')
+        logger.info(f'--Predicting {ticker_name}--')
+        predictions = predictions_from_ticker_dto(ticker_dto)
+        logger.info('--Finish prediction--')
+    except Exception as err:
+        logger.error(f"Exception occurred at live predictions for {ticker_dto.tickerName}\n: {err}")
     return PredictionDTO(tickerDTO=ticker_dto,
                          predictions=predictions)
 
@@ -130,8 +138,8 @@ async def by_ticker_dto_live(ticker_dto: TickerDTO):
 # Dev
 # todo: method tested as working. to remove this api after dev.
 @app.get("/api/v1/dev/load_pickle_model")
-async def test_load_pickle_model(ticker_name, key):
-    await load_pickle_file(AWS_S3_MODEL_BUCKET_NAME, ticker_name, key, LOADED_MODELS)
+def test_load_pickle_model(ticker_name, key):
+    load_pickle_file(AWS_S3_MODEL_BUCKET_NAME, ticker_name, key, LOADED_MODELS)
     if ticker_name in list(LOADED_MODELS):
         return {"response": f'{ticker_name} loaded!'}
     return {"response": f'{ticker_name} loading failed!'}
@@ -152,7 +160,7 @@ def get_s3_client():
 
 # Read and load models from S3 to RAM
 # todo: to refactor. taking around 2s per model.
-async def load_all_pickle_files(bucket_name, models_dict):
+def load_all_pickle_files(bucket_name, models_dict):
     try:
         s3_client = get_s3_client()
         # Retrieve the list of model files in the bucket
@@ -176,7 +184,7 @@ async def load_all_pickle_files(bucket_name, models_dict):
             logger.info('--Start loading models--')
             for key in keys:
                 ticker_name = str(key).split(".")[0]
-                await load_pickle_file(bucket_name, ticker_name, key, models_dict)
+                load_pickle_file(bucket_name, ticker_name, key, models_dict)
             logger.info('--Finish loading models--')
 
         else:
@@ -185,13 +193,13 @@ async def load_all_pickle_files(bucket_name, models_dict):
         print(f"Failed to retrieve objects from the bucket: {str(e)}")
 
 
-async def load_pickle_file(bucket_name, ticker_name, key, models_dict):
+def load_pickle_file(bucket_name, ticker_name, key, models_dict):
     # Set up S3 client
     s3_client = get_s3_client()
     # Load trained model from s3 to in-memory dictionary
     obj = s3_client.get_object(Bucket=bucket_name, Key=f'model/{key}')
     models_dict[ticker_name] = pickle.loads(obj['Body'].read())
-    logger.info(f'Loaded {key} model')
+    logger.info(f'Loaded {key} model. Ticker name: {ticker_name}')
     # Load x_scaler from s3 to in-memory dictionary
     obj = s3_client.get_object(Bucket=bucket_name, Key=f'x_scaler/{key}')
     LOADED_X_SCALERS[ticker_name] = pickle.loads(obj['Body'].read())
@@ -260,5 +268,5 @@ MAIN
 
 
 @app.on_event("startup")
-async def startup_event():
-    await load_all_pickle_files(AWS_S3_MODEL_BUCKET_NAME, LOADED_MODELS)
+def startup_event():
+    load_all_pickle_files(AWS_S3_MODEL_BUCKET_NAME, LOADED_MODELS)

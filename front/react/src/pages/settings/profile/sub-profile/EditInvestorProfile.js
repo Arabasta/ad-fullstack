@@ -1,9 +1,10 @@
 import React from 'react';
+import EditInvestorProfileForm from "./EditInvestorProfileForm";
 
 const EditInvestorProfile = () => {
     return (
         <div>
-            <h2>Edit Investor Profile</h2>
+            <EditInvestorProfileForm/>
         </div>
     );
 };

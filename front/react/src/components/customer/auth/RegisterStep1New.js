@@ -17,12 +17,12 @@ import Button from "../../common/buttons/Button";
 const RegisterStep1Form = ({email, setEmail, username, setUsername, password, setPassword, method}) => {
     return (
         <Box
-            bg="brand.600"
+            bg="brand.400"
             _dark={{ bg: "#111" }}
             p={10}
         >
             <Box
-                bg="brand.400"
+                bg="brand.100"
                 _dark={{ bg: "#111" }}
                 p={30}
             >
@@ -33,7 +33,7 @@ const RegisterStep1Form = ({email, setEmail, username, setUsername, password, se
                 >
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
-                            <Heading color="brand.100" fontSize="5xl" fontWeight="md" lineHeight="10">
+                            <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
                                 Register
                             </Heading>
                             <Text
@@ -76,7 +76,7 @@ const RegisterStep1Form = ({email, setEmail, username, setUsername, password, se
                                             <Input
                                                 type="email"
                                                 value={email}
-                                                placeholder="Username"
+                                                placeholder="Email"
                                                 onChange={(e) => setEmail(e.target.value)}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
@@ -136,7 +136,6 @@ const RegisterStep1Form = ({email, setEmail, username, setUsername, password, se
                             >
                                 <Button
                                     type="submit"
-                                    colorScheme="brand"
                                     _focus={{ shadow: "" }}
                                     fontWeight="md"
                                 >

@@ -1,23 +1,27 @@
 import axiosInstance from "../../config/axios/axiosInstance";
 
-const startTrade = async (portfolioType = '', tickerType='') => {
-    const url = `/v1/admin/trading/livetrading/start?portfolioType=${portfolioType}&tickerType=${tickerType}`
+// Start live trading
+const startLiveTrading = async (portfolioType, tickerType) => {
+    const url = `/v1/admin/trading/livetrading/start?portfolioType=${portfolioType}&tickerType=${tickerType}`;
     return await axiosInstance.get(url);
 };
 
-const stopTrade = async () => {
-    return await axiosInstance.get(`/v1/admin/trading/livetrading/stop`);
+// Stop live trading
+const stopLiveTrading = async () => {
+    const url = '/v1/admin/trading/livetrading/stop';
+    return await axiosInstance.get(url);
 };
 
-const seeTransactions = async (portfolioType = '', page = 0, size= 10 ) => {
-    const url = `/api/v1/admin/trading/livetrading/transactions?portfolioType=${portfolioType}&page=${page}&size=${size}`;
+// Get live trading transactions
+const getLiveTradingTransactions = async (portfolioType) => {
+    const url = `/v1/admin/trading/livetrading/transactions?portfolioType=${portfolioType}`;
     return await axiosInstance.get(url);
 };
 
 const LiveTradingService = {
-    startTrade,
-    stopTrade,
-    seeTransactions,
+    startLiveTrading,
+    stopLiveTrading,
+    getLiveTradingTransactions,
 };
 
 export default LiveTradingService;

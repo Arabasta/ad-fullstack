@@ -1,44 +1,54 @@
-import { useState, useEffect, useCallback } from 'react';
-import LiveTradingService from '../services/LiveTradingService';
+import { useState, useCallback } from 'react';
+import LiveTradingService from "../services/LiveTradingService";
 
-const useLiveTrading = (portfolioType = '', tickerType = '') => {
+const useLiveTrading = () => {
+    const [message, setMessage] = useState(null);
     const [transactions, setTransactions] = useState([]);
-    const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(false);
 
-    const startTrade = useCallback(async () => {
+    const startLiveTrading = useCallback(async (portfolioType, tickerType) => {
+        setMessage(null);
         try {
-            const response = await LiveTradingService.startTrade(portfolioType, tickerType);
-            return response.data.data;
-        } catch (error) {
-            setMessage('Error starting trade. please try again');
-        }
-    }, [portfolioType, tickerType]);
-
-    const stopTrade = useCallback(async () => {
-        try {
-            const response = await LiveTradingService.stopTrade();
-            return response.data.data;
-        } catch (error) {
-            setMessage('Error stopping trade. please try again');
+            const response = await LiveTradingService.startLiveTrading(portfolioType, tickerType);
+            setMessage(response.data.message);
+        } catch (err) {
+            setMessage(err.message);
         }
     }, []);
 
-    const seeTransactions = useCallback(async (page = 0, size = 10) => {
+    const stopLiveTrading = useCallback(async () => {
+        setMessage(null);
         try {
-            const response = await LiveTradingService.seeTransactions(portfolioType, page, size);
-            setTransactions(response.data.data);
-        } catch (error) {
-            setMessage('Error fetching transactions. please try again');        }
-    }, [portfolioType]);
-
-    // Render transactions given portfolioType
-    useEffect(() => {
-        if (portfolioType) {
-            seeTransactions();
+            const response = await LiveTradingService.stopLiveTrading();
+            setMessage(response.data.message);
+        } catch (err) {
+            setMessage(err.message);
         }
-    }, [portfolioType, seeTransactions]);
+    }, []);
 
-    return { transactions, startTrade, stopTrade, seeTransactions, message };
+    const getLiveTradingTransactions = useCallback(async (portfolioType) => {
+        setLoading(true);
+        try {
+            const response = await LiveTradingService.getLiveTradingTransactions(portfolioType);
+            setTransactions(response.data.data.content);
+            setHasMore(response.data.data.content.length > 0);
+        } catch (err) {
+            setMessage(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    return {
+        message,
+        transactions,
+        loading,
+        hasMore,
+        startLiveTrading,
+        stopLiveTrading,
+        getLiveTradingTransactions,
+    };
 };
 
 export default useLiveTrading;

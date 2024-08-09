@@ -18,10 +18,15 @@ const UpdatePassword = ({ user, updateUser }) => {
                 updateUser({ ...user });
             }
         } catch (error) {
-            console.error('Error updating password:', error);
-            setError('Error updating password');
-            setSuccess('');
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+            }
+            else {
+                console.error(`Error updating mobile number`, error);
+                setError('An unexpected error occurred. Please try again.');
+            }
         }
+
     };
 
     return (

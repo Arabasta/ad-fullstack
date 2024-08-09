@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import portfolioTypes from "../../components/portfolio/portfolioTypes";
 
 export default function PortfolioPage() {
     const navigate = useNavigate();
@@ -10,15 +11,13 @@ export default function PortfolioPage() {
 
     return (
         <div>
-            <div>
-                <button onClick={() => handlePortfolioSelection('CONSERVATIVE')}>CONSERVATIVE</button>
-            </div>
-            <div>
-                <button onClick={() => handlePortfolioSelection('MODERATE')}>MODERATE</button>
-            </div>
-            <div>
-                <button onClick={() => handlePortfolioSelection('AGGRESSIVE')}>AGGRESSIVE</button>
-            </div>
+            {portfolioTypes.map((portfolio) => (
+                <div key={portfolio.type}>
+                    <button onClick={() => handlePortfolioSelection(portfolio.type)}>
+                        {portfolio.title}
+                    </button>
+                </div>
+            ))}
         </div>
     );
 }

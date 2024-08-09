@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Box,
     SimpleGrid,
@@ -8,21 +8,55 @@ import {
     FormControl,
     FormLabel
 } from '@chakra-ui/react';
+import Heading from "../../../../components/common/text/Heading";
+import Text from "../../../../components/common/text/Text";
+import Button from "../../../../components/common/buttons/Button";
+import FormSelect from "../../../../components/common/inputFields/FormSelect";
+import {Link} from "react-router-dom";
 
-import Heading from "../../common/text/Heading";
-import Text from "../../common/text/Text";
-import Button from "../../common/buttons/Button";
-import FormSelect from "../../common/inputFields/FormSelect";
+const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
+    const [employmentStatus, setEmploymentStatus] = useState(financialProfile.employmentStatus);
 
-const RegisterStep4Form = ({
-                               employmentStatus, setEmploymentStatus,
-                               annualIncome, setAnnualIncome,
-                               netWorth, setNetWorth,
-                               sourceOfWealth, setSourceOfWealth,
-                               investmentObjective, setInvestmentObjective,
-                               investmentExperience, setInvestmentExperience,
-                               handlePrevious, handleNext
-                           }) => {
+    const [annualIncome, setAnnualIncome] = useState(financialProfile.annualIncome);
+    const [netWorth, setNetWorth] = useState(financialProfile.netWorth);
+
+    const [sourceOfWealth, setSourceOfWealth] = useState(financialProfile.sourceOfWealth);
+    const [investmentObjective, setInvestmentObjective] = useState(financialProfile.investmentObjective);
+    const [investmentExperience, setInvestmentExperience] = useState(financialProfile.investmentExperience);
+
+    useEffect(() => {
+        setEmploymentStatus(financialProfile.employmentStatus);
+        setAnnualIncome(financialProfile.annualIncome);
+        setNetWorth(financialProfile.netWorth);
+        setSourceOfWealth(financialProfile.sourceOfWealth);
+        setInvestmentObjective(financialProfile.investmentObjective);
+        setInvestmentExperience(financialProfile.investmentExperience);
+    }, [financialProfile]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit({
+            employmentStatus,
+            annualIncome,
+            netWorth,
+            sourceOfWealth,
+            investmentObjective,
+            investmentExperience,
+        });
+    };
+
+    /*
+    const employmentStatusOptions = [
+        { label: 'Employed', value: 1 },
+        { label: 'Self-Employed', value: 2 },
+        { label: 'Unemployed', value: 3 },
+        { label: 'Retired', value: 4 },
+        { label: 'Student', value: 5 },
+        { label: 'Other', value: 6 }
+    ]
+
+     */
+
     const incomeOptions = [
         { label: 'Below $20,000', value: 20000 },
         { label: '$20,000 - $50,000', value: 50000 },
@@ -39,14 +73,30 @@ const RegisterStep4Form = ({
         { label: 'Above $1,000,000', value: 1000001 },
     ];
 
-    useEffect(() => {
-        // Ensure the values are set to valid defaults if not already set
-        if (!employmentStatus) setEmploymentStatus('EMPLOYED');
-        if (!sourceOfWealth) setSourceOfWealth('SALARY');
-        if (!investmentObjective) setInvestmentObjective('GROWTH');
-        if (!investmentExperience) setInvestmentExperience('NONE');
-    }, [employmentStatus, sourceOfWealth, investmentObjective, investmentExperience, setEmploymentStatus, setSourceOfWealth, setInvestmentObjective, setInvestmentExperience]);
+    /*
+    const sourceOfWealthOptions = [
+        { label: 'Salary', value: 1 },
+        { label: 'Business', value: 2 },
+        { label: 'Investments', value: 3 },
+        { label: 'Inheritance', value: 4 },
+        { label: 'Other', value: 5 }
+    ]
+     */
 
+    const investmentExperienceOptions = [
+        { label: 'None', value: 1 },
+        { label: 'Limited', value: 2 },
+        { label: 'Moderate', value: 3 },
+        { label: 'Extensive', value: 4 }
+    ]
+
+    const investmentObjectiveOptions = [
+        { label: 'Growth', value: 1 },
+        { label: 'Income', value: 2 },
+        { label: 'Capital Preservation', value: 3 },
+        { label: 'Speculation', value: 4 },
+        { label: 'Other', value: 5 }
+    ]
 
     return (
         <Box
@@ -66,8 +116,8 @@ const RegisterStep4Form = ({
                 >
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
-                            <Heading color="brand.100" fontSize="5xl" fontWeight="md" lineHeight="10">
-                                Register
+                            <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
+                                Update
                             </Heading>
                             <Text
                                 mt={1}
@@ -75,14 +125,14 @@ const RegisterStep4Form = ({
                                 color="gray.600"
                                 _dark={{ color: "gray.400" }}
                             >
-                                Almost there.
+                                your details.
                             </Text>
                         </Box>
                     </GridItem>
 
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
-                            onSubmit={handleNext}
+                            onsubmit={handleSubmit}
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
@@ -98,7 +148,10 @@ const RegisterStep4Form = ({
                                 p={{ sm: 6 }}
                             >
                                 <SimpleGrid columns={6} spacing={6}>
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl
+                                        color="brand.600"
+                                        borderColor="brand.300"
+                                        as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -110,7 +163,6 @@ const RegisterStep4Form = ({
                                         <FormSelect
                                             placeholder="Select option"
                                             mt={1}
-                                            focusBorderColor="brand.400"
                                             shadow="sm"
                                             size="sm"
                                             w="full"
@@ -118,18 +170,21 @@ const RegisterStep4Form = ({
                                             value={employmentStatus}
                                             onChange={(value) => setEmploymentStatus(value.toString())}
                                             options={[
-                                                { label: 'Employed', value: 1 },
-                                                { label: 'Self-Employed', value: 2 },
-                                                { label: 'Unemployed', value: 3 },
-                                                { label: 'Retired', value: 4 },
-                                                { label: 'Student', value: 5 },
-                                                { label: 'Other', value: 6 }
+                                                { label: 'Employed', value: 0 },
+                                                { label: 'Self-Employed', value: 1 },
+                                                { label: 'Unemployed', value: 2 },
+                                                { label: 'Retired', value: 3 },
+                                                { label: 'Student', value: 4 },
+                                                { label: 'Other', value: 5 }
                                             ]}
                                             required
+
                                         />
                                     </FormControl>
 
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl
+                                        color="brand.600"
+                                        as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -139,7 +194,6 @@ const RegisterStep4Form = ({
                                             Annual Income
                                         </FormLabel>
                                         <FormSelect
-                                            placeholder="Select option"
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
@@ -147,13 +201,14 @@ const RegisterStep4Form = ({
                                             w="full"
                                             rounded="md"
                                             value={annualIncome}
-                                            onChange={(value) => setAnnualIncome(value.toString())}
+                                            onChange={setAnnualIncome}
                                             options={incomeOptions}
                                             required
                                         />
                                     </FormControl>
 
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 4]}>
+                                    <FormControl color="brand.600"
+                                                 as={GridItem} colSpan={[6, 4]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -171,13 +226,14 @@ const RegisterStep4Form = ({
                                             w="full"
                                             rounded="md"
                                             value={netWorth}
-                                            onChange={(value) => setNetWorth(value.toString())}
+                                            onChange={setNetWorth}
                                             options={netWorthOptions}
                                             required
                                         />
                                     </FormControl>
 
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600"
+                                                 as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -195,19 +251,20 @@ const RegisterStep4Form = ({
                                             w="full"
                                             rounded="md"
                                             value={sourceOfWealth}
-                                            onChange={(value) => setSourceOfWealth(value.toString())}
+                                            onChange={setSourceOfWealth}
                                             options={[
-                                                { label: 'Salary', value: 1 },
-                                                { label: 'Business', value: 2 },
-                                                { label: 'Investments', value: 3 },
-                                                { label: 'Inheritance', value: 4 },
-                                                { label: 'Other', value: 5 }
+                                                { label: 'Salary', value: 0 },
+                                                { label: 'Business', value: 1 },
+                                                { label: 'Investments', value: 2 },
+                                                { label: 'Inheritance', value: 3 },
+                                                { label: 'Other', value: 4 }
                                             ]}
                                             required
                                         />
                                     </FormControl>
 
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600"
+                                                 as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -225,19 +282,14 @@ const RegisterStep4Form = ({
                                             w="full"
                                             rounded="md"
                                             value={investmentObjective}
-                                            onChange={(value) => setInvestmentObjective(value.toString())}
-                                            options={[
-                                                { label: 'Growth', value: 1 },
-                                                { label: 'Income', value: 2 },
-                                                { label: 'Capital Preservation', value: 3 },
-                                                { label: 'Speculation', value: 4 },
-                                                { label: 'Other', value: 5 }
-                                            ]}
+                                            onChange={setInvestmentObjective}
+                                            options={ investmentObjectiveOptions}
                                             required
                                         />
                                     </FormControl>
 
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600"
+                                                 as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -255,19 +307,19 @@ const RegisterStep4Form = ({
                                             w="full"
                                             rounded="md"
                                             value={investmentExperience}
-                                            onChange={(value) => setInvestmentExperience(value.toString())}
-                                            options={[
-                                                { label: 'None', value: 1 },
-                                                { label: 'Limited', value: 2 },
-                                                { label: 'Moderate', value: 3 },
-                                                { label: 'Extensive', value: 4 }
-                                            ]}
+                                            onChange={setInvestmentExperience}
+                                            options={investmentExperienceOptions}
                                             required
                                         />
+                                        <Button
+                                            onClick={handleSubmit}
+                                            colorScheme="brand"
+                                            _focus={{ shadow: "" }}
+                                            fontWeight="md"
+                                        >
+                                            Update
+                                        </Button>
                                     </FormControl>
-
-
-
                                 </SimpleGrid>
                             </Stack>
 
@@ -278,23 +330,17 @@ const RegisterStep4Form = ({
                                 _dark={{ bg: "#121212" }}
                                 textAlign="right"
                             >
-                                <Button
-                                    type="button"
-                                    onClick={handlePrevious}
-                                    colorScheme="brand"
-                                    _focus={{ shadow: "" }}
-                                    fontWeight="md"
-                                >
-                                    Back
-                                </Button>
-                                <Button
-                                    type="submit"
-                                    colorScheme="brand"
-                                    _focus={{ shadow: "" }}
-                                    fontWeight="md"
-                                >
-                                    Next
-                                </Button>
+                                <Link to="/settings/profile">
+                                    <Button
+                                        type="button"
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md"
+                                    >
+                                        Return
+                                    </Button>
+                                </Link>
+
                             </Box>
                         </chakra.form>
                     </GridItem>
@@ -304,4 +350,4 @@ const RegisterStep4Form = ({
     );
 };
 
-export default RegisterStep4Form;
+export default EditFinancialProfileForm;

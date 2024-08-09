@@ -1,5 +1,5 @@
 import React from 'react';
-import ProfileMainPage from "./ProfileMain";
+import ProfileMainPage from "./EditProfileMainForm";
 
 const EditProfilePage = () => {
     return (

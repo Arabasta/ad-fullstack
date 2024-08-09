@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     Box,
     SimpleGrid,
@@ -8,45 +8,112 @@ import {
     FormControl,
     FormLabel
 } from '@chakra-ui/react';
+import Heading from "../../../../components/common/text/Heading";
+import Text from "../../../../components/common/text/Text";
+import Button from "../../../../components/common/buttons/Button";
+import FormSelect from "../../../../components/common/inputFields/FormSelect";
+import InvestorProfileService from "../../../../services/InvestorProfileService";
+import {AuthContext} from "../../../../config/context/AuthContext";
+import {Link} from "react-router-dom";
 
-import Heading from "../../common/text/Heading";
-import Text from "../../common/text/Text";
-import Button from "../../common/buttons/Button";
-import FormSelect from "../../common/inputFields/FormSelect";
+const EditInvestorProfileForm = () => {
+    const { isAuthenticated } = useContext(AuthContext);
+    const [profile, setProfile] = useState({
+        investmentDurationScore: 1,
+        withdrawalSpendingPlanScore: 1,
+        investmentKnowledgeScore: 1,
+        riskRewardScore: 1,
+        ownedInvestmentsScore: 1,
+        investmentPersonalityScore: 1,
+    });
+    const [loading, setLoading] = useState(true);
+    const [message, setMessage] = useState('');
+    const [recommendedPortfolioType, setRecommendedPortfolioType] = useState('');
 
-const RegisterStep4Form = ({
-                               employmentStatus, setEmploymentStatus,
-                               annualIncome, setAnnualIncome,
-                               netWorth, setNetWorth,
-                               sourceOfWealth, setSourceOfWealth,
-                               investmentObjective, setInvestmentObjective,
-                               investmentExperience, setInvestmentExperience,
-                               handlePrevious, handleNext
-                           }) => {
-    const incomeOptions = [
-        { label: 'Below $20,000', value: 20000 },
-        { label: '$20,000 - $50,000', value: 50000 },
-        { label: '$50,001 - $100,000', value: 100000 },
-        { label: '$100,001 - $200,000', value: 200000 },
-        { label: 'Above $200,000', value: 200001 },
+    const optionsForQuestion1 = [
+        { label: "Less than 3 years", value: 1 },
+        { label: "3-5 years", value: 2 },
+        { label: "6-10 years", value: 3 },
+        { label: "11 years or more", value: 4 }
     ];
-
-    const netWorthOptions = [
-        { label: 'Below $50,000', value: 50000 },
-        { label: '$50,000 - $100,000', value: 100000 },
-        { label: '$100,001 - $500,000', value: 500000 },
-        { label: '$500,001 - $1,000,000', value: 1000000 },
-        { label: 'Above $1,000,000', value: 1000001 },
+    const optionsForQuestion2 = [
+        { label: "Less than 2 years", value: 1 },
+        { label: "2-5 years", value: 2 },
+        { label: "6-10 years", value: 3 },
+        { label: "11 years or more", value: 4 }
+    ];
+    const optionsForQuestion3 = [
+        { label: "None", value: 1 },
+        { label: "Limited", value: 2 },
+        { label: "Good", value: 3 },
+        { label: "Extensive", value: 4 }
+    ];
+    const optionsForQuestion4 = [
+        { label: "Take less risk, expect less returns", value: 1 },
+        { label: "Take average risk, expect average returns", value: 2 },
+        { label: "Take more risks, expect more returns", value: 3 }
+    ];
+    const optionsForQuestion5 = [
+        { label: "Bonds and/or bonds funds", value: 1 },
+        { label: "Stocks and/or stocks funds", value: 2 },
+        { label: "International securities and/or funds", value: 3 }
+    ];
+    const optionsForQuestion6 = [
+        { label: "Sell all my shares", value: 1 },
+        { label: "Sell some of my shares", value: 2 },
+        { label: "Do nothing", value: 3 },
+        { label: "Buy more shares", value: 4 }
     ];
 
     useEffect(() => {
-        // Ensure the values are set to valid defaults if not already set
-        if (!employmentStatus) setEmploymentStatus('EMPLOYED');
-        if (!sourceOfWealth) setSourceOfWealth('SALARY');
-        if (!investmentObjective) setInvestmentObjective('GROWTH');
-        if (!investmentExperience) setInvestmentExperience('NONE');
-    }, [employmentStatus, sourceOfWealth, investmentObjective, investmentExperience, setEmploymentStatus, setSourceOfWealth, setInvestmentObjective, setInvestmentExperience]);
+        if (!isAuthenticated) {
+            setLoading(false);
+        } else {
+            const fetchProfile = async () => {
+                try {
+                    const response = await InvestorProfileService.getInvestorProfile();
+                    setProfile(response.data.data);
+                    setRecommendedPortfolioType(response.data.data.recommendedPortfolioType);
+                    setLoading(false);
+                } catch (error) {
+                    setMessage('Error fetching investor profile');
+                    setLoading(false);
+                }
+            };
 
+            fetchProfile();
+        }
+    }, [isAuthenticated]);
+
+
+    const handleUpdate = async (event) => {
+        event.preventDefault();
+        try {
+            const response = await InvestorProfileService.updateInvestorProfile(profile);
+            console.log("Updated profile:", profile);
+            setMessage('Profile updated successfully');
+            setProfile(response.data.data);
+            setRecommendedPortfolioType(response.data.data.recommendedPortfolioType);
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            setMessage('Error updating profile');
+        }
+    };
+
+    const handleChange = (field, value) => {
+        setProfile({
+            ...profile,
+            [field]: value
+        });
+    };
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    if (!isAuthenticated) {
+        return <p>Please log in to view this page.</p>;
+    }
 
     return (
         <Box
@@ -66,8 +133,8 @@ const RegisterStep4Form = ({
                 >
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
-                            <Heading color="brand.100" fontSize="5xl" fontWeight="md" lineHeight="10">
-                                Register
+                            <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
+                                Update
                             </Heading>
                             <Text
                                 mt={1}
@@ -75,14 +142,14 @@ const RegisterStep4Form = ({
                                 color="gray.600"
                                 _dark={{ color: "gray.400" }}
                             >
-                                Almost there.
+                                your details.
                             </Text>
                         </Box>
                     </GridItem>
 
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
-                            onSubmit={handleNext}
+                            onsubmit={handleUpdate}
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
@@ -105,7 +172,7 @@ const RegisterStep4Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Employment Status
+                                            Investment Duration Score
                                         </FormLabel>
                                         <FormSelect
                                             placeholder="Select option"
@@ -115,16 +182,9 @@ const RegisterStep4Form = ({
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={employmentStatus}
-                                            onChange={(value) => setEmploymentStatus(value.toString())}
-                                            options={[
-                                                { label: 'Employed', value: 1 },
-                                                { label: 'Self-Employed', value: 2 },
-                                                { label: 'Unemployed', value: 3 },
-                                                { label: 'Retired', value: 4 },
-                                                { label: 'Student', value: 5 },
-                                                { label: 'Other', value: 6 }
-                                            ]}
+                                            value={profile.investmentDurationScore}
+                                            onChange={(value) => handleChange('investmentDurationScore', value)}
+                                            options={optionsForQuestion1}
                                             required
                                         />
                                     </FormControl>
@@ -136,19 +196,18 @@ const RegisterStep4Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Annual Income
+                                            Withdrawal Spending Plan Score
                                         </FormLabel>
                                         <FormSelect
-                                            placeholder="Select option"
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={annualIncome}
-                                            onChange={(value) => setAnnualIncome(value.toString())}
-                                            options={incomeOptions}
+                                            value={profile.withdrawalSpendingPlanScore}
+                                            onChange={(value) => handleChange('withdrawalSpendingPlanScore', value)}
+                                            options={optionsForQuestion2}
                                             required
                                         />
                                     </FormControl>
@@ -160,7 +219,7 @@ const RegisterStep4Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Net Worth
+                                            Investment Knowledge Score
                                         </FormLabel>
                                         <FormSelect
                                             placeholder="Select option"
@@ -170,9 +229,9 @@ const RegisterStep4Form = ({
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={netWorth}
-                                            onChange={(value) => setNetWorth(value.toString())}
-                                            options={netWorthOptions}
+                                            value={profile.investmentKnowledgeScore}
+                                            onChange={(value) => handleChange('investmentKnowledgeScore', value)}
+                                            options={optionsForQuestion3}
                                             required
                                         />
                                     </FormControl>
@@ -184,7 +243,7 @@ const RegisterStep4Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Source of Wealth
+                                            Risk Reward Score
                                         </FormLabel>
                                         <FormSelect
                                             placeholder="Select option"
@@ -194,15 +253,9 @@ const RegisterStep4Form = ({
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={sourceOfWealth}
-                                            onChange={(value) => setSourceOfWealth(value.toString())}
-                                            options={[
-                                                { label: 'Salary', value: 1 },
-                                                { label: 'Business', value: 2 },
-                                                { label: 'Investments', value: 3 },
-                                                { label: 'Inheritance', value: 4 },
-                                                { label: 'Other', value: 5 }
-                                            ]}
+                                            value={profile.riskRewardScore}
+                                            onChange={(value) => handleChange('riskRewardScore', value)}
+                                            options={optionsForQuestion4}
                                             required
                                         />
                                     </FormControl>
@@ -214,7 +267,7 @@ const RegisterStep4Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Investment Objective
+                                            Owned Investments Score
                                         </FormLabel>
                                         <FormSelect
                                             placeholder="Select option"
@@ -224,15 +277,9 @@ const RegisterStep4Form = ({
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={investmentObjective}
-                                            onChange={(value) => setInvestmentObjective(value.toString())}
-                                            options={[
-                                                { label: 'Growth', value: 1 },
-                                                { label: 'Income', value: 2 },
-                                                { label: 'Capital Preservation', value: 3 },
-                                                { label: 'Speculation', value: 4 },
-                                                { label: 'Other', value: 5 }
-                                            ]}
+                                            value={profile.ownedInvestmentsScore}
+                                            onChange={(value) => handleChange('ownedInvestmentsScore', value)}
+                                            options={optionsForQuestion5}
                                             required
                                         />
                                     </FormControl>
@@ -244,7 +291,7 @@ const RegisterStep4Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Investment Experience
+                                            Investment Personality Score
                                         </FormLabel>
                                         <FormSelect
                                             placeholder="Select option"
@@ -254,20 +301,22 @@ const RegisterStep4Form = ({
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={investmentExperience}
-                                            onChange={(value) => setInvestmentExperience(value.toString())}
-                                            options={[
-                                                { label: 'None', value: 1 },
-                                                { label: 'Limited', value: 2 },
-                                                { label: 'Moderate', value: 3 },
-                                                { label: 'Extensive', value: 4 }
-                                            ]}
+                                            value={profile.investmentPersonalityScore}
+                                            onChange={(value) => handleChange('investmentPersonalityScore', value)}
+                                            options={optionsForQuestion6}
                                             required
                                         />
+                                        <Button
+                                            onClick={handleUpdate}
+                                            colorScheme="brand"
+                                            _focus={{ shadow: "" }}
+                                            fontWeight="md"
+                                        >
+                                            Update
+                                        </Button>
+                                        {message && <p>{message}</p> && <p>Updated Recommend Portfolio Type: {recommendedPortfolioType}</p>}
+
                                     </FormControl>
-
-
-
                                 </SimpleGrid>
                             </Stack>
 
@@ -278,23 +327,17 @@ const RegisterStep4Form = ({
                                 _dark={{ bg: "#121212" }}
                                 textAlign="right"
                             >
-                                <Button
-                                    type="button"
-                                    onClick={handlePrevious}
-                                    colorScheme="brand"
-                                    _focus={{ shadow: "" }}
-                                    fontWeight="md"
-                                >
-                                    Back
-                                </Button>
-                                <Button
-                                    type="submit"
-                                    colorScheme="brand"
-                                    _focus={{ shadow: "" }}
-                                    fontWeight="md"
-                                >
-                                    Next
-                                </Button>
+                                <Link to="/settings/profile">
+                                    <Button
+                                        type="button"
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md"
+                                    >
+                                        Return
+                                    </Button>
+                                </Link>
+
                             </Box>
                         </chakra.form>
                     </GridItem>
@@ -304,4 +347,4 @@ const RegisterStep4Form = ({
     );
 };
 
-export default RegisterStep4Form;
+export default EditInvestorProfileForm;

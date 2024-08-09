@@ -11,6 +11,7 @@ import {
     Input,
 } from '@chakra-ui/react';
 
+import { Link } from 'react-router-dom';
 import useUser from "../../../../hooks/useUser";
 import UserService from "../../../../services/UserService";
 import useCustomer from "../../../../hooks/useCustomer";
@@ -19,15 +20,12 @@ import Text from "../../../../components/common/text/Text";
 import Button from "../../../../components/common/buttons/Button";
 
 
-const EditUserDetailsForm = ({
-                                 //password, setPassword,
-                                 method}) => {
+const EditUserDetailsForm = () => {
 
     const { user, updateUser, loading } = useUser();
     const { customer, updateMobileNumber } = useCustomer();
     const [email, setEmail] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
-
 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
@@ -73,12 +71,12 @@ const EditUserDetailsForm = ({
 
     return (
         <Box
-            bg="brand.600"
+            bg="brand.400"
             _dark={{ bg: "#111" }}
             p={10}
         >
             <Box
-                bg="brand.400"
+                bg="brand.100"
                 _dark={{ bg: "#111" }}
                 p={30}
             >
@@ -89,8 +87,8 @@ const EditUserDetailsForm = ({
                 >
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
-                            <Heading color="brand.100" fontSize="5xl" fontWeight="md" lineHeight="10">
-                                Update.
+                            <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
+                                Update
                             </Heading>
                             <Text
                                 mt={1}
@@ -98,12 +96,12 @@ const EditUserDetailsForm = ({
                                 color="gray.600"
                                 _dark={{ color: "gray.400" }}
                             >
+                                your details.
                             </Text>
                         </Box>
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
-                            onSubmit={method}
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
@@ -133,6 +131,7 @@ const EditUserDetailsForm = ({
                                                 value={email}
                                                 placeholder="email"
                                                 onChange={(e) => setEmail(e.target.value)}
+                                                borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                             />
@@ -163,10 +162,12 @@ const EditUserDetailsForm = ({
                                                 type="tel"
                                                 value={mobileNumber}
                                                 onChange={(e) => setMobileNumber(e.target.value)}
+                                                borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                             />
                                         </InputGroup>
+
                                         <Button
                                             type="button"
                                             onClick={handleUpdateMobileNumber}
@@ -190,14 +191,14 @@ const EditUserDetailsForm = ({
                                 _dark={{ bg: "#121212" }}
                                 textAlign="right"
                             >
-                                <Button
-                                    type="submit"
-                                    colorScheme="brand"
-                                    _focus={{ shadow: "" }}
-                                    fontWeight="md"
-                                >
-                                    Next
-                                </Button>
+                                <Link to="/settings/profile">
+                                    <Button
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md">
+                                        Return
+                                    </Button>
+                                </Link>
                             </Box>
                         </chakra.form>
 
