@@ -60,9 +60,7 @@ public class HistoricalMarketDataService {
                 .collectList()
                 .map(tickerDataList -> {
                     List<TickerDataDTO> tickerDataDTOList = new ArrayList<>();
-                    for (TickerDataDTO data : tickerDataList) {
-                        tickerDataDTOList.add(data);
-                    }
+                    tickerDataDTOList.addAll(tickerDataList);
                     return tickerDataDTOList;
                 });
     }

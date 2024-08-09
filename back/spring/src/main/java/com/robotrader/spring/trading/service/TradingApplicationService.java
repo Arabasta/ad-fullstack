@@ -39,6 +39,7 @@ public class TradingApplicationService implements ITradingApplicationService {
     private final LiveMarketDataService liveMarketDataService;
     private final TradeTransactionLogService tradeTransactionLogService;
     private final S3TransactionLogger s3TransactionLogger;
+    private final PredictionService predictionService;
     private List<TradingContext> tradingContexts;
     private static final Logger logger = LoggerFactory.getLogger(TradingApplicationService.class);
 
@@ -46,12 +47,13 @@ public class TradingApplicationService implements ITradingApplicationService {
     public TradingApplicationService(MoneyPoolService moneyPoolService,
                                      HistoricalMarketDataService historicalMarketDataService,
                                      LiveMarketDataService liveMarketDataService, TradeTransactionLogService tradeTransactionLogService,
-                                     Optional<S3TransactionLogger> s3TransactionLogger) {
+                                     Optional<S3TransactionLogger> s3TransactionLogger, PredictionService predictionService) {
         this.moneyPoolService = moneyPoolService;
         this.historicalMarketDataService = historicalMarketDataService;
         this.liveMarketDataService = liveMarketDataService;
         this.tradeTransactionLogService = tradeTransactionLogService;
         this.s3TransactionLogger = s3TransactionLogger.orElse(null);
+        this.predictionService = predictionService;
         this.tradingContexts = new ArrayList<>();
     }
 
@@ -66,9 +68,9 @@ public class TradingApplicationService implements ITradingApplicationService {
         for (String ticker : tickers) {
             TradingContext tradingContext = new TradingContext();
             tradingContext.setStrategy(new BackTestingStrategy(
-                    new MemoryStoreTradePersistence(), historicalMarketDataService));
+                    new MemoryStoreTradePersistence(), historicalMarketDataService, predictionService));
 
-            TradingAlgorithmBase tradingAlgorithm = new TradingAlgorithmOne(ticker, portfolioType, moneyPoolService);
+            TradingAlgorithmBase tradingAlgorithm = new TradingAlgorithmTwo(ticker, portfolioType, moneyPoolService);
 
             // Execute the trading strategy asynchronously
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {

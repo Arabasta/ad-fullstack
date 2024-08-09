@@ -81,7 +81,7 @@ public abstract class TradingAlgorithmBase {
         if (sellSignal && isTest) {
             executeTradeBackTest("SELL");
             return; // Allow only 1 trade per execution.
-        } else if (sellSignal && !isTest) {
+        } else if (sellSignal) {
             executeTradeLive("SELL");
             return; // Allow only 1 trade per execution.
         }
