@@ -21,14 +21,21 @@ ChartJS.register(
     Legend
 );
 
+
 const LineChart = ({ data , view, labels }) => {
+
+    if (!data || !data.datasets) {
+        console.error('Invalid data format:', data);
+        return null;
+    }
+
     const chartOptions = {
         responsive: true,
         scales: {
             'y-axis-1': {
                 type: 'linear',
                 position: 'left',
-                display: view === 'capital',
+                display: view === 'capital' || view === 'portfolioValue',
                 title: {
                     display: true,
                     text: 'Capital ($)',
@@ -52,7 +59,7 @@ const LineChart = ({ data , view, labels }) => {
             'y-axis-2': {
                 type: 'linear',
                 position: 'left',
-                display: view === 'percentChange',
+                display: view === 'percentChange' || view === 'performance',
                 title: {
                     display: true,
                     text: 'Percent Change (%)',
@@ -77,7 +84,7 @@ const LineChart = ({ data , view, labels }) => {
             x: {
                 title: {
                     display: true,
-                    text: `Elapsed Time (${labels[labels.length - 1]} minutes)`,
+                    text: `Elapsed Time`,
                     color: 'brand.600',
                     font: {
                         size: 14
