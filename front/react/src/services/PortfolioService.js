@@ -20,11 +20,11 @@ const addFunds = async (portfolioType, amount) => {
     });
 };
 
-const seePortfolioPerformanceChart = async(portfolioType) => {
-    return await axiosInstance.get(`/v1/customer/portfolio/chart`, {
-        params: { portfolioType }
-    });
-}
+const seePortfolioPerformanceChart = async (portfolioType) => {
+    const url = `/v1/customer/portfolio/chart?portfolioType=${portfolioType}`;
+    return await axiosInstance.get(url);
+};
+
 
 const PortfolioService = {
     getPortfolio,

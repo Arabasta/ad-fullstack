@@ -39,7 +39,7 @@ const usePortfolio = (portfolioType) => {
     const getPerformanceChart = async () => {
         try {
             const response = await PortfolioService.seePortfolioPerformanceChart(portfolioType);
-            setPerformanceChart(response.data.data); // Assuming response.data.data contains the chart data
+            setPerformanceChart(response.data.data);
         } catch (error) {
             console.error('Error fetching portfolio performance chart', error);
         }
