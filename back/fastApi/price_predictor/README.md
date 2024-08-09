@@ -4,8 +4,8 @@ _ref: https://fastapi-openapi-markdown-documentation-generator-d96hc549nb58e.str
 ---
 ## Running locally
 
-1. RECOMMENDED: Create new virtual environment
-2. Navigate to `/back/fastApi/price_predictor/` directory
+1. RECOMMENDED: Create new virtual environment using IDE.
+2. In IDE terminal, navigate to `/back/fastApi/price_predictor/` directory
 3. Run `pip install --no-cache-dir -r requirements.txt`
 4. Execute command `fastapi run`
 
