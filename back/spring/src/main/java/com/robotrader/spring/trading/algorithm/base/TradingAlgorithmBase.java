@@ -190,10 +190,12 @@ public abstract class TradingAlgorithmBase {
         return baseRisk; // Otherwise, use the base risk
     }
 
-    public void stopLiveTrade() {
+    public boolean stopLiveTrade() {
         if (lastTradeTransaction.getAction().equals("BUY")) {
             executeTradeLive("SELL");
+            return true;
         }
+        return false;
     }
 
 }

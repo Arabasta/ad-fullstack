@@ -43,6 +43,7 @@ public class LiveTradingStrategy implements TradingStrategy {
     }
 
     @Override
+//    @Scheduled(cron = "0 */10 * * * *") // todo: Runs every 10 minutes
     public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithm) {
         this.tradingAlgorithm = tradingAlgorithm;
         this.completionFuture = new CompletableFuture<>();
@@ -91,15 +92,15 @@ public class LiveTradingStrategy implements TradingStrategy {
     // Polygon's websocket ticker subscription is X:BTC-USD but response object is BTC-USD......
     private String processResponseTicker(String ticker) { return "X:" + ticker; }
 
-    private void setupAndExecuteLiveTrade(TradingAlgorithmBase tradingAlgorithmBase) {
-        historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
-                .doOnNext(data-> tradingAlgorithmBase.setPriceHistory(data))
-                .doOnNext(data -> tradingAlgorithmBase.setPricePredictions(getPricePredictions(data)))
+    private void setupAndExecuteLiveTrade(TradingAlgorithmBase tradingAlgorithm) {
+        historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithm.getTicker()))
+                .doOnNext(data-> tradingAlgorithm.setPriceHistory(data))
+                .doOnNext(data -> tradingAlgorithm.setPricePredictions(getPricePredictions(data)))
                 .doOnNext(data -> {
-                    TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getLastTradeTransaction();
+                    TradeTransaction lastTransactionBeforeExecution = tradingAlgorithm.getLastTradeTransaction();
                     boolean isTest = false;
-                    tradingAlgorithmBase.execute(isTest);
-                    TradeTransaction newTransaction = tradingAlgorithmBase.getLastTradeTransaction();
+                    tradingAlgorithm.execute(isTest);
+                    TradeTransaction newTransaction = tradingAlgorithm.getLastTradeTransaction();
 
                     // Only process the trade if a new transaction was created
                     if (newTransaction != null && !newTransaction.equals(lastTransactionBeforeExecution)) {
@@ -125,7 +126,10 @@ public class LiveTradingStrategy implements TradingStrategy {
 
     @Override
     public void stop() {
-        tradingAlgorithm.stopLiveTrade();
+        if (tradingAlgorithm.stopLiveTrade()) {
+            TradeTransaction newTransaction = tradingAlgorithm.getLastTradeTransaction();
+            processTrade(newTransaction);
+        }
         unsubscribeFromFlux();
         completionFuture.complete(null); // Complete on stop
     }
