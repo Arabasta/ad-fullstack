@@ -9,7 +9,7 @@ const LiveTrading = () => {
     const [tickerType, setTickerType] = useState('CRYPTO');
 
     const handleStartLiveTrading = async () => {
-        await startLiveTrading(portfolioType, tickerType);
+        await startLiveTrading();  // 移除了参数
     };
 
     const handleStopLiveTrading = async () => {
@@ -22,14 +22,14 @@ const LiveTrading = () => {
     };
 
     return (
-        <div>
+        <div>a
             <div>
                 <label>
                     Portfolio Type:
                     <select value={portfolioType} onChange={(e) => setPortfolioType(e.target.value)} disabled={isTrading}>
                         <option value="AGGRESSIVE">Aggressive</option>
                         <option value="CONSERVATIVE">Conservative</option>
-                        <option value="BALANCED">Balanced</option>
+                        <option value="MODERATE">Moderate</option>
                     </select>
                 </label>
                 <label>
@@ -53,4 +53,4 @@ const LiveTrading = () => {
     );
 };
 
-export default LiveTrading;
+export default LiveTrading

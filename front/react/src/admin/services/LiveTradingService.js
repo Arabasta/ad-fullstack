@@ -1,8 +1,8 @@
 import axiosInstance from "../../config/axios/axiosInstance";
 
 // Start live trading
-const startLiveTrading = async (portfolioType, tickerType) => {
-    const url = `/v1/admin/trading/livetrading/start?portfolioType=${portfolioType}&tickerType=${tickerType}`;
+const startLiveTrading = async () => {
+    const url = '/v1/admin/trading/livetrading/start';
     return await axiosInstance.get(url);
 };
 
