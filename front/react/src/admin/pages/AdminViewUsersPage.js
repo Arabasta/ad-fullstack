@@ -1,14 +1,15 @@
 import React from 'react';
+import { Box, Heading, Container } from '@chakra-ui/react';
 import UserList from '../component/UserList';
-import Heading from "../../components/common/text/Heading";
-
 
 const AdminPage = () => {
     return (
-        <div>
-            <Heading variant="h1">Manage Users</Heading>
+        <Container maxW="container.lg" p={4}>
+            <Heading as="h1" size="lg" mb={6}>
+                Manage Users
+            </Heading>
             <UserList />
-        </div>
+        </Container>
     );
 };
 
