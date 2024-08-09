@@ -1,15 +1,22 @@
 package com.robotrader.spring.trading.strategy;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.robotrader.spring.dto.ticker.TickerDTO;
+import com.robotrader.spring.model.enums.PortfolioTypeEnum;
+import com.robotrader.spring.model.enums.TickerTypeEnum;
+import com.robotrader.spring.trading.dto.PredictionDTO;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.HistoricalMarketDataService;
-import com.robotrader.spring.trading.service.LiveMarketDataService;
+import com.robotrader.spring.trading.service.PredictionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,19 +28,24 @@ import java.util.stream.Collectors;
 public class BackTestingStrategy implements TradingStrategy {
     private final TradePersistence tradePersistence;
     private final HistoricalMarketDataService historicalMarketDataService;
+    private final PredictionService predictionService;
     private static final Logger logger = LoggerFactory.getLogger(BackTestingStrategy.class);
+    private static final int MIN_INPUT_SIZE = 76;
 
     public BackTestingStrategy(TradePersistence tradePersistence,
-                               HistoricalMarketDataService historicalMarketDataService) {
+                               HistoricalMarketDataService historicalMarketDataService, PredictionService predictionService) {
         this.tradePersistence = tradePersistence;
         this.historicalMarketDataService = historicalMarketDataService;
+        this.predictionService = predictionService;
     }
 
     @Override
     public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase) {
         return historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
-                .doOnNext(data -> runSimulation(tradingAlgorithmBase, data))
-                .doOnNext(data -> getTradeResults())
+                .flatMap(data -> {
+                    // Ensure runSimulation returns a Mono<Void>
+                    return runSimulation(tradingAlgorithmBase, data);
+                })
                 .toFuture()
                 .thenAccept(data -> logger.info("Backtesting completed successfully."))
                 .exceptionally(error -> {
@@ -54,38 +66,101 @@ public class BackTestingStrategy implements TradingStrategy {
         return ticker.replace("-","");
     }
 
-    public void runSimulation(TradingAlgorithmBase tradingAlgorithmBase, Map<String, List<Object>> marketDataHistory) {
+    public Mono<Void> runSimulation(TradingAlgorithmBase tradingAlgorithmBase, Map<String, List<Object>> marketDataHistory) {
+        return Mono.create(sink -> {
+            // Loop through price history and execute algo, simulating progress of time
+            Flux.fromIterable(marketDataHistory.get("open"))
+                    .takeWhile(openPrice -> marketDataHistory.get("open").size() >= 77)
+                    .concatMap(openPrice -> {
+                        return getPricePredictions(marketDataHistory, tradingAlgorithmBase.getTicker())
+                                .doOnNext(predictionDTO -> {
+                                    List<BigDecimal> pricePredictions = predictionDTO.getPredictions();
+                                    System.out.println("Size of market data history: " + marketDataHistory.get("open").size());
+                                    System.out.println("Size of predictions: " + pricePredictions.size());
+                                    System.out.println(predictionDTO);
+                                    TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getLastTradeTransaction();
 
-        List<BigDecimal> pricePredictions = getPricePredictions(marketDataHistory);
-        // Loop through price history and execute algo, simulating progress of time
-        while (!pricePredictions.isEmpty()) {
-            TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getLastTradeTransaction();
+                                    tradingAlgorithmBase.setPricePredictions(new ArrayList<>(pricePredictions));
+                                    tradingAlgorithmBase.setPriceHistory(new HashMap<>(marketDataHistory));
+                                    boolean isTest = true;
+                                    tradingAlgorithmBase.execute(isTest);
 
-            tradingAlgorithmBase.setPricePredictions(new ArrayList<>(pricePredictions));
-            tradingAlgorithmBase.setPriceHistory(new HashMap<>(marketDataHistory));
-            boolean isTest = true;
-            tradingAlgorithmBase.execute(isTest);
-            pricePredictions.remove(0); // Remove the oldest price
-            marketDataHistory.get("timestamp").remove(0);
-            marketDataHistory.get("open").remove(0);
-            marketDataHistory.get("close").remove(0);
-            marketDataHistory.get("high").remove(0);
-            marketDataHistory.get("low").remove(0);
+                                    List<Object> openPrices = new ArrayList<>(marketDataHistory.get("open"));
+                                    List<Object> timestamps = new ArrayList<>(marketDataHistory.get("timestamp"));
+                                    List<Object> closePrices = new ArrayList<>(marketDataHistory.get("close"));
+                                    List<Object> highPrices = new ArrayList<>(marketDataHistory.get("high"));
+                                    List<Object> lowPrices = new ArrayList<>(marketDataHistory.get("low"));
+                                    List<Object> vwPrices = new ArrayList<>(marketDataHistory.get("vw"));
 
-            TradeTransaction newTransaction = tradingAlgorithmBase.getLastTradeTransaction();
-            // Only process the trade if a new transaction was created
-            if (newTransaction != null && !newTransaction.equals(lastTransactionBeforeExecution)) {
-                processTrade(newTransaction);
-            }
+                                    openPrices.remove(0);
+                                    timestamps.remove(0);
+                                    closePrices.remove(0);
+                                    highPrices.remove(0);
+                                    lowPrices.remove(0);
+                                    vwPrices.remove(0);
 
-        }
+                                    marketDataHistory.put("open", openPrices);
+                                    marketDataHistory.put("timestamp", timestamps);
+                                    marketDataHistory.put("close", closePrices);
+                                    marketDataHistory.put("high", highPrices);
+                                    marketDataHistory.put("low", lowPrices);
+                                    marketDataHistory.put("vw", vwPrices);
+
+                                    TradeTransaction newTransaction = tradingAlgorithmBase.getLastTradeTransaction();
+                                    // Only process the trade if a new transaction was created
+                                    if (newTransaction != null && !newTransaction.equals(lastTransactionBeforeExecution)) {
+                                        processTrade(newTransaction);
+                                    }
+
+                                })
+                                .doOnError(error -> {
+                                    logger.error("Error retrieving price predictions: {}", error.getMessage());
+                                    sink.error(error);
+                                });
+                    })
+                    .subscribe(
+                            null,
+                            sink::error,
+                            sink::success
+                    );
+        });
     }
 
-    public List<BigDecimal> getPricePredictions(Map<String, List<Object>> marketDataHistory) {
-        List<Object> objects = marketDataHistory.get("close");
-        return objects.stream()
+    public Mono<PredictionDTO> getPricePredictions(Map<String, List<Object>> marketDataHistory, String tickerName) {
+        List<BigDecimal> historicalPrices = marketDataHistory.get("close").stream()
                 .map(price -> (BigDecimal) price)
-                .collect(Collectors.toList()); //TODO: Predictions == history for now
+                .collect(Collectors.toList());
+
+        PredictionDTO predictionDTO = new PredictionDTO();
+        predictionDTO.setPredictions(historicalPrices);
+
+        TickerDTO tickerDTO = new TickerDTO();
+        tickerDTO.setTickerName(tickerName);
+        tickerDTO.setTickerType(TickerTypeEnum.STOCKS);
+        tickerDTO.setPortfolioType(PortfolioTypeEnum.AGGRESSIVE);
+        predictionDTO.setTickerDTO(tickerDTO);
+
+        return Mono.just(predictionDTO);
+        // todo: replace above with below code for deployment. Above code doesn't require fast api prediction server to be set up
+//        PredictionDTO predictionDTO = new PredictionDTO();
+//        List<BigDecimal> historicalVW = marketDataHistory.get("vw").subList(0, MIN_INPUT_SIZE + 1)
+//                .stream()
+//                .map(obj -> new BigDecimal(obj.toString()))
+//                .collect(Collectors.toList());
+//        System.out.println("Input data: " + historicalVW);
+//        predictionDTO.setPredictions(historicalVW);
+//        TickerDTO tickerDTO = new TickerDTO();
+//        tickerDTO.setTickerName(processTicker(tickerName));
+//        tickerDTO.setTickerType(TickerTypeEnum.STOCKS);
+//        tickerDTO.setPortfolioType(PortfolioTypeEnum.AGGRESSIVE);
+//        predictionDTO.setTickerDTO(tickerDTO);
+//        Mono<PredictionDTO> predictionDTOMono;
+//        try {
+//            predictionDTOMono = predictionService.byPredictionDtoBacktest(predictionDTO);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return predictionDTOMono;
     }
 
     @Override
@@ -116,6 +191,9 @@ public class BackTestingStrategy implements TradingStrategy {
                 }
             }
             logger.info("Total Profit: {}", totalProfit);
+            logger.info("TOtal number of trades: {}", trades.size());
+        } else {
+            logger.info("No trade transactions");
         }
         return trades;
     }

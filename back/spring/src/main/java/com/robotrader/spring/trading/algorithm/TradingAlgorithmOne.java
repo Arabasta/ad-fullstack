@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TradingAlgorithmOne extends TradingAlgorithmBase {
-    private BigDecimal atr;
+    protected BigDecimal atr;
     public static final String ALGORITHM_TYPE = "TREND_FOLLOWING_ATR";
     private static final Logger logger = LoggerFactory.getLogger(TradingAlgorithmOne.class);
 
@@ -24,7 +24,7 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
     public boolean checkForBuySignal() {
 
         if (isTradeable() && pricePredictions != null) {
-            int window = 20; // TODO: Assumed prediction data size is 20 for now, depending on model output
+            int window = 37;
             // Not enough prediction data, cannot trade
             if (pricePredictions.size() < window) {
                 logger.info("Not enough price predictions");
@@ -68,19 +68,22 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
         // 14-day ATR
         int atrPeriod = 14;
 
-            if (priceHistory.get("close").size() < atrPeriod + 1) { // Need a atrPeriod + 1 window
-                logger.info("Insufficient number of to make a trade decision, no. of data: {}", atrPeriod);
-                return BigDecimal.ZERO;
-            }
-            atr = getATR(priceHistory, atrPeriod);
-            stopLossPrice = calculateStopLossPrice(currentPrice);
+        if (priceHistory.get("close").size() < atrPeriod + 1) { // Need a atrPeriod + 1 window
+            logger.info("Insufficient number of to make a trade decision, no. of data: {}", atrPeriod);
+            return BigDecimal.ZERO;
+        }
+        atr = getATR(priceHistory, atrPeriod);
+        stopLossPrice = calculateStopLossPrice(currentPrice);
 
-            // Determine available capital
-            BigDecimal availableCapital = isTest ? currentCapitalTest : moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
+        // Determine available capital
+        BigDecimal availableCapital = isTest ? currentCapitalTest : moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
 
-            // Calculate raw position size
-            BigDecimal rawPositionSize = availableCapital.multiply(risk).divide(stopLossAmount, 8, RoundingMode.HALF_UP);
-            return applyPriceBasedScaling(rawPositionSize, currentPrice, HIGH_PRICE_THRESHOLD);
+        // Calculate adjusted risk based on stop loss size
+        BigDecimal adjustedRisk = calculateAdjustedRisk(risk, stopLossAmount, currentPrice);
+
+        // Calculate raw position size using adjusted risk
+        BigDecimal rawPositionSize = availableCapital.multiply(adjustedRisk).divide(stopLossAmount, 8, RoundingMode.HALF_UP);
+        return applyPriceBasedScaling(rawPositionSize, currentPrice, HIGH_PRICE_THRESHOLD);
     }
 
     @Override
