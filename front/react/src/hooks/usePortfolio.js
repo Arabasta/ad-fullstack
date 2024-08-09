@@ -15,7 +15,17 @@ const usePortfolio = (portfolioType) => {
             }
         };
 
+        const getPerformanceChart = async () => {
+            try {
+                const response = await PortfolioService.getPortfolioChart(portfolioType);
+                setPerformanceChart(response.data.data);
+            } catch (error) {
+                console.error('Error fetching performance chart data', error);
+            }
+        };
+
         getPortfolio();
+        getPerformanceChart();
     }, [portfolioType]);
 
     const addFunds = async (amount) => {
@@ -36,18 +46,7 @@ const usePortfolio = (portfolioType) => {
         }
     };
 
-    const getPerformanceChart = async () => {
-        try {
-            const response = await PortfolioService.seePortfolioPerformanceChart(portfolioType);
-            setPerformanceChart(response.data.data);
-        } catch (error) {
-            console.error('Error fetching portfolio performance chart', error);
-        }
-    };
-
-
-
-    return { portfolio, addFunds, withdrawFunds, performanceChart, getPerformanceChart };
+    return { portfolio, performanceChart, addFunds, withdrawFunds };
 };
 
 export default usePortfolio;
