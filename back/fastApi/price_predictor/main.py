@@ -74,14 +74,14 @@ API
 
 
 @app.get("/")
-async def redirect_to_documentation():
+def redirect_to_documentation():
     return RedirectResponse(url="/documentation")
 
 
 # todo: for dev. to delete before submission.
 # To check list of tickers that are available for predictions, with trained models loaded
 @app.get("/api/v1/health")
-async def get():
+def get():
     health = {
         "AWS_S3_ACCESS_KEY_ID": AWS_S3_ACCESS_KEY_ID,
         "AWS_S3_SECRET_ACCESS_KEY": AWS_S3_SECRET_ACCESS_KEY,
@@ -99,7 +99,7 @@ async def get():
 # Accepts Backend's PredictionDTO in RequestBody
 # Note: List<Decimal> must be >= FEATURE_COUNT, which will be used to create lag features and reshaped for predictions.
 @app.post("/api/v1/predict/ticker/backtest")
-async def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
+def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
     predictions = []
     try:
         if prediction_dto.tickerDTO is None or prediction_dto.predictions is None:
@@ -119,7 +119,7 @@ async def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
 # todo: put try catch block
 # Accepts Backend's TickerDTO in RequestBody
 @app.post("/api/v1/predict/ticker/live")
-async def by_ticker_dto_live(ticker_dto: TickerDTO):
+def by_ticker_dto_live(ticker_dto: TickerDTO):
     predictions = []
     try:
         ticker_name = ticker_dto.tickerName
@@ -138,8 +138,8 @@ async def by_ticker_dto_live(ticker_dto: TickerDTO):
 # Dev
 # todo: method tested as working. to remove this api after dev.
 @app.get("/api/v1/dev/load_pickle_model")
-async def test_load_pickle_model(ticker_name, key):
-    await load_pickle_file(AWS_S3_MODEL_BUCKET_NAME, ticker_name, key, LOADED_MODELS)
+def test_load_pickle_model(ticker_name, key):
+    load_pickle_file(AWS_S3_MODEL_BUCKET_NAME, ticker_name, key, LOADED_MODELS)
     if ticker_name in list(LOADED_MODELS):
         return {"response": f'{ticker_name} loaded!'}
     return {"response": f'{ticker_name} loading failed!'}
@@ -160,7 +160,7 @@ def get_s3_client():
 
 # Read and load models from S3 to RAM
 # todo: to refactor. taking around 2s per model.
-async def load_all_pickle_files(bucket_name, models_dict):
+def load_all_pickle_files(bucket_name, models_dict):
     try:
         s3_client = get_s3_client()
         # Retrieve the list of model files in the bucket
@@ -184,7 +184,7 @@ async def load_all_pickle_files(bucket_name, models_dict):
             logger.info('--Start loading models--')
             for key in keys:
                 ticker_name = str(key).split(".")[0]
-                await load_pickle_file(bucket_name, ticker_name, key, models_dict)
+                load_pickle_file(bucket_name, ticker_name, key, models_dict)
             logger.info('--Finish loading models--')
 
         else:
@@ -193,13 +193,13 @@ async def load_all_pickle_files(bucket_name, models_dict):
         print(f"Failed to retrieve objects from the bucket: {str(e)}")
 
 
-async def load_pickle_file(bucket_name, ticker_name, key, models_dict):
+def load_pickle_file(bucket_name, ticker_name, key, models_dict):
     # Set up S3 client
     s3_client = get_s3_client()
     # Load trained model from s3 to in-memory dictionary
     obj = s3_client.get_object(Bucket=bucket_name, Key=f'model/{key}')
     models_dict[ticker_name] = pickle.loads(obj['Body'].read())
-    logger.info(f'Loaded {key} model')
+    logger.info(f'Loaded {key} model. Ticker name: {ticker_name}')
     # Load x_scaler from s3 to in-memory dictionary
     obj = s3_client.get_object(Bucket=bucket_name, Key=f'x_scaler/{key}')
     LOADED_X_SCALERS[ticker_name] = pickle.loads(obj['Body'].read())
@@ -268,5 +268,5 @@ MAIN
 
 
 @app.on_event("startup")
-async def startup_event():
-    await load_all_pickle_files(AWS_S3_MODEL_BUCKET_NAME, LOADED_MODELS)
+def startup_event():
+    load_all_pickle_files(AWS_S3_MODEL_BUCKET_NAME, LOADED_MODELS)
