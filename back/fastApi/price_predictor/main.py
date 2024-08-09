@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import List
+from typing import List, Type
 
 import boto3
 import os
@@ -13,7 +13,7 @@ from sklearn.linear_model import ElasticNet
 from xgboost import XGBRegressor
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 from polygon import RESTClient
 
@@ -54,6 +54,15 @@ MODELS
 '''
 
 
+class HealthDTO(BaseModel):
+    cloud_access_key_id_status: str
+    cloud_secret_access_key_status: str
+    cloud_prediction_storage_name_status: str
+    cloud_model_storage_name_status: str
+    cloud_data_provider_api_key_status: str
+    models_loaded_for_prediction_and_backtesting: List[str]
+
+
 class TickerDTO(BaseModel):
     tickerType: str
     tickerName: str
@@ -63,6 +72,11 @@ class TickerDTO(BaseModel):
 class PredictionDTO(BaseModel):
     tickerDTO: TickerDTO
     predictions: List[Decimal]
+
+
+class ExceptionDTO(BaseModel):
+    status_code: int
+    detail: str
 
 
 '''
@@ -76,28 +90,34 @@ def redirect_to_documentation():
 
 
 @app.get("/api/v1/health")
-def get():
-    health = {
-        "cloud_access_key_id": "Loaded" if len(AWS_S3_ACCESS_KEY_ID) > 0 else "Not found.",
-        "cloud_secret_access_key": "Loaded" if len(AWS_S3_SECRET_ACCESS_KEY) > 0 else "Not found.",
-        "cloud_prediction_storage_name": "Loaded" if len(AWS_S3_PREDICTION_BUCKET_NAME) > 0 else "Not found.",
-        "cloud_model_storage_name": "Loaded" if len(AWS_S3_MODEL_BUCKET_NAME) > 0 else "Not found.",
-        "cloud_data_provider_api_key": "Loaded" if len(POLYGON_API_KEY) > 0 else "Not found.",
-        "models_loaded_for_prediction_and_backtesting": LOADED_MODELS,
-    }
-    return {"response": health}
+def get() -> Type[HealthDTO]:
+    HealthDTO(
+        cloud_access_key_id_status="Loaded" if len(AWS_S3_ACCESS_KEY_ID) > 0 else "Not found.",
+        cloud_secret_access_key_status="Loaded" if len(AWS_S3_SECRET_ACCESS_KEY) > 0 else "Not found.",
+        cloud_prediction_storage_name_status="Loaded" if len(AWS_S3_PREDICTION_BUCKET_NAME) > 0 else "Not found.",
+        cloud_model_storage_name_status="Loaded" if len(AWS_S3_MODEL_BUCKET_NAME) > 0 else "Not found.",
+        cloud_data_provider_api_key_status="Loaded" if len(POLYGON_API_KEY) > 0 else "Not found.",
+        models_loaded_for_prediction_and_backtesting=list(LOADED_MODELS)
+    )
+    return HealthDTO
 
 
 # Accepts Backend's PredictionDTO in RequestBody
 # Note: List<Decimal> must be >= FEATURE_COUNT, which will be used to create lag features and reshaped for predictions.
 @app.post("/api/v1/predict/ticker/backtest")
-def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
+def by_prediction_dto_backtest(prediction_dto: PredictionDTO) -> PredictionDTO | ExceptionDTO:
     predictions = []
     try:
-        if prediction_dto.tickerDTO is None or prediction_dto.predictions is None:
-            return None
+        # Exception handling
+        if len(list(LOADED_MODELS)) == 0:
+            return ExceptionDTO(status_code=503, detail=f"No models ready. Please try api `load_all_pickle_models`.")
+        if prediction_dto.tickerDTO.tickerName is None or prediction_dto.predictions is None:
+            return ExceptionDTO(status_code=400,
+                                detail=f"tickerDTO.tickerName or predictions attributes cannot be null")
         if len(prediction_dto.predictions) < FEATURE_COUNT:
-            raise ValueError(f"Please input more than {FEATURE_COUNT} datapoints")
+            return ExceptionDTO(status_code=400,
+                                detail=f"Please input more than {FEATURE_COUNT} predictions datapoints")
+        # Prediction logic
         x_values = add_lagged_features(df_x_values=pd.DataFrame(prediction_dto.predictions, columns=[FEATURE]),
                                        future_window=FEATURE_COUNT)
         predictions = predictions_from_x_values(ticker_dto=prediction_dto.tickerDTO,
@@ -110,12 +130,17 @@ def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
 
 # Accepts Backend's TickerDTO in RequestBody
 @app.post("/api/v1/predict/ticker/live")
-def by_ticker_dto_live(ticker_dto: TickerDTO):
+def by_ticker_dto_live(ticker_dto: TickerDTO) -> PredictionDTO | ExceptionDTO:
     predictions = []
     try:
-        ticker_name = ticker_dto.tickerName
+        ticker_name = ticker_dto.tickerName.strip()
+        # Exception handling
+        if ticker_name is None or ticker_name is "":
+            return ExceptionDTO(status_code=400,
+                                detail=f"tickerName cannot be empty")
         if ticker_name not in list(LOADED_MODELS):
-            return None
+            return ExceptionDTO(status_code=400, detail=f"{ticker_name} not in available models: {list(LOADED_MODELS)}")
+        # Prediction logic
         logger.info('--Start prediction--')
         logger.info(f'--Predicting {ticker_name}--')
         predictions = predictions_from_ticker_dto(ticker_dto)
@@ -127,9 +152,9 @@ def by_ticker_dto_live(ticker_dto: TickerDTO):
 
 
 @app.get("/api/v1/dev/load_all_pickle_models")
-async def load_models():
+async def load_models() -> List[str]:
     load_all_pickle_files(AWS_S3_MODEL_BUCKET_NAME, LOADED_MODELS)
-    return {"response": f'Loaded: {list(LOADED_MODELS)}'}
+    return list(LOADED_MODELS)
 
 
 # todo: to refactor helper functions into another python file.
