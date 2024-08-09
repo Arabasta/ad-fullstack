@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Heading, Container, Flex } from '@chakra-ui/react';
+import { Box, Heading, Container } from '@chakra-ui/react';
 import UserList from '../component/UserList';
 
 const AdminPage = () => {
