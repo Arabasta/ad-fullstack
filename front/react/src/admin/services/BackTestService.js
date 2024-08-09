@@ -5,8 +5,12 @@ const getAlgorithmList = async () => {
 };
 
 const runBackTest = async (ticker, portfolioType) => {
-    return await axiosInstance.get(`/v1/admin/trading/backtest/${ticker}?portfolioType=${portfolioType}`);
+    const url = `/v1/admin/trading/backtest/${portfolioType}`;
+    const params = ticker ? `?ticker=${ticker}` : '';
+    return await axiosInstance.get(`${url}${params}`);
 };
+
+
 
 const BackTestService = {
     getAlgorithmList,
