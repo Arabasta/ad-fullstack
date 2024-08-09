@@ -21,12 +21,10 @@ import pandas as pd
 
 from service import utils as utils
 
-
 # Load
 app = FastAPI(docs_url="/documentation", redoc_url=None)
 logger = logging.getLogger('uvicorn')
 load_dotenv()
-
 
 '''
 Constants
@@ -45,14 +43,12 @@ PARENT_DIRECTORY_PATH = str(utils.get_project_root())
 REPO_ROOT_PATH = str(utils.get_repo_root())
 
 # IN-MEMORY DATA
-FEATURE = 'vwap'
+FEATURE = 'vwap'  # todo: hardcoded. to implement detecting feature name.
 FEATURE_COUNT = 39  # todo: hardcoded. to implement detecting models' number of features.
 LOADED_MODELS = {}
 LOADED_X_SCALERS = {}
 LOADED_Y_SCALERS = {}
 
-
-# todo: to refactor models into dto folder. for some reason, they were not detected when imported from dto folder.
 '''
 MODELS
 '''
@@ -61,6 +57,7 @@ MODELS
 class TickerDTO(BaseModel):
     tickerType: str
     tickerName: str
+    portfolioType: str
 
 
 class PredictionDTO(BaseModel):
@@ -78,24 +75,19 @@ def redirect_to_documentation():
     return RedirectResponse(url="/documentation")
 
 
-# todo: for dev. to delete before submission.
-# To check list of tickers that are available for predictions, with trained models loaded
 @app.get("/api/v1/health")
 def get():
     health = {
-        "AWS_S3_ACCESS_KEY_ID": AWS_S3_ACCESS_KEY_ID,
-        "AWS_S3_SECRET_ACCESS_KEY": AWS_S3_SECRET_ACCESS_KEY,
-        "AWS_S3_PREDICTION_BUCKET_NAME": AWS_S3_PREDICTION_BUCKET_NAME,
-        "AWS_S3_MODEL_BUCKET_NAME": AWS_S3_MODEL_BUCKET_NAME,
-        "POLYGON_API_KEY": POLYGON_API_KEY,
-        "PARENT_DIRECTORY_PATH": PARENT_DIRECTORY_PATH,
-        "REPO_ROOT_PATH": REPO_ROOT_PATH,
-        "LOADED_MODELS": LOADED_MODELS,
+        "cloud_access_key_id": "Loaded" if len(AWS_S3_ACCESS_KEY_ID) > 0 else "Not found.",
+        "cloud_secret_access_key": "Loaded" if len(AWS_S3_SECRET_ACCESS_KEY) > 0 else "Not found.",
+        "cloud_prediction_storage_name": "Loaded" if len(AWS_S3_PREDICTION_BUCKET_NAME) > 0 else "Not found.",
+        "cloud_model_storage_name": "Loaded" if len(AWS_S3_MODEL_BUCKET_NAME) > 0 else "Not found.",
+        "cloud_data_provider_api_key": "Loaded" if len(POLYGON_API_KEY) > 0 else "Not found.",
+        "models_loaded_for_prediction_and_backtesting": LOADED_MODELS,
     }
     return {"response": health}
 
 
-# todo: put try catch block
 # Accepts Backend's PredictionDTO in RequestBody
 # Note: List<Decimal> must be >= FEATURE_COUNT, which will be used to create lag features and reshaped for predictions.
 @app.post("/api/v1/predict/ticker/backtest")
@@ -116,7 +108,6 @@ def by_prediction_dto_backtest(prediction_dto: PredictionDTO):
                          predictions=predictions)
 
 
-# todo: put try catch block
 # Accepts Backend's TickerDTO in RequestBody
 @app.post("/api/v1/predict/ticker/live")
 def by_ticker_dto_live(ticker_dto: TickerDTO):
@@ -135,14 +126,10 @@ def by_ticker_dto_live(ticker_dto: TickerDTO):
                          predictions=predictions)
 
 
-# Dev
-# todo: method tested as working. to remove this api after dev.
-@app.get("/api/v1/dev/load_pickle_model")
-def test_load_pickle_model(ticker_name, key):
-    load_pickle_file(AWS_S3_MODEL_BUCKET_NAME, ticker_name, key, LOADED_MODELS)
-    if ticker_name in list(LOADED_MODELS):
-        return {"response": f'{ticker_name} loaded!'}
-    return {"response": f'{ticker_name} loading failed!'}
+@app.get("/api/v1/dev/load_all_pickle_models")
+async def load_models():
+    load_all_pickle_files(AWS_S3_MODEL_BUCKET_NAME, LOADED_MODELS)
+    return {"response": f'Loaded: {list(LOADED_MODELS)}'}
 
 
 # todo: to refactor helper functions into another python file.
@@ -169,7 +156,6 @@ def load_all_pickle_files(bucket_name, models_dict):
             # Extract the keys (filenames) and filter out non-.pkl files if needed
             keys = [str(item['Key']).split("/")[1] for item in response['Contents'] if
                     item['Key'].endswith('.pkl')]  # todo:to reinstate all keys after optimisation.
-            logger.info(keys)
             # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
             temp_keys = ['AAPL.pkl', 'ABBV.pkl', 'ADBE.pkl', 'AMZN.pkl', 'AVGO.pkl',
                          'COST.pkl', 'CVX.pkl', 'GOOG.pkl', 'GOOGL.pkl', 'HD.pkl',
@@ -180,6 +166,7 @@ def load_all_pickle_files(bucket_name, models_dict):
 
             # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
             keys = list(set(keys) & set(temp_keys))
+            logger.info(f'Trained models available: {keys}')
             # Load all models
             logger.info('--Start loading models--')
             for key in keys:
