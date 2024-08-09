@@ -10,8 +10,6 @@ const runBackTest = async (ticker, portfolioType) => {
     return await axiosInstance.get(`${url}${params}`);
 };
 
-
-
 const BackTestService = {
     getAlgorithmList,
     runBackTest
