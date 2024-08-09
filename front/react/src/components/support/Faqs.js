@@ -1,6 +1,6 @@
 import React from 'react';
 import FaqList from './FaqList';
-import Heading from "../common/text/Heading";
+import { Box, Flex, chakra, useColorModeValue } from '@chakra-ui/react';
 
 const faqs = [
     {
@@ -51,11 +51,50 @@ const faqs = [
 
 const Faq = () => {
     return (
-        <div>
-            <Heading variant="h1">Frequently Asked Questions</Heading>
-            <FaqList faqs={faqs} />
-        </div>
+        <Flex
+            bg={useColorModeValue("gray.200", "gray.600")}
+            p={20}
+            w="auto"
+            justifyContent="center"
+            alignItems="center"
+        >
+            <Box
+                py={12}
+                bg={useColorModeValue("white", "gray.900")}
+                rounded="xl"
+                shadow="base"
+                w="100%"
+            >
+                <Box maxW="7xl" mx="auto" px={{ base: 4, lg: 8 }}>
+                    <Box textAlign="center">
+                        <chakra.h2
+                            mt={2}
+                            fontSize={{ base: "3xl", sm: "4xl" }}
+                            lineHeight="8"
+                            fontWeight="extrabold"
+                            letterSpacing="tight"
+                            color={useColorModeValue("gray.900", "gray.100")}
+                        >
+                            Frequently Asked Questions
+                        </chakra.h2>
+                        <chakra.p
+                            mt={4}
+                            maxW="2xl"
+                            fontSize="xl"
+                            mx={{ lg: "auto" }}
+                            color={useColorModeValue("gray.500", "gray.300")}
+                        >
+                            Here are some common questions and answers.
+                        </chakra.p>
+                    </Box>
+
+                    <Box mt={10}>
+                        <FaqList faqs={faqs} />
+                    </Box>
+                </Box>
+            </Box>
+        </Flex>
     );
-}
+};
 
 export default Faq;
