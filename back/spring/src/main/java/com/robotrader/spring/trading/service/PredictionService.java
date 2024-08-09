@@ -48,9 +48,9 @@ public class PredictionService {
                 .map(fileName -> fileName.split("/")[1]) // e.g., splits 'model/AAPL' and returns 'AAPL'
                 .map(tickerName -> {
                     if (tickerName.contains(":")) {  //todo: our crypto names are e.g., 'X:BTCUSD'. check if this is robust enough.
-                        return new TickerDTO(TickerTypeEnum.CRYPTO, tickerName);
+                        return new TickerDTO(TickerTypeEnum.CRYPTO, tickerName, null);
                     } else {
-                        return new TickerDTO(TickerTypeEnum.STOCKS, tickerName);
+                        return new TickerDTO(TickerTypeEnum.STOCKS, tickerName, null);
                     }
                 })
                 .toList();

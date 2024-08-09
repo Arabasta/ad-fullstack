@@ -2,6 +2,7 @@ package com.robotrader.spring.service.interfaces;
 
 import com.robotrader.spring.dto.ticker.TickerDTO;
 import com.robotrader.spring.model.Ticker;
+import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface ITickerService {
     List<String> getAllCrytpoTickerName();
     void updateTickerFromDTO(Ticker ticker, TickerDTO tickerDTO);
     void deleteTicker(String tickerName);
+
+    List<String> getTickerByPortfolioType(PortfolioTypeEnum portfolioType);
 }

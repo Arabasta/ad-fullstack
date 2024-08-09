@@ -36,7 +36,7 @@ public class HistoricalDataApiService {
                         .path(path)
                         .queryParam("adjusted", "true")
                         .queryParam("sort", "desc")
-                        .queryParam("limit", 1000)
+                        .queryParam("limit", 5000)
                         .build(ticker, MULTIPLIER, TIMESPAN, fromDate, toDate))
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError(), response -> {
@@ -48,7 +48,6 @@ public class HistoricalDataApiService {
                     return Mono.error(new RuntimeException("5xx error"));
                 })
                 .bodyToMono(MarketDataApiResponseDTO.class)
-                .doOnNext(response -> logger.debug("API Response: {}", response))
                 .doOnError(error -> logger.error("Error in API call: {}", error.getMessage()));
 
         return dataStream

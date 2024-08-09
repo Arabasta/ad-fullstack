@@ -1,5 +1,6 @@
 package com.robotrader.spring.model;
 
+import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,9 @@ public class Ticker {
     @Enumerated(EnumType.STRING)
     private TickerTypeEnum tickerType;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String tickerName;
+
+    @Enumerated(EnumType.STRING)
+    private PortfolioTypeEnum portfolioType;
 }

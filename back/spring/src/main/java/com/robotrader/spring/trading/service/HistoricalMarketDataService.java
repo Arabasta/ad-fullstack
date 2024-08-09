@@ -1,12 +1,9 @@
 package com.robotrader.spring.trading.service;
 
-import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.trading.dto.HistoricalDataDTO;
-import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
 import com.robotrader.spring.trading.dto.TickerDataDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -37,6 +34,7 @@ public class HistoricalMarketDataService {
                     List<BigDecimal> closePrices = new ArrayList<>();
                     List<BigDecimal> highPrices = new ArrayList<>();
                     List<BigDecimal> lowPrices = new ArrayList<>();
+                    List<BigDecimal> vw = new ArrayList<>();
 
                     // Get stock prices in ascending order by time
                     for (HistoricalDataDTO data : stockDataList) {
@@ -45,12 +43,14 @@ public class HistoricalMarketDataService {
                         closePrices.add(0, data.getC());
                         highPrices.add(0, data.getH());
                         lowPrices.add(0, data.getL());
+                        vw.add(0,data.getVw());
                     }
                     stockData.put("timestamp", new ArrayList<>(timestamp));
                     stockData.put("open", new ArrayList<>(openPrices));
                     stockData.put("close", new ArrayList<>(closePrices));
                     stockData.put("high", new ArrayList<>(highPrices));
                     stockData.put("low", new ArrayList<>(lowPrices));
+                    stockData.put("vw", new ArrayList<>(vw));
                     return stockData;
                 });
     }
@@ -60,9 +60,7 @@ public class HistoricalMarketDataService {
                 .collectList()
                 .map(tickerDataList -> {
                     List<TickerDataDTO> tickerDataDTOList = new ArrayList<>();
-                    for (TickerDataDTO data : tickerDataList) {
-                        tickerDataDTOList.add(data);
-                    }
+                    tickerDataDTOList.addAll(tickerDataList);
                     return tickerDataDTOList;
                 });
     }
