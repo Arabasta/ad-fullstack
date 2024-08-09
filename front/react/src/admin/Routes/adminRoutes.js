@@ -1,7 +1,7 @@
 import AdminViewUsersPage from "../pages/AdminViewUsersPage";
 import { Route } from "react-router-dom";
 import ManageTickersPage from "../pages/ManageTickersPage";
-import BackTestPage from "../pages/BacktestPage";
+import BackTestPage from "../pages/Backtest/BacktestPage";
 import AdminManageLiveTradingPage from "../pages/LiveTrading/AdminManageLiveTradingPage";
 import BackTestResultPage from "../pages/BackTestResultPage";
 import TransactionsPage from "../pages/LiveTrading/TransactionsPage";
