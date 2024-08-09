@@ -6,6 +6,7 @@ import Heading from "../../components/common/text/Heading";
 import usePortfolio from "../../hooks/usePortfolio";
 import PortfolioDetails from "../../components/portfolio/PortfolioDetails";
 import portfolioTypes from "./portfolioTypes";
+import RulesPageModal from "../../pages/portfolio/rules/RulesPageModal";
 
 const PortfolioManager = () => {
     const { portfolioType } = useParams();
@@ -27,6 +28,11 @@ const PortfolioManager = () => {
             <PortfolioAddFunds addFunds={addFunds} />
             <PortfolioWithdrawFunds withdrawFunds={withdrawFunds} currentBalance={portfolio.allocatedBalance} />
             <button onClick={handleNavigateToRules}>Rules page</button>
+
+            {/* Manage Rules Modal Button */}
+            <RulesPageModal triggerText="Manage Rules"
+                            modalTitle={title}
+                            portfolioType={portfolioType.toUpperCase()} />
         </div>
     );
 };
