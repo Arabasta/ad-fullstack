@@ -24,8 +24,8 @@ public abstract class TradingAlgorithmBase {
     protected final MoneyPoolService moneyPoolService;
     protected PortfolioTypeEnum portfolioType;
     protected BigDecimal baseAlgoRisk;
-    protected static final BigDecimal AGGRESSIVE_RISK = BigDecimal.valueOf(0.0005);
-    protected static final BigDecimal MODERATE_RISK = BigDecimal.valueOf(0.0003);
+    protected static final BigDecimal AGGRESSIVE_RISK = BigDecimal.valueOf(0.001);
+    protected static final BigDecimal MODERATE_RISK = BigDecimal.valueOf(0.0005);
     protected static final BigDecimal CONSERVATIVE_RISK = BigDecimal.valueOf(0.0001);
     protected BigDecimal position;
     protected BigDecimal currentPrice;
