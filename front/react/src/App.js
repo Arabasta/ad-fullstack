@@ -13,7 +13,7 @@ import AdminRoutes from "./admin/Routes/adminRoutes";
 import settingRoutes from "./routes/SettingRoutes";
 
 import { Button, useColorMode} from "@chakra-ui/react";
-import Admin_header from "./admin/component/Header/Admin_header";
+import AdminHeader from "./admin/component/Header/adminHeader";
 
 const App = () => {
     return (
@@ -32,7 +32,7 @@ const AppContent = () => {
     return (
         <>
             <Header />
-            <Admin_header />
+            <AdminHeader />
             <Button onClick={toggleColorMode}>
                 Toggle {colorMode === "light" ? "Dark" : "Light"}
             </Button>

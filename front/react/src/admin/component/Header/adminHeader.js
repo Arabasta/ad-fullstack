@@ -18,7 +18,7 @@ import Button from "../../../components/common/buttons/Button";
 import { Link } from 'react-router-dom';
 import { AuthContext } from "../../../config/context/AuthContext";
 
-const Admin_header = () => {
+const AdminHeader = () => {
     const bg = useColorModeValue("white", "white");
     const mobileNav = useDisclosure();
     const { isAuthenticated, logout } = useContext(AuthContext);
@@ -158,4 +158,4 @@ const Admin_header = () => {
     );
 };
 
-export default Admin_header;
+export default AdminHeader;
