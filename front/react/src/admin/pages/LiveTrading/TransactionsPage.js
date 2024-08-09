@@ -1,11 +1,11 @@
 import React, { useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ListItem } from '@chakra-ui/react';
 import useLiveTrading from "../../hooks/useLiveTrading";
-import SeparatorBlack from "../../../components/common/layout/separator/SeparatorBlack";
-import SeparatorGrey from "../../../components/common/layout/separator/SeparatorGrey";
+import { ListItem } from '@chakra-ui/react';
 import UnorderedList from "../../../components/common/layout/list/UnorderedList";
 import BlackText from "../../../components/common/text/BlackText";
+import SeparatorBlack from "../../../components/common/layout/separator/SeparatorBlack";
+import SeparatorGrey from "../../../components/common/layout/separator/SeparatorGrey";
 
 const TransactionsPage = () => {
     const location = useLocation();
@@ -34,7 +34,7 @@ const TransactionsPage = () => {
         <div>
             <h1>Transactions for {portfolioType}</h1>
             <SeparatorBlack />
-            {transactions ? (
+            {transactions.length > 0 ? (
                 <UnorderedList>
                     {transactions.map((transaction) => (
                         <ListItem key={transaction.transactionId} style={{ border: '1px solid black', margin: '10px', padding: '10px' }}>
@@ -58,3 +58,5 @@ const TransactionsPage = () => {
 };
 
 export default TransactionsPage;
+
+
