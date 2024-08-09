@@ -24,8 +24,8 @@ public abstract class TradingAlgorithmBase {
     protected final MoneyPoolService moneyPoolService;
     protected PortfolioTypeEnum portfolioType;
     protected BigDecimal baseAlgoRisk;
-    protected static final BigDecimal AGGRESSIVE_RISK = BigDecimal.valueOf(0.0005);
-    protected static final BigDecimal MODERATE_RISK = BigDecimal.valueOf(0.0003);
+    protected static final BigDecimal AGGRESSIVE_RISK = BigDecimal.valueOf(0.001);
+    protected static final BigDecimal MODERATE_RISK = BigDecimal.valueOf(0.0005);
     protected static final BigDecimal CONSERVATIVE_RISK = BigDecimal.valueOf(0.0001);
     protected BigDecimal position;
     protected BigDecimal currentPrice;
@@ -81,7 +81,7 @@ public abstract class TradingAlgorithmBase {
         if (sellSignal && isTest) {
             executeTradeBackTest("SELL");
             return; // Allow only 1 trade per execution.
-        } else if (sellSignal && !isTest) {
+        } else if (sellSignal) {
             executeTradeLive("SELL");
             return; // Allow only 1 trade per execution.
         }
@@ -188,6 +188,12 @@ public abstract class TradingAlgorithmBase {
         }
 
         return baseRisk; // Otherwise, use the base risk
+    }
+
+    public void stopLiveTrade() {
+        if (lastTradeTransaction.getAction().equals("BUY")) {
+            executeTradeLive("SELL");
+        }
     }
 
 }

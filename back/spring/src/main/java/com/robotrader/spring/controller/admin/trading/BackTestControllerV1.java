@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/admin/trading/backtest")
 public class BackTestControllerV1 {
@@ -38,11 +41,17 @@ public class BackTestControllerV1 {
         return ResponseEntity.ok(new ApiResponse<>("success", "Algorithm list retrieved successfully", responseDTO));
     }
 
-    @GetMapping("/{ticker}")
-    public ResponseEntity<ApiResponse<ChartDataDTO>> getTradingBackTestResults(@PathVariable String ticker,
-                                                                               @RequestParam PortfolioTypeEnum portfolioType) {
+    @GetMapping("/{portfolioType}")
+    public ResponseEntity<ApiResponse<ChartDataDTO>> getTradingBackTestResults(@PathVariable PortfolioTypeEnum portfolioType,
+                                                                               @RequestParam(required = false) String ticker) {
+        List<String> tickers = new ArrayList<>();
+        if (ticker == null || ticker.isEmpty()){
+             tickers = tickerService.getTickerByPortfolioType(portfolioType);
+        } else {
+            tickers.add(ticker);
+        }
 
-        BackTestResultDTO tradeResults = tradingApplicationService.runTradingAlgorithmBackTest(ticker, portfolioType);
+        BackTestResultDTO tradeResults = tradingApplicationService.runTradingAlgorithmBackTest(tickers, portfolioType);
         ChartDataDTO responseDTO = chartService.transformBackTestDTOtoChartDataDTO(tradeResults);
         return ResponseEntity.ok(new ApiResponse<>("success", "Back test results retrieved successfully", responseDTO));
     }

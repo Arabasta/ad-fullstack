@@ -2,10 +2,7 @@ package com.robotrader.spring.trading.dto;
 
 import com.robotrader.spring.dto.ticker.TickerDTO;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,6 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class PredictionDTO implements IPredictionServiceDTO {
     @NotNull
     private TickerDTO tickerDTO;
