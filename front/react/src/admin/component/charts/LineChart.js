@@ -32,21 +32,21 @@ const LineChart = ({ data , view, labels }) => {
                 title: {
                     display: true,
                     text: 'Capital ($)',
-                    color: '#eee',
+                    color: 'brand.600',
                     font: {
                         size: 14
                     }
                 },
 
                 ticks: {
-                    color: '#eee', // Tick color
+                    color: 'brand.600', // Tick color
                     font: {
                         size: 12
                     }
                 },
 
                 grid: {
-                    color: 'grey' // Grid color
+                    color: '#dddddd' // Grid color
                 }
             },
             'y-axis-2': {
@@ -56,21 +56,21 @@ const LineChart = ({ data , view, labels }) => {
                 title: {
                     display: true,
                     text: 'Percent Change (%)',
-                    color: '#eee', // Title color
+                    color: 'brand.600', // Title color
                     font: {
                         size: 14
                     }
                 },
 
                 ticks: {
-                    color: '#eee', // Tick color
+                    color: 'brand.600', // Tick color
                     font: {
                         size: 12
                     }
                 },
 
                 grid: {
-                    color: 'grey' // Grid color
+                    color: '#dddddd' // Grid color
                 }
             },
 
@@ -78,19 +78,21 @@ const LineChart = ({ data , view, labels }) => {
                 title: {
                     display: true,
                     text: `Elapsed Time (${labels[labels.length - 1]} minutes)`,
-                    color: '#eee',
+                    color: 'brand.600',
                     font: {
                         size: 14
                     }
                 },
                 ticks: {
-                    color: '#eee',
                     font: {
                         size: 12
                     },
                     callback: function(value, index, values) {
                         return index === 0 || index === values.length - 1 ? this.getLabelForValue(value) : '';
                     }
+                },
+                grid: {
+                    color: '#dddddd'
                 }
             },
         }

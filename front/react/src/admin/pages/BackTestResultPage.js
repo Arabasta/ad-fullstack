@@ -23,8 +23,8 @@ const BackTestResultPage = () => {
                     label: 'Capital',
                     data: datasets[0].data,
                     yAxisID: 'y-axis-1',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: '#800000',
+                    backgroundColor: '#800000',
                     tension: 0.4,
                 }] :
             [
@@ -32,8 +32,8 @@ const BackTestResultPage = () => {
                     label: 'Percent Change',
                     data: datasets[1].data,
                     yAxisID: 'y-axis-2',
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: '#000080',
+                    backgroundColor: '#000080',
                     tension: 0.4,
                 },
             ],
@@ -41,15 +41,10 @@ const BackTestResultPage = () => {
 
     return (
         <div>
-            <Heading as="h1" size="lg" color="white" mb={2}>BackTest Performance</Heading>
-            <div className="chart-container">
-                <LineChart data={data} view={view} labels={labels}/>
-            </div>
-
             <CardComponent
-                title={<Heading as="h1" size="lg" color="brand.100" mb={2}>BackTest Performance</Heading>}
+                title={<Heading as="h1" size="lg" color="brand.600" mb={2}>BackTest Performance</Heading>}
                 chart={<LineChart data={data} view={view} labels={labels}/>}
-                button={<Button color="brand.100" onClick={handleToggle}>
+                button={<Button color="brand.600" onClick={handleToggle}>
                     Toggle View
                 </Button>}
             />
