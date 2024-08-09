@@ -1,23 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackTestService from '../services/BackTestService';
 
-const TickerList = ({ tickerList, portfolioTypes }) => {
-    const [selectedPortfolioType, setSelectedPortfolioType] = useState({});
+const TickerList = ({ tickerList, selectedPortfolioType }) => {
     const navigate = useNavigate();
 
-    const handlePortfolioTypeChange = (tickerName, portfolioType) => {
-        setSelectedPortfolioType((prevSelected) => ({
-            ...prevSelected,
-            [tickerName]: portfolioType,
-        }));
-    };
-
     const handleRunBackTest = async (tickerName) => {
-        const portfolioType = selectedPortfolioType[tickerName];
-        if (portfolioType) {
+        if (selectedPortfolioType) {
             try {
-                const response = await BackTestService.runBackTest(tickerName, portfolioType);
+                const response = await BackTestService.runBackTest(tickerName, selectedPortfolioType);
                 navigate('/admin/backtest-result', { state: response.data.data });
             } catch (error) {
                 console.error('Error running backtest', error);
@@ -37,7 +28,6 @@ const TickerList = ({ tickerList, portfolioTypes }) => {
                         <th>ID</th>
                         <th>Ticker Type</th>
                         <th>Ticker Name</th>
-                        <th>Portfolio Type</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -47,23 +37,6 @@ const TickerList = ({ tickerList, portfolioTypes }) => {
                             <td>{ticker.id}</td>
                             <td>{ticker.tickerType}</td>
                             <td>{ticker.tickerName}</td>
-                            <td>
-                                <select
-                                    value={selectedPortfolioType[ticker.tickerName] || ''}
-                                    onChange={(e) =>
-                                        handlePortfolioTypeChange(ticker.tickerName, e.target.value)
-                                    }
-                                >
-                                    <option value="" disabled>
-                                        Select Portfolio Type
-                                    </option>
-                                    {portfolioTypes.map((type) => (
-                                        <option key={type} value={type}>
-                                            {type}
-                                        </option>
-                                    ))}
-                                </select>
-                            </td>
                             <td>
                                 <button onClick={() => handleRunBackTest(ticker.tickerName)}>
                                     Run BackTest

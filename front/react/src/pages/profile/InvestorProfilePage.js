@@ -3,6 +3,8 @@ import InvestorProfileService from "../../services/InvestorProfileService";
 import InvestorProfileForm from "../../components/customer/profileforms/InvestorProfileForm";
 import { AuthContext } from '../../config/context/AuthContext';
 
+import profileOptions from "../../components/customer/profileforms/profileOptions";
+
 const PreferenceFormPage = () => {
     const { isAuthenticated } = useContext(AuthContext);
     const [profile, setProfile] = useState({
@@ -17,50 +19,15 @@ const PreferenceFormPage = () => {
     const [message, setMessage] = useState('');
     const [recommendedPortfolioType, setRecommendedPortfolioType] = useState('');
 
-    const optionsForQuestion1 = [
-        { label: "Less than 3 years", value: 1 },
-        { label: "3-5 years", value: 2 },
-        { label: "6-10 years", value: 3 },
-        { label: "11 years or more", value: 4 }
-    ];
-    const optionsForQuestion2 = [
-        { label: "Less than 2 years", value: 1 },
-        { label: "2-5 years", value: 2 },
-        { label: "6-10 years", value: 3 },
-        { label: "11 years or more", value: 4 }
-    ];
-    const optionsForQuestion3 = [
-        { label: "None", value: 1 },
-        { label: "Limited", value: 2 },
-        { label: "Good", value: 3 },
-        { label: "Extensive", value: 4 }
-    ];
-    const optionsForQuestion4 = [
-        { label: "Take lower than average risks expecting to earn lower than average returns", value: 1 },
-        { label: "Take average risks expecting to earn average returns", value: 2 },
-        { label: "Take above average risks expecting to earn above average returns", value: 3 }
-    ];
-    const optionsForQuestion5 = [
-        { label: "Bonds and/or bonds funds", value: 1 },
-        { label: "Stocks and/or stocks funds", value: 2 },
-        { label: "International securities and/or international funds", value: 3 }
-    ];
-    const optionsForQuestion6 = [
-        { label: "Sell all my shares", value: 1 },
-        { label: "Sell some of my shares", value: 2 },
-        { label: "Do nothing", value: 3 },
-        { label: "Buy more shares", value: 4 }
-    ];
-
     useEffect(() => {
         if (!isAuthenticated) {
-            setLoading(false); // 如果没有登录，停止加载并显示消息
+            setLoading(false);
         } else {
             const fetchProfile = async () => {
                 try {
                     const response = await InvestorProfileService.getInvestorProfile();
-                    setProfile(response.data.data); // 确保访问到正确的数据结构
-                    setRecommendedPortfolioType(response.data.data.recommendedPortfolioType); // 设置之前的推荐投资组合
+                    setProfile(response.data.data);
+                    setRecommendedPortfolioType(response.data.data.recommendedPortfolioType);
                     setLoading(false);
                 } catch (error) {
                     setMessage('Error fetching investor profile');
@@ -78,7 +45,7 @@ const PreferenceFormPage = () => {
             const response = await InvestorProfileService.updateInvestorProfile(profile);
             console.log("Updated profile:", profile);
             setMessage('Profile updated successfully');
-            setProfile(response.data.data); // 确保访问到正确的数据结构
+            setProfile(response.data.data);
             setRecommendedPortfolioType(response.data.data.recommendedPortfolioType);
         } catch (error) {
             console.error('Error updating profile:', error);
@@ -120,12 +87,12 @@ const PreferenceFormPage = () => {
                 handleSubmit={handleUpdate}
                 buttonText="Update"
                 message={message}
-                optionsForQuestion1={optionsForQuestion1}
-                optionsForQuestion2={optionsForQuestion2}
-                optionsForQuestion3={optionsForQuestion3}
-                optionsForQuestion4={optionsForQuestion4}
-                optionsForQuestion5={optionsForQuestion5}
-                optionsForQuestion6={optionsForQuestion6}
+                optionsForQuestion1={profileOptions.optionsForQuestion1}
+                optionsForQuestion2={profileOptions.optionsForQuestion2}
+                optionsForQuestion3={profileOptions.optionsForQuestion3}
+                optionsForQuestion4={profileOptions.optionsForQuestion4}
+                optionsForQuestion5={profileOptions.optionsForQuestion5}
+                optionsForQuestion6={profileOptions.optionsForQuestion6}
             />
             {recommendedPortfolioType && (
                 <div>

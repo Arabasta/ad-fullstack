@@ -4,7 +4,7 @@ import useLiveTrading from "../hooks/useLiveTrading";
 
 const LiveTrading = () => {
     const navigate = useNavigate();
-    const { message, status, startLiveTrading, stopLiveTrading, getLiveTradingTransactions } = useLiveTrading();
+    const { message, isTrading, startLiveTrading, stopLiveTrading, getLiveTradingTransactions } = useLiveTrading();
     const [portfolioType, setPortfolioType] = useState('AGGRESSIVE');
     const [tickerType, setTickerType] = useState('CRYPTO');
 
@@ -26,7 +26,7 @@ const LiveTrading = () => {
             <div>
                 <label>
                     Portfolio Type:
-                    <select value={portfolioType} onChange={(e) => setPortfolioType(e.target.value)}>
+                    <select value={portfolioType} onChange={(e) => setPortfolioType(e.target.value)} disabled={isTrading}>
                         <option value="AGGRESSIVE">Aggressive</option>
                         <option value="CONSERVATIVE">Conservative</option>
                         <option value="BALANCED">Balanced</option>
@@ -34,18 +34,18 @@ const LiveTrading = () => {
                 </label>
                 <label>
                     Ticker Type:
-                    <select value={tickerType} onChange={(e) => setTickerType(e.target.value)}>
+                    <select value={tickerType} onChange={(e) => setTickerType(e.target.value)} disabled={isTrading}>
                         <option value="CRYPTO">Crypto</option>
                         <option value="STOCKS">Stocks</option>
                     </select>
                 </label>
             </div>
-            <button onClick={handleStartLiveTrading}>Start Live Trading</button>
-            <button onClick={handleStopLiveTrading}>Stop Live Trading</button>
-            <button onClick={handleGetTransactions}>Get Transactions</button>
+            <button onClick={handleStartLiveTrading} disabled={isTrading}>Start Live Trading</button>
+            <button onClick={handleStopLiveTrading} disabled={!isTrading}>Stop Live Trading</button>
+            <button onClick={handleGetTransactions} >Get Transactions</button>
 
             {message && (
-                <p style={{ color: status === 'success' ? 'green' : 'red' }}>
+                <p style={{ color: isTrading ? 'green' : 'red' }}>
                     {message}
                 </p>
             )}
