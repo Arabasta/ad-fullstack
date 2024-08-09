@@ -9,7 +9,6 @@ import java.util.List;
 public interface ITradingApplicationService {
     List<String> getAlgorithmList();
     BackTestResultDTO runTradingAlgorithmBackTest(List<String> ticker, PortfolioTypeEnum portfolioType);
-    void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, TickerTypeEnum tickerType);
+    void runTradingAlgorithmLive();
     void stopTradingAlgorithmLive();
-    void runTradingAlgorithm();
 }
