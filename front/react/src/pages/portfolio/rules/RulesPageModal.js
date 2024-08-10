@@ -1,15 +1,9 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import UpdateRulesByPortfolio from '../../../components/rules/UpdateRulesByPortfolio';
 import ResetStopLossTriggerByPortfolio from '../../../components/rules/ResetStopLossTriggerByPortfolio';
 import useRule from '../../../hooks/useRule';
 import { Modal } from '../../../components/common/modal/Modal';
-import RulesPage from "./RulesPage";
 import {Center, HStack, VStack} from "@chakra-ui/react";
-import BlackText from "../../../components/common/text/BlackText";
-import InputBoxWhiteExtraLarge from "../../../components/common/inputFields/InputBoxWhiteExtraLarge";
-import RedText from "../../../components/common/text/RedText";
-import BoxBorderGray from "../../../components/common/modal/Box-BorderGray";
 
 
 const RulesPageModal = ({portfolioType, modalTitle, onActionComplete}) => {

@@ -1,7 +1,6 @@
 import React from 'react';
-import BoxBorderGray from "../common/modal/Box-BorderGray";
 import ButtonRed from "../common/buttons/ButtonRed";
-import {Button, Center} from "@chakra-ui/react";
+import {Center} from "@chakra-ui/react";
 
 const ResetStopLossTriggerByPortfolio = ({ portfolioType, onReset }) => {
     return (

@@ -3,17 +3,10 @@ import BoxBorderGray from "../common/modal/Box-BorderGray";
 import BlackText from "../common/text/BlackText";
 import {Button, Center, chakra, HStack} from "@chakra-ui/react";
 import InputBoxWhite from "../common/inputFields/InputBoxWhite";
-import ButtonBlack from "../common/buttons/ButtonBlack";
 
 const UpdateRulesByPortfolio = ({ onUpdate, rule }) => {
     const [formData, setFormData] = useState({});
     const [validationMessage, setValidationMessage] = useState('');
-
-    // // Attributes of PortfolioRule
-    // const [portfolioType, setPortfolioType] = useState('');
-    // const [stopLoss, setStopLoss] = useState(0);
-    // const [recurringAllocationAmount, setRecurringAllocationAmount] = useState(0);
-    // const [recurringAllocationDay, setRecurringAllocationDay] = useState(0);
 
     useEffect(() => {
         if (rule) {
