@@ -40,7 +40,7 @@ const RegisterStep4Form = ({
     ];
 
     useEffect(() => {
-        if (!employmentStatus) setEmploymentStatus(incomeOptions[0].value);
+        if (!employmentStatus) setEmploymentStatus(1);
         if (!annualIncome) setAnnualIncome(incomeOptions[0].value);
         if (!netWorth) setNetWorth(netWorthOptions[0].value);
         if (!sourceOfWealth) setSourceOfWealth(1); // 'Salary' is the default value
