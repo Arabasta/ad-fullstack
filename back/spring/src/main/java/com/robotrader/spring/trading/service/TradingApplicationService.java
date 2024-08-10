@@ -99,6 +99,7 @@ public class TradingApplicationService implements ITradingApplicationService {
 
         // Create the combined BackTestResultDTO
         BackTestResultDTO combinedResult = new BackTestResultDTO(combinedInitialCapital.get(), combinedTradeResults);
+        logger.info("Total number of trades for all tickers: {}", combinedTradeResults.size());
         return combinedResult;
     }
 
@@ -128,7 +129,7 @@ public class TradingApplicationService implements ITradingApplicationService {
                                 historicalMarketDataService, liveMarketDataService, predictionService, tickerType));
 
                         // todo: make algo selection modular
-                        TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmThree(ticker, portfolioType, moneyPoolService);
+                        TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmTwo(ticker, portfolioType, moneyPoolService);
                         tradingContext.executeTradingStrategy(tradingAlgorithmOne);
                     }
                 }

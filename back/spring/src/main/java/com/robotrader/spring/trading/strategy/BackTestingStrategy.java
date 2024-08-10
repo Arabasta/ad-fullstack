@@ -76,9 +76,6 @@ public class BackTestingStrategy implements TradingStrategy {
                         return getPricePredictions(marketDataHistory, tradingAlgorithmBase.getTicker())
                                 .doOnNext(predictionDTO -> {
                                     List<BigDecimal> pricePredictions = predictionDTO.getPredictions();
-                                    System.out.println("Size of market data history: " + marketDataHistory.get("open").size());
-                                    System.out.println("Size of predictions: " + pricePredictions.size());
-                                    System.out.println(predictionDTO);
                                     TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getLastTradeTransaction();
 
                                     tradingAlgorithmBase.setPricePredictions(new ArrayList<>(pricePredictions));
@@ -170,8 +167,10 @@ public class BackTestingStrategy implements TradingStrategy {
         // Printing of trades
         ObjectNode lastTrade = null;
         BigDecimal totalProfit = BigDecimal.ZERO;
+        String tickerName = "";
         logger.info("Trade Transactions: ");
         if (trades != null && !trades.isEmpty()) {
+            tickerName = trades.get(0).get("ticker").asText();
             for (ObjectNode trade : trades) {
                 logger.info(trade.toString());
                 String action = trade.get("action").asText();
@@ -191,7 +190,7 @@ public class BackTestingStrategy implements TradingStrategy {
                 }
             }
             logger.info("Total Profit: {}", totalProfit);
-            logger.info("TOtal number of trades: {}", trades.size());
+            logger.info("Total number of trades for {}: {}", tickerName, trades.size());
         } else {
             logger.info("No trade transactions");
         }

@@ -23,15 +23,16 @@ public class ChartService implements IChartService {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     @Override
-    public ChartDataDTO transformBackTestDTOtoChartDataDTO(BackTestResultDTO backTestResult) {
+    public ChartDataDTO transformBackTestDTOtoChartDataDTO(BackTestResultDTO backTestResult, int amount) {
         List<LocalDateTime> labels = new ArrayList<>();
         List<BigDecimal> capitalAbsoluteData = new ArrayList<>();
         List<BigDecimal> capitalPercentChangeData = new ArrayList<>();
 
         BigDecimal initialCapital = backTestResult.getInitialCapitalTest();
-        BigDecimal currentCapital = initialCapital;
+        BigDecimal initialAmount = BigDecimal.valueOf(amount);
+        BigDecimal newAmount;
         BigDecimal cumulativePercentChange = BigDecimal.ZERO;
-        capitalAbsoluteData.add(initialCapital);
+        capitalAbsoluteData.add(initialAmount);
         capitalPercentChangeData.add(cumulativePercentChange);
 
         List<ObjectNode> tradeTransactionList = backTestResult.getTradeResults();
@@ -64,8 +65,8 @@ public class ChartService implements IChartService {
                 capitalPercentChangeData.add(cumulativePercentChange.setScale(2, RoundingMode.HALF_UP));
 
 
-                currentCapital = currentCapital.add(profitLossAmount).setScale(2, RoundingMode.HALF_UP);
-                capitalAbsoluteData.add(currentCapital);
+                 newAmount = initialAmount.add(initialAmount.multiply(cumulativePercentChange.divide(BigDecimal.valueOf(100)))).setScale(2, RoundingMode.HALF_UP);
+                capitalAbsoluteData.add(newAmount);
             }
         }
 

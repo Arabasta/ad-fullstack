@@ -43,7 +43,8 @@ public class BackTestControllerV1 {
 
     @GetMapping("/{portfolioType}")
     public ResponseEntity<ApiResponse<ChartDataDTO>> getTradingBackTestResults(@PathVariable PortfolioTypeEnum portfolioType,
-                                                                               @RequestParam(required = false) String ticker) {
+                                                                               @RequestParam(required = false) String ticker,
+                                                                               @RequestParam int amount) {
         List<String> tickers = new ArrayList<>();
         if (ticker == null || ticker.isEmpty()){
              tickers = tickerService.getTickerByPortfolioType(portfolioType);
@@ -52,7 +53,7 @@ public class BackTestControllerV1 {
         }
 
         BackTestResultDTO tradeResults = tradingApplicationService.runTradingAlgorithmBackTest(tickers, portfolioType);
-        ChartDataDTO responseDTO = chartService.transformBackTestDTOtoChartDataDTO(tradeResults);
+        ChartDataDTO responseDTO = chartService.transformBackTestDTOtoChartDataDTO(tradeResults, amount);
         return ResponseEntity.ok(new ApiResponse<>("success", "Back test results retrieved successfully", responseDTO));
     }
 
