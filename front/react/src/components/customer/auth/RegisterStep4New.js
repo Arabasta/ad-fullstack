@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useMemo} from 'react';
 import {
     Box,
     SimpleGrid,
@@ -23,21 +23,21 @@ const RegisterStep4Form = ({
                                investmentExperience, setInvestmentExperience,
                                handlePrevious, handleNext
                            }) => {
-    const incomeOptions = [
+    const incomeOptions = useMemo(() =>[
         { label: 'Below $20,000', value: 20000 },
         { label: '$20,000 - $50,000', value: 50000 },
         { label: '$50,001 - $100,000', value: 100000 },
         { label: '$100,001 - $200,000', value: 200000 },
         { label: 'Above $200,000', value: 200001 },
-    ];
+    ],[]);
 
-    const netWorthOptions = [
+    const netWorthOptions = useMemo(() => [
         { label: 'Below $50,000', value: 50000 },
         { label: '$50,000 - $100,000', value: 100000 },
         { label: '$100,001 - $500,000', value: 500000 },
         { label: '$500,001 - $1,000,000', value: 1000000 },
         { label: 'Above $1,000,000', value: 1000001 },
-    ];
+    ],[]);
 
     useEffect(() => {
         if (!employmentStatus) setEmploymentStatus(1);
@@ -46,7 +46,7 @@ const RegisterStep4Form = ({
         if (!sourceOfWealth) setSourceOfWealth(1); // 'Salary' is the default value
         if (!investmentObjective) setInvestmentObjective(1); // 'Growth' is the default value
         if (!investmentExperience) setInvestmentExperience(1); // 'None' is the default value
-    }, [employmentStatus, annualIncome, netWorth, sourceOfWealth, investmentObjective, investmentExperience, setEmploymentStatus, setAnnualIncome, setNetWorth, setSourceOfWealth, setInvestmentObjective, setInvestmentExperience]);
+    }, [employmentStatus, annualIncome, netWorth, sourceOfWealth, investmentObjective, investmentExperience, setEmploymentStatus, setAnnualIncome, setNetWorth, setSourceOfWealth, setInvestmentObjective, setInvestmentExperience, incomeOptions, netWorthOptions]);
 
 
     return (
