@@ -34,6 +34,7 @@ Button.defaultProps = {
     variant: 'solid',
     size: 'sm',
     type: 'button',
+    colorScheme: 'brand', // Default value for colorScheme
     onClick: () => {},
 };
 
