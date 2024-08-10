@@ -5,7 +5,7 @@ import ResetStopLossTriggerByPortfolio from '../../../components/rules/ResetStop
 import useRule from '../../../hooks/useRule';
 import { Modal } from '../../../components/common/modal/Modal';
 import RulesPage from "./RulesPage";
-import {HStack, VStack} from "@chakra-ui/react";
+import {Center, HStack, VStack} from "@chakra-ui/react";
 import BlackText from "../../../components/common/text/BlackText";
 import InputBoxWhiteExtraLarge from "../../../components/common/inputFields/InputBoxWhiteExtraLarge";
 import RedText from "../../../components/common/text/RedText";
@@ -42,23 +42,20 @@ const RulesPageModal = ({portfolioType, modalTitle, onActionComplete}) => {
     };
 
     return (
-        <Modal
-            triggerText={actionText}
-            title={`Rules - ${modalTitle}`}
-            onClose={resetFields}
-            onOpen={handleModalOpen}
-        >
-            <VStack spacing={6} p={6}>
-                <BoxBorderGray>
+        <Center>
+            <Modal
+                triggerText={actionText}
+                title={`Rules - ${modalTitle}`}
+                onClose={resetFields}
+                onOpen={handleModalOpen}
+            >
+                <VStack spacing={6} p={6}>
                     <UpdateRulesByPortfolio  onUpdate={handleUpdate} rule={rule} />
-                </BoxBorderGray>
-
-                <BoxBorderGray>
                     <ResetStopLossTriggerByPortfolio portfolioType={portfolioType} onReset={handleReset} />
-                </BoxBorderGray>
-                {message && <p>{message}</p>}
-            </VStack>
-        </Modal>
+                    {message && <p>{message}</p>}
+                </VStack>
+            </Modal>
+        </Center>
     );
 
 };
