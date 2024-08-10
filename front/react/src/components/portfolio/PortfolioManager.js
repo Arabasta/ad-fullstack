@@ -15,6 +15,7 @@ import LineChart2 from "../../admin/component/charts/LineChart2";
 import CardComponent from "../common/cards/CardWithChart";
 import Button from "../common/buttons/Button";
 import GrayText from "../common/text/GrayText";
+import PortfolioTransactionHistoryPage from "../../pages/portfolio/PortfolioTransactionHistoryPage";
 
 const PortfolioManager = () => {
     const { portfolioType } = useParams();
@@ -56,48 +57,48 @@ const PortfolioManager = () => {
                             </Heading>
                         </BoxBorderGray>
 
-                        {/*Portfolio Dashboard*/}
-                        <BoxBorderGray p={4} h="maxContent" boxShadow="md" bg="white"
-                                       flexGrow={2}>
-                            <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={500} w={800}>
-                                Dashboard
+                    {/*Portfolio Dashboard*/}
+                    <BoxBorderGray p={4} h="maxContent" boxShadow="2xl" bg="white"
+                                   flexGrow={2}>
+                        <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={500} w={800}>
+                            Dashboard
+                        </Text>
+                        <Box h="400" bg="lightgray">
+                            {/*todo: alvin: add portfolio dashboard*/}
+                            Simulated Dashboard
+                        </Box>
+                    </BoxBorderGray>
+
+                    {/*Portfolio Value*/}
+                    <BoxBorderGray p={4} h="maxContent" boxShadow="2xl"
+                                   bg="white">
+                        <HStack alignContent="center">
+                            <PortfolioDetails portfolio={portfolio}/>
+                        </HStack>
+                    </BoxBorderGray>
+                </VStack>
+
+                {/*Right Panel - Action Panel*/}
+                <BoxBorderGray className="right-panel" p={4} bg="gray.200" w="max-content"
+                               boxShadow="2xl" height="full"
+                               flexDirection="column" justifyContent="space-between">
+                    <VStack>
+                        <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={700}>
+                            Action Panel
+                        </Text>
+
+                        {/*Portfolio Fund Action*/}
+                        <BoxBorderGray p={4} mb={4} boxShadow="md" bg="white">
+                            <Text color="black" fontSize="lg" fontWeight={500}>
+                                Portfolio Fund Action
                             </Text>
-                            <Box h="400" bg="lightgray">
-
-                            </Box>
+                            <VStack p="1rem">
+                                <PortfolioAddFunds addFunds={addFunds}/>
+                                <PortfolioRemoveFunds withdrawFunds={withdrawFunds} currentBalance={portfolio.allocatedBalance}/>
+                                {/*todo: alvin: transaction history not showing. to debug.*/}
+                                <PortfolioTransactionHistoryPage portfolioType={portfolioType.toUpperCase()}/>
+                            </VStack>
                         </BoxBorderGray>
-
-                        {/*Portfolio Value*/}
-                        <BoxBorderGray p={4} h="maxContent" boxShadow="md"
-                                       bg="white">
-                            <HStack alignContent="center">
-                                <PortfolioDetails portfolio={portfolio}/>
-                            </HStack>
-                        </BoxBorderGray>
-                    </VStack>
-
-                    {/*Right Panel - Action Panel*/}
-                    <BoxBorderGray className="right-panel" p={4} bg="gray.200" w="max-content"
-                                   boxShadow="md" height="full"
-                                   flexDirection="column" justifyContent="space-between">
-                        <VStack>
-                            <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={700}>
-                                Action Panel
-                            </Text>
-
-                            {/*Portfolio Fund Action*/}
-                            <BoxBorderGray p={4} mb={4} boxShadow="md" bg="white">
-                                <Text color="black" fontSize="lg" fontWeight={500}>
-                                    Portfolio Fund Action
-                                </Text>
-                                <VStack p="1rem">
-                                    <PortfolioAddFunds addFunds={addFunds}/>
-                                    <PortfolioRemoveFunds withdrawFunds={withdrawFunds} currentBalance={portfolio.allocatedBalance}/>
-                                    <ButtonBlack>
-                                        Transaction History
-                                    </ButtonBlack>
-                                </VStack>
-                            </BoxBorderGray>
 
                             {/*Portfolio Rules*/}
                             <BoxBorderGray p={4} mb={4} boxShadow="md" bg="gray.50">

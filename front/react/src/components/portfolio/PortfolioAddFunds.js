@@ -45,9 +45,10 @@ const PortfolioAddFunds = ({ addFunds }) => {
                 />
                 <Button onClick={handleAddFunds}
                         bg="gray.300"
-                             fontSize="md"
-                             height="2rem"
-                             width="6rem">
+                        shadow="sm"
+                        fontSize="md"
+                        height="2rem"
+                        width="6rem">
                     Add
                 </Button>
             </HStack>
