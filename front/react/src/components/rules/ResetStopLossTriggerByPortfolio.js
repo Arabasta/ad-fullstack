@@ -1,11 +1,14 @@
 import React from 'react';
+import ButtonRed from "../common/buttons/ButtonRed";
+import {Center} from "@chakra-ui/react";
 
 const ResetStopLossTriggerByPortfolio = ({ portfolioType, onReset }) => {
     return (
-        <div>
-            <h2>Reset Stop Loss Trigger for {portfolioType}</h2>
-            <button onClick={onReset}>Reset Stop Loss</button>
-        </div>
+        <Center>
+            <ButtonRed onClick={onReset}>
+                Reset Stop Loss based on Current Value
+            </ButtonRed>
+        </Center>
     );
 };
 
