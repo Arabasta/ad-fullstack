@@ -44,7 +44,6 @@ const PortfolioAddFunds = ({ addFunds }) => {
                     width="10rem"
                 />
                 <Button onClick={handleAddFunds}
-                        bg="gray.300"
                         shadow="sm"
                         fontSize="md"
                         height="2rem"

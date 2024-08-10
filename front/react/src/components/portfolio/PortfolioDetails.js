@@ -7,8 +7,12 @@ const PortfolioDetails = ({ portfolio }) => {
         <Box flex={1} direction="row">
             {portfolio !== null ? (
                 <HStack alignContent="center" flex={1} direction="row" justifyContent="space-around">
-                    <Text color="black" fontSize="2xl">Current Value: ${portfolio.currentValue}</Text>
-                    <Text color="black" fontSize="2xl">Allocated Balance: ${portfolio.allocatedBalance}</Text>
+                    <Text color="black" fontSize="2xl" fontWeight="500">
+                        Current Value: ${portfolio.currentValue}
+                    </Text>
+                    <Text color="black" fontSize="2xl">
+                        Allocated Balance: ${portfolio.allocatedBalance}
+                    </Text>
                 </HStack>
                 ) : (
                 <Box>

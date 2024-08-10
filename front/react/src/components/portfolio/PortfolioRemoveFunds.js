@@ -50,7 +50,6 @@ const PortfolioRemoveFunds = ({ withdrawFunds, currentBalance }) => {
                     width="10rem"
                 />
                 <Button onClick={handleWithdraw}
-                        bg="gray.300"
                         shadow="sm"
                         fontSize="md"
                         height="2rem"

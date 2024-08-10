@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useLocation, useParams} from 'react-router-dom';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import PortfolioAddFunds from "../../components/portfolio/PortfolioAddFunds";
 import PortfolioRemoveFunds from "./PortfolioRemoveFunds";
 import Heading from "../../components/common/text/Heading";
@@ -7,7 +7,7 @@ import usePortfolio from "../../hooks/usePortfolio";
 import PortfolioDetails from "../../components/portfolio/PortfolioDetails";
 import portfolioTypes from "./portfolioTypes";
 import RulesModal from "../rules/RulesModal";
-import {Box, Center, Flex, HStack, VStack} from "@chakra-ui/react";
+import {Box, Button, Center, Flex, HStack, VStack} from "@chakra-ui/react";
 import BoxBorderGray from "../common/modal/Box-BorderGray";
 import Text from "../common/text/Text";
 import ButtonBlack from "../common/buttons/ButtonBlack";
@@ -20,9 +20,15 @@ import PortfolioTransactionHistoryPage from "../../pages/portfolio/PortfolioTran
 const PortfolioManager = () => {
     const { portfolioType } = useParams();
     const { portfolio, addFunds, withdrawFunds } = usePortfolio(portfolioType.toUpperCase());
+    const otherPortfolios = portfolioTypes.filter(allPortfolioTypes => allPortfolioTypes.type.toLowerCase() !== portfolioType.toLowerCase());
+    const navigate = useNavigate();
 
     const selectedPortfolioType = portfolioTypes.find(pt => pt.type.toLowerCase() === portfolioType);
     const title = selectedPortfolioType ? selectedPortfolioType.title : 'Portfolio';
+
+    const handlePortfolioSelection = (type) => {
+        navigate(`/portfolio/${type.toLowerCase()}`);
+    };
 
     const { state } = useLocation();
     const { chartData=[], labels=[], view, toPassDate } = state || {};
@@ -42,20 +48,34 @@ const PortfolioManager = () => {
                 chart={<LineChart2 datasets={[chartData]} labels={labels} view={currentView} />}
                 button={<Button onClick={handleToggle}>Toggle View</Button>}
             />
-            <Center bg="#666db3" p="2rem">
 
-                <Flex direction="row" flex="1" maxWidth="70%">
-                    {/*Left Panel - Portfolio Header, Portfolio Dashboard, Portfolio Value*/}
-                    <VStack className="left-panel" flex="1" flex-direction="column" mr={4}
-                            width="70%" // Set width to 70% of the container on larger screens
-                    >
-                        {/*Portfolio Header*/}
-                        <BoxBorderGray p={4} h="maxContent" boxShadow="md" bg="white"
-                                       flexGrow={0} flexShrink={0}>
-                            <Heading as="h1" color="#4B4BB3">
-                                {title}
-                            </Heading>
-                        </BoxBorderGray>
+        <Center bg="#666db3" p="2rem">
+            <Flex direction="row" flex="1" maxWidth="70%">
+                {/*Left Panel - Portfolio Header, Portfolio Dashboard, Portfolio Value*/}
+                <VStack className="left-panel" flex="1" flex-direction="column" mr={4}
+                        width="70%" // Set width to 70% of the container on larger screens
+                >
+                    {/*Portfolio Header*/}
+                    <BoxBorderGray p={4} h="maxContent" boxShadow="2xl" bg="white"
+                                   flexGrow={0} flexShrink={0}>
+                        <HStack justifyContent="space-between">
+                            <Box>
+                                <Heading as="h1" color="#4B4BB3">
+                                    {title}
+                                </Heading>
+                            </Box>
+                            <Box>
+                                {otherPortfolios.map((portfolio, index) => (
+                                    <Button key={index}
+                                            mr="1rem"
+                                            onClick={() => handlePortfolioSelection(portfolio.type)}
+                                    >
+                                        {portfolio.title}
+                                    </Button>
+                                ))}
+                            </Box>
+                        </HStack>
+                    </BoxBorderGray>
 
                     {/*Portfolio Dashboard*/}
                     <BoxBorderGray p={4} h="maxContent" boxShadow="2xl" bg="white"
