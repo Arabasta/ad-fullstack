@@ -53,31 +53,31 @@ VALUES ('CONSERVATIVE', 1000000.00, 1.00, 1000000);
 
 -- Ticker
 INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
-VALUES (1, 'AAPL', 'STOCKS', 'AGGRESSIVE');
+VALUES (1, 'AAPL', 'STOCK', 'AGGRESSIVE');
 
 INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
-VALUES (2, 'AAPL', 'STOCKS', 'MODERATE');
+VALUES (2, 'AAPL', 'STOCK', 'MODERATE');
 
 INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
-VALUES (3, 'AAPL', 'STOCKS', 'CONSERVATIVE');
+VALUES (3, 'AAPL', 'STOCK', 'CONSERVATIVE');
 
 INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
-VALUES (4, 'GOOGL', 'STOCKS', 'AGGRESSIVE');
+VALUES (4, 'GOOGL', 'STOCK', 'AGGRESSIVE');
 
 INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
-VALUES (5, 'GOOGL', 'STOCKS', 'MODERATE');
+VALUES (5, 'GOOGL', 'STOCK', 'MODERATE');
 
 INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
-VALUES (6, 'GOOGL', 'STOCKS', 'CONSERVATIVE');
+VALUES (6, 'GOOGL', 'STOCK', 'CONSERVATIVE');
 
 INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
-VALUES (7, 'NVDA', 'STOCKS', 'AGGRESSIVE');
+VALUES (7, 'NVDA', 'STOCK', 'AGGRESSIVE');
 
 INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
-VALUES (8, 'NVDA', 'STOCKS', 'MODERATE');
+VALUES (8, 'NVDA', 'STOCK', 'MODERATE');
 
 INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
-VALUES (9, 'NVDA', 'STOCKS', 'CONSERVATIVE');
+VALUES (9, 'NVDA', 'STOCK', 'CONSERVATIVE');
 
 INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
 VALUES (10, 'X:BTC-USD', 'CRYPTO', 'AGGRESSIVE');
