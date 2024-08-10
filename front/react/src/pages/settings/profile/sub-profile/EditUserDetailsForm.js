@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     SimpleGrid,
@@ -8,39 +8,50 @@ import {
     FormControl,
     FormLabel,
     InputGroup,
-    Input,
+    Button,
+    Select, Input
 } from '@chakra-ui/react';
-
 import { Link } from 'react-router-dom';
 import useUser from "../../../../hooks/useUser";
 import UserService from "../../../../services/UserService";
 import useCustomer from "../../../../hooks/useCustomer";
 import Heading from "../../../../components/common/text/Heading";
 import Text from "../../../../components/common/text/Text";
-import Button from "../../../../components/common/buttons/Button";
-
+import CountryCodes from "../../../../components/customer/auth/CountryCodes";
 
 const EditUserDetailsForm = () => {
-
     const { user, updateUser, loading } = useUser();
     const { customer, updateMobileNumber } = useCustomer();
     const [email, setEmail] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
+    const [countryCode, setCountryCode] = useState('');
 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
     useEffect(() => {
         if (user && user.email) setEmail(user.email);
-        if (customer && customer.mobileNumber) setMobileNumber(customer.mobileNumber);
+        if (customer && customer.mobileNumber) {
+            const code = extractCountryCode(customer.mobileNumber);
+            setCountryCode(code);
+            setMobileNumber(customer.mobileNumber.replace(code, ''));
+        }
     }, [user, customer]);
+
+    const extractCountryCode = (number) => {
+        for (let { code } of CountryCodes) {
+            if (number.startsWith(code)) {
+                return code;
+            }
+        }
+        return '';
+    };
 
     const handleUpdateMobileNumber = async () => {
         try {
-            await updateMobileNumber(mobileNumber);
+            await updateMobileNumber(`${countryCode}${mobileNumber}`);
             setSuccess('Mobile number updated successfully');
             setError('');
-
         } catch (error) {
             console.error('Error updating mobile number', error);
             setError('Error updating mobile number');
@@ -57,7 +68,6 @@ const EditUserDetailsForm = () => {
             if (updateUser) {
                 updateUser({ ...user, email });
             }
-
         } catch (error) {
             console.error('Error updating email', error);
             setError('Error updating email');
@@ -158,6 +168,23 @@ const EditUserDetailsForm = () => {
                                         </FormLabel>
 
                                         <InputGroup size="sm">
+                                            <Select
+                                                value={countryCode}
+                                                onChange={(e) => setCountryCode(e.target.value)}
+                                                placeholder="Select country code"
+                                                borderColor="brand.300"
+                                                focusBorderColor="brand.400"
+                                                rounded="md"
+                                                width="500px"
+                                                mr={2}
+                                            >
+                                                {CountryCodes.map(({ code, label }) => (
+                                                    <option key={code} value={code}>
+                                                        {label}
+                                                    </option>
+                                                ))}
+                                            </Select>
+
                                             <Input
                                                 type="tel"
                                                 value={mobileNumber}
@@ -178,7 +205,6 @@ const EditUserDetailsForm = () => {
                                             Update
                                         </Button>
 
-                                        {/* change this to toast / alert */}
                                         {error && <p style={{ color: 'red' }}>{error}</p>}
                                         {success && <p style={{ color: 'green' }}>{success}</p>}
                                     </FormControl>

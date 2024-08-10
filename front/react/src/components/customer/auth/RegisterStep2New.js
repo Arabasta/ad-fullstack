@@ -101,7 +101,7 @@ const RegisterStep2Form = ({
                                                 onChange={handleCountryCodeChange}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
-                                                width="90px"
+                                                width="500px"
                                                 mr={2}
                                                 required
                                             >
