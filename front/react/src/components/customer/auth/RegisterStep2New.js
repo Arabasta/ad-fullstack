@@ -10,7 +10,6 @@ import {
     InputGroup,
     Input,
     Select,
-    useToast,
 } from '@chakra-ui/react';
 
 import Heading from "../../common/text/Heading";
@@ -27,50 +26,16 @@ const RegisterStep2Form = ({
                                nationality, setNationality,
                                handlePrevious, handleNext,
                            }) => {
-    const toast = useToast();
-
     const handleMobileNumberChange = (e) => {
-        const number = e.target.value.replace(/\D/g, ''); // 仅保留数字
-        setMobileNumber(number); // 仅设置号码部分
+        const number = e.target.value.replace(/\D/g, ''); // only can input numbers
+        setMobileNumber(number);
     };
 
     const handleCountryCodeChange = (e) => {
         const code = e.target.value;
         setCountryCode(code);
-        // 更新手机号，确保国家代码只添加一次
+
         setMobileNumber(prev => prev.replace(/^\+\d+/, ''));
-    };
-
-    const handleFirstNameChange = (e) => {
-        const value = e.target.value;
-        // 检查输入是否包含数字，如果包含则显示错误信息
-        if (/\d/.test(value)) {
-            toast({
-                title: "Invalid Input",
-                description: "First Name cannot contain numbers.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            });
-        } else {
-            setFirstName(value);
-        }
-    };
-
-    const handleLastNameChange = (e) => {
-        const value = e.target.value;
-        // 检查输入是否包含数字，如果包含则显示错误信息
-        if (/\d/.test(value)) {
-            toast({
-                title: "Invalid Input",
-                description: "Last Name cannot contain numbers.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            });
-        } else {
-            setLastName(value);
-        }
     };
 
     return (
@@ -136,7 +101,7 @@ const RegisterStep2Form = ({
                                                 onChange={handleCountryCodeChange}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
-                                                width="100px" // 设置更宽的宽度
+                                                width="90px"
                                                 mr={2}
                                                 required
                                             >
@@ -172,7 +137,7 @@ const RegisterStep2Form = ({
                                                 type="text"
                                                 value={firstName}
                                                 placeholder="required"
-                                                onChange={handleFirstNameChange}
+                                                onChange={(e) => setFirstName(e.target.value)}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
@@ -194,7 +159,7 @@ const RegisterStep2Form = ({
                                                 type="text"
                                                 value={lastName}
                                                 placeholder="required"
-                                                onChange={handleLastNameChange}
+                                                onChange={(e) => setLastName(e.target.value)}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required

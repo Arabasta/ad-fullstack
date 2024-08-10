@@ -71,6 +71,30 @@ const RegisterForm = () => {
 
     const handleNext = (e) => {
         e.preventDefault();
+
+        if (step === 1) {
+            if (username.length < 3 || username.length > 20) {
+                toast({
+                    title: "Invalid Username",
+                    description: "Username must be between 3 and 20 characters.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                return;
+            }
+            if (password.length < 6) {
+                toast({
+                    title: "Invalid Password",
+                    description: "Password must be at least 6 characters long.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                return;
+            }
+        }
+
         if (!validateStep()) {
             toast(toastOptions);
             return;
@@ -96,7 +120,7 @@ const RegisterForm = () => {
             await register({
                 userDetails: { username, password, email },
                 customerDetails: {
-                    mobileNumber: `${countryCode}${mobileNumber}`, // 将国家代码与手机号组合
+                    mobileNumber: `${countryCode}${mobileNumber}`,
                     firstName, lastName, nationality,
                     address: { street, city, postalCode, country, unitNo },
                     financialProfile: { employmentStatus, annualIncome, netWorth,
@@ -151,7 +175,6 @@ const RegisterForm = () => {
             }
         }
     };
-
 
     return (
         <div>
