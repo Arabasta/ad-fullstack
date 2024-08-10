@@ -57,7 +57,7 @@ const ProfileMainPage = () => {
                             >
                                 <SimpleGrid columns={3} spacing={6}>
                                     <GridItem colSpan={[3, 2]}>
-                                        <SmallCardWithTextAndButton title="Email" directToThisPath="/settings/profile/user">
+                                        <SmallCardWithTextAndButton title="Email / Phone number" directToThisPath="/settings/profile/user">
                                         </SmallCardWithTextAndButton>
                                         <SeparatorBlack/>
 
