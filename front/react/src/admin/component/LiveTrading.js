@@ -40,12 +40,23 @@ const LiveTrading = () => {
                     </select>
                 </label>
             </div>
-            <button onClick={handleStartLiveTrading} disabled={isTrading}>Start Live Trading</button>
-            <button onClick={handleStopLiveTrading} disabled={!isTrading}>Stop Live Trading</button>
-            <button onClick={handleGetTransactions} >Get Transactions</button>
+            <div style={{ marginTop: '20px' }}>
+                {isTrading ? (
+                    <button onClick={handleStopLiveTrading} style={{ width: '150px' }}>
+                        Stop Live Trading
+                    </button>
+                ) : (
+                    <button onClick={handleStartLiveTrading} style={{ width: '150px' }}>
+                        Start Live Trading
+                    </button>
+                )}
+            </div>
+            <button onClick={handleGetTransactions} style={{ marginTop: '10px' }}>
+                Get Transactions
+            </button>
 
             {message && (
-                <p style={{ color: isTrading ? 'green' : 'red' }}>
+                <p style={{ color: isTrading ? 'green' : 'red', marginTop: '20px' }}>
                     {message}
                 </p>
             )}
@@ -53,4 +64,4 @@ const LiveTrading = () => {
     );
 };
 
-export default LiveTrading
+export default LiveTrading;
