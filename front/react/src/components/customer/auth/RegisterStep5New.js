@@ -14,7 +14,7 @@ import Text from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
 import FormSelect from "../../common/inputFields/FormSelect";
 
-const RegisterStep4Form = ({
+const RegisterStep5Form = ({
                                investmentDurationScore, setInvestmentDurationScore,
                                withdrawalSpendingPlanScore, setWithdrawalSpendingPlanScore,
                                investmentKnowledgeScore, setInvestmentKnowledgeScore,
@@ -269,7 +269,6 @@ const RegisterStep4Form = ({
                                 <Button
                                     type="button"
                                     onClick={handlePrevious}
-                                    colorScheme="brand"
                                     _focus={{ shadow: "" }}
                                     fontWeight="md"
                                 >
@@ -277,7 +276,6 @@ const RegisterStep4Form = ({
                                 </Button>
                                 <Button
                                     type="submit"
-                                    colorScheme="brand"
                                     _focus={{ shadow: "" }}
                                     fontWeight="md"
                                 >
@@ -293,4 +291,4 @@ const RegisterStep4Form = ({
     );
 };
 
-export default RegisterStep4Form;
+export default RegisterStep5Form;
