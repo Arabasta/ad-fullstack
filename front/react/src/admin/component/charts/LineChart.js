@@ -82,9 +82,14 @@ const LineChart = ({ data , view }) => {
                     }
                 },
                 ticks: {
-                    font: {
-                        size: 12
-                    }
+                    callback: function (value, index, ticks) {
+                        // Show only the first and last tick
+                        if (index === 0 || index === ticks.length - 1) {
+                            return this.getLabelForValue(value);
+                        } else {
+                            return ''; // Return an empty string for all other ticks
+                        }
+                    },
                 },
             },
         }

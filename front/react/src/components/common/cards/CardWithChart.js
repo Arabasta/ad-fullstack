@@ -8,7 +8,7 @@ const CardComponent = ({title, button, chart}) => {
             bg="brand.400"
             w="full"
             h={{lg: "90%"}}
-            p={50}
+            p={20}
             alignItems="center"
             justifyContent="center">
             <Box
