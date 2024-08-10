@@ -63,7 +63,7 @@ const LineChart2 = ({ labels, datasets, view }) => {
                     }
                 },
                 ticks: {
-                    callback: (value) => `${value * 100}`,
+                    callback: (value) => `${value}`,
                 },
             },
 
