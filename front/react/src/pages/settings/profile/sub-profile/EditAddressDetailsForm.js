@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     SimpleGrid,
@@ -9,6 +9,7 @@ import {
     FormLabel,
     InputGroup,
     Input,
+    Select,
 } from '@chakra-ui/react';
 
 import useAddress from "../../../../hooks/useAddress";
@@ -16,9 +17,8 @@ import AddressService from "../../../../services/AddressService";
 import Heading from "../../../../components/common/text/Heading";
 import Text from "../../../../components/common/text/Text";
 import Button from "../../../../components/common/buttons/Button";
-import Autocomplete from "../../../../components/feature/Autocomplete";
 import Countries from "../../../../components/customer/auth/Countries";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const EditAddressDetailsForm = () => {
     const { address, getAddress } = useAddress();
@@ -38,7 +38,6 @@ const EditAddressDetailsForm = () => {
 
     const handleAddressUpdate = async () => {
         try {
-            // todo: add more robust validation
             if (!addressValues) {
                 alert('You have no address to update.');
                 return;
@@ -50,7 +49,7 @@ const EditAddressDetailsForm = () => {
             setError('');
         } catch (error) {
             console.error('Error updating address', error);
-            setError('Error updating mobile number');
+            setError('Error updating address');
             setSuccess('');
         }
     };
@@ -165,7 +164,7 @@ const EditAddressDetailsForm = () => {
                                                 type="text"
                                                 name="street"
                                                 value={addressValues.street}
-                                                placeholder="required"
+                                                placeholder="Enter street"
                                                 onChange={handleInputChange}
                                                 borderColor="brand.300"
                                                 focusBorderColor="brand.400"
@@ -204,30 +203,40 @@ const EditAddressDetailsForm = () => {
                                         <FormLabel fontSize="md" fontWeight="md" color="gray.700" _dark={{ color: "gray.50" }}>
                                             Country
                                         </FormLabel>
-                                        <Autocomplete
+                                        <Select
                                             name="country"
                                             value={addressValues.country}
                                             onChange={handleInputChange}
-                                            category={Countries}
-                                        />
-
-                                        <Button
-                                            onClick={handleAddressUpdate}
-                                            type="button"
-                                            colorScheme="brand"
-                                            _focus={{ shadow: "" }}
-                                            fontWeight="md"
+                                            placeholder="Select country"
+                                            focusBorderColor="brand.400"
+                                            rounded="md"
+                                            required
                                         >
-                                            Update
-                                        </Button>
-                                        {/* change this to toast / alert */}
-                                        {error && <p style={{ color: 'red' }}>{error}</p>}
-                                        {success && <p style={{ color: 'green' }}>{success}</p>}
+                                            {Countries.map((country) => (
+                                                <option key={country} value={country}>
+                                                    {country}
+                                                </option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
-
                                 </SimpleGrid>
 
+                                <Box textAlign="right">
+                                    <Button
+                                        onClick={handleAddressUpdate}
+                                        type="button"
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md"
+                                    >
+                                        Update
+                                    </Button>
+                                </Box>
+
+                                {error && <p style={{ color: 'red' }}>{error}</p>}
+                                {success && <p style={{ color: 'green' }}>{success}</p>}
                             </Stack>
+
                             <Box
                                 px={{ base: 4, sm: 6 }}
                                 py={3}
@@ -255,3 +264,4 @@ const EditAddressDetailsForm = () => {
 };
 
 export default EditAddressDetailsForm;
+

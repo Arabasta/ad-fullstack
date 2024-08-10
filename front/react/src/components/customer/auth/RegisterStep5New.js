@@ -21,7 +21,7 @@ const RegisterStep5Form = ({
                                riskRewardScore, setRiskRewardScore,
                                ownedInvestmentsScore, setOwnedInvestmentsScore,
                                investmentPersonalityScore, setInvestmentPersonalityScore,
-                               handlePrevious, handleRegister, message
+                               handlePrevious, handleRegister
                            }) => {
 
     const optionsForQuestion1 = [
