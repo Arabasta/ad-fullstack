@@ -5,6 +5,7 @@ import InputBoxWhite from "../common/inputFields/InputBoxWhite";
 
 const PortfolioAddFunds = ({ addFunds }) => {
     const [amount, setAmount] = useState('');
+    const [responseStatus, setResponseStatus] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -23,10 +24,15 @@ const PortfolioAddFunds = ({ addFunds }) => {
             setError('Insufficient wallet balance');
             setSuccess('')
         } else {
-            addFunds(amountNumber);
-            setAmount('');
-            setError('');
-            setSuccess('Funds added successfully');
+            try {
+                setResponseStatus(addFunds(amountNumber));
+                setAmount('');
+                setError('');
+                setSuccess('Funds added successfully' ? responseStatus === "success" : '');
+            } catch (error) {
+                setError('Failed to add funds');
+                setSuccess('');
+            }
         }
     };
 
@@ -48,7 +54,7 @@ const PortfolioAddFunds = ({ addFunds }) => {
                         fontSize="md"
                         height="2rem"
                         width="6rem">
-                    Add
+                    Allocate
                 </Button>
             </HStack>
             {error && <p style={{ color: 'red' }}>{error}</p>}

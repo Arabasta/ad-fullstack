@@ -22,6 +22,11 @@ const TransactionHistory = ({ type, portfolioType }) => {
         return "Invalid Date";
     };
 
+    const customiseTransactionTypeText = (transactionType) => {
+        if (transactionType === "Allocate") return "Allocated"
+        if (transactionType === "Withdraw") return "Withdrawn"
+    }
+
     return (
         <>
             <SeparatorBlack />
@@ -29,7 +34,7 @@ const TransactionHistory = ({ type, portfolioType }) => {
                 {transactions.map((transaction) => (
                     <ListItem key={transaction.id}>
                         <BlackText fontWeight="bold">
-                            {transaction.transactionType} ${transaction.transactionAmount}
+                            {customiseTransactionTypeText(transaction.transactionType)}: ${transaction.transactionAmount}
                         </BlackText>
                         <BlackText>Balance: ${transaction.totalAmount}</BlackText>
                         <BlackText>{formatTimestamp(transaction.timestamp)}</BlackText>

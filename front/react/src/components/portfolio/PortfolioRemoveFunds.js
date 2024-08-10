@@ -4,6 +4,7 @@ import InputBoxWhite from "../common/inputFields/InputBoxWhite";
 
 const PortfolioRemoveFunds = ({ withdrawFunds, currentBalance }) => {
     const [amount, setAmount] = useState('');
+    const [responseStatus, setResponseStatus] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -25,10 +26,10 @@ const PortfolioRemoveFunds = ({ withdrawFunds, currentBalance }) => {
             setError('Insufficient allocated balance');
         } else {
             try {
-                await withdrawFunds(amountNumber);
+                setResponseStatus(withdrawFunds(amountNumber));
                 setAmount('');
                 setError('');
-                setSuccess('Funds withdrawn successfully');
+                setSuccess('Funds withdrawn successfully' ? responseStatus === "success" : '');
             } catch (error) {
                 setError('Failed to withdraw funds');
                 setSuccess('');
@@ -54,7 +55,7 @@ const PortfolioRemoveFunds = ({ withdrawFunds, currentBalance }) => {
                         fontSize="md"
                         height="2rem"
                         width="6rem">
-                    Remove
+                    Withdraw
                 </Button>
             </HStack>
             {error && <p style={{color: 'red'}}>{error}</p>}

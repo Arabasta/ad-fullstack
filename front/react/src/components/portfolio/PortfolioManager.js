@@ -18,13 +18,12 @@ import GrayText from "../common/text/GrayText";
 import PortfolioTransactionHistoryPage from "../../pages/portfolio/PortfolioTransactionHistoryPage";
 
 const PortfolioManager = () => {
+    const navigate = useNavigate();
     const { portfolioType } = useParams();
     const { portfolio, addFunds, withdrawFunds } = usePortfolio(portfolioType.toUpperCase());
-    const otherPortfolios = portfolioTypes.filter(allPortfolioTypes => allPortfolioTypes.type.toLowerCase() !== portfolioType.toLowerCase());
-    const navigate = useNavigate();
 
     const selectedPortfolioType = portfolioTypes.find(pt => pt.type.toLowerCase() === portfolioType);
-    const title = selectedPortfolioType ? selectedPortfolioType.title : 'Portfolio';
+    const otherPortfolioTypes = portfolioTypes.filter(allPortfolioTypes => allPortfolioTypes.type.toLowerCase() !== portfolioType.toLowerCase());
 
     const handlePortfolioSelection = (type) => {
         navigate(`/portfolio/${type.toLowerCase()}`);
@@ -61,11 +60,11 @@ const PortfolioManager = () => {
                         <HStack justifyContent="space-between">
                             <Box>
                                 <Heading as="h1" color="#4B4BB3">
-                                    {title}
+                                    {selectedPortfolioType.title}
                                 </Heading>
                             </Box>
                             <Box>
-                                {otherPortfolios.map((portfolio, index) => (
+                                {otherPortfolioTypes.map((portfolio, index) => (
                                     <Button key={index}
                                             mr="1rem"
                                             onClick={() => handlePortfolioSelection(portfolio.type)}
@@ -80,7 +79,7 @@ const PortfolioManager = () => {
                     {/*Portfolio Dashboard*/}
                     <BoxBorderGray p={4} h="maxContent" boxShadow="2xl" bg="white"
                                    flexGrow={2}>
-                        <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={500} w={800}>
+                        <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={600} w={800}>
                             Dashboard
                         </Text>
                         <Box h="400" bg="lightgray">
@@ -102,21 +101,24 @@ const PortfolioManager = () => {
                 <BoxBorderGray className="right-panel" p={4} bg="gray.200" w="max-content"
                                boxShadow="2xl" height="full"
                                flexDirection="column" justifyContent="space-between">
+                    <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={600}>
+                        Action Panel
+                    </Text>
                     <VStack>
-                        <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={700}>
-                            Action Panel
-                        </Text>
-
                         {/*Portfolio Fund Action*/}
                         <BoxBorderGray p={4} mb={4} boxShadow="md" bg="white">
                             <Text color="black" fontSize="lg" fontWeight={500}>
                                 Portfolio Fund Action
                             </Text>
                             <VStack p="1rem">
-                                <PortfolioAddFunds addFunds={addFunds}/>
-                                <PortfolioRemoveFunds withdrawFunds={withdrawFunds} currentBalance={portfolio.allocatedBalance}/>
+                                <PortfolioAddFunds
+                                    addFunds={addFunds}/>
+                                <PortfolioRemoveFunds
+                                    withdrawFunds={withdrawFunds}
+                                    currentBalance={portfolio.allocatedBalance}/>
                                 {/*todo: alvin: transaction history not showing. to debug.*/}
-                                <PortfolioTransactionHistoryPage portfolioType={portfolioType.toUpperCase()}/>
+                                <PortfolioTransactionHistoryPage
+                                    portfolioType={portfolioType.toUpperCase()}/>
                             </VStack>
                         </BoxBorderGray>
 
