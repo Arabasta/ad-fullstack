@@ -9,13 +9,14 @@ import {
     FormLabel,
     InputGroup,
     Input,
+    Select,
 } from '@chakra-ui/react';
 
 import Heading from "../../common/text/Heading";
 import Text from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
-import Autocomplete from "../../feature/Autocomplete";
 import Countries from "./Countries";
+
 const RegisterStep3Form = ({
                                street, setStreet, city, setCity, postalCode, setPostalCode,
                                country, setCountry, unitNo, setUnitNo, handlePrevious, handleNext
@@ -163,11 +164,20 @@ const RegisterStep3Form = ({
                                         <FormLabel fontSize="md" fontWeight="md" color="gray.700" _dark={{ color: "gray.50" }}>
                                             Country
                                         </FormLabel>
-                                        <Autocomplete
+                                        <Select
                                             value={country}
                                             onChange={(e) => setCountry(e.target.value)}
-                                            category={Countries}
-                                        />
+                                            placeholder="Select country"
+                                            focusBorderColor="brand.400"
+                                            rounded="md"
+                                            required
+                                        >
+                                            {Countries.map((country) => (
+                                                <option key={country} value={country}>
+                                                    {country}
+                                                </option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
@@ -205,3 +215,4 @@ const RegisterStep3Form = ({
 };
 
 export default RegisterStep3Form;
+

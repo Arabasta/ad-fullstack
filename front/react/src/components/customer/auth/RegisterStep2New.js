@@ -9,20 +9,35 @@ import {
     FormLabel,
     InputGroup,
     Input,
+    Select,
 } from '@chakra-ui/react';
 
 import Heading from "../../common/text/Heading";
 import Text from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
-import Autocomplete from "../../feature/Autocomplete";
 import Nationalities from "./Nationalities";
+import CountryCodes from './CountryCodes';
+
 const RegisterStep2Form = ({
                                mobileNumber, setMobileNumber,
+                               countryCode, setCountryCode,
                                firstName, setFirstName,
                                lastName, setLastName,
                                nationality, setNationality,
                                handlePrevious, handleNext,
                            }) => {
+    const handleMobileNumberChange = (e) => {
+        const number = e.target.value.replace(/\D/g, ''); // 仅保留数字
+        setMobileNumber(number); // 仅设置号码部分
+    };
+
+    const handleCountryCodeChange = (e) => {
+        const code = e.target.value;
+        setCountryCode(code);
+        // 更新手机号，确保国家代码只添加一次
+        setMobileNumber(prev => prev.replace(/^\+\d+/, ''));
+    };
+
     return (
         <Box
             bg="brand.400"
@@ -81,11 +96,26 @@ const RegisterStep2Form = ({
                                         </FormLabel>
 
                                         <InputGroup size="sm">
+                                            <Select
+                                                value={countryCode}
+                                                onChange={handleCountryCodeChange}
+                                                focusBorderColor="brand.400"
+                                                rounded="md"
+                                                width="100px" // 设置更宽的宽度
+                                                mr={2}
+                                                required
+                                            >
+                                                {CountryCodes.map((country) => (
+                                                    <option key={country.code} value={country.code}>
+                                                        {country.label}
+                                                    </option>
+                                                ))}
+                                            </Select>
                                             <Input
                                                 type="tel"
                                                 value={mobileNumber}
                                                 placeholder="required"
-                                                onChange={(e) => setMobileNumber(e.target.value)}
+                                                onChange={handleMobileNumberChange}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
@@ -140,11 +170,20 @@ const RegisterStep2Form = ({
                                         <FormLabel fontSize="md" fontWeight="md" color="gray.700" _dark={{ color: "gray.50" }}>
                                             Nationality
                                         </FormLabel>
-                                        <Autocomplete
+                                        <Select
                                             value={nationality}
                                             onChange={(e) => setNationality(e.target.value)}
-                                            category={Nationalities}
-                                        />
+                                            placeholder="Select nationality"
+                                            focusBorderColor="brand.400"
+                                            rounded="md"
+                                            required
+                                        >
+                                            {Nationalities.map((nation) => (
+                                                <option key={nation} value={nation}>
+                                                    {nation}
+                                                </option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>

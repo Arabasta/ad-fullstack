@@ -14,6 +14,7 @@ const RegisterForm = () => {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
+    const [countryCode, setCountryCode] = useState('+65');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [nationality, setNationality] = useState('');
@@ -95,7 +96,8 @@ const RegisterForm = () => {
             await register({
                 userDetails: { username, password, email },
                 customerDetails: {
-                    mobileNumber, firstName, lastName, nationality,
+                    mobileNumber: `${countryCode}${mobileNumber}`, // 将国家代码与手机号组合
+                    firstName, lastName, nationality,
                     address: { street, city, postalCode, country, unitNo },
                     financialProfile: { employmentStatus, annualIncome, netWorth,
                         sourceOfWealth, investmentObjective, investmentExperience },
@@ -107,7 +109,7 @@ const RegisterForm = () => {
             toast({
                 title: "Registration successful",
                 description: "You have been successfully registered.",
-                status: "",
+                status: "success",
                 duration: 2000,
                 isClosable: true,
                 position: "top",
@@ -156,6 +158,8 @@ const RegisterForm = () => {
                 <RegisterStep2New
                     mobileNumber={mobileNumber}
                     setMobileNumber={setMobileNumber}
+                    countryCode={countryCode}  // 将 countryCode 传递给 RegisterStep2New
+                    setCountryCode={setCountryCode}  // 将 setCountryCode 传递给 RegisterStep2New
                     firstName={firstName}
                     setFirstName={setFirstName}
                     lastName={lastName}
