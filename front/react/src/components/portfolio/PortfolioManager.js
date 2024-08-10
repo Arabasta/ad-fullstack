@@ -12,12 +12,6 @@ import {Box, Center} from "@chakra-ui/react";
 const PortfolioManager = () => {
     const { portfolioType } = useParams();
     const { portfolio, addFunds, withdrawFunds } = usePortfolio(portfolioType.toUpperCase());
-    //pass the portfolio type the hook, then the hook could handle different portfolio type
-    const navigate = useNavigate();
-
-    const handleNavigateToRules = () => {
-        navigate('/portfolio/rules', { state: { portfolioType: portfolioType.toUpperCase() } });
-    };
 
     const selectedPortfolioType = portfolioTypes.find(pt => pt.type.toLowerCase() === portfolioType);
     const title = selectedPortfolioType ? selectedPortfolioType.title : 'Portfolio';

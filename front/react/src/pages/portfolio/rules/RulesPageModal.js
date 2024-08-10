@@ -3,7 +3,7 @@ import UpdateRulesByPortfolio from '../../../components/rules/UpdateRulesByPortf
 import ResetStopLossTriggerByPortfolio from '../../../components/rules/ResetStopLossTriggerByPortfolio';
 import useRule from '../../../hooks/useRule';
 import { Modal } from '../../../components/common/modal/Modal';
-import {Center, HStack, VStack} from "@chakra-ui/react";
+import {Center, VStack} from "@chakra-ui/react";
 
 
 const RulesPageModal = ({portfolioType, modalTitle, onActionComplete}) => {
