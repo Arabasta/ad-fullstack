@@ -8,7 +8,7 @@ const ActiveTickerItem = ({ ticker, onDelete }) => {
     return (
         <div>
             <BlackText>{ticker.tickerType}: {ticker.tickerName}</BlackText>
-            <Button onClick={() => onDelete(ticker.tickerName)}>Delete</Button>
+            <Button onClick={() => onDelete(ticker.id)}>Delete</Button>
         </div>
     );
 };

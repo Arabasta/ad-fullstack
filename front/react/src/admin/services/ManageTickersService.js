@@ -16,8 +16,8 @@ const addTicker = async (tickerDTO) => {
     return response.data;
 };
 
-const deleteTicker = async (tickerName) => {
-    const response = await axiosInstance.delete(`/v1/admin/trading/tickers/${tickerName}`);
+const deleteTicker = async (tickerId) => {
+    const response = await axiosInstance.delete(`/v1/admin/trading/tickers/${tickerId}`);
     return response.data;
 };
 
