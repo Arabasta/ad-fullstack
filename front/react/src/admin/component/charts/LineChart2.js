@@ -1,74 +1,69 @@
-import React from 'react';
-import { Line } from 'react-chartjs-2';
+import React from "react";
+import { Line } from "react-chartjs-2";
 import {
     Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
     LineElement,
     PointElement,
-    LinearScale,
-    CategoryScale,
     Title,
     Tooltip,
     Legend,
-} from 'chart.js';
+} from "chart.js";
 
 ChartJS.register(
+    CategoryScale,
+    LinearScale,
     LineElement,
     PointElement,
-    LinearScale,
-    CategoryScale,
     Title,
     Tooltip,
     Legend
 );
 
+const LineChart2 = ({ labels, datasets, view }) => {
+    const data = {
+        labels,
+        datasets: datasets.map((dataset, index) => ({
+            ...dataset,
+            yAxisID: index === 0 ? "y-axis-1" : "y-axis-2",
+        })),
+    };
 
-const LineChart = ({ data , view }) => {
-
-    if (!data || !data.datasets) {
-        console.error('Invalid data format:', data);
-        return null;
-    }
-
-    const chartOptions = {
+    const options = {
         responsive: true,
         scales: {
-            'y-axis-1': {
-                type: 'linear',
-                position: 'left',
-                display: view === 'capital',
+            "y-axis-1": {
+                type: "linear",
+                position: "left",
+                display: view === 'portfolioValue',
                 title: {
-                    display: true,
-                    text: 'Capital ($)',
+                    display: view === 'portfolioValue',
+                    text: 'Portfolio Value ($)',
                     color: 'brand.600',
                     font: {
                         size: 14
                     }
                 },
                 ticks: {
-                    color: 'brand.600', // Tick color
-                    font: {
-                        size: 12
-                    }
+                    callback: (value) => `${value}`,
                 },
+
             },
-            'y-axis-2': {
-                type: 'linear',
-                position: 'left',
-                display: view === 'percentChange',
+            "y-axis-2": {
+                type: "linear",
+                position: "left",
+                display: view === 'performance',
                 title: {
-                    display: true,
-                    text: 'Percent Change (%)',
-                    color: 'brand.600', // Title color
+                    display: view === 'performance',
+                    text: 'Performance (%)',
+                    color: 'brand.600',
                     font: {
                         size: 14
                     }
                 },
-
                 ticks: {
-                    color: 'brand.600', // Tick color
-                    font: {
-                        size: 12
-                    }
+                    callback: (value) => `${value * 100}`,
                 },
             },
 
@@ -84,7 +79,7 @@ const LineChart = ({ data , view }) => {
                 ticks: {
                     callback: function (value, index, ticks) {
                         // Show only the first and last tick
-                        if (index === 0 || index === ticks.length - 1) {
+                        if (index === 0 || index === ticks.length - 2) {
                             return this.getLabelForValue(value);
                         } else {
                             return ''; // Return an empty string for all other ticks
@@ -92,11 +87,13 @@ const LineChart = ({ data , view }) => {
                     },
                 },
             },
-        }
 
+
+        }
     };
 
-    return <Line data={data} options={chartOptions} />;
-};
+    return <Line data={data} options={options} />;
+}
 
-export default LineChart;
+export default LineChart2;
+

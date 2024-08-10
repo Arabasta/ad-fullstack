@@ -52,11 +52,51 @@ INSERT INTO money_pool (portfolio_type, pool_balance, unit_price, total_unit_qty
 VALUES ('CONSERVATIVE', 1000000.00, 1.00, 1000000);
 
 -- Ticker
-INSERT INTO ticker (id, ticker_name, ticker_type)
-VALUES (1, 'AAPL', 'STOCKS');
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (1, 'AAPL', 'STOCKS', 'AGGRESSIVE');
 
-INSERT INTO ticker (id, ticker_name, ticker_type)
-VALUES (2, 'X:BTC-USD', 'CRYPTO');
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (2, 'AAPL', 'STOCKS', 'MODERATE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (3, 'AAPL', 'STOCKS', 'CONSERVATIVE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (4, 'GOOGL', 'STOCKS', 'AGGRESSIVE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (5, 'GOOGL', 'STOCKS', 'MODERATE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (6, 'GOOGL', 'STOCKS', 'CONSERVATIVE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (7, 'NVDA', 'STOCKS', 'AGGRESSIVE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (8, 'NVDA', 'STOCKS', 'MODERATE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (9, 'NVDA', 'STOCKS', 'CONSERVATIVE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (10, 'X:BTC-USD', 'CRYPTO', 'AGGRESSIVE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (11, 'X:BTC-USD', 'CRYPTO', 'MODERATE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (12, 'X:BTC-USD', 'CRYPTO', 'CONSERVATIVE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (13, 'X:ETH-USD', 'CRYPTO', 'AGGRESSIVE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (14, 'X:ETH-USD', 'CRYPTO', 'MODERATE');
+
+INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
+VALUES (15, 'X:ETH-USD', 'CRYPTO', 'CONSERVATIVE');
+
 
 -- Portfolio
 -- For ALL portfolio

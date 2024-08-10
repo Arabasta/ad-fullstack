@@ -1,32 +1,38 @@
 import React, { useState } from 'react';
-import useWallet from "../../hooks/useWallet";
 import {Button, HStack, VStack} from "@chakra-ui/react";
 import InputBoxWhite from "../common/inputFields/InputBoxWhite";
 
-const PortfolioAddFunds = ({ addFunds }) => {
+const PortfolioRemoveFunds = ({ withdrawFunds, currentBalance }) => {
     const [amount, setAmount] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const {wallet} = useWallet();
-
     const handleAmountChange = (e) => {
         setAmount(e.target.value);
+        if (error) {
+            setError('');
+        }
+        if (success) {
+            setSuccess('');
+        }
     };
 
-    const handleAddFunds = () => {
+    const handleWithdraw = async () => {
         const amountNumber = parseFloat(amount);
-        setSuccess(''); // Clear success message before checking
         if (isNaN(amountNumber) || amountNumber <= 0) {
             setError('Please enter a valid amount more than $0');
-        } else if (amountNumber > wallet) {
-            setError('Insufficient wallet balance');
-            setSuccess('')
+        } else if (amountNumber > currentBalance) {
+            setError('Insufficient allocated balance');
         } else {
-            addFunds(amountNumber);
-            setAmount('');
-            setError('');
-            setSuccess('Funds added successfully');
+            try {
+                await withdrawFunds(amountNumber);
+                setAmount('');
+                setError('');
+                setSuccess('Funds withdrawn successfully');
+            } catch (error) {
+                setError('Failed to withdraw funds');
+                setSuccess('');
+            }
         }
     };
 
@@ -43,18 +49,18 @@ const PortfolioAddFunds = ({ addFunds }) => {
                     height="2rem"
                     width="10rem"
                 />
-                <Button onClick={handleAddFunds}
+                <Button onClick={handleWithdraw}
                         bg="gray.300"
-                             fontSize="md"
-                             height="2rem"
-                             width="6rem">
-                    Add
+                        fontSize="md"
+                        height="2rem"
+                        width="6rem">
+                    Remove
                 </Button>
             </HStack>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
+            {error && <p style={{color: 'red'}}>{error}</p>}
+            {success && <p style={{color: 'green'}}>{success}</p>}
         </VStack>
     );
 };
 
-export default PortfolioAddFunds;
+export default PortfolioRemoveFunds;
