@@ -10,6 +10,8 @@ import numpy as np
 from pydantic import BaseModel
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import ElasticNet
+from xgboost import Booster
+from xgboost import DMatrix
 from xgboost import XGBRegressor
 
 from dotenv import load_dotenv
@@ -71,12 +73,7 @@ class TickerDTO(BaseModel):
 
 class PredictionDTO(BaseModel):
     tickerDTO: TickerDTO
-    predictions: List[Decimal]
-
-
-class FastapiException(Exception):
-    status_code: int
-    detail: str
+    predictions: List[float]
 
 
 '''
@@ -176,23 +173,18 @@ def load_all_pickle_files(bucket_name, models_dict):
         response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix="model/")
         if 'Contents' in response:
             # Extract the keys (filenames) and filter out non-.pkl files if needed
-            keys = [str(item['Key']).split("/")[1] for item in response['Contents'] if
-                    item['Key'].endswith('.pkl')]  # todo:to reinstate all keys after optimisation.
+            keys = [str(item['Key']).split("/")[1] for item in response['Contents']]
+
             # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
-            # temp_keys = ['AAPL.pkl', 'ABBV.pkl', 'ADBE.pkl', 'AMZN.pkl', 'AVGO.pkl',
-            #              'COST.pkl', 'CVX.pkl', 'GOOG.pkl', 'GOOGL.pkl', 'HD.pkl',
-            #              'JNJ.pkl', 'JPM.pkl', 'LLY.pkl', 'MA.pkl', 'META.pkl',
-            #              'MRK.pkl', 'MSFT.pkl', 'NVDA.pkl', 'PEP.pkl', 'PG.pkl',
-            #              'TSLA.pkl', 'UNH.pkl', 'XOM.pkl', 'X:XRPUSD.pkl', 'X:SOLUSD.pkl',
-            #              'X:ETHUSD.pkl', 'X:DOGEUSD.pkl', 'X:BTCUSD.pkl', 'X:ADAUSD.pkl']
             temp_keys = ['AAPL.pkl', 'ABBV.pkl', 'ADBE.pkl', 'AMZN.pkl', 'AVGO.pkl',
                          'COST.pkl', 'CVX.pkl', 'GOOG.pkl', 'GOOGL.pkl', 'HD.pkl',
                          'JNJ.pkl', 'JPM.pkl', 'LLY.pkl', 'MA.pkl', 'META.pkl',
                          'MRK.pkl', 'MSFT.pkl', 'NVDA.pkl', 'PEP.pkl', 'PG.pkl',
-                         'TSLA.pkl', 'UNH.pkl', 'XOM.pkl', 'X:ETHUSD.pkl', 'X:ADAUSD.pkl']
-
-            # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
+                         'TSLA.pkl', 'UNH.pkl', 'XOM.pkl', 'X:XRPUSD.pkl', 'X:SOLUSD.pkl',
+                         'X:ETHUSD.pkl', 'X:DOGEUSD.pkl', 'X:BTCUSD.pkl', 'X:ADAUSD.pkl']
             keys = list(set(keys) & set(temp_keys))
+            # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
+
             logger.info(f'Trained models available: {keys}')
             # Load all models
             logger.info('--Start loading models--')
@@ -213,13 +205,14 @@ def load_pickle_file(bucket_name, ticker_name, key, models_dict):
     # Load trained model from s3 to in-memory dictionary
     obj = s3_client.get_object(Bucket=bucket_name, Key=f'model/{key}')
     models_dict[ticker_name] = pickle.loads(obj['Body'].read())
+    logger.info(f'Model: {type(models_dict[ticker_name])}')
     logger.info(f'Loaded {key} model. Ticker name: {ticker_name}')
     # Load x_scaler from s3 to in-memory dictionary
-    obj = s3_client.get_object(Bucket=bucket_name, Key=f'x_scaler/{key}')
+    obj = s3_client.get_object(Bucket=bucket_name, Key=f'x_scaler/{ticker_name}.pkl')
     LOADED_X_SCALERS[ticker_name] = pickle.loads(obj['Body'].read())
     logger.info(f'Loaded {key} x_scaler')
     # Load y_scaler from s3 to in-memory dictionary
-    obj = s3_client.get_object(Bucket=bucket_name, Key=f'y_scaler/{key}')
+    obj = s3_client.get_object(Bucket=bucket_name, Key=f'y_scaler/{ticker_name}.pkl')
     LOADED_Y_SCALERS[ticker_name] = pickle.loads(obj['Body'].read())
     logger.info(f'Loaded {key} y_scaler')
 
@@ -243,12 +236,13 @@ def get_latest_ticker_api_data(ticker_name):
         to=today,
         adjusted=True,
         sort='desc',  # get most recent datapoints.
-        limit=117  # todo: do not hardcode. match quantity of features required by models.
+        limit=146  # todo: do not hardcode. match quantity of features required by models.
     )
     # Create DataFrame from polygon api json response for data processing.
     df_raw = pd.DataFrame(data_request)
-    df_features = add_lagged_features(df_raw[[FEATURE]].iloc[::-1], FEATURE_COUNT)
-    arr_features = df_features.iloc[:FEATURE_COUNT].values
+    df_feature_flip = df_raw[[FEATURE]].iloc[::-1]
+    df_ready = add_lagged_features(df_feature_flip, FEATURE_COUNT)
+    arr_features = df_ready.iloc[-FEATURE_COUNT:].values
     return arr_features
 
 
@@ -270,9 +264,13 @@ def predictions_from_ticker_dto(ticker_dto):
 def predictions_from_x_values(ticker_dto, x_values):
     ticker_name = ticker_dto.tickerName
     model = LOADED_MODELS[ticker_name]
+    logger.info(x_values)
     scaled_x_values = LOADED_X_SCALERS[ticker_name].transform(x_values)
+    logger.info(scaled_x_values)
     y_pred = model.predict(np.array(scaled_x_values))
+    logger.info(y_pred)
     inverse_scaled_y_pred = LOADED_Y_SCALERS[ticker_name].inverse_transform(y_pred.reshape(-1, 1)).flatten()
+    logger.info(inverse_scaled_y_pred)
     return list(inverse_scaled_y_pred)
 
 
