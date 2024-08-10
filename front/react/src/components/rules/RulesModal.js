@@ -1,12 +1,12 @@
 import React from 'react';
-import UpdateRulesByPortfolio from '../../../components/rules/UpdateRulesByPortfolio';
-import ResetStopLossTriggerByPortfolio from '../../../components/rules/ResetStopLossTriggerByPortfolio';
-import useRule from '../../../hooks/useRule';
-import { Modal } from '../../../components/common/modal/Modal';
+import UpdateRulesByPortfolio from './UpdateRulesByPortfolio';
+import ResetStopLossTriggerByPortfolio from './ResetStopLossTriggerByPortfolio';
+import useRule from '../../hooks/useRule';
+import { Modal } from '../common/modal/Modal';
 import {Center, VStack} from "@chakra-ui/react";
 
 
-const RulesPageModal = ({portfolioType, modalTitle, onActionComplete}) => {
+const RulesModal = ({portfolioType, modalTitle, onActionComplete}) => {
     // Set the modal title
     // const modalTitle = `Rules - ${portfolioType} Portfolio`;
     const actionText = 'Manage Rules';
@@ -54,4 +54,4 @@ const RulesPageModal = ({portfolioType, modalTitle, onActionComplete}) => {
 
 };
 
-export default RulesPageModal;
+export default RulesModal;

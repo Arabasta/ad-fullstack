@@ -1,18 +1,21 @@
 import React from 'react';
+import {Box, HStack} from "@chakra-ui/react";
+import Text from "../common/text/Text";
 
 const PortfolioDetails = ({ portfolio }) => {
     return (
-        <div>
+        <Box flex={1} direction="row">
             {portfolio !== null ? (
-                <div>
-                    <p>Portfolio Type: {portfolio.portfolioType}</p>
-                    <p>Allocated Balance: {portfolio.allocatedBalance}</p>
-                    <p>Current Value: {portfolio.currentValue}</p>
-                </div>
-            ) : (
-                <p>Loading portfolio...</p>
+                <HStack alignContent="center" flex={1} direction="row" justifyContent="space-around">
+                    <Text color="black" fontSize="2xl">Current Value: ${portfolio.currentValue}</Text>
+                    <Text color="black" fontSize="2xl">Allocated Balance: ${portfolio.allocatedBalance}</Text>
+                </HStack>
+                ) : (
+                <Box>
+                    <Text color="black">Loading portfolio...</Text>
+                </Box>
             )}
-        </div>
+        </Box>
     );
 };
 
