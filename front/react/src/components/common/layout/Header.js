@@ -54,19 +54,19 @@ const Header = () => {
                         display={{ base: "none", md: "inline-flex" }}
                     >
                         <Link to="/news">
-                            <Button>News</Button>
+                            <Button variant="ghost">News</Button>
                         </Link>
 
                         {isAuthenticated ? (
                             <>
                                 <Link to="/portfolio">
-                                    <Button>Portfolio</Button>
+                                    <Button variant="ghost">Portfolio</Button>
                                 </Link>
                                 <Link to="/wallet">
-                                    <Button>Wallet</Button>
+                                    <Button variant="ghost">Wallet</Button>
                                 </Link>
                                 <Link to="/settings">
-                                    <Button>Settings</Button>
+                                    <Button variant="ghost">Settings</Button>
                                 </Link>
                                 <Button onClick={logout}>Sign Out</Button>
                             </>
