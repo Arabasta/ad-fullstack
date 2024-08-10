@@ -8,7 +8,7 @@ const CardComponent = ({title, button, chart}) => {
             bg="brand.400"
             w="full"
             h={{lg: "90%"}}
-            p={50}
+            p={20}
             alignItems="center"
             justifyContent="center">
             <Box
@@ -22,7 +22,7 @@ const CardComponent = ({title, button, chart}) => {
                 <Box
                     py={12}
                     px={6}
-                    w={{lg: "40%"}}
+                    w="full"
                     h={{lg: "30%"}}>
                     <chakra.h2
                         fontSize={{ base: "xl"}}
