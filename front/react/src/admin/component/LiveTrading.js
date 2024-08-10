@@ -9,7 +9,7 @@ const LiveTrading = () => {
     const [tickerType, setTickerType] = useState('CRYPTO');
 
     const handleStartLiveTrading = async () => {
-        await startLiveTrading();  // 移除了参数
+        await startLiveTrading();
     };
 
     const handleStopLiveTrading = async () => {
@@ -22,7 +22,7 @@ const LiveTrading = () => {
     };
 
     return (
-        <div>a
+        <div>
             <div>
                 <label>
                     Portfolio Type:
