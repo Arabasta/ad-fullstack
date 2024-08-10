@@ -20,7 +20,7 @@ const useTickers = () => {
     const fetchAvailableTickers = async () => {
         setLoading(true);
         const result = await ManageTickersService.getAvailableTickers();
-        setAvailableTickers(result.data.tickerDTOList || []); // Ensure the correct path is used
+        setAvailableTickers(result.data.tickerDTOList || []);
         setLoading(false);
     };
 
@@ -29,8 +29,8 @@ const useTickers = () => {
         fetchActiveTickers();
     };
 
-    const deleteTicker = async (tickerName) => {
-        await ManageTickersService.deleteTicker(tickerName);
+    const deleteTicker = async (tickerId) => {
+        await ManageTickersService.deleteTicker(tickerId);
         fetchActiveTickers();
     };
 
