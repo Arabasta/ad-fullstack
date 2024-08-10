@@ -48,9 +48,9 @@ public class ManageTickerControllerV1 {
         return ResponseEntity.ok(new ApiResponse<>("success", "Ticker created successfully", responseDTO));
     }
 
-    @DeleteMapping("/{ticker}")
-    public ResponseEntity<ApiResponse<?>> deleteTicker(@PathVariable String ticker) {
-        tickerService.deleteTicker(ticker);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteTicker(@PathVariable Long id) {
+        tickerService.deleteTicker(id);
         return ResponseEntity.ok(new ApiResponse<>("success", "Ticker deleted successfully", null));
     }
 }
