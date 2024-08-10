@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import BoxBorderGray from "../common/modal/Box-BorderGray";
+import BlackText from "../common/text/BlackText";
+import {Button, Center, chakra, HStack} from "@chakra-ui/react";
+import InputBoxWhite from "../common/inputFields/InputBoxWhite";
 
 const UpdateRulesByPortfolio = ({ onUpdate, rule }) => {
     const [formData, setFormData] = useState({});
@@ -41,17 +45,18 @@ const UpdateRulesByPortfolio = ({ onUpdate, rule }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>
-                    Stop Loss Initial Value:
-                    <span>{formData.stopLossInitialValue || ''}</span>
-                </label>
-            </div>
-            <div>
-                <label>
-                    Stop Loss:
-                    <input
+        <BoxBorderGray>
+            <chakra.form
+                onSubmit={handleSubmit}
+                overflow={{lg: "hidden"}}
+                color="brand.100"
+            >
+                {/*Stop Loss*/}
+                <HStack align="center" spacing={0} mb={4}>
+                    <BlackText fontSize="xl" mb={4}>
+                        Stop Loss (%):
+                    </BlackText>
+                    <InputBoxWhite
                         type="number"
                         name="stopLoss"
                         value={formData.stopLoss || ''}
@@ -59,33 +64,42 @@ const UpdateRulesByPortfolio = ({ onUpdate, rule }) => {
                         max="100"
                         onChange={handleChange}
                     />
-                </label>
-            </div>
-            {validationMessage && <p style={{ color: 'red' }}>{validationMessage}</p>}
-            <div>
-                <label>
-                    Recurring Allocation Amount:
-                    <input
+                </HStack>
+                {/*todo: use toast for validation*/}
+                {validationMessage && <p style={{color: 'red'}}>{validationMessage}</p>}
+
+                {/*Recurring Amount*/}
+                <HStack align="center" spacing={0} mb={4}>
+                    <BlackText fontSize="xl" mb={4}>
+                        Recurring Allocation Amount ($):
+                    </BlackText>
+                    <InputBoxWhite
                         type="number"
                         name="recurringAllocationAmount"
                         value={formData.recurringAllocationAmount || ''}
                         onChange={handleChange}
                     />
-                </label>
-            </div>
-            <div>
-                <label>
-                    Recurring Allocation Day:
-                    <input
+                </HStack>
+
+                {/*Recurring Amount*/}
+                <HStack align="center" spacing={0} mb={4}>
+                    <BlackText fontSize="xl" mb={4}>
+                        Recurring Allocation Day of Month:
+                    </BlackText>
+                    <InputBoxWhite
                         type="number"
                         name="recurringAllocationDay"
                         value={formData.recurringAllocationDay || ''}
-                        onChange={handleChange}
-                    />
-                </label>
-            </div>
-            <button type="submit">Update Rule</button>
-        </form>
+                        onChange={handleChange}/>
+                </HStack>
+                {/*todo: button not submitting*/}
+                <Center>
+                    <Button type="submit">
+                        Update Rule
+                    </Button>
+                </Center>
+            </chakra.form>
+        </BoxBorderGray>
     );
 };
 
