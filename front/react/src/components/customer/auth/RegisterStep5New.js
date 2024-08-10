@@ -283,7 +283,6 @@ const RegisterStep5Form = ({
                                 </Button>
                             </Box>
                         </chakra.form>
-                        {message && <Text>{message}</Text>}
                     </GridItem>
                 </SimpleGrid>
             </Box>
