@@ -1,60 +1,93 @@
-import React, { useState } from 'react';
+import React from 'react';
 import useTickers from '../hooks/useTickers';
-import TickerList from '../component/tickers/TickerList';
-import AvailableTickerList from '../component/tickers/AvailableTickerList';
-import Heading from '../../components/common/text/Heading';
-import Button from '../../components/common/buttons/Button';
-import BlackText from '../../components/common/text/BlackText';
-import UserMessage from "../../components/common/alerts/UserMessage";
 
 const ManageTickersPage = () => {
     const {
         activeTickers,
         availableTickers,
         loading,
-        fetchAvailableTickers,
         addTicker,
         deleteTicker
     } = useTickers();
 
-    const [showAvailableTickers, setShowAvailableTickers] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-
-    const handleAddButtonClick = async () => {
-        if (!showAvailableTickers) {
-            await fetchAvailableTickers();
-        }
-        setShowAvailableTickers(!showAvailableTickers);
+    const handleDragStart = (e, ticker) => {
+        e.dataTransfer.setData("ticker", JSON.stringify(ticker));
     };
 
-    const handleAddTicker = async (ticker) => {
-        try {
-            await addTicker(ticker);
-            setShowAvailableTickers(false); // Optionally hide the available tickers list after adding
-            setErrorMessage(''); // Clear any previous error messages
-        } catch (error) {
-            setErrorMessage('Failed to add ticker. Please try again.');
-            console.error('Error adding ticker:', error);
-        }
+    const handleDrop = (e) => {
+        const ticker = JSON.parse(e.dataTransfer.getData("ticker"));
+        addTicker(ticker);
     };
 
-    if (loading) return <BlackText>Loading...</BlackText>;
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    if (loading) return <div>Loading...</div>;
 
     return (
         <div>
-            <Heading variant="h1">Manage Tickers</Heading>
-            <Button onClick={handleAddButtonClick}>
-                {showAvailableTickers ? 'Hide Available Tickers' : 'Add Ticker'}
-            </Button>
-            <Heading variant="h2">Active Tickers</Heading>
-            <TickerList tickers={activeTickers} onDelete={deleteTicker} />
-            {showAvailableTickers && (
+            <h1>Manage Tickers</h1>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div>
-                    <Heading variant="h2">Available Tickers</Heading>
-                    <AvailableTickerList tickers={availableTickers} onAdd={handleAddTicker} />
+                    <h2>Available Tickers</h2>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ticker Name</th>
+                            <th>Ticker Type</th>
+                            <th>Portfolio</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {availableTickers.map(ticker => (
+                            <tr key={ticker.id} draggable onDragStart={(e) => handleDragStart(e, ticker)}>
+                                <td>{ticker.id}</td>
+                                <td>{ticker.tickerName}</td>
+                                <td>{ticker.tickerType}</td>
+                                <td>{ticker.portfolioType}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
                 </div>
-            )}
-            {errorMessage && <UserMessage message={errorMessage} />}
+                <div
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                    style={{ minHeight: '200px', minWidth: '200px', border: '1px solid black' }}
+                >
+                    <h2>Active Tickers</h2>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ticker Name</th>
+                            <th>Ticker Type</th>
+                            <th>Portfolio</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {activeTickers.map(ticker => (
+                            <tr key={ticker.id}>
+                                <td>{ticker.id}</td>
+                                <td>{ticker.tickerName}</td>
+                                <td>{ticker.tickerType}</td>
+                                <td>{ticker.portfolioType}</td>
+                                <td>
+                                    <button onClick={() => deleteTicker(ticker.id)}>Delete</button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div style={{ marginTop: '20px' }}>
+                <button>Cancel</button>
+                <button>Save</button>
+            </div>
         </div>
     );
 };
