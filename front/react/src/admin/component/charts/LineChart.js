@@ -22,7 +22,7 @@ ChartJS.register(
 );
 
 
-const LineChart = ({ data , view, labels }) => {
+const LineChart = ({ data , view }) => {
 
     if (!data || !data.datasets) {
         console.error('Invalid data format:', data);
@@ -35,7 +35,7 @@ const LineChart = ({ data , view, labels }) => {
             'y-axis-1': {
                 type: 'linear',
                 position: 'left',
-                display: view === 'capital' || view === 'portfolioValue',
+                display: view === 'capital',
                 title: {
                     display: true,
                     text: 'Capital ($)',
@@ -44,22 +44,17 @@ const LineChart = ({ data , view, labels }) => {
                         size: 14
                     }
                 },
-
                 ticks: {
                     color: 'brand.600', // Tick color
                     font: {
                         size: 12
                     }
                 },
-
-                grid: {
-                    color: '#dddddd' // Grid color
-                }
             },
             'y-axis-2': {
                 type: 'linear',
                 position: 'left',
-                display: view === 'percentChange' || view === 'performance',
+                display: view === 'percentChange',
                 title: {
                     display: true,
                     text: 'Percent Change (%)',
@@ -75,16 +70,12 @@ const LineChart = ({ data , view, labels }) => {
                         size: 12
                     }
                 },
-
-                grid: {
-                    color: '#dddddd' // Grid color
-                }
             },
 
             x: {
                 title: {
                     display: true,
-                    text: `Elapsed Time`,
+                    text: `Time`,
                     color: 'brand.600',
                     font: {
                         size: 14
@@ -93,14 +84,8 @@ const LineChart = ({ data , view, labels }) => {
                 ticks: {
                     font: {
                         size: 12
-                    },
-                    callback: function(value, index, values) {
-                        return index === 0 || index === values.length - 1 ? this.getLabelForValue(value) : '';
                     }
                 },
-                grid: {
-                    color: '#dddddd'
-                }
             },
         }
 
