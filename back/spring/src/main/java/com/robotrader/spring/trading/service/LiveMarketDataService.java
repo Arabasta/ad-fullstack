@@ -1,5 +1,6 @@
 package com.robotrader.spring.trading.service;
 
+import com.robotrader.spring.model.Ticker;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.TickerService;
 import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
@@ -27,12 +28,19 @@ public class LiveMarketDataService {
 
     public void subscribeToLiveMarketData() {
         cryptoWebSocketService.connect();
-        List<String> cryptoTickers = tickerService.getAllCrytpoTickerName();
+        List<String> cryptoTickers = tickerService.getAllCrytpoTickerName()
+                .stream()
+                .map(Ticker::getTickerName)
+                .toList();
         cryptoWebSocketService.subscribe(cryptoTickers);
 
-        List<String> stockTickers = tickerService.getAllStockTickerName();
+        List<String> stockTickers = tickerService.getAllStockTickerName()
+                .stream()
+                .map(Ticker::getTickerName)
+                .toList();
         stockWebSocketService.connect();
         stockWebSocketService.subscribe(stockTickers);
+
         isRunning = true;
     }
 

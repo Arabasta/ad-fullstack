@@ -51,17 +51,13 @@ public class TickerService implements ITickerService {
     }
 
     @Override
-    public List<String> getAllStockTickerName() {
-        return tickerRepository.findByTickerType(TickerTypeEnum.STOCKS).stream()
-                .map(ticker -> ticker.getTickerName())
-                .collect(Collectors.toList());
+    public List<Ticker> getAllStockTickerName() {
+        return tickerRepository.findByTickerType(TickerTypeEnum.STOCKS);
     }
 
     @Override
-    public List<String> getAllCrytpoTickerName() {
-        return tickerRepository.findByTickerType(TickerTypeEnum.CRYPTO).stream()
-                .map(ticker -> ticker.getTickerName())
-                .collect(Collectors.toList());
+    public List<Ticker> getAllCrytpoTickerName() {
+        return tickerRepository.findByTickerType(TickerTypeEnum.CRYPTO);
     }
 
     @Override

@@ -1,6 +1,6 @@
 import React from 'react';
 import FaqList from './FaqList';
-import Heading from "../common/text/Heading";
+import { Box, Flex, chakra } from '@chakra-ui/react';
 
 const faqs = [
     {
@@ -51,11 +51,50 @@ const faqs = [
 
 const Faq = () => {
     return (
-        <div>
-            <Heading variant="h1">Frequently Asked Questions</Heading>
-            <FaqList faqs={faqs} />
-        </div>
+        <Flex
+            bg="#666db3"
+            p={20}
+            w="auto"
+            justifyContent="center"
+            alignItems="center"
+        >
+            <Box
+                py={12}
+                bg="white"
+                rounded="xl"
+                shadow="base"
+                w="100%"
+            >
+                <Box maxW="7xl" mx="auto" px={{ base: 4, lg: 8 }}>
+                    <Box textAlign="center">
+                        <chakra.h2
+                            mt={2}
+                            fontSize={{ base: "3xl", sm: "4xl" }}
+                            lineHeight="8"
+                            fontWeight="extrabold"
+                            letterSpacing="tight"
+                            color="gray.900"
+                        >
+                            Frequently Asked Questions
+                        </chakra.h2>
+                        <chakra.p
+                            mt={4}
+                            maxW="2xl"
+                            fontSize="xl"
+                            mx={{ lg: "auto" }}
+                            color="gray.500"
+                        >
+                            Discover answers to some of the most commonly asked questions
+                        </chakra.p>
+                    </Box>
+
+                    <Box mt={10}>
+                        <FaqList faqs={faqs} />
+                    </Box>
+                </Box>
+            </Box>
+        </Flex>
     );
-}
+};
 
 export default Faq;

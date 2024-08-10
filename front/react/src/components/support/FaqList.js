@@ -1,14 +1,15 @@
 import React from 'react';
 import QuestionItem from './QuestionItem';
 import PropTypes from 'prop-types';
+import { Accordion } from '@chakra-ui/react';
 
 const FaqList = ({ faqs }) => {
     return (
-        <div>
+        <Accordion allowMultiple>
             {faqs.map((faq, index) => (
                 <QuestionItem key={index} question={faq.question} answer={faq.answer} />
             ))}
-        </div>
+        </Accordion>
     );
 };
 

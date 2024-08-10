@@ -37,14 +37,8 @@ public class LiveTradingControllerV1 {
     }
 
     @GetMapping("/start")
-    public ResponseEntity<ApiResponse<?>> startLiveTrading(@RequestParam PortfolioTypeEnum portfolioType,
-                                                          @RequestParam TickerTypeEnum tickerType) {
-        List<String> tickerList = null;
-        switch(tickerType) {
-            case STOCKS -> tickerList = tickerService.getAllStockTickerName();
-            case CRYPTO -> tickerList = tickerService.getAllCrytpoTickerName();
-        }
-        tradingApplicationService.runTradingAlgorithmLive(tickerList, portfolioType, tickerType);
+    public ResponseEntity<ApiResponse<?>> startLiveTrading() {
+        tradingApplicationService.runTradingAlgorithmLive();
         return ResponseEntity.ok(new ApiResponse<>("success", "Live trading started successfully", null));
     }
 

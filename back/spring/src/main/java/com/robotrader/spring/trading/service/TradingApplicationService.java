@@ -2,20 +2,20 @@ package com.robotrader.spring.trading.service;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.robotrader.spring.aws.s3.S3TransactionLogger;
+import com.robotrader.spring.model.Ticker;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
+import com.robotrader.spring.service.TickerService;
 import com.robotrader.spring.service.log.TradeTransactionLogService;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithmTwo;
-import com.robotrader.spring.trading.transactions.DatabaseStoreTradePersistence;
-import com.robotrader.spring.trading.transactions.MemoryStoreTradePersistence;
-import com.robotrader.spring.trading.transactions.ObjectStoreTradePersistence;
+import com.robotrader.spring.trading.persistence.DatabaseStoreTradePersistence;
+import com.robotrader.spring.trading.persistence.MemoryStoreTradePersistence;
 import com.robotrader.spring.trading.interfaces.ITradingApplicationService;
 import com.robotrader.spring.trading.dto.BackTestResultDTO;
 import com.robotrader.spring.trading.strategy.BackTestingStrategy;
 import com.robotrader.spring.trading.strategy.LiveTradingStrategy;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
-import com.robotrader.spring.trading.algorithm.TradingAlgorithmOne;
 import com.robotrader.spring.trading.strategy.TradingContext;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -40,6 +40,7 @@ public class TradingApplicationService implements ITradingApplicationService {
     private final TradeTransactionLogService tradeTransactionLogService;
     private final S3TransactionLogger s3TransactionLogger;
     private final PredictionService predictionService;
+    private final TickerService tickerService;
     private List<TradingContext> tradingContexts;
     private static final Logger logger = LoggerFactory.getLogger(TradingApplicationService.class);
 
@@ -47,13 +48,14 @@ public class TradingApplicationService implements ITradingApplicationService {
     public TradingApplicationService(MoneyPoolService moneyPoolService,
                                      HistoricalMarketDataService historicalMarketDataService,
                                      LiveMarketDataService liveMarketDataService, TradeTransactionLogService tradeTransactionLogService,
-                                     Optional<S3TransactionLogger> s3TransactionLogger, PredictionService predictionService) {
+                                     Optional<S3TransactionLogger> s3TransactionLogger, PredictionService predictionService, TickerService tickerService) {
         this.moneyPoolService = moneyPoolService;
         this.historicalMarketDataService = historicalMarketDataService;
         this.liveMarketDataService = liveMarketDataService;
         this.tradeTransactionLogService = tradeTransactionLogService;
         this.s3TransactionLogger = s3TransactionLogger.orElse(null);
         this.predictionService = predictionService;
+        this.tickerService = tickerService;
         this.tradingContexts = new ArrayList<>();
     }
 
@@ -99,41 +101,53 @@ public class TradingApplicationService implements ITradingApplicationService {
     }
 
     @Override
-    public void runTradingAlgorithmLive(List<String> tickers, PortfolioTypeEnum portfolioType, TickerTypeEnum tickerType) {
-
-        TradingContext tradingContext = new TradingContext();
-        tradingContexts.add(tradingContext);
-        if (!LiveMarketDataService.isRunning()){
+    public void runTradingAlgorithmLive() {
+        if (!LiveMarketDataService.isRunning()) {
             liveMarketDataService.subscribeToLiveMarketData();
         }
-        tradingContext.setStrategy(new LiveTradingStrategy(
-                new DatabaseStoreTradePersistence(tradeTransactionLogService),
-                historicalMarketDataService, liveMarketDataService, tickerType));
-        for (String ticker : tickers) {
-            // todo: make algo selection modular
-            TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmTwo(ticker, portfolioType, moneyPoolService);
-            tradingContext.executeTradingStrategy(tradingAlgorithmOne);
+        for (TickerTypeEnum tickerType : TickerTypeEnum.values()) {
+            for (PortfolioTypeEnum portfolioType : PortfolioTypeEnum.values()) {
+                List<Ticker> tickerList = null;
+                switch (tickerType) {
+                    case STOCKS -> tickerList = tickerService.getAllStockTickerName();
+                    case CRYPTO -> tickerList = tickerService.getAllCrytpoTickerName();
+                }
+                List<String> tickers = tickerList.stream()
+                        .filter(ticker -> ticker.getPortfolioType() == portfolioType)
+                        .map(Ticker::getTickerName)
+                        .toList();
+
+                if (tickers != null && !tickers.isEmpty()) {
+                    TradingContext tradingContext = new TradingContext();
+                    tradingContexts.add(tradingContext);
+                    tradingContext.setStrategy(new LiveTradingStrategy(
+                            new DatabaseStoreTradePersistence(tradeTransactionLogService),
+                            historicalMarketDataService, liveMarketDataService, tickerType));
+                    for (String ticker : tickers) {
+                        // todo: make algo selection modular
+                        TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmTwo(ticker, portfolioType, moneyPoolService);
+                        tradingContext.executeTradingStrategy(tradingAlgorithmOne);
+                    }
+                }
+            }
         }
     }
 
     @Override
     public void stopTradingAlgorithmLive() {
+        liveMarketDataService.disconnectLiveMarketData();
+        try {
+            // Pause for 1 second
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore the interrupted status
+            logger.error("Thread was interrupted during sleep", e);
+        }
         for (TradingContext tradingContext : tradingContexts) {
             tradingContext.stop();
         }
         tradingContexts.clear();
-        liveMarketDataService.disconnectLiveMarketData();
-    }
 
-
-    @Override
-    @Scheduled(cron = "0 */10 * * * *") // todo: Runs every 10 minutes
-    public void runTradingAlgorithm() {
-        try {
-
-        } catch (Exception e) {
-
-        }
     }
 
     @Override
