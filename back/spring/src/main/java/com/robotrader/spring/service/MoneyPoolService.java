@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 public class MoneyPoolService implements IMoneyPoolService {
@@ -65,7 +66,7 @@ public class MoneyPoolService implements IMoneyPoolService {
 
         if (tradeTransaction.getAction().equals("SELL")) {
             // Update unit price
-            moneyPool.setUnitPrice(newBalance.divide(moneyPool.getTotalUnitQty()));
+            moneyPool.setUnitPrice(newBalance.divide(moneyPool.getTotalUnitQty(), RoundingMode.HALF_UP));
 
             // Update all portfolio balance by type
             BigDecimal newUnitPrice = moneyPool.getUnitPrice();

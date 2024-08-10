@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -167,7 +168,7 @@ public class PortfolioService implements IPortfolioService {
         portfolio.setCurrentValue(portfolio.getCurrentValue().add(amount));
 
         BigDecimal moneyPoolUnitPrice = moneyPoolService.getUnitPriceByPortfolioType(portfolio.getPortfolioType());
-        BigDecimal newUnitsToAdd = amount.divide(moneyPoolUnitPrice);
+        BigDecimal newUnitsToAdd = amount.divide(moneyPoolUnitPrice, RoundingMode.HALF_UP);
         moneyPoolService.updateTotalUnitQty(newUnitsToAdd, portfolio.getPortfolioType(), true);
         portfolio.setAllocatedUnitQty(portfolio.getAllocatedUnitQty().add(newUnitsToAdd));
 
@@ -182,7 +183,7 @@ public class PortfolioService implements IPortfolioService {
             throw new InsufficientFundsException("Insufficient funds in portfolio");
 
         BigDecimal moneyPoolUnitPrice = moneyPoolService.getUnitPriceByPortfolioType(portfolio.getPortfolioType());
-        BigDecimal unitsToSubtract = amount.divide(moneyPoolUnitPrice);
+        BigDecimal unitsToSubtract = amount.divide(moneyPoolUnitPrice, RoundingMode.HALF_UP);
         moneyPoolService.updateTotalUnitQty(unitsToSubtract, portfolio.getPortfolioType(), false);
         portfolio.setAllocatedUnitQty(portfolio.getAllocatedUnitQty().subtract(unitsToSubtract));
 

@@ -51,6 +51,10 @@ VALUES ('MODERATE', 1000000.00, 1.00, 1000000);
 INSERT INTO money_pool (portfolio_type, pool_balance, unit_price, total_unit_qty)
 VALUES ('CONSERVATIVE', 1000000.00, 1.00, 1000000);
 
+UPDATE money_pool
+SET pool_balance = 1000000.00,
+    unit_price = 1.00,
+    total_unit_qty = 1000000;
 -- Ticker
 INSERT INTO ticker (id, ticker_name, ticker_type)
 VALUES (1, 'AAPL', 'STOCKS');
