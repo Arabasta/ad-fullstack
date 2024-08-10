@@ -118,12 +118,13 @@ public class TradingApplicationService implements ITradingApplicationService {
                         .toList();
 
                 if (tickers != null && !tickers.isEmpty()) {
-                    TradingContext tradingContext = new TradingContext();
-                    tradingContexts.add(tradingContext);
-                    tradingContext.setStrategy(new LiveTradingStrategy(
-                            new DatabaseStoreTradePersistence(tradeTransactionLogService),
-                            historicalMarketDataService, liveMarketDataService, tickerType));
                     for (String ticker : tickers) {
+                        TradingContext tradingContext = new TradingContext();
+                        tradingContexts.add(tradingContext);
+                        tradingContext.setStrategy(new LiveTradingStrategy(
+                                new DatabaseStoreTradePersistence(tradeTransactionLogService),
+                                historicalMarketDataService, liveMarketDataService, predictionService, tickerType));
+
                         // todo: make algo selection modular
                         TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmTwo(ticker, portfolioType, moneyPoolService);
                         tradingContext.executeTradingStrategy(tradingAlgorithmOne);
@@ -137,10 +138,10 @@ public class TradingApplicationService implements ITradingApplicationService {
     public void stopTradingAlgorithmLive() {
         liveMarketDataService.disconnectLiveMarketData();
         try {
-            // Pause for 1 second
+            // Pause for 1 second, for data flux completion
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Restore the interrupted status
+            Thread.currentThread().interrupt();
             logger.error("Thread was interrupted during sleep", e);
         }
         for (TradingContext tradingContext : tradingContexts) {

@@ -109,16 +109,19 @@ public abstract class TradingAlgorithmBase {
         logger.debug("Stop loss: {}", stopLossPrice);
     }
 
-    // Risk management. max trades/day, prediction confidence level, enough capital to buy position
+    // Risk management. max trades/day, enough capital to buy position
     public boolean isTradeable(){
         // Check if already have an open buy trade
         if (openTrade()) {
+            logger.info("There is an open trade");
             return false;
         }
 
         // Calculate the position size
         position = positionSizing(baseAlgoRisk);
+        logger.info("Calculated position size: {}", position);
         if (position.equals(BigDecimal.ZERO)) {
+            logger.info("Insufficient capital");
             return false;
         }
         // Calculate the total cost of the trade
@@ -126,9 +129,10 @@ public abstract class TradingAlgorithmBase {
 
         // Check if there's enough capital for the trade
         BigDecimal poolBalance = moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
+        logger.debug("Total cost: {}", totalCost);
+        logger.debug("Pool balance: {}", poolBalance);
         if (isTest && totalCost.compareTo(currentCapitalTest) > 0 || !isTest && totalCost.compareTo(poolBalance) > 0) {
-            logger.debug("Position: {}", position);
-            logger.debug("Not enough capital for the trade. Required: {}, Available: {}", totalCost, currentCapitalTest);
+            logger.info("Not enough capital for the trade. Required: {}, Available: {}", totalCost, currentCapitalTest);
             return false;
         }
         return true;
@@ -191,8 +195,11 @@ public abstract class TradingAlgorithmBase {
     }
 
     public boolean stopLiveTrade() {
-        if (lastTradeTransaction.getAction().equals("BUY")) {
+        System.out.println("Algo stop");
+        System.out.println("Last trade: " + lastTradeTransaction);
+        if (lastTradeTransaction != null && lastTradeTransaction.getAction().equals("BUY")) {
             executeTradeLive("SELL");
+            System.out.println("Last trade if last was buy: " + lastTradeTransaction);
             return true;
         }
         return false;

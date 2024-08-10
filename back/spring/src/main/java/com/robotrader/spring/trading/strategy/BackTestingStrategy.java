@@ -71,7 +71,7 @@ public class BackTestingStrategy implements TradingStrategy {
             // Loop through price history and execute algo, simulating progress of time
             Flux.fromIterable(marketDataHistory.get("open"))
                     .takeWhile(openPrice -> marketDataHistory.get("open").size() >= 77)
-                    .concatMap(openPrice -> {
+                    .concatMap(openPrice -> { // Ensures sequential running of getPricePredictions, so that it completes before the next one is run.
                         return getPricePredictions(marketDataHistory, tradingAlgorithmBase.getTicker())
                                 .doOnNext(predictionDTO -> {
                                     List<BigDecimal> pricePredictions = predictionDTO.getPredictions();
@@ -147,7 +147,6 @@ public class BackTestingStrategy implements TradingStrategy {
 //                .stream()
 //                .map(obj -> new BigDecimal(obj.toString()))
 //                .collect(Collectors.toList());
-//        System.out.println("Input data: " + historicalVW);
 //        predictionDTO.setPredictions(historicalVW);
 //        TickerDTO tickerDTO = new TickerDTO();
 //        tickerDTO.setTickerName(processTicker(tickerName));

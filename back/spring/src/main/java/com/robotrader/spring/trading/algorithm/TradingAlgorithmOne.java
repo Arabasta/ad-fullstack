@@ -22,7 +22,7 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
 
     @Override
     public boolean checkForBuySignal() {
-
+        logger.debug("Price predictions: {}", pricePredictions);
         if (isTradeable() && pricePredictions != null) {
             int window = 37;
             // Not enough prediction data, cannot trade
@@ -45,7 +45,7 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
                     return true;
                 }
             }
-            logger.debug("Price prediction: Predicted price did not hit the target or stop loss within the prediction window");
+            logger.info("Price prediction: Predicted price did not hit the target or stop loss within the prediction window");
         }
         logger.info("Buy trade rules not met");
         return false;
@@ -83,6 +83,7 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
 
         // Calculate raw position size using adjusted risk
         BigDecimal rawPositionSize = availableCapital.multiply(adjustedRisk).divide(stopLossAmount, 8, RoundingMode.HALF_UP);
+        logger.debug("Raw position size: {}", rawPositionSize);
         return applyPriceBasedScaling(rawPositionSize, currentPrice, HIGH_PRICE_THRESHOLD);
     }
 

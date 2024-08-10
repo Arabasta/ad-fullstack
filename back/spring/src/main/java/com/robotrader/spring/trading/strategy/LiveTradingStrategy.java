@@ -1,19 +1,25 @@
 package com.robotrader.spring.trading.strategy;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.robotrader.spring.dto.ticker.TickerDTO;
+import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
+import com.robotrader.spring.trading.dto.PredictionDTO;
 import com.robotrader.spring.trading.dto.TradeTransaction;
 import com.robotrader.spring.trading.interfaces.TradePersistence;
 import com.robotrader.spring.trading.interfaces.TradingStrategy;
 import com.robotrader.spring.trading.service.HistoricalMarketDataService;
 import com.robotrader.spring.trading.service.LiveMarketDataService;
+import com.robotrader.spring.trading.service.PredictionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -27,17 +33,21 @@ public class LiveTradingStrategy implements TradingStrategy {
     private CompletableFuture<Void> completionFuture;
     private HistoricalMarketDataService historicalMarketDataService;
     private LiveMarketDataService liveMarketDataService;
+    private PredictionService predictionService;
     private TickerTypeEnum tickerType;
     private TradingAlgorithmBase tradingAlgorithm;
+    private static final int MIN_INPUT_SIZE = 76;
     private static final Logger logger = LoggerFactory.getLogger(LiveTradingStrategy.class);
 
     public LiveTradingStrategy(TradePersistence tradePersistence,
                                HistoricalMarketDataService historicalMarketDataService,
                                LiveMarketDataService liveMarketDataService,
+                               PredictionService predictionService,
                                TickerTypeEnum tickerType) {
         this.tradePersistence = tradePersistence;
         this.historicalMarketDataService = historicalMarketDataService;
         this.liveMarketDataService = liveMarketDataService;
+        this.predictionService = predictionService;
         this.tickerType = tickerType;
         this.completionFuture = new CompletableFuture<>();
     }
@@ -94,8 +104,13 @@ public class LiveTradingStrategy implements TradingStrategy {
 
     private void setupAndExecuteLiveTrade(TradingAlgorithmBase tradingAlgorithm) {
         historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithm.getTicker()))
-                .doOnNext(data-> tradingAlgorithm.setPriceHistory(data))
-                .doOnNext(data -> tradingAlgorithm.setPricePredictions(getPricePredictions(data)))
+                .flatMap(data -> {
+                    tradingAlgorithm.setPriceHistory(data);
+                    return getPricePredictions(data, tradingAlgorithm.getTicker());
+                })
+                .doOnNext(predictionDTO -> {
+                    tradingAlgorithm.setPricePredictions(predictionDTO.getPredictions());
+                })
                 .doOnNext(data -> {
                     TradeTransaction lastTransactionBeforeExecution = tradingAlgorithm.getLastTradeTransaction();
                     boolean isTest = false;
@@ -117,18 +132,42 @@ public class LiveTradingStrategy implements TradingStrategy {
 
     }
 
-    public List<BigDecimal> getPricePredictions(Map<String, List<Object>> marketDataHistory) {
-        List<Object> objects = marketDataHistory.get("close");
-        return objects.stream()
-                .map(price -> (BigDecimal) price)
-                .collect(Collectors.toList()); //TODO: Predictions == history for now
+    public Mono<PredictionDTO> getPricePredictions(Map<String, List<Object>> marketDataHistory, String tickerName
+    ) {
+//        List<Object> objects = marketDataHistory.get("close");
+//        return objects.stream()
+//                .map(price -> (BigDecimal) price)
+//                .collect(Collectors.toList());
+        PredictionDTO predictionDTO = new PredictionDTO();
+        int dataSize = marketDataHistory.get("vw").size();
+        List<BigDecimal> historicalVW = marketDataHistory.get("vw").subList(dataSize - MIN_INPUT_SIZE, dataSize)
+                .stream()
+                .map(obj -> new BigDecimal(obj.toString()))
+                .collect(Collectors.toList());
+        predictionDTO.setPredictions(historicalVW);
+        TickerDTO tickerDTO = new TickerDTO();
+        tickerDTO.setTickerName(processTicker(tickerName));
+        tickerDTO.setTickerType(TickerTypeEnum.STOCKS);
+        tickerDTO.setPortfolioType(PortfolioTypeEnum.AGGRESSIVE);
+        predictionDTO.setTickerDTO(tickerDTO);
+        Mono<PredictionDTO> predictionDTOMono;
+        try {
+            predictionDTOMono = predictionService.byPredictionDtoBacktest(predictionDTO);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return predictionDTOMono;
     }
 
     @Override
     public void stop() {
+        System.out.println("LiveTradingStrategy stopped");
         if (tradingAlgorithm.stopLiveTrade()) {
-            TradeTransaction newTransaction = tradingAlgorithm.getLastTradeTransaction();
-            processTrade(newTransaction);
+            TradeTransaction transaction = tradingAlgorithm.getLastTradeTransaction();
+            System.out.println("LiveTradingStrategy Last trade: " + transaction);
+            if (transaction != null) {
+                processTrade(transaction);
+            }
         }
         unsubscribeFromFlux();
         completionFuture.complete(null); // Complete on stop
