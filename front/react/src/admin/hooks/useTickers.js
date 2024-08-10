@@ -8,6 +8,7 @@ const useTickers = () => {
 
     useEffect(() => {
         fetchActiveTickers();
+        fetchAvailableTickers();
     }, []);
 
     const fetchActiveTickers = async () => {
@@ -26,19 +27,23 @@ const useTickers = () => {
 
     const addTicker = async (ticker) => {
         await ManageTickersService.addTicker(ticker);
-        fetchActiveTickers();
+        setActiveTickers((prevActiveTickers) => [...prevActiveTickers, ticker]);
+        setAvailableTickers((prevAvailableTickers) =>
+            prevAvailableTickers.filter(t => t.id !== ticker.id)
+        );
     };
 
     const deleteTicker = async (tickerId) => {
         await ManageTickersService.deleteTicker(tickerId);
-        fetchActiveTickers();
+        const ticker = activeTickers.find(t => t.id === tickerId);
+        setAvailableTickers((prevAvailableTickers) => [...prevAvailableTickers, ticker]);
+        setActiveTickers((prevActiveTickers) => prevActiveTickers.filter(t => t.id !== tickerId));
     };
 
     return {
         activeTickers,
         availableTickers,
         loading,
-        fetchAvailableTickers,
         addTicker,
         deleteTicker
     };
