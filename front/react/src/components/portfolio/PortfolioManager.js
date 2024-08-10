@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 import PortfolioAddFunds from "../../components/portfolio/PortfolioAddFunds";
 import PortfolioRemoveFunds from "./PortfolioRemoveFunds";
 import Heading from "../../components/common/text/Heading";
@@ -11,6 +11,7 @@ import {Box, Center, Flex, HStack, VStack} from "@chakra-ui/react";
 import BoxBorderGray from "../common/modal/Box-BorderGray";
 import Text from "../common/text/Text";
 import ButtonBlack from "../common/buttons/ButtonBlack";
+import LineChart2 from "../../admin/component/charts/LineChart2";
 
 const PortfolioManager = () => {
     const { portfolioType } = useParams();
@@ -18,6 +19,9 @@ const PortfolioManager = () => {
 
     const selectedPortfolioType = portfolioTypes.find(pt => pt.type.toLowerCase() === portfolioType);
     const title = selectedPortfolioType ? selectedPortfolioType.title : 'Portfolio';
+
+    const { state } = useLocation();
+    const { chartData=[], labels=[], view } = state || {};
 
     return (
         <Center bg="#666db3" p="2rem">
@@ -42,6 +46,7 @@ const PortfolioManager = () => {
                         </Text>
                         <Box h="400" bg="lightgray">
                             Simulated Dashboard
+                            <LineChart2 datasets={[chartData]} labels={labels} view={view} />
                         </Box>
                     </BoxBorderGray>
 
