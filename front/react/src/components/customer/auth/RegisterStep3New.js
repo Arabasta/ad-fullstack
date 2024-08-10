@@ -9,17 +9,27 @@ import {
     FormLabel,
     InputGroup,
     Input,
+    Select,
 } from '@chakra-ui/react';
 
 import Heading from "../../common/text/Heading";
 import Text from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
-import Autocomplete from "../../feature/Autocomplete";
 import Countries from "./Countries";
+
 const RegisterStep3Form = ({
                                street, setStreet, city, setCity, postalCode, setPostalCode,
                                country, setCountry, unitNo, setUnitNo, handlePrevious, handleNext
                            }) => {
+
+    // 处理邮政编码输入，只允许数字
+    const handlePostalCodeChange = (e) => {
+        const value = e.target.value;
+        // 只保留数字
+        const numericValue = value.replace(/\D/g, '');
+        setPostalCode(numericValue);
+    };
+
     return (
         <Box
             bg="brand.400"
@@ -150,8 +160,8 @@ const RegisterStep3Form = ({
                                             <Input
                                                 type="text"
                                                 value={postalCode}
-                                                placeholder="required"
-                                                onChange={(e) => setPostalCode(e.target.value)}
+                                                placeholder="Enter numeric postal code"
+                                                onChange={handlePostalCodeChange}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
@@ -163,11 +173,20 @@ const RegisterStep3Form = ({
                                         <FormLabel fontSize="md" fontWeight="md" color="gray.700" _dark={{ color: "gray.50" }}>
                                             Country
                                         </FormLabel>
-                                        <Autocomplete
+                                        <Select
                                             value={country}
                                             onChange={(e) => setCountry(e.target.value)}
-                                            category={Countries}
-                                        />
+                                            placeholder="Select country"
+                                            focusBorderColor="brand.400"
+                                            rounded="md"
+                                            required
+                                        >
+                                            {Countries.map((country) => (
+                                                <option key={country} value={country}>
+                                                    {country}
+                                                </option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>

@@ -14,6 +14,7 @@ const RegisterForm = () => {
     const [password, setPassword] = useState('');
     const [email, setEmail] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
+    const [countryCode, setCountryCode] = useState('+65');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [nationality, setNationality] = useState('');
@@ -34,7 +35,7 @@ const RegisterForm = () => {
     const [riskRewardScore, setRiskRewardScore] = useState(1);
     const [ownedInvestmentsScore, setOwnedInvestmentsScore] = useState(1);
     const [investmentPersonalityScore, setInvestmentPersonalityScore] = useState(1);
-    const [message, setMessage] = useState('');
+    const [message] = useState('');
     const { register } = useAuth();
     const navigate = useNavigate();
     const toast = useToast();
@@ -46,7 +47,7 @@ const RegisterForm = () => {
         duration: 5000,
         isClosable: true,
         position: "top",
-    }
+    };
 
     const validateStep = () => {
         switch (step) {
@@ -70,6 +71,30 @@ const RegisterForm = () => {
 
     const handleNext = (e) => {
         e.preventDefault();
+
+        if (step === 1) {
+            if (username.length < 3 || username.length > 20) {
+                toast({
+                    title: "Invalid Username",
+                    description: "Username must be between 3 and 20 characters.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                return;
+            }
+            if (password.length < 6) {
+                toast({
+                    title: "Invalid Password",
+                    description: "Password must be at least 6 characters long.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                });
+                return;
+            }
+        }
+
         if (!validateStep()) {
             toast(toastOptions);
             return;
@@ -95,7 +120,8 @@ const RegisterForm = () => {
             await register({
                 userDetails: { username, password, email },
                 customerDetails: {
-                    mobileNumber, firstName, lastName, nationality,
+                    mobileNumber: `${countryCode}${mobileNumber}`,
+                    firstName, lastName, nationality,
                     address: { street, city, postalCode, country, unitNo },
                     financialProfile: { employmentStatus, annualIncome, netWorth,
                         sourceOfWealth, investmentObjective, investmentExperience },
@@ -107,23 +133,35 @@ const RegisterForm = () => {
             toast({
                 title: "Registration successful",
                 description: "You have been successfully registered.",
-                status: "",
+                status: "success",
                 duration: 2000,
                 isClosable: true,
                 position: "top",
             });
             navigate('/');
         } catch (error) {
-            setMessage('An error occurred, please try again.');
             if (error.response && error.response.data && error.response.data.message) {
-                toast({
-                    title: "Registration failed",
-                    description: error.response.data.message,
-                    status: "error",
-                    duration: 5000,
-                    isClosable: true,
-                    position: "top",
-                });
+                const errorMessage = error.response.data.message;
+                const errorDetails = error.response.data.details;
+                if (errorDetails && errorDetails.includes("Duplicate entry") && errorDetails.includes("for key 'user.UK_sb8bbouer5wak8vyiiy4pf2bx'")) {
+                    toast({
+                        title: "Username already exists",
+                        description: "The username is already taken. Please choose a different username.",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                        position: "top",
+                    });
+                } else {
+                    toast({
+                        title: "Registration failed",
+                        description: errorMessage,
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                        position: "top",
+                    });
+                }
             } else {
                 console.error('Error during registration', error);
                 toast({
@@ -156,6 +194,8 @@ const RegisterForm = () => {
                 <RegisterStep2New
                     mobileNumber={mobileNumber}
                     setMobileNumber={setMobileNumber}
+                    countryCode={countryCode}
+                    setCountryCode={setCountryCode}
                     firstName={firstName}
                     setFirstName={setFirstName}
                     lastName={lastName}

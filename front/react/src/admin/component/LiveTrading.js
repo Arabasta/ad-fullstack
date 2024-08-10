@@ -9,7 +9,7 @@ const LiveTrading = () => {
     const [tickerType, setTickerType] = useState('CRYPTO');
 
     const handleStartLiveTrading = async () => {
-        await startLiveTrading(portfolioType, tickerType);
+        await startLiveTrading();
     };
 
     const handleStopLiveTrading = async () => {
@@ -29,7 +29,7 @@ const LiveTrading = () => {
                     <select value={portfolioType} onChange={(e) => setPortfolioType(e.target.value)} disabled={isTrading}>
                         <option value="AGGRESSIVE">Aggressive</option>
                         <option value="CONSERVATIVE">Conservative</option>
-                        <option value="BALANCED">Balanced</option>
+                        <option value="MODERATE">Moderate</option>
                     </select>
                 </label>
                 <label>
@@ -40,12 +40,23 @@ const LiveTrading = () => {
                     </select>
                 </label>
             </div>
-            <button onClick={handleStartLiveTrading} disabled={isTrading}>Start Live Trading</button>
-            <button onClick={handleStopLiveTrading} disabled={!isTrading}>Stop Live Trading</button>
-            <button onClick={handleGetTransactions} >Get Transactions</button>
+            <div style={{ marginTop: '20px' }}>
+                {isTrading ? (
+                    <button onClick={handleStopLiveTrading} style={{ width: '150px' }}>
+                        Stop Live Trading
+                    </button>
+                ) : (
+                    <button onClick={handleStartLiveTrading} style={{ width: '150px' }}>
+                        Start Live Trading
+                    </button>
+                )}
+            </div>
+            <button onClick={handleGetTransactions} style={{ marginTop: '10px' }}>
+                Get Transactions
+            </button>
 
             {message && (
-                <p style={{ color: isTrading ? 'green' : 'red' }}>
+                <p style={{ color: isTrading ? 'green' : 'red', marginTop: '20px' }}>
                     {message}
                 </p>
             )}

@@ -8,7 +8,7 @@ const useLiveTrading = () => {
     const [hasMore, setHasMore] = useState(false);
     const [isTrading, setIsTrading] = useState(false);
 
-    const startLiveTrading = useCallback(async (portfolioType, tickerType) => {
+    const startLiveTrading = useCallback(async () => {
         if (isTrading) {
             setMessage("Live trading is already running.");
             return;
@@ -17,7 +17,7 @@ const useLiveTrading = () => {
         setMessage(null);
         setIsTrading(true);
         try {
-            const response = await LiveTradingService.startLiveTrading(portfolioType, tickerType);
+            const response = await LiveTradingService.startLiveTrading();
             setMessage(response.data.message);
         } catch (err) {
             setMessage(err.message);
@@ -55,7 +55,6 @@ const useLiveTrading = () => {
         }
     }, []);
 
-
     return {
         message,
         transactions,
@@ -69,3 +68,4 @@ const useLiveTrading = () => {
 };
 
 export default useLiveTrading;
+
