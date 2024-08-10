@@ -1,15 +1,9 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
 import UpdateRulesByPortfolio from '../../../components/rules/UpdateRulesByPortfolio';
 import ResetStopLossTriggerByPortfolio from '../../../components/rules/ResetStopLossTriggerByPortfolio';
 import useRule from '../../../hooks/useRule';
 import { Modal } from '../../../components/common/modal/Modal';
-import RulesPage from "./RulesPage";
-import {HStack, VStack} from "@chakra-ui/react";
-import BlackText from "../../../components/common/text/BlackText";
-import InputBoxWhiteExtraLarge from "../../../components/common/inputFields/InputBoxWhiteExtraLarge";
-import RedText from "../../../components/common/text/RedText";
-import BoxBorderGray from "../../../components/common/modal/Box-BorderGray";
+import {Center, VStack} from "@chakra-ui/react";
 
 
 const RulesPageModal = ({portfolioType, modalTitle, onActionComplete}) => {
@@ -42,23 +36,20 @@ const RulesPageModal = ({portfolioType, modalTitle, onActionComplete}) => {
     };
 
     return (
-        <Modal
-            triggerText={actionText}
-            title={`Rules - ${modalTitle}`}
-            onClose={resetFields}
-            onOpen={handleModalOpen}
-        >
-            <VStack spacing={6} p={6}>
-                <BoxBorderGray>
+        <Center>
+            <Modal
+                triggerText={actionText}
+                title={`Rules - ${modalTitle}`}
+                onClose={resetFields}
+                onOpen={handleModalOpen}
+            >
+                <VStack spacing={6} p={6}>
                     <UpdateRulesByPortfolio  onUpdate={handleUpdate} rule={rule} />
-                </BoxBorderGray>
-
-                <BoxBorderGray>
                     <ResetStopLossTriggerByPortfolio portfolioType={portfolioType} onReset={handleReset} />
-                </BoxBorderGray>
-                {message && <p>{message}</p>}
-            </VStack>
-        </Modal>
+                    {message && <p>{message}</p>}
+                </VStack>
+            </Modal>
+        </Center>
     );
 
 };
