@@ -31,6 +31,7 @@ public class BackTestingStrategy implements TradingStrategy {
     private final PredictionService predictionService;
     private static final Logger logger = LoggerFactory.getLogger(BackTestingStrategy.class);
     private static final int MIN_INPUT_SIZE = 76;
+    private static final int LIMIT = 5000; // API call data limit
 
     public BackTestingStrategy(TradePersistence tradePersistence,
                                HistoricalMarketDataService historicalMarketDataService, PredictionService predictionService) {
@@ -41,7 +42,7 @@ public class BackTestingStrategy implements TradingStrategy {
 
     @Override
     public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase) {
-        return historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
+        return historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()), LIMIT)
                 .flatMap(data -> {
                     // Ensure runSimulation returns a Mono<Void>
                     return runSimulation(tradingAlgorithmBase, data);

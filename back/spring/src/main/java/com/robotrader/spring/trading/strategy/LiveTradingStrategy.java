@@ -37,6 +37,7 @@ public class LiveTradingStrategy implements TradingStrategy {
     private TickerTypeEnum tickerType;
     private TradingAlgorithmBase tradingAlgorithm;
     private static final int MIN_INPUT_SIZE = 76;
+    private static final int LIMIT = 1000; // API call data limit
     private static final Logger logger = LoggerFactory.getLogger(LiveTradingStrategy.class);
 
     public LiveTradingStrategy(TradePersistence tradePersistence,
@@ -103,7 +104,7 @@ public class LiveTradingStrategy implements TradingStrategy {
     private String processResponseTicker(String ticker) { return "X:" + ticker; }
 
     private void setupAndExecuteLiveTrade(TradingAlgorithmBase tradingAlgorithm) {
-        historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithm.getTicker()))
+        historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithm.getTicker()), LIMIT)
                 .flatMap(data -> {
                     tradingAlgorithm.setPriceHistory(data);
                     return getPricePredictions(data, tradingAlgorithm.getTicker());
@@ -134,10 +135,21 @@ public class LiveTradingStrategy implements TradingStrategy {
 
     public Mono<PredictionDTO> getPricePredictions(Map<String, List<Object>> marketDataHistory, String tickerName
     ) {
-//        List<Object> objects = marketDataHistory.get("close");
-//        return objects.stream()
+//        List<BigDecimal> historicalPrices = marketDataHistory.get("close").stream()
 //                .map(price -> (BigDecimal) price)
 //                .collect(Collectors.toList());
+//
+//        PredictionDTO predictionDTO = new PredictionDTO();
+//        predictionDTO.setPredictions(historicalPrices);
+//
+//        TickerDTO tickerDTO = new TickerDTO();
+//        tickerDTO.setTickerName(tickerName);
+//        tickerDTO.setTickerType(TickerTypeEnum.STOCKS);
+//        tickerDTO.setPortfolioType(PortfolioTypeEnum.AGGRESSIVE);
+//        predictionDTO.setTickerDTO(tickerDTO);
+//
+//        return Mono.just(predictionDTO);
+// todo: replace above with below code for deployment. Above code doesn't require fast api prediction server to be set up
         PredictionDTO predictionDTO = new PredictionDTO();
         int dataSize = marketDataHistory.get("vw").size();
         List<BigDecimal> historicalVW = marketDataHistory.get("vw").subList(dataSize - MIN_INPUT_SIZE, dataSize)
@@ -150,6 +162,7 @@ public class LiveTradingStrategy implements TradingStrategy {
         tickerDTO.setTickerType(TickerTypeEnum.STOCKS);
         tickerDTO.setPortfolioType(PortfolioTypeEnum.AGGRESSIVE);
         predictionDTO.setTickerDTO(tickerDTO);
+        logger.debug("Price prediction input: {}", historicalVW);
         Mono<PredictionDTO> predictionDTOMono;
         try {
             predictionDTOMono = predictionService.byPredictionDtoBacktest(predictionDTO);
@@ -161,10 +174,8 @@ public class LiveTradingStrategy implements TradingStrategy {
 
     @Override
     public void stop() {
-        System.out.println("LiveTradingStrategy stopped");
         if (tradingAlgorithm.stopLiveTrade()) {
             TradeTransaction transaction = tradingAlgorithm.getLastTradeTransaction();
-            System.out.println("LiveTradingStrategy Last trade: " + transaction);
             if (transaction != null) {
                 processTrade(transaction);
             }

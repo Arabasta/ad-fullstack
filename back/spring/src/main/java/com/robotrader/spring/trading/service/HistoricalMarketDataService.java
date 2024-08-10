@@ -24,8 +24,8 @@ public class HistoricalMarketDataService {
         this.tickerDataApiService = tickerDataApiService;
     }
 
-    public Mono<Map<String, List<Object>>> getHistoricalMarketData(String ticker) {
-        return historicalDataApiService.getMarketDataByTicker(ticker)
+    public Mono<Map<String, List<Object>>> getHistoricalMarketData(String ticker, int limit) {
+        return historicalDataApiService.getMarketDataByTicker(ticker, limit)
                 .collectList()
                 .map(stockDataList -> {
                     Map<String, List<Object>> stockData = new HashMap<>();
