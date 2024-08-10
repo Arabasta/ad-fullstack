@@ -35,7 +35,7 @@ const RegisterForm = () => {
     const [riskRewardScore, setRiskRewardScore] = useState(1);
     const [ownedInvestmentsScore, setOwnedInvestmentsScore] = useState(1);
     const [investmentPersonalityScore, setInvestmentPersonalityScore] = useState(1);
-    const [message, setMessage] = useState('');
+    const [message] = useState('');
     const { register } = useAuth();
     const navigate = useNavigate();
     const toast = useToast();
@@ -47,7 +47,7 @@ const RegisterForm = () => {
         duration: 5000,
         isClosable: true,
         position: "top",
-    }
+    };
 
     const validateStep = () => {
         switch (step) {
@@ -116,16 +116,28 @@ const RegisterForm = () => {
             });
             navigate('/');
         } catch (error) {
-            setMessage('An error occurred, please try again.');
             if (error.response && error.response.data && error.response.data.message) {
-                toast({
-                    title: "Registration failed",
-                    description: error.response.data.message,
-                    status: "error",
-                    duration: 5000,
-                    isClosable: true,
-                    position: "top",
-                });
+                const errorMessage = error.response.data.message;
+                const errorDetails = error.response.data.details;
+                if (errorDetails && errorDetails.includes("Duplicate entry") && errorDetails.includes("for key 'user.UK_sb8bbouer5wak8vyiiy4pf2bx'")) {
+                    toast({
+                        title: "Username already exists",
+                        description: "The username is already taken. Please choose a different username.",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                        position: "top",
+                    });
+                } else {
+                    toast({
+                        title: "Registration failed",
+                        description: errorMessage,
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                        position: "top",
+                    });
+                }
             } else {
                 console.error('Error during registration', error);
                 toast({
@@ -139,6 +151,7 @@ const RegisterForm = () => {
             }
         }
     };
+
 
     return (
         <div>
@@ -158,8 +171,8 @@ const RegisterForm = () => {
                 <RegisterStep2New
                     mobileNumber={mobileNumber}
                     setMobileNumber={setMobileNumber}
-                    countryCode={countryCode}  // 将 countryCode 传递给 RegisterStep2New
-                    setCountryCode={setCountryCode}  // 将 setCountryCode 传递给 RegisterStep2New
+                    countryCode={countryCode}
+                    setCountryCode={setCountryCode}
                     firstName={firstName}
                     setFirstName={setFirstName}
                     lastName={lastName}

@@ -14,7 +14,6 @@ import Text from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
 import FormSelect from "../../common/inputFields/FormSelect";
 
-// 定义 incomeOptions 和 netWorthOptions 作为常量
 const incomeOptions = [
     { label: 'Below $20,000', value: 20000 },
     { label: '$20,000 - $50,000', value: 50000 },
@@ -44,8 +43,8 @@ const RegisterStep4Form = ({
     useEffect(() => {
         // 确保如果尚未设置值，则为其设置默认值
         if (!employmentStatus) setEmploymentStatus('EMPLOYED');
-        if (!annualIncome) setAnnualIncome(incomeOptions[0].value); // 设置第一个选项为默认值
-        if (!netWorth) setNetWorth(netWorthOptions[0].value); // 设置第一个选项为默认值
+        if (!annualIncome) setAnnualIncome(incomeOptions[0].value);
+        if (!netWorth) setNetWorth(netWorthOptions[0].value);
         if (!sourceOfWealth) setSourceOfWealth('SALARY');
         if (!investmentObjective) setInvestmentObjective('GROWTH');
         if (!investmentExperience) setInvestmentExperience('NONE');
