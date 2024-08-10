@@ -22,7 +22,7 @@ const CardComponent = ({title, button, chart}) => {
                 <Box
                     py={12}
                     px={6}
-                    w={{lg: "40%"}}
+                    w="full"
                     h={{lg: "30%"}}>
                     <chakra.h2
                         fontSize={{ base: "xl"}}
