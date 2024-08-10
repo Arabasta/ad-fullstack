@@ -8,14 +8,9 @@ import os
 import pickle
 import numpy as np
 from pydantic import BaseModel
-from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import ElasticNet
-from xgboost import Booster
-from xgboost import DMatrix
-from xgboost import XGBRegressor
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from polygon import RESTClient
 
@@ -45,8 +40,8 @@ PARENT_DIRECTORY_PATH = str(utils.get_project_root())
 REPO_ROOT_PATH = str(utils.get_repo_root())
 
 # IN-MEMORY DATA
-FEATURE = 'vwap'  # todo: hardcoded. to implement detecting feature name.
-FEATURE_COUNT = 39  # todo: hardcoded. to implement detecting models' number of features.
+FEATURE = 'vwap'
+FEATURE_COUNT = 39
 LOADED_MODELS = {}
 LOADED_X_SCALERS = {}
 LOADED_Y_SCALERS = {}
@@ -73,7 +68,7 @@ class TickerDTO(BaseModel):
 
 class PredictionDTO(BaseModel):
     tickerDTO: TickerDTO
-    predictions: List[float]
+    predictions: List[Decimal]
 
 
 '''
@@ -118,7 +113,7 @@ def by_prediction_dto_backtest(prediction_dto: PredictionDTO) -> PredictionDTO:
         predictions = predictions_from_x_values(ticker_dto=prediction_dto.tickerDTO,
                                                 x_values=x_values)
     except Exception as err:
-        logger.error(f"Exception occurred at backtest predictions for {prediction_dto.tickerDTO.tickerName}\n: {err}")
+        logger.error(f"Exception occurred at backtest predictions for {prediction_dto.tickerDTO.tickerName}: {err}")
     return PredictionDTO(tickerDTO=prediction_dto.tickerDTO,
                          predictions=predictions)
 
@@ -140,7 +135,7 @@ def by_ticker_dto_live(ticker_dto: TickerDTO) -> PredictionDTO:
         predictions = predictions_from_ticker_dto(ticker_dto)
         logger.info('--Finish prediction--')
     except Exception as err:
-        logger.error(f"Exception occurred at live predictions for {ticker_dto.tickerName}\n: {err}")
+        logger.error(f"Exception occurred at live predictions for {ticker_dto.tickerName}: {err}")
     return PredictionDTO(tickerDTO=ticker_dto,
                          predictions=predictions)
 
@@ -151,7 +146,6 @@ async def load_models() -> List[str]:
     return list(LOADED_MODELS)
 
 
-# todo: to refactor helper functions into another python file.
 '''
 Helper functions
 '''
@@ -165,7 +159,6 @@ def get_s3_client():
 
 
 # Read and load models from S3 to RAM
-# todo: to refactor. taking around 2s per model.
 def load_all_pickle_files(bucket_name, models_dict):
     try:
         s3_client = get_s3_client()
@@ -219,7 +212,6 @@ def load_pickle_file(bucket_name, ticker_name, key, models_dict):
 
 # Read and load prices jsons from polygon API
 def get_latest_ticker_api_data(ticker_name):
-    # todo: to consider redesigning pipeline to know the name and quantity of features required by the trained models.
     # Build polygon client
     polygon_client = RESTClient(api_key=POLYGON_API_KEY)
     # Datetime strings for api
@@ -228,6 +220,7 @@ def get_latest_ticker_api_data(ticker_name):
     previous = previous_datetime.strftime('%Y-%m-%d')
 
     # Call polygon api
+    # ref: https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__range__multiplier___timespan___from___to
     data_request = polygon_client.list_aggs(
         ticker=ticker_name,
         multiplier=10,
@@ -235,8 +228,8 @@ def get_latest_ticker_api_data(ticker_name):
         from_=previous,
         to=today,
         adjusted=True,
-        sort='desc',  # get most recent datapoints.
-        limit=146  # todo: do not hardcode. match quantity of features required by models.
+        sort='desc',
+        limit=146
     )
     # Create DataFrame from polygon api json response for data processing.
     df_raw = pd.DataFrame(data_request)
@@ -264,13 +257,9 @@ def predictions_from_ticker_dto(ticker_dto):
 def predictions_from_x_values(ticker_dto, x_values):
     ticker_name = ticker_dto.tickerName
     model = LOADED_MODELS[ticker_name]
-    logger.info(x_values)
     scaled_x_values = LOADED_X_SCALERS[ticker_name].transform(x_values)
-    logger.info(scaled_x_values)
     y_pred = model.predict(np.array(scaled_x_values))
-    logger.info(y_pred)
     inverse_scaled_y_pred = LOADED_Y_SCALERS[ticker_name].inverse_transform(y_pred.reshape(-1, 1)).flatten()
-    logger.info(inverse_scaled_y_pred)
     return list(inverse_scaled_y_pred)
 
 
