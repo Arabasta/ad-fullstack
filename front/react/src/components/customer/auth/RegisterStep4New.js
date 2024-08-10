@@ -40,12 +40,13 @@ const RegisterStep4Form = ({
     ];
 
     useEffect(() => {
-        // Ensure the values are set to valid defaults if not already set
-        if (!employmentStatus) setEmploymentStatus('EMPLOYED');
-        if (!sourceOfWealth) setSourceOfWealth('SALARY');
-        if (!investmentObjective) setInvestmentObjective('GROWTH');
-        if (!investmentExperience) setInvestmentExperience('NONE');
-    }, [employmentStatus, sourceOfWealth, investmentObjective, investmentExperience, setEmploymentStatus, setSourceOfWealth, setInvestmentObjective, setInvestmentExperience]);
+        if (!employmentStatus) setEmploymentStatus(incomeOptions[0].value);
+        if (!annualIncome) setAnnualIncome(incomeOptions[0].value);
+        if (!netWorth) setNetWorth(netWorthOptions[0].value);
+        if (!sourceOfWealth) setSourceOfWealth(1); // 'Salary' is the default value
+        if (!investmentObjective) setInvestmentObjective(1); // 'Growth' is the default value
+        if (!investmentExperience) setInvestmentExperience(1); // 'None' is the default value
+    }, [employmentStatus, annualIncome, netWorth, sourceOfWealth, investmentObjective, investmentExperience, setEmploymentStatus, setAnnualIncome, setNetWorth, setSourceOfWealth, setInvestmentObjective, setInvestmentExperience]);
 
 
     return (
