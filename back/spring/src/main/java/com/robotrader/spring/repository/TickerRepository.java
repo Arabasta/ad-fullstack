@@ -10,8 +10,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface TickerRepository extends JpaRepository<Ticker, Long> {
-    Ticker findByTickerName(String tickerName);
-
     @Query("SELECT t FROM Ticker t WHERE t.tickerType = :tickerType")
     List<Ticker> findByTickerType(@Param("tickerType") TickerTypeEnum tickerType);
     List<Ticker> findByPortfolioType(PortfolioTypeEnum portfolioType);

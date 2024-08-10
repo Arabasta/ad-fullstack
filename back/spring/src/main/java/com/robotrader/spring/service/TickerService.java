@@ -37,12 +37,9 @@ public class TickerService implements ITickerService {
     }
 
     @Override
-    public Ticker getTickerByTickerName(String tickerName) {
-        Ticker ticker = tickerRepository.findByTickerName(tickerName);
-        if (ticker == null) {
-            throw new TickerNotFoundException("Ticker not found");
-        }
-        return ticker;
+    public Ticker findById(Long id) {
+        return tickerRepository.findById(id)
+                .orElseThrow(() -> new TickerNotFoundException("Ticker not found"));
     }
 
     @Override
@@ -68,8 +65,8 @@ public class TickerService implements ITickerService {
     }
 
     @Override
-    public void deleteTicker(String tickerName) {
-        Ticker ticker = getTickerByTickerName(tickerName);
+    public void deleteTicker(Long id) {
+        Ticker ticker = findById(id);
         tickerRepository.delete(ticker);
     }
 

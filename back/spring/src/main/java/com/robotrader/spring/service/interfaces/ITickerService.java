@@ -9,11 +9,11 @@ import java.util.List;
 public interface ITickerService {
     void save (Ticker ticker);
     Ticker create(TickerDTO tickerDTO);
-    Ticker getTickerByTickerName(String tickerName);
     List<Ticker> getAllTickers();
     List<Ticker> getAllStockTickerName();
     List<Ticker> getAllCrytpoTickerName();
     void updateTickerFromDTO(Ticker ticker, TickerDTO tickerDTO);
-    void deleteTicker(String tickerName);
+    void deleteTicker(Long id);
     List<String> getTickerByPortfolioType(PortfolioTypeEnum portfolioType);
+    Ticker findById(Long id);
 }
