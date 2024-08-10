@@ -23,12 +23,12 @@ const RegisterForm = () => {
     const [postalCode, setPostalCode] = useState('');
     const [country, setCountry] = useState('');
     const [unitNo, setUnitNo] = useState('');
-    const [employmentStatus, setEmploymentStatus] = useState('');
-    const [annualIncome, setAnnualIncome] = useState(0);
-    const [netWorth, setNetWorth] = useState(0);
-    const [sourceOfWealth, setSourceOfWealth] = useState('');
-    const [investmentObjective, setInvestmentObjective] = useState('');
-    const [investmentExperience, setInvestmentExperience] = useState('');
+    const [employmentStatus, setEmploymentStatus] = useState(0);
+    const [annualIncome, setAnnualIncome] = useState(20000);
+    const [netWorth, setNetWorth] = useState(50000);
+    const [sourceOfWealth, setSourceOfWealth] = useState(0);
+    const [investmentObjective, setInvestmentObjective] = useState(0);
+    const [investmentExperience, setInvestmentExperience] = useState(0);
     const [investmentDurationScore, setInvestmentDurationScore] = useState(1);
     const [withdrawalSpendingPlanScore, setWithdrawalSpendingPlanScore] = useState(1);
     const [investmentKnowledgeScore, setInvestmentKnowledgeScore] = useState(1);
@@ -58,12 +58,9 @@ const RegisterForm = () => {
             case 3:
                 return street && city && postalCode && country;
             case 4:
-                return employmentStatus && annualIncome && netWorth && sourceOfWealth &&
-                    investmentObjective && investmentExperience;
+                return true; // 第4步总是通过，因为有默认值
             case 5:
-                return investmentDurationScore && withdrawalSpendingPlanScore &&
-                    investmentKnowledgeScore && riskRewardScore && ownedInvestmentsScore &&
-                    investmentPersonalityScore;
+                return true; // 第5步总是通过，因为有默认值
             default:
                 return false;
         }
