@@ -21,6 +21,7 @@ import reactor.core.publisher.Sinks;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 // Reference: https://www.geeksforgeeks.org/spring-boot-web-socket/
@@ -97,7 +98,7 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler {
         logger.info("Authenticating...");
     }
 
-    public void subscribe(List<String> tickers) {
+    public void subscribe(Set<String> tickers) {
         authenticationFuture.thenRun(() -> {
             try {
                 StringBuilder param = new StringBuilder("\"");

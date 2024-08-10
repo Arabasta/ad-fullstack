@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class LiveMarketDataService {
@@ -28,16 +30,16 @@ public class LiveMarketDataService {
 
     public void subscribeToLiveMarketData() {
         cryptoWebSocketService.connect();
-        List<String> cryptoTickers = tickerService.getAllCrytpoTickerName()
+        Set<String> cryptoTickers = tickerService.getAllCrytpoTickerName()
                 .stream()
                 .map(Ticker::getTickerName)
-                .toList();
+                .collect(Collectors.toSet());
         cryptoWebSocketService.subscribe(cryptoTickers);
 
-        List<String> stockTickers = tickerService.getAllStockTickerName()
+        Set<String> stockTickers = tickerService.getAllStockTickerName()
                 .stream()
                 .map(Ticker::getTickerName)
-                .toList();
+                .collect(Collectors.toSet());
         stockWebSocketService.connect();
         stockWebSocketService.subscribe(stockTickers);
 
