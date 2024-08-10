@@ -10,7 +10,6 @@ import java.math.RoundingMode;
 
 public class TradingAlgorithmTwo extends TradingAlgorithmOne {
     public static final String ALGORITHM_TYPE = "TREND_FOLLOWING_ATR_HIGH_FREQUENCY";
-    private static final Logger logger = LoggerFactory.getLogger(TradingAlgorithmTwo.class);
 
     public TradingAlgorithmTwo(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         super(ticker, portfolioType, moneyPoolService);

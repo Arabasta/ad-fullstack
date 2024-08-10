@@ -85,17 +85,8 @@ public abstract class TradingAlgorithmBase {
             executeTradeLive("SELL");
             return; // Allow only 1 trade per execution.
         }
-
-        boolean buySignal = false;
-        if (!isTest) {
-            // TODO: temporarily set to always true if tradeable, pending price predictions
-            checkForBuySignal();
-
-            if (isTradeable()) { buySignal = true; }
-            // TODO: temporarily set to always true if tradeable, pending price predictions. Should be just buySignal = checkForBuySignal();
-        } else {
-            buySignal = checkForBuySignal();
-        }
+        
+        boolean buySignal = checkForBuySignal();
         logger.debug("Buy signal: {}", buySignal);
 
         if (buySignal && isTest) {
@@ -195,11 +186,8 @@ public abstract class TradingAlgorithmBase {
     }
 
     public boolean stopLiveTrade() {
-        System.out.println("Algo stop");
-        System.out.println("Last trade: " + lastTradeTransaction);
         if (lastTradeTransaction != null && lastTradeTransaction.getAction().equals("BUY")) {
             executeTradeLive("SELL");
-            System.out.println("Last trade if last was buy: " + lastTradeTransaction);
             return true;
         }
         return false;

@@ -93,11 +93,11 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
         return currentPrice.subtract(stopLossAmount).setScale(4, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal calculateProfitTargetPrice(BigDecimal currentPrice) {
+    protected BigDecimal calculateProfitTargetPrice(BigDecimal currentPrice) {
         return currentPrice.add(stopLossAmount.multiply(BigDecimal.valueOf(2))).setScale(4, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal getATR(Map<String, List<Object>> priceHistory, Integer atrPeriod) {
+    protected BigDecimal getATR(Map<String, List<Object>> priceHistory, Integer atrPeriod) {
         List<Object> closePrices = priceHistory.get("close");
         List<Object> highPrices = priceHistory.get("high");
         List<Object> lowPrices = priceHistory.get("low");
@@ -124,11 +124,11 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
         return atr;
     }
 
-    private boolean isProfitTargetTriggered(BigDecimal currentPrice) {
+    protected boolean isProfitTargetTriggered(BigDecimal currentPrice) {
         return currentPrice.compareTo(profitTarget) > 0;
     }
 
-    private BigDecimal applyPriceBasedScaling(BigDecimal rawPositionSize, BigDecimal currentPrice, BigDecimal highPriceThreshold) {
+    protected BigDecimal applyPriceBasedScaling(BigDecimal rawPositionSize, BigDecimal currentPrice, BigDecimal highPriceThreshold) {
         if (currentPrice.compareTo(highPriceThreshold) > 0) {
             return rawPositionSize.setScale(2, RoundingMode.HALF_UP);
         } else {

@@ -8,6 +8,8 @@ import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 import com.robotrader.spring.service.TickerService;
 import com.robotrader.spring.service.log.TradeTransactionLogService;
+import com.robotrader.spring.trading.algorithm.TradingAlgorithmOne;
+import com.robotrader.spring.trading.algorithm.TradingAlgorithmThree;
 import com.robotrader.spring.trading.algorithm.TradingAlgorithmTwo;
 import com.robotrader.spring.trading.persistence.DatabaseStoreTradePersistence;
 import com.robotrader.spring.trading.persistence.MemoryStoreTradePersistence;
@@ -126,7 +128,7 @@ public class TradingApplicationService implements ITradingApplicationService {
                                 historicalMarketDataService, liveMarketDataService, predictionService, tickerType));
 
                         // todo: make algo selection modular
-                        TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmTwo(ticker, portfolioType, moneyPoolService);
+                        TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmThree(ticker, portfolioType, moneyPoolService);
                         tradingContext.executeTradingStrategy(tradingAlgorithmOne);
                     }
                 }
