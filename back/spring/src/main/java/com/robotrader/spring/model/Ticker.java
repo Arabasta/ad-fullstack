@@ -13,6 +13,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "ticker", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"tickerName", "portfolioType"})
+})
 public class Ticker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
