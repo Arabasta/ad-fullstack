@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Box,
     SimpleGrid,
@@ -6,15 +6,16 @@ import {
     chakra,
     Stack,
     FormControl,
-    FormLabel
+    FormLabel,
+    Button,
+    Flex,
+    Text,
 } from '@chakra-ui/react';
 import Heading from "../../../../components/common/text/Heading";
-import Text from "../../../../components/common/text/Text";
-import Button from "../../../../components/common/buttons/Button";
 import FormSelect from "../../../../components/common/inputFields/FormSelect";
 import InvestorProfileService from "../../../../services/InvestorProfileService";
-import {AuthContext} from "../../../../config/context/AuthContext";
-import {Link} from "react-router-dom";
+import { AuthContext } from "../../../../config/context/AuthContext";
+import { Link } from "react-router-dom";
 
 const EditInvestorProfileForm = () => {
     const { isAuthenticated } = useContext(AuthContext);
@@ -85,7 +86,6 @@ const EditInvestorProfileForm = () => {
         }
     }, [isAuthenticated]);
 
-
     const handleUpdate = async (event) => {
         event.preventDefault();
         try {
@@ -149,12 +149,11 @@ const EditInvestorProfileForm = () => {
 
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
-                            onsubmit={handleUpdate}
+                            onSubmit={handleUpdate}
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
                             color="brand.100"
-
                         >
                             <Stack
                                 px={4}
@@ -306,26 +305,23 @@ const EditInvestorProfileForm = () => {
                                             options={optionsForQuestion6}
                                             required
                                         />
-                                        <Button
-                                            onClick={handleUpdate}
-                                            colorScheme="brand"
-                                            _focus={{ shadow: "" }}
-                                            fontWeight="md"
-                                        >
-                                            Update
-                                        </Button>
-                                        {message && <p>{message}</p> && <p>Updated Recommend Portfolio Type: {recommendedPortfolioType}</p>}
-
+                                        {message && (
+                                            <>
+                                                <Text mt={3} color="black">{message}</Text>
+                                                <Text mt={1} color="black">Updated Recommend Portfolio Type: {recommendedPortfolioType}</Text>
+                                            </>
+                                        )}
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
 
-                            <Box
+                            <Flex
                                 px={{ base: 4, sm: 6 }}
                                 py={3}
                                 bg="gray.50"
                                 _dark={{ bg: "#121212" }}
-                                textAlign="right"
+                                justifyContent="space-between"
+                                alignItems="center"
                             >
                                 <Link to="/settings/profile">
                                     <Button
@@ -338,7 +334,15 @@ const EditInvestorProfileForm = () => {
                                     </Button>
                                 </Link>
 
-                            </Box>
+                                <Button
+                                    onClick={handleUpdate}
+                                    colorScheme="brand"
+                                    _focus={{ shadow: "" }}
+                                    fontWeight="md"
+                                >
+                                    Update
+                                </Button>
+                            </Flex>
                         </chakra.form>
                     </GridItem>
                 </SimpleGrid>
