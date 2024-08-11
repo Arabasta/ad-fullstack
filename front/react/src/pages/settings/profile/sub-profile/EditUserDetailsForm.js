@@ -9,7 +9,8 @@ import {
     FormLabel,
     InputGroup,
     Button,
-    Select, Input
+    Select,
+    Input
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import useUser from "../../../../hooks/useUser";

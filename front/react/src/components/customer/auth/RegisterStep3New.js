@@ -10,6 +10,7 @@ import {
     InputGroup,
     Input,
     Select,
+    Flex, // Import Flex for alignment
 } from '@chakra-ui/react';
 
 import Heading from "../../common/text/Heading";
@@ -22,10 +23,10 @@ const RegisterStep3Form = ({
                                country, setCountry, unitNo, setUnitNo, handlePrevious, handleNext
                            }) => {
 
-    // 处理邮政编码输入，只允许数字
+    // Handle postal code input, allowing only numbers
     const handlePostalCodeChange = (e) => {
         const value = e.target.value;
-        // 只保留数字
+        // Retain only numeric values
         const numericValue = value.replace(/\D/g, '');
         setPostalCode(numericValue);
     };
@@ -190,12 +191,12 @@ const RegisterStep3Form = ({
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
-                            <Box
+                            <Flex
                                 px={{ base: 4, sm: 6 }}
                                 py={3}
                                 bg="gray.50"
                                 _dark={{ bg: "#121212" }}
-                                textAlign="right"
+                                justifyContent="space-between"
                             >
                                 <Button
                                     type="button"
@@ -214,7 +215,7 @@ const RegisterStep3Form = ({
                                 >
                                     Next
                                 </Button>
-                            </Box>
+                            </Flex>
                         </chakra.form>
                     </GridItem>
                 </SimpleGrid>
