@@ -1,10 +1,27 @@
-import React from 'react';
-import { Table, Tbody, Th, Thead, Tr, Text, Td, Box } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Table, Tbody, Th, Thead, Tr, Text, Td, Box, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
+import { SearchIcon } from '@chakra-ui/icons';
 import TickerRow from './TickerRow';
 
 const TickerTable = ({ activeTickers, deleteTicker }) => {
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const filteredTickers = activeTickers.filter((ticker) =>
+        ticker.tickerName.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <Box overflowX="auto" borderWidth="1px" borderRadius="lg" p={4} bg="white" boxShadow="sm">
+            <InputGroup mb={4}>
+                <InputLeftElement pointerEvents="none">
+                    <SearchIcon color="gray.300" />
+                </InputLeftElement>
+                <Input
+                    placeholder="Search Ticker Name"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+            </InputGroup>
             <Table variant="simple">
                 <Thead bg="gray.100">
                     <Tr>
@@ -16,8 +33,8 @@ const TickerTable = ({ activeTickers, deleteTicker }) => {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {activeTickers.length > 0 ? (
-                        activeTickers.map((ticker) => (
+                    {filteredTickers.length > 0 ? (
+                        filteredTickers.map((ticker) => (
                             <TickerRow
                                 key={ticker.id}
                                 ticker={ticker}
