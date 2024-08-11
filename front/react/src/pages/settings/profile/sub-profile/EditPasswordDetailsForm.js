@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     SimpleGrid,
@@ -9,15 +9,15 @@ import {
     FormLabel,
     InputGroup,
     Input,
+    Flex,
+    Text,
 } from '@chakra-ui/react';
 
 import UserService from "../../../../services/UserService";
 import Heading from "../../../../components/common/text/Heading";
-import Text from "../../../../components/common/text/Text";
-import Button from "../../../../components/common/buttons/Button";
 import useUser from "../../../../hooks/useUser";
-import {Link} from "react-router-dom";
-
+import Button from "../../../../components/common/buttons/Button";
+import { Link } from "react-router-dom";
 
 const EditPasswordDetailsForm = () => {
     const { user, updateUser, loading } = useUser();
@@ -136,44 +136,40 @@ const EditPasswordDetailsForm = () => {
                                                 rounded="md"
                                             />
                                         </InputGroup>
-                                        <Button
-                                            type="button"
-                                            onClick={handleUpdatePassword}
-                                            colorScheme="brand"
-                                            _focus={{ shadow: "" }}
-                                            fontWeight="md"
+
+                                        <Flex
+                                            justifyContent="space-between"
+                                            alignItems="center"
+                                            mt={4}  // Adds some space between the inputs and the buttons
                                         >
-                                            Update
-                                        </Button>
+                                            <Link to="/settings/profile">
+                                                <Button
+                                                    type="button"
+                                                    colorScheme="brand"
+                                                    _focus={{ shadow: "" }}
+                                                    fontWeight="md"
+                                                >
+                                                    Return
+                                                </Button>
+                                            </Link>
 
-                                        {/* change this to toast / alert */}
-                                        {error && <p style={{ color: 'red' }}>{error}</p>}
-                                        {success && <p style={{ color: 'green' }}>{success}</p>}
+                                            <Button
+                                                type="button"
+                                                onClick={handleUpdatePassword}
+                                                colorScheme="brand"
+                                                _focus={{ shadow: "" }}
+                                                fontWeight="md"
+                                            >
+                                                Update
+                                            </Button>
+                                        </Flex>
+
+                                        {error && <Text mt={3} color="red.500">{error}</Text>}
+                                        {success && <Text mt={3} color="green.500">{success}</Text>}
                                     </FormControl>
-
-
                                 </SimpleGrid>
                             </Stack>
-                            <Box
-                                px={{ base: 4, sm: 6 }}
-                                py={3}
-                                bg="gray.50"
-                                _dark={{ bg: "#121212" }}
-                                textAlign="right"
-                            >
-                                <Link to="/settings/profile">
-                                    <Button
-                                        type="button"
-                                        colorScheme="brand"
-                                        _focus={{ shadow: "" }}
-                                        fontWeight="md"
-                                    >
-                                        Return
-                                    </Button>
-                                </Link>
-                            </Box>
                         </chakra.form>
-
                     </GridItem>
                 </SimpleGrid>
             </Box>
