@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Tr, Td, Button, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay } from '@chakra-ui/react';
+import { Tr, Td, Button, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, useDisclosure } from '@chakra-ui/react';
 
 const TickerRow = ({ ticker, deleteTicker }) => {
-    const [isDialogOpen, setDialogOpen] = useState(false);
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = React.useRef();
 
     const handleDelete = () => {
         deleteTicker(ticker.id);
-        setDialogOpen(false);
+        onClose();
     };
 
     return (
@@ -16,15 +16,15 @@ const TickerRow = ({ ticker, deleteTicker }) => {
             <Td>{ticker.tickerName}</Td>
             <Td>{ticker.tickerType}</Td>
             <Td>{ticker.portfolioType}</Td>
-            <Td>
-                <Button colorScheme="red" onClick={() => setDialogOpen(true)}>
+            <Td textAlign="center">
+                <Button colorScheme="red" size="sm" onClick={onOpen}>
                     Delete
                 </Button>
 
                 <AlertDialog
-                    isOpen={isDialogOpen}
+                    isOpen={isOpen}
                     leastDestructiveRef={cancelRef}
-                    onClose={() => setDialogOpen(false)}
+                    onClose={onClose}
                 >
                     <AlertDialogOverlay>
                         <AlertDialogContent>
@@ -35,7 +35,7 @@ const TickerRow = ({ ticker, deleteTicker }) => {
                                 Are you sure you want to delete this ticker?
                             </AlertDialogBody>
                             <AlertDialogFooter>
-                                <Button ref={cancelRef} onClick={() => setDialogOpen(false)}>
+                                <Button ref={cancelRef} onClick={onClose}>
                                     Cancel
                                 </Button>
                                 <Button colorScheme="red" onClick={handleDelete} ml={3}>

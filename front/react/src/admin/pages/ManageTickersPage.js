@@ -1,21 +1,31 @@
 import React from 'react';
-import { Box, Button, useDisclosure, Spinner, Text } from '@chakra-ui/react';
+import { Box, Button, useDisclosure, Spinner, Heading, Flex } from '@chakra-ui/react';
 import useTickers from '../hooks/useTickers';
-import TickerTable from "../component/tickers/TickerTable";
-import AddTickerModal from "../component/tickers/AddTickerModal";
-
+import TickerTable from '../component/tickers/TickerTable';
+import AddTickerModal from '../component/tickers/AddTickerModal';
 
 const ManageTickersPage = () => {
-    const { activeTickers, availableTickers, loading, addTicker, deleteTicker } = useTickers();
+    const { activeTickers, availableTickers, loading, addTicker, deleteTicker, fetchActiveTickers } = useTickers();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const handleAddTicker = async (ticker) => {
+        await addTicker(ticker);
+        fetchActiveTickers();  // Refresh the list of active tickers after adding a new ticker
+        onClose();  // Close the modal
+    };
+
     return (
-        <Box>
-            <Button colorScheme="teal" onClick={onOpen} mb={4}>
-                Add Ticker
-            </Button>
+        <Box p={6} maxWidth="1200px" mx="auto">
+            <Flex justify="space-between" align="center" mb={4}>
+                <Heading as="h1" size="lg">Manage Tickers</Heading>
+                <Button colorScheme="teal" onClick={onOpen}>
+                    Add Ticker
+                </Button>
+            </Flex>
             {loading ? (
-                <Spinner size="xl" />
+                <Flex justify="center" align="center" height="200px">
+                    <Spinner size="xl" />
+                </Flex>
             ) : (
                 <TickerTable
                     activeTickers={activeTickers}
@@ -27,7 +37,7 @@ const ManageTickersPage = () => {
                 onClose={onClose}
                 availableTickers={availableTickers}
                 activeTickers={activeTickers}
-                addTicker={addTicker}
+                addTicker={handleAddTicker}  // Pass the updated handleAddTicker function
             />
         </Box>
     );

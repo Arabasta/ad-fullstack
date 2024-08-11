@@ -27,17 +27,12 @@ const useTickers = () => {
 
     const addTicker = async (ticker) => {
         await ManageTickersService.addTicker(ticker);
-        setActiveTickers((prevActiveTickers) => [...prevActiveTickers, ticker]);
-        setAvailableTickers((prevAvailableTickers) =>
-            prevAvailableTickers.filter(t => t.id !== ticker.id)
-        );
+        // No need to manually update activeTickers here as fetchActiveTickers will handle it
     };
 
     const deleteTicker = async (tickerId) => {
         await ManageTickersService.deleteTicker(tickerId);
-        const ticker = activeTickers.find(t => t.id === tickerId);
-        setAvailableTickers((prevAvailableTickers) => [...prevAvailableTickers, ticker]);
-        setActiveTickers((prevActiveTickers) => prevActiveTickers.filter(t => t.id !== tickerId));
+        fetchActiveTickers();  // Refresh the list of active tickers after deleting one
     };
 
     return {
@@ -45,7 +40,8 @@ const useTickers = () => {
         availableTickers,
         loading,
         addTicker,
-        deleteTicker
+        deleteTicker,
+        fetchActiveTickers  // Expose fetchActiveTickers to trigger a manual refresh
     };
 };
 
