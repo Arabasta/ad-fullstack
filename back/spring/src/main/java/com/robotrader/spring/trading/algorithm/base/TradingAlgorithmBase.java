@@ -37,6 +37,7 @@ public abstract class TradingAlgorithmBase {
     protected boolean isTest;
     protected final BigDecimal HIGH_PRICE_THRESHOLD = BigDecimal.valueOf(10000);
     protected TradeTransaction lastTradeTransaction;
+    private boolean liveTradeBuySignalTrigger;
     private static final Logger logger = LoggerFactory.getLogger(TradingAlgorithmBase.class);
 
     public TradingAlgorithmBase(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
@@ -69,14 +70,14 @@ public abstract class TradingAlgorithmBase {
     public void execute(boolean isTest) {
         if (isTest) {
             this.isTest = true;
-            logger.info("------ Back Test Execution ------");
+            logger.info("------ Back Test Execution for {} ------", ticker);
         } else {
             this.isTest = false;
-            logger.info("------ Live Trade Execution ------");
+            logger.info("------ Live Trade Execution {} ------", ticker);
         }
 
         boolean sellSignal = checkForSellSignal();
-        logger.debug("Sell signal: {}", sellSignal);
+        logger.debug("{} - Sell signal: {}", ticker, sellSignal);
 
         if (sellSignal && isTest) {
             executeTradeBackTest("SELL");
@@ -85,19 +86,31 @@ public abstract class TradingAlgorithmBase {
             executeTradeLive("SELL");
             return; // Allow only 1 trade per execution.
         }
-        
-        boolean buySignal = checkForBuySignal();
-        logger.debug("Buy signal: {}", buySignal);
 
-        if (buySignal && isTest) {
-            executeTradeBackTest("BUY");
-        } else if (buySignal && !isTest) {
-            executeTradeLive("BUY");
+        boolean buySignal;
+
+        if (isTest) {
+            buySignal = checkForBuySignal();
+            logger.debug("{} - Buy signal: {}", ticker, buySignal);
+            if (buySignal) {
+                executeTradeBackTest("BUY");
+            }
+
+        } else {
+            if (liveTradeBuySignalTrigger) {
+                buySignal = checkForBuySignal();
+                logger.debug("{} - Buy signal: {}", ticker, buySignal);
+                if (buySignal) {
+                    executeTradeLive("BUY");
+                }
+                liveTradeBuySignalTrigger = false; // Reset trigger until next time interval from buy signal event publisher
+            }
         }
 
-        logger.debug("Current price: {}", currentPrice);
-        logger.debug("Profit target: {}", profitTarget);
-        logger.debug("Stop loss: {}", stopLossPrice);
+
+        logger.debug("{} - Current price: {}", ticker, currentPrice);
+        logger.debug("{} - Profit target: {}", ticker, profitTarget);
+        logger.debug("{} - Stop loss: {}", ticker, stopLossPrice);
     }
 
     // Risk management. max trades/day, enough capital to buy position
@@ -120,10 +133,10 @@ public abstract class TradingAlgorithmBase {
 
         // Check if there's enough capital for the trade
         BigDecimal poolBalance = moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
-        logger.debug("Total cost: {}", totalCost);
-        logger.debug("Pool balance: {}", poolBalance);
+        logger.debug("{} - Total cost: {}", ticker, totalCost);
+        logger.debug("{} - Pool balance: {}", portfolioType, poolBalance);
         if (isTest && totalCost.compareTo(currentCapitalTest) > 0 || !isTest && totalCost.compareTo(poolBalance) > 0) {
-            logger.info("Not enough capital for the trade. Required: {}, Available: {}", totalCost, currentCapitalTest);
+            logger.info("{} - Not enough capital for the trade. Required: {}, Available: {}", ticker, totalCost, currentCapitalTest);
             return false;
         }
         return true;

@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class TradingContext {
     private TradingStrategy strategy;
+    private TradingAlgorithmBase algorithm;
 
     public TradingContext() {}
 
@@ -18,6 +19,7 @@ public class TradingContext {
     }
 
     public CompletableFuture<Void> executeTradingStrategy(TradingAlgorithmBase algorithm) {
+        this.algorithm = algorithm;
         return strategy.execute(algorithm);
     }
 
@@ -29,4 +31,7 @@ public class TradingContext {
         strategy.stop();
     }
 
+    public void setBuySignalTrigger() {
+        algorithm.setLiveTradeBuySignalTrigger(true);
+    }
 }

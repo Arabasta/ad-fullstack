@@ -22,7 +22,7 @@ public class TradingAlgorithmThree extends TradingAlgorithmOne {
         int atrPeriod = 14;
 
         if (priceHistory.get("close").size() < atrPeriod + 1) { // Need a atrPeriod + 1 window
-            logger.info("Insufficient number of to make a trade decision, no. of data: {}", atrPeriod);
+            logger.info("{} - Insufficient number of to make a trade decision, no. of data: {}", ticker, atrPeriod);
             return BigDecimal.ZERO;
         }
         atr = super.getATR(priceHistory, atrPeriod);

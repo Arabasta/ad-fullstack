@@ -19,6 +19,7 @@ import com.robotrader.spring.trading.strategy.BackTestingStrategy;
 import com.robotrader.spring.trading.strategy.LiveTradingStrategy;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.strategy.TradingContext;
+import lombok.Getter;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ public class TradingApplicationService implements ITradingApplicationService {
     private final S3TransactionLogger s3TransactionLogger;
     private final PredictionService predictionService;
     private final TickerService tickerService;
+    @Getter
     private List<TradingContext> tradingContexts;
     private static final Logger logger = LoggerFactory.getLogger(TradingApplicationService.class);
 

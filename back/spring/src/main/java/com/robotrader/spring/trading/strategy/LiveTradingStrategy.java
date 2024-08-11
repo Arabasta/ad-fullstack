@@ -54,7 +54,6 @@ public class LiveTradingStrategy implements TradingStrategy {
     }
 
     @Override
-//    @Scheduled(cron = "0 */10 * * * *") // todo: Runs every 10 minutes
     public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithm) {
         this.tradingAlgorithm = tradingAlgorithm;
         this.completionFuture = new CompletableFuture<>();
