@@ -1,6 +1,6 @@
 import { Flex, Box, chakra, Stack } from "@chakra-ui/react";
 
-const CallToActionSection = ({ children }) => {
+const CallToActionSection = ({ title, subtitle, children }) => {
     return (
         <Flex
             bg="brand.400"
@@ -47,7 +47,7 @@ const CallToActionSection = ({ children }) => {
                         }}
                         mb={6}
                     >
-                        <chakra.span display="block">Live Trading</chakra.span>
+                        <chakra.span display="block">{title}</chakra.span>
                         <chakra.span
                             display="block"
                             color="brand.600"
@@ -55,7 +55,7 @@ const CallToActionSection = ({ children }) => {
                                 color: "gray.500",
                             }}
                         >
-                            Sanity Check on Assets Performance
+                            {subtitle}
                         </chakra.span>
                     </chakra.span>
                     <Stack

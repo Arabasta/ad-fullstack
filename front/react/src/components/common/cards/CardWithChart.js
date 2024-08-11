@@ -2,7 +2,7 @@ import React from 'react';
 import { Flex, Box, chakra } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
-const CardComponent = ({ title, subtitle, button, chart, scaleToFit }) => {
+const CardComponent = ({ title, subtitle, subtitle2, button, chart, scaleToFit }) => {
     return (
         <Flex
             bg="brand.400"
@@ -20,7 +20,7 @@ const CardComponent = ({ title, subtitle, button, chart, scaleToFit }) => {
                 shadow={{ base: "sm", lg: "lg" }} // Adjust shadow for mobile
                 rounded={{ base: "md", lg: "lg" }}
                 w="full"
-                p={{ base: 4, lg: 6 }} // Padding around the content
+                p={{lg: 1 }} // Padding around the content
                 flexDirection={{ base: "column", lg: "row" }} // Column layout on mobile, row on larger screens
                 flexGrow={2} // Allows the chart to grow more
                 flexShrink={1} // Allows the chart area to shrink when space is limited
@@ -68,6 +68,15 @@ const CardComponent = ({ title, subtitle, button, chart, scaleToFit }) => {
                         isTruncated // Ensures that long subtitles don't take up too much space
                     >
                         {subtitle}
+                    </chakra.h3>
+                )}
+
+                {subtitle2 && (
+                    <chakra.h3
+                        fontSize={{ base: "xs" }} // Adjust font size for responsiveness
+                        color="brand.100"
+                        mt={2}>
+                        {subtitle2}
                     </chakra.h3>
                 )}
 
