@@ -2,7 +2,7 @@ import React from 'react';
 import { Flex, Box,chakra } from '@chakra-ui/react'; // Make sure you have Chakra UI installed
 import PropTypes from 'prop-types';
 
-const CardComponent = ({title, button, chart}) => {
+const CardComponent = ({title, subtitle, button, chart}) => {
     return (
         <Flex
             bg="brand.400"
@@ -31,6 +31,15 @@ const CardComponent = ({title, button, chart}) => {
                         {title}{" "}
                     </chakra.h2>
 
+                    {subtitle && (
+                        <chakra.h3
+                            fontSize={{ base: "md" }}
+                            color="brand.600"
+                            mt={2}>
+                            {subtitle}
+                        </chakra.h3>
+                    )}
+
                     <Box mt={8}>
                         {button}
                     </Box>
@@ -42,7 +51,7 @@ const CardComponent = ({title, button, chart}) => {
 
 CardComponent.propTypes = {
     title: PropTypes.object,
-    subtitle: PropTypes.string,
+    subtitle: PropTypes.object,
     description: PropTypes.string,
     button: PropTypes.object,
     imageUrl: PropTypes.object,
