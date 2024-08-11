@@ -27,6 +27,8 @@ const LineChart2 = ({ labels, datasets, view }) => {
         datasets: datasets.map((dataset, index) => ({
             ...dataset,
             yAxisID: index === 0 ? "y-axis-1" : "y-axis-2",
+            borderWidth: 1.5,  // Thinner line
+            pointRadius: 0.5,    // Smaller data point circles
         })),
     };
 
