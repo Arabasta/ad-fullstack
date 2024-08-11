@@ -1,68 +1,132 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
 import Container from "../../../components/common/container/Container";
+import ButtonPrimary from '../../../components/common/button/ButtonPrimary';
+import ButtonCancel from '../../../components/common/button/ButtonCancel';
+import SmallDisplayCard from "../../../components/common/card/SmallDisplayCard";
+import ErrorText from "../../../components/common/text/ErrorText";
+import SuccessText from "../../../components/common/text/SuccessText";
+import useInvestorProfile from "../../../hooks/useInvestorProfile";
+import InvestorProfileService from "../../../services/InvestorProfileService";
+import InvestorProfileForm from "../../../components/forms/InvestorProfileForm";
+import {investmentDurationOptions, withdrawalSpendingPlanOptions, investmentKnowledgeOptions, riskRewardOptions,
+    ownedInvestmentsOptions, investmentPersonalityOptions} from "../../../constants/InvestorProfileOptions";
+import { getLabelFromValue } from "../../../utils/getLabelFromValue";
+import {validateInvestorProfile} from "../../../utils/validation/validateInvestorProfile";
 import Text from "../../../components/common/text/Text";
 
-const InvestorProfileScreen = ({ navigation }) => {
+const InvestorProfileScreen = () => {
+    const { investorProfile, recommendedPortfolioType, getInvestorProfile } = useInvestorProfile();
+    const [localProfile, setLocalProfile] = useState({});
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
+
+    useEffect(() => {
+        if (investorProfile) {
+            setLocalProfile(investorProfile);
+        }
+    }, [investorProfile]);
+
+    const handleSave = async () => {
+        setSuccess('');
+        setError('');
+
+        const { valid, error } = validateInvestorProfile(localProfile);
+        if (!valid) {
+            setError(error);
+            return;
+        }
+
+        try {
+            await InvestorProfileService.updateInvestorProfile(localProfile);
+            setSuccess('Investor profile updated successfully.');
+            setIsEditing(false);
+            await getInvestorProfile();
+        } catch (error) {
+            console.error("Error saving investor profile:", error);
+            setError("Failed to save investor profile. Please try again.");
+            setSuccess('');
+        }
+    };
+
+    const toggleEdit = () => {
+        setIsEditing(!isEditing);
+    };
+
     return (
         <Container>
-            <Text style={styles.heading}>Investor Profile</Text>
+            {!isEditing ? (
+                localProfile ? (
+                    <>
+                        <SmallDisplayCard
+                            label="Investment Duration"
+                            value={getLabelFromValue(investmentDurationOptions, localProfile.investmentDurationScore)}
+                        />
+                        <SmallDisplayCard
+                            label="Withdrawal Spending Plan"
+                            value={getLabelFromValue(withdrawalSpendingPlanOptions, localProfile.withdrawalSpendingPlanScore)}
+                        />
+                        <SmallDisplayCard
+                            label="Investment Knowledge"
+                            value={getLabelFromValue(investmentKnowledgeOptions, localProfile.investmentKnowledgeScore)}
+                        />
+                        <SmallDisplayCard
+                            label="Risk Reward"
+                            value={getLabelFromValue(riskRewardOptions, localProfile.riskRewardScore)}
+                        />
+                        <SmallDisplayCard
+                            label="Owned Investments"
+                            value={getLabelFromValue(ownedInvestmentsOptions, localProfile.ownedInvestmentsScore)}
+                        />
+                        <SmallDisplayCard
+                            label="Investment Personality"
+                            value={getLabelFromValue(investmentPersonalityOptions, localProfile.investmentPersonalityScore)}
+                        />
+                        {success && (<SuccessText>{success}</SuccessText>)}
 
-            <View style={styles.fieldContainer}>
-                <Text style={styles.label}>Risk Tolerance</Text>
-                <Text style={styles.value}>Moderate</Text>
-            </View>
+                        {recommendedPortfolioType && (
+                            <>
+                                <Text style={styles.portfolioLabel}>Recommended Portfolio Type:</Text>
+                                <Text>{recommendedPortfolioType}</Text>
+                            </>
+                        )}
+                        <ButtonPrimary style={styles.buttonSpacing} title="Edit" onPress={toggleEdit} />
+                    </>
+                ) : ( <Text>Loading...</Text> )
+            ) : (
+                <>
+                    <InvestorProfileForm profile={localProfile} onChange={setLocalProfile} />
 
-            <View style={styles.fieldContainer}>
-                <Text style={styles.label}>Investment Goals</Text>
-                <Text style={styles.value}>Growth</Text>
-            </View>
-
-            <View style={styles.fieldContainer}>
-                <Text style={styles.label}>Time Horizon</Text>
-                <Text style={styles.value}>5-10 years</Text>
-            </View>
-
-            <TouchableOpacity style={styles.button} onPress={() => console.log('Edit Pressed')}>
-                <Text style={styles.buttonText}>Edit Investor Profile</Text>
-            </TouchableOpacity>
+                    {error && (
+                        <ErrorText style={styles.errorTextSpacing}>
+                            {error}
+                        </ErrorText>
+                    )}
+                    <View style={styles.buttonContainer}>
+                        <ButtonCancel style={styles.buttonSpacing} title="Cancel" onPress={toggleEdit} />
+                        <ButtonPrimary style={styles.buttonSpacing} title="Save" onPress={handleSave} />
+                    </View>
+                </>
+            )}
         </Container>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
+    buttonSpacing: {
+        marginTop: 20,
     },
-    heading: {
-        fontSize: 24,
+    errorTextSpacing: {
+        marginBottom: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    portfolioLabel: {
+        marginTop: 20,
         fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    fieldContainer: {
-        paddingVertical: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    value: {
-        fontSize: 16,
-        marginTop: 5,
-    },
-    button: {
-        marginTop: 30,
-        paddingVertical: 15,
-        backgroundColor: '#000',
-        borderRadius: 5,
-        alignItems: 'center',
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
     },
 });
 

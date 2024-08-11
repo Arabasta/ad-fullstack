@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ScrollView from "../../components/common/container/ScrollView";
-import faqData from "./faqData";
+import faqData from "../../constants/FaqData";
 import FaqItem from "../../components/support/FaqItem";
 import Container from "../../components/common/container/Container";
 
