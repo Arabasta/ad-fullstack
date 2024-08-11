@@ -8,9 +8,6 @@ import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 import com.robotrader.spring.service.TickerService;
 import com.robotrader.spring.service.log.TradeTransactionLogService;
-import com.robotrader.spring.trading.algorithm.TradingAlgorithmOne;
-import com.robotrader.spring.trading.algorithm.TradingAlgorithmThree;
-import com.robotrader.spring.trading.algorithm.TradingAlgorithmTwo;
 import com.robotrader.spring.trading.persistence.DatabaseStoreTradePersistence;
 import com.robotrader.spring.trading.persistence.MemoryStoreTradePersistence;
 import com.robotrader.spring.trading.interfaces.ITradingApplicationService;
@@ -24,10 +21,11 @@ import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -46,6 +44,7 @@ public class TradingApplicationService implements ITradingApplicationService {
     private final TickerService tickerService;
     @Getter
     private List<TradingContext> tradingContexts;
+    private static Map<String, Class<? extends TradingAlgorithmBase>> algorithmMap = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(TradingApplicationService.class);
 
     @Autowired
@@ -61,10 +60,12 @@ public class TradingApplicationService implements ITradingApplicationService {
         this.predictionService = predictionService;
         this.tickerService = tickerService;
         this.tradingContexts = new ArrayList<>();
+
+        initializeAlgorithmMap();
     }
 
     @Override
-    public BackTestResultDTO runTradingAlgorithmBackTest(List<String> tickers, PortfolioTypeEnum portfolioType) {
+    public BackTestResultDTO runTradingAlgorithmBackTest(List<String> tickers, PortfolioTypeEnum portfolioType, String algorithmType) {
         // Use AtomicReference for mutable BigDecimal
         AtomicReference<BigDecimal> combinedInitialCapital = new AtomicReference<>(BigDecimal.ZERO);
         List<ObjectNode> combinedTradeResults = Collections.synchronizedList(new ArrayList<>());
@@ -76,18 +77,32 @@ public class TradingApplicationService implements ITradingApplicationService {
             tradingContext.setStrategy(new BackTestingStrategy(
                     new MemoryStoreTradePersistence(), historicalMarketDataService, predictionService));
 
-            TradingAlgorithmBase tradingAlgorithm = new TradingAlgorithmTwo(ticker, portfolioType, moneyPoolService);
+            // reference: https://www.baeldung.com/java-reflection
+            // Get the algorithm class from the map created in initializeAlgorithmMap based on the input param to this method
+            Class<? extends TradingAlgorithmBase> algorithmClass = algorithmMap.get(algorithmType);
+            if (algorithmClass != null) {
+                try {
+                    // Create a reflection constructor to take in the 3 constructor param types
+                    Constructor<? extends TradingAlgorithmBase> constructor = algorithmClass.getConstructor(String.class, PortfolioTypeEnum.class, MoneyPoolService.class);
+                    // Use the reflection constructor to instantiate the selected algo class
+                    TradingAlgorithmBase tradingAlgorithm = constructor.newInstance(ticker, portfolioType, moneyPoolService);
+                    // Execute the trading strategy asynchronously. Completable futures used to ensure all back testing is completed before processing results
+                    CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                        tradingContext.executeTradingStrategy(tradingAlgorithm).join();
+                        // Update combinedInitialCapital using AtomicReference and add trade results using synchronized list as back testing is done async on multiple threads
+                        combinedInitialCapital.updateAndGet(current -> current.add(tradingAlgorithm.getInitialCapitalTest()));
+                        combinedTradeResults.addAll(tradingContext.getTradeResults());
+                    });
+                    futures.add(future);
+                } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                         InvocationTargetException e) {
+                    logger.error("Error instantiating trading algorithm: {}", e.getMessage());
+                }
+            } else {
+                logger.error("No algorithm found for type: {}", algorithmType);
+            }
 
-            // Execute the trading strategy asynchronously
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                tradingContext.executeTradingStrategy(tradingAlgorithm).join();
-                // Update combinedInitialCapital using AtomicReference
-                combinedInitialCapital.updateAndGet(current -> current.add(tradingAlgorithm.getInitialCapitalTest()));
-                // Add trade results to synchronized list
-                combinedTradeResults.addAll(tradingContext.getTradeResults());
-            });
 
-            futures.add(future);
         }
 
         // Wait for all futures to complete
@@ -99,14 +114,14 @@ public class TradingApplicationService implements ITradingApplicationService {
                 .thenComparing(result -> LocalDateTime.parse(result.get("transactionDateTime").asText(), dtf))
         );
 
-        // Create the combined BackTestResultDTO
+        // Create the combined BackTestResultDTO after all futures are complete
         BackTestResultDTO combinedResult = new BackTestResultDTO(combinedInitialCapital.get(), combinedTradeResults);
         logger.info("Total number of trades for all tickers: {}", combinedTradeResults.size());
         return combinedResult;
     }
 
     @Override
-    public void runTradingAlgorithmLive() {
+    public void runTradingAlgorithmLive(String algorithmType) {
         if (!LiveMarketDataService.isRunning()) {
             liveMarketDataService.subscribeToLiveMarketData();
         }
@@ -130,9 +145,23 @@ public class TradingApplicationService implements ITradingApplicationService {
                                 new DatabaseStoreTradePersistence(tradeTransactionLogService),
                                 historicalMarketDataService, liveMarketDataService, predictionService, tickerType));
 
-                        // todo: make algo selection modular
-                        TradingAlgorithmBase tradingAlgorithmOne = new TradingAlgorithmTwo(ticker, portfolioType, moneyPoolService);
-                        tradingContext.executeTradingStrategy(tradingAlgorithmOne);
+                        // reference: https://www.baeldung.com/java-reflection
+                        // Get the algorithm class from the map created in initializeAlgorithmMap based on the input param to this method
+                        Class<? extends TradingAlgorithmBase> algorithmClass = algorithmMap.get(algorithmType);
+                        if (algorithmClass != null) {
+                            try {
+                                // Create a reflection constructor to take in the 3 constructor param types
+                                Constructor<? extends TradingAlgorithmBase> constructor = algorithmClass.getConstructor(String.class, PortfolioTypeEnum.class, MoneyPoolService.class);
+                                // Use the reflection constructor to instantiate the selected algo class
+                                TradingAlgorithmBase tradingAlgorithm = constructor.newInstance(ticker, portfolioType, moneyPoolService);
+                                tradingContext.executeTradingStrategy(tradingAlgorithm);
+                            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
+                                     InvocationTargetException e) {
+                                logger.error("Error instantiating trading algorithm: {}", e.getMessage());
+                            }
+                        } else {
+                            logger.error("No algorithm found for type: {}", algorithmType);
+                        }
                     }
                 }
             }
@@ -157,21 +186,25 @@ public class TradingApplicationService implements ITradingApplicationService {
     }
 
     @Override
-    public List<String> getAlgorithmList() {
+    public Set<String> getAlgorithms(){
+        return algorithmMap.keySet();
+    }
+
+    // reference: https://www.baeldung.com/java-reflection
+    private void initializeAlgorithmMap() {
+        // Algorithms are stored in this package
         Reflections reflections = new Reflections("com.robotrader.spring.trading.algorithm");
         Set<Class<? extends TradingAlgorithmBase>> classes = reflections.getSubTypesOf(TradingAlgorithmBase.class);
 
-        List<String> algorithmTypes = new ArrayList<>();
         for (Class<? extends TradingAlgorithmBase> clazz : classes) {
             try {
                 Field field = clazz.getField("ALGORITHM_TYPE");
                 String algorithmType = (String) field.get(null);
-                algorithmTypes.add(algorithmType);
-                logger.info("{}: {}", clazz.getName(), algorithmType);
+                algorithmMap.put(algorithmType, clazz);
+                logger.debug("{}: {}", clazz.getName(), algorithmType);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
-        return algorithmTypes;
     }
 }

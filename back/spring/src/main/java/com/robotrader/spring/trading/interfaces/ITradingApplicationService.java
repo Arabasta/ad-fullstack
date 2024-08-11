@@ -1,14 +1,14 @@
 package com.robotrader.spring.trading.interfaces;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
-import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.trading.dto.BackTestResultDTO;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ITradingApplicationService {
-    List<String> getAlgorithmList();
-    BackTestResultDTO runTradingAlgorithmBackTest(List<String> ticker, PortfolioTypeEnum portfolioType);
-    void runTradingAlgorithmLive();
+    Set<String> getAlgorithms();
+    BackTestResultDTO runTradingAlgorithmBackTest(List<String> ticker, PortfolioTypeEnum portfolioType, String algorithmType);
+    void runTradingAlgorithmLive(String algorithmType);
     void stopTradingAlgorithmLive();
 }

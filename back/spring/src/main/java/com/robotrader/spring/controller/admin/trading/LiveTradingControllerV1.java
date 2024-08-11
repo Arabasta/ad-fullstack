@@ -2,6 +2,7 @@ package com.robotrader.spring.controller.admin.trading;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.robotrader.spring.aws.s3.S3TransactionLogger;
+import com.robotrader.spring.dto.backtest.AlgorithmDTO;
 import com.robotrader.spring.dto.general.ApiErrorResponse;
 import com.robotrader.spring.dto.general.ApiResponse;
 import com.robotrader.spring.dto.livetrade.TradeTransactionLogDTO;
@@ -36,9 +37,18 @@ public class LiveTradingControllerV1 {
         this.tradeTransactionLogService = tradeTransactionLogService;
     }
 
+    @GetMapping("/view")
+    public ResponseEntity<ApiResponse<AlgorithmDTO>> getTradingAlgorithms() {
+        AlgorithmDTO responseDTO = new AlgorithmDTO();
+        responseDTO.setAlgorithms(tradingApplicationService.getAlgorithms());
+        responseDTO.setPortfolioTypes(PortfolioTypeEnum.values());
+        responseDTO.setTickerList(tickerService.getAllTickers());
+        return ResponseEntity.ok(new ApiResponse<>("success", "Algorithm list retrieved successfully", responseDTO));
+    }
+
     @GetMapping("/start")
-    public ResponseEntity<ApiResponse<?>> startLiveTrading() {
-        tradingApplicationService.runTradingAlgorithmLive();
+    public ResponseEntity<ApiResponse<?>> startLiveTrading(@RequestParam String algorithmType) {
+        tradingApplicationService.runTradingAlgorithmLive(algorithmType);
         return ResponseEntity.ok(new ApiResponse<>("success", "Live trading started successfully", null));
     }
 

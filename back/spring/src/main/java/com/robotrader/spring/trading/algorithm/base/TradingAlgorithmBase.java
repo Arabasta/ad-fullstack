@@ -99,6 +99,7 @@ public abstract class TradingAlgorithmBase {
         } else {
             if (liveTradeBuySignalTrigger) {
                 buySignal = checkForBuySignal();
+                logger.debug("{} - Buy signal trigger: {}", ticker, liveTradeBuySignalTrigger);
                 logger.debug("{} - Buy signal: {}", ticker, buySignal);
                 if (buySignal) {
                     executeTradeLive("BUY");
