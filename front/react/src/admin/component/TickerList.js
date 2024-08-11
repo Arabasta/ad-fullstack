@@ -1,58 +1,87 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackTestService from '../services/BackTestService';
+import Button from "../../components/common/buttons/Button";
+import { useToast, Table, Thead, Tbody, Tr, Th, Td} from "@chakra-ui/react";
+import Text from "../../components/common/text/Text";
 
-const TickerList = ({ tickerList, selectedPortfolioType, selectedAlgorithmType, amount }) => {
+
+const TickerList = ({ tickerList, selectedAlgorithmType, amount }) => {
     const navigate = useNavigate();
+    const toast = useToast();
 
-    const handleRunBackTest = async (tickerName) => {
-        if (selectedPortfolioType && selectedAlgorithmType && amount) {
+    const handleRunBackTest = async (tickerName, tickerPortfolioType) => {
+        if (tickerPortfolioType && selectedAlgorithmType && amount) {
             try {
                 const response = await BackTestService.runBackTest(
-                    selectedPortfolioType,
+                    tickerPortfolioType,
                     amount,
                     selectedAlgorithmType,
                     tickerName
                 );
-                navigate('/admin/backtest-result', { state: response.data.data });
+                navigate('/admin/backtest-result',
+                    { state:
+                            {
+                                labels: response.data.data.labels,
+                                datasets: response.data.data.datasets,
+                                tickerName: tickerName,
+                                tickerType: tickerName.type,
+                                portfolioType: tickerPortfolioType,
+                                algorithmType: selectedAlgorithmType
+                            }
+                    });
             } catch (error) {
-                console.error('Error running backtest', error);
+                toast({
+                    title: "Missing input",
+                    description: "Please ensure that Algorithm Type, and Amount are selected.",
+                    status: "warning",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "top",
+                });
             }
         } else {
-            alert('Please ensure that Portfolio Type, Algorithm Type, and Amount are selected');
+            toast({
+                title: "Missing input",
+                description: "Please ensure that Algorithm Type, and Amount are selected.",
+                status: "warning",
+                duration: 5000,
+                isClosable: true,
+                position: "top",
+            });
         }
     };
 
     return (
         <div>
-            <h2>Ticker List</h2>
             {tickerList.length > 0 ? (
-                <table>
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Ticker Type</th>
-                        <th>Ticker Name</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
+                <Table variant="striped" colorScheme="brand">
+                    <Thead>
+                    <Tr>
+                        <Th>Type</Th>
+                        <Th>Name</Th>
+                        <Th>Portfolio Type</Th>
+                        <Th>BackTest</Th>
+                    </Tr>
+                    </Thead>
+                    <Tbody>
                     {tickerList.map((ticker) => (
-                        <tr key={ticker.id}>
-                            <td>{ticker.id}</td>
-                            <td>{ticker.tickerType}</td>
-                            <td>{ticker.tickerName}</td>
-                            <td>
-                                <button onClick={() => handleRunBackTest(ticker.tickerName)}>
-                                    Run BackTest
-                                </button>
-                            </td>
-                        </tr>
+                        <Tr key={ticker.id}>
+                            <Td>{ticker.tickerType}</Td>
+                            <Td>{ticker.tickerName}</Td>
+                            <Td>{ticker.portfolioType}</Td>
+                            <Td>
+                                <Button size="sm"
+                                    onClick={() => handleRunBackTest(ticker.tickerName, ticker.portfolioType)}>
+                                    Run
+                                </Button>
+                            </Td>
+                        </Tr>
                     ))}
-                    </tbody>
-                </table>
+                    </Tbody>
+                </Table>
             ) : (
-                <p>No tickers available</p>
+                <Text>No tickers available</Text>
             )}
         </div>
     );

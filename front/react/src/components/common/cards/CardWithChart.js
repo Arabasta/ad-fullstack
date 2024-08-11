@@ -2,7 +2,7 @@ import React from 'react';
 import { Flex, Box,chakra } from '@chakra-ui/react'; // Make sure you have Chakra UI installed
 import PropTypes from 'prop-types';
 
-const CardComponent = ({title, subtitle, button, chart}) => {
+const CardComponent = ({title, subtitle, subtitle2, button, chart}) => {
     return (
         <Flex
             bg="brand.400"
@@ -21,7 +21,7 @@ const CardComponent = ({title, subtitle, button, chart}) => {
                 shadow={{ base: "sm", lg: "lg" }} // Adjust shadow for mobile
                 rounded={{ base: "md", lg: "lg" }}
                 w="full"
-                p={{ base: 4, lg: 8 }} // Padding around the content
+                p={{lg: 1 }} // Padding around the content
                 flexDirection={{ base: "column", lg: "row" }} // Column layout on mobile, row on larger screens
             >
                 <Box
@@ -36,8 +36,7 @@ const CardComponent = ({title, subtitle, button, chart}) => {
             </Box>
             <Box
                 py={{ base: 4, lg: 6 }} // Padding on top and bottom
-                px={{ base: 2, lg: 6 }} // Padding on left and right
-                w={{ base: "100%", lg: "30%" }} // Full width on mobile, 30% on larger screens
+                w={{ base: "100%", lg: "50%" }} // Full width on mobile, 30% on larger screens
                 h="auto"
             >
                 <chakra.h2
@@ -52,6 +51,15 @@ const CardComponent = ({title, subtitle, button, chart}) => {
                         color="brand.100"
                         mt={2}>
                         {subtitle}
+                    </chakra.h3>
+                )}
+
+                {subtitle2 && (
+                    <chakra.h3
+                        fontSize={{ base: "xs" }} // Adjust font size for responsiveness
+                        color="brand.100"
+                        mt={2}>
+                        {subtitle2}
                     </chakra.h3>
                 )}
 

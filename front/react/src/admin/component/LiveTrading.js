@@ -79,7 +79,8 @@ const LiveTrading = () => {
 
     return (
         <div>
-            <CallToActionSection>
+            <CallToActionSection title="Live Trading"
+                                 subtitle="Measure Algorithm Performance">
                 <VStack>
                     <HStack>
                         <FormControl as={GridItem} colSpan={[6, 3]}>

@@ -5,10 +5,11 @@ import '../../../assets/styles/BackTestResultPage.css';
 import Button from "../../../components/common/buttons/Button";
 import Heading from "../../../components/common/text/Heading";
 import CardComponent from "../../../components/common/cards/CardWithChart";
+import Text from "../../../components/common/text/Text";
 
 const BackTestResultPage = () => {
     const location = useLocation();
-    const { labels, datasets } = location.state;
+    const { labels, datasets, tickerName, portfolioType, algorithmType } = location.state;
     const [view, setView] = useState('capital');
 
     const handleToggle = () => {
@@ -57,9 +58,13 @@ const BackTestResultPage = () => {
     return (
         <div>
             <CardComponent
-                title={<Heading as="h1" color="brand.10" mb={2}>BackTest Performance</Heading>}
+                title={<Heading as="h1" color="brand.10" mb={2}>BackTesting {tickerName}</Heading>}
+                subtitle={<Text variant="h3"> Portfolio: {portfolioType}</Text>}
+                subtitle2={<Text variant="h3"> Algorithm: {algorithmType}</Text>}
                 chart={<LineChart data={data} labels={formattedLabels} view={view} />}
                 button={<Button onClick={handleToggle}>Toggle View</Button>}
+                maxWidth="600px"  // Set maxWidth or width
+                margin="0 auto"  // Center the card
             />
         </div>
     );
