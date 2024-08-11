@@ -16,10 +16,9 @@ const PortfolioDetails = ({ portfolio }) => {
             {(portfolio) ? (
                 <HStack alignContent="center" flex={1} direction="row">
                     <Text color="black" fontSize="2xl" fontWeight="500">
-                        {/*todo: alvin: use currency format*/}
                         {formatter.format(currentValue)}
                     </Text>
-                    <Text color={percentageChange >= 0 ? "green.500" : "red.500"} fontSize="md">
+                    <Text color={percentageChange >= 0 ? "green.500" : "red.500"} fontSize="xl">
                         ({percentageChange}%)
                     </Text>
                 </HStack>

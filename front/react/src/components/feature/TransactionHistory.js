@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import useSqlTransactionLog from '../../hooks/useSqlTransactionLog';
 import SeparatorBlack from '../common/layout/separator/SeparatorBlack';
 import SeparatorGrey from '../common/layout/separator/SeparatorGrey';
@@ -28,6 +28,10 @@ const TransactionHistory = ({ type, portfolioType }) => {
         }
         return "Invalid Date";
     };
+
+    useEffect(() => {
+        loadMoreTransactions()
+    }, [transactions, loadMoreTransactions]);
 
     const customiseTransactionTypeText = (transactionType) => {
         if (transactionType === "Allocate") return "Allocated"
