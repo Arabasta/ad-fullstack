@@ -27,7 +27,6 @@ const RulesModal = ({portfolioType, modalTitle}) => {
             <Modal
                 triggerText={actionText}
                 title={`Rules - ${modalTitle}`}
-                onClose={resetFields}
             >
                 <VStack spacing={6} p={6}>
                     <UpdateRulesByPortfolio

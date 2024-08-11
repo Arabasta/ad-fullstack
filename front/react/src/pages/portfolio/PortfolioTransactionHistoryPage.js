@@ -7,8 +7,11 @@ const PortfolioTransactionHistoryPage = ({ portfolioType }) => {
     const selectedPortfolioType = portfolioTypes.find(pt => pt.type === portfolioType);
 
     return (
-        <Modal triggerText="View History" title={`Transactions - ${selectedPortfolioType.title}`}>
-            <TransactionHistory type="portfolio" portfolioType={selectedPortfolioType.type} />
+        <Modal triggerText="View History"
+               title={`Transactions - ${selectedPortfolioType.title}`}>
+            <TransactionHistory
+                type="portfolio"
+                portfolioType={selectedPortfolioType.type} />
         </Modal>
     );
 };

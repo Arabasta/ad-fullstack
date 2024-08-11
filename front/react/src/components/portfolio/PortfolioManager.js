@@ -1,21 +1,17 @@
 import React, {useState} from 'react';
 import {useLocation, useNavigate, useParams} from 'react-router-dom';
-import PortfolioAddFunds from "../../components/portfolio/PortfolioAddFunds";
-import PortfolioRemoveFunds from "./PortfolioRemoveFunds";
 import Heading from "../../components/common/text/Heading";
 import usePortfolio from "../../hooks/usePortfolio";
 import PortfolioDetails from "../../components/portfolio/PortfolioDetails";
 import portfolioTypes from "./portfolioTypes";
-import RulesModal from "../rules/RulesModal";
-import {Box, Button, Center, Flex, HStack, VStack} from "@chakra-ui/react";
+import {Box, Flex, HStack, VStack} from "@chakra-ui/react";
 import BoxBorderGray from "../common/modal/Box-BorderGray";
 import Text from "../common/text/Text";
-import ButtonBlack from "../common/buttons/ButtonBlack";
 import LineChart2 from "../../admin/component/charts/LineChart2";
 import CardComponent from "../common/cards/CardWithChart";
 import Button from "../common/buttons/Button";
 import GrayText from "../common/text/GrayText";
-import PortfolioTransactionHistoryPage from "../../pages/portfolio/PortfolioTransactionHistoryPage";
+import PortfolioActionPanel from "./PortfolioActionPanel";
 
 const PortfolioManager = () => {
     const navigate = useNavigate();
@@ -25,38 +21,64 @@ const PortfolioManager = () => {
     const selectedPortfolioType = portfolioTypes.find(pt => pt.type.toLowerCase() === portfolioType);
     const otherPortfolioTypes = portfolioTypes.filter(allPortfolioTypes => allPortfolioTypes.type.toLowerCase() !== portfolioType.toLowerCase());
 
-    const handlePortfolioSelection = (type) => {
-        navigate(`/portfolio/${type.toLowerCase()}`);
-    };
-
     const { state } = useLocation();
-    const { chartData=[], labels=[], view, toPassDate } = state || {};
+    const { portfolios, combinedData, chartData=[], labels=[], view, toPassDate } = state || {};
 
     const [currentView, setView] = useState(view || 'portfolioValue');
+
+    function formatLabels(labels) {
+        return labels.map(label => {
+            const [year, month, day, hour, minute, second] = label;
+            const date = new Date(year, month - 1, day, hour, minute, second);
+            return date.toLocaleString('en-SG', {
+                //year: 'numeric',
+                //month: 'short',
+                //day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+            });
+        });
+    }
+
+    const getDataByType = (type) => {
+        const datasetIndex = view === 'portfolioValue' ? 0 : 1;
+
+        const portfolio = portfolios.find(portfolio => portfolio.type === type);
+
+        return {
+            chartData: {
+                label: portfolio?.type,
+                data: portfolio?.data?.datasets[datasetIndex]?.data || [],
+                borderColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
+                backgroundColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
+                yAxisID: view === 'portfolioValue' ? 'y-axis-1' : 'y-axis-2',
+            },
+            labels: portfolio?.data?.labels ? formatLabels(portfolio.data.labels) : [],
+        };
+    };
+
+    const handlePortfolioSelection = (type) => {
+        const {chartData, labels} = getDataByType(type);
+        navigate(`/portfolio/${type.toLowerCase()}`, {
+            state: { portfolios, combinedData, chartData, labels, view, toPassDate }
+        });
+    };
 
     const handleToggle = () => {
         setView(currentView === 'portfolioValue' ? 'performance' : 'portfolioValue');
     };
 
-
     return (
-        <>
-            <CardComponent
-                title={<Heading as="h2" color="brand.10">Portfolio Performance</Heading>}
-                subtitle={<GrayText fontSize="2xl" fontWeight="bold">{toPassDate || 'Date not available'} </GrayText>}
-                chart={<LineChart2 datasets={[chartData]} labels={labels} view={currentView} />}
-                button={<Button onClick={handleToggle}>Toggle View</Button>}
-            />
-
-        <Center bg="#666db3" p="2rem">
-            <Flex direction="row" flex="1" maxWidth="70%">
+        <Box>
+            <Flex direction={{ base: "column", lg: "row" }} // Column on mobile, row on larger screens
+                  flex="1">
                 {/*Left Panel - Portfolio Header, Portfolio Dashboard, Portfolio Value*/}
-                <VStack className="left-panel" flex="1" flex-direction="column" mr={4}
+                <VStack className="left-panel" flex="1" mr={4}
                         width="70%" // Set width to 70% of the container on larger screens
                 >
                     {/*Portfolio Header*/}
-                    <BoxBorderGray p={4} h="maxContent" boxShadow="2xl" bg="white"
-                                   flexGrow={0} flexShrink={0}>
+                    <BoxBorderGray p={4} h="maxContent" boxShadow="2xl" bg="white">
                         <HStack justifyContent="space-between">
                             <Box>
                                 <Heading as="h1" color="#4B4BB3">
@@ -64,81 +86,48 @@ const PortfolioManager = () => {
                                 </Heading>
                             </Box>
                             <Box>
+                                <PortfolioDetails portfolio={portfolio}/>
+                            </Box>
+                            <Box>
                                 {otherPortfolioTypes.map((portfolio, index) => (
                                     <Button key={index}
                                             mr="1rem"
                                             onClick={() => handlePortfolioSelection(portfolio.type)}
                                     >
-                                        {portfolio.title}
+                                        {portfolio.title.split(' ')[0]}
                                     </Button>
                                 ))}
                             </Box>
                         </HStack>
                     </BoxBorderGray>
 
-                    {/*Portfolio Dashboard*/}
-                    <BoxBorderGray p={4} h="maxContent" boxShadow="2xl" bg="white"
-                                   flexGrow={2}>
-                        <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={600} w={800}>
+                    {/* Portfolio Dashboard */}
+                    <BoxBorderGray p={4} boxShadow="2xl" bg="white">
+                        <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={600}>
                             Dashboard
                         </Text>
-                        <Box h="400" bg="lightgray">
-                            {/*todo: alvin: add portfolio dashboard*/}
-                            Simulated Dashboard
+                        <Box width="100%" height="35rem" overflow="visible">
+                            <CardComponent
+                                title={<Heading as="h2" color="brand.10">Portfolio Performance</Heading>}
+                                subtitle={<GrayText fontSize="2xl" fontWeight="bold">{toPassDate || 'Date not available'} </GrayText>}
+                                chart={<LineChart2 datasets={[chartData]} labels={labels} view={currentView} scaleToFit={true} />}
+                                button={<Button onClick={handleToggle}>Toggle View</Button>}
+                                scaleToFit={true}
+                            />
                         </Box>
-                    </BoxBorderGray>
-
-                    {/*Portfolio Value*/}
-                    <BoxBorderGray p={4} h="maxContent" boxShadow="2xl"
-                                   bg="white">
-                        <HStack alignContent="center">
-                            <PortfolioDetails portfolio={portfolio}/>
-                        </HStack>
                     </BoxBorderGray>
                 </VStack>
 
                 {/*Right Panel - Action Panel*/}
-                <BoxBorderGray className="right-panel" p={4} bg="gray.200" w="max-content"
-                               boxShadow="2xl" height="full"
-                               flexDirection="column" justifyContent="space-between">
-                    <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={600}>
-                        Action Panel
-                    </Text>
-                    <VStack>
-                        {/*Portfolio Fund Action*/}
-                        <BoxBorderGray p={4} mb={4} boxShadow="md" bg="white">
-                            <Text color="black" fontSize="lg" fontWeight={500}>
-                                Portfolio Fund Action
-                            </Text>
-                            <VStack p="1rem">
-                                <PortfolioAddFunds
-                                    addFunds={addFunds}/>
-                                <PortfolioRemoveFunds
-                                    withdrawFunds={withdrawFunds}
-                                    currentBalance={portfolio.allocatedBalance}/>
-                                {/*todo: alvin: transaction history not showing. to debug.*/}
-                                <PortfolioTransactionHistoryPage
-                                    portfolioType={portfolioType.toUpperCase()}/>
-                            </VStack>
-                        </BoxBorderGray>
-
-                            {/*Portfolio Rules*/}
-                            <BoxBorderGray p={4} mb={4} boxShadow="md" bg="gray.50">
-                                <Text color="black" pb="1.5rem" fontSize="lg" fontWeight={500}>
-                                    Portfolio Rules
-                                </Text>
-                                {/* Manage Rules Modal Button */}
-                                <RulesModal triggerText="Manage Rules"
-                                            modalTitle={title}
-                                            portfolioType={portfolioType.toUpperCase()}
-                                            p={5}/>
-                            </BoxBorderGray>
-                        </VStack>
-                    </BoxBorderGray>
-                </Flex>
-            </Center>
-        </>
-
+                <PortfolioActionPanel
+                    addFunds={addFunds}
+                    withdrawFunds={withdrawFunds}
+                    portfolio={portfolio}
+                    portfolioType={portfolioType.toUpperCase()}
+                    modalTitle={selectedPortfolioType.title}
+                />
+            </Flex>
+        </Box>
     );
 };
 
