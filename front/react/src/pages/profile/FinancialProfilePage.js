@@ -1,7 +1,7 @@
 import React from 'react';
 import useFinancialProfile from '../../hooks/useFinancialProfile';
 import FinancialProfileForm from '../../components/customer/profileforms/FinancialProfileForm';
-import UpdateFinancialProfileService from '../../services/UpdateFinancialProfileService';
+import FinancialProfileService from '../../services/FinancialProfileService';
 
 /**
  * Page component to display and handle the update of the financial profile.
@@ -11,7 +11,7 @@ const FinancialProfilePage = () => {
 
     const handleUpdate = async (updatedProfile) => {
         try {
-            await UpdateFinancialProfileService.updateFinancialProfile(updatedProfile);
+            await FinancialProfileService.updateFinancialProfile(updatedProfile);
             alert('Financial profile updated successfully!');
             getFinancialProfile(); // Refresh the profile after update
         } catch (error) {

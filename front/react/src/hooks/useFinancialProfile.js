@@ -1,30 +1,42 @@
 import { useState, useEffect } from 'react';
-import UpdateFinancialProfileService from '../services/UpdateFinancialProfileService';
+import FinancialProfileService from '../services/FinancialProfileService';
 
 const useFinancialProfile = () => {
     const [financialProfile, setFinancialProfile] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const getFinancialProfile = async () => {
+    const fetchFinancialProfile = async () => {
+        setLoading(true);
+        setError(null);
         try {
-            const response = await UpdateFinancialProfileService.getFinancialProfile();
-            setFinancialProfile(response);
-            setError(null);
-        } catch (error) {
-            console.error('Error fetching financial profile data', error);
-            setError('Error fetching financial profile data');
+            const response = await FinancialProfileService.getFinancialProfile();
+            setFinancialProfile(response.data.data);
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const updateFinancialProfile = async (profileData) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await FinancialProfileService.updateFinancialProfile(profileData);
+            setFinancialProfile(response.data.data);
+        } catch (err) {
+            setError(err);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-            getFinancialProfile();
-        },
-        []);
+        fetchFinancialProfile();
+    }, []);
 
-    return { financialProfile, loading, error, getFinancialProfile };
+    return { financialProfile, loading, error, fetchFinancialProfile, updateFinancialProfile };
 };
 
 export default useFinancialProfile;
