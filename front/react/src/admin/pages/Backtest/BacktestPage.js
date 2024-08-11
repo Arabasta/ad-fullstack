@@ -11,22 +11,45 @@ import { useNavigate } from 'react-router-dom';
 const BackTestPage = () => {
     const { algorithms, portfolioTypes, tickerList, loading, error } = useBackTest();
     const [selectedPortfolioType, setSelectedPortfolioType] = useState('');
+    const [selectedAlgorithmType, setSelectedAlgorithmType] = useState('');
+    const [amount, setAmount] = useState('');
+    const [selectedTicker] = useState(null);
     const navigate = useNavigate();
 
     const handlePortfolioTypeChange = (event) => {
         setSelectedPortfolioType(event.target.value);
     };
 
+    const handleAlgorithmTypeChange = (event) => {
+        setSelectedAlgorithmType(event.target.value);
+    };
+
+    const handleAmountChange = (event) => {
+        setAmount(event.target.value);
+    };
+
     const handleRunGlobalBackTest = async () => {
-        if (selectedPortfolioType) {
+        if (selectedPortfolioType && selectedAlgorithmType && amount) {
             try {
-                const response = await BackTestService.runBackTest(null, selectedPortfolioType); // ticker 为 null
+                console.log('Running BackTest with:', {
+                    portfolioType: selectedPortfolioType,
+                    amount: amount,
+                    algorithmType: selectedAlgorithmType,
+                    ticker: selectedTicker
+                });
+
+                const response = await BackTestService.runBackTest(
+                    selectedPortfolioType,
+                    amount,
+                    selectedAlgorithmType,
+                    selectedTicker
+                );
                 navigate('/admin/backtest-result', { state: response.data.data });
             } catch (error) {
                 console.error('Error running backtest', error);
             }
         } else {
-            alert('Please select a portfolio type');
+            alert('Please select a portfolio type, algorithm type, and amount');
         }
     };
 
@@ -57,10 +80,38 @@ const BackTestPage = () => {
                             </option>
                         ))}
                     </select>
-                    <button onClick={handleRunGlobalBackTest}>Run Global BackTest</button>
                 </div>
+                <div>
+                    <label>Select Algorithm Type:</label>
+                    <select
+                        value={selectedAlgorithmType}
+                        onChange={handleAlgorithmTypeChange}
+                    >
+                        <option value="" disabled>Select Algorithm Type</option>
+                        {algorithms.map((algo) => (
+                            <option key={algo} value={algo}>
+                                {algo}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div>
+                    <label>Amount:</label>
+                    <input
+                        type="number"
+                        value={amount}
+                        onChange={handleAmountChange}
+                        placeholder="Enter amount"
+                    />
+                </div>
+                <button onClick={handleRunGlobalBackTest}>Run Global BackTest</button>
             </div>
-            <TickerList tickerList={tickerList} selectedPortfolioType={selectedPortfolioType} />
+            <TickerList
+                tickerList={tickerList}
+                selectedPortfolioType={selectedPortfolioType}
+                selectedAlgorithmType={selectedAlgorithmType}
+                amount={amount}
+            />
         </div>
     );
 };

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import UserService from '../../services/UserService';
+import Header from "../common/layout/Header";
+import Button from "../common/buttons/Button";
 
 const UpdatePassword = ({ user, updateUser }) => {
     const [oldPassword, setOldPassword] = useState('');
@@ -31,7 +33,7 @@ const UpdatePassword = ({ user, updateUser }) => {
 
     return (
         <div>
-            <h1>Update Password</h1>
+            <Header>Update Password</Header>
             <div>
                 <input
                     type="password"
@@ -45,7 +47,7 @@ const UpdatePassword = ({ user, updateUser }) => {
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                 />
-                <button onClick={handleUpdatePassword}>Update Password</button>
+                <Button onClick={handleUpdatePassword}>Update Password</Button>
             </div>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {success && <p style={{ color: 'green' }}>{success}</p>}

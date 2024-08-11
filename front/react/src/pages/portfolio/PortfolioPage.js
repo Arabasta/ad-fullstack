@@ -16,7 +16,6 @@ export default function PortfolioPage() {
     const navigate = useNavigate();
     const [view, setView] = useState('portfolioValue');
 
-
     // Call usePortfolio for each portfolio type
     const conservativePortfolio = usePortfolio('CONSERVATIVE');
     const moderatePortfolio = usePortfolio('MODERATE');
@@ -41,10 +40,6 @@ export default function PortfolioPage() {
         { type: 'AGGRESSIVE', data: aggressivePortfolio.performanceChart },
     ];
 
-    const handlePortfolioSelection = (type) => {
-        navigate(`/portfolio/${type.toLowerCase()}`);
-    };
-
     const handleToggle = () => {
         setView(view === 'portfolioValue' ? 'performance' : 'portfolioValue');
     };
@@ -54,15 +49,26 @@ export default function PortfolioPage() {
             const [year, month, day, hour, minute, second] = label;
             const date = new Date(year, month - 1, day, hour, minute, second);
             return date.toLocaleString('en-SG', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
+                //year: 'numeric',
+                //month: 'short',
+                //day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true,
             });
         });
     }
+
+    // Extract and format the first label as a date string for the card component
+    const firstLabel = portfolios[0].data?.labels?.[0];
+    const date = firstLabel ? new Date(firstLabel[0], firstLabel[1] - 1, firstLabel[2]) : null;
+    const formattedDate = date ? date.toLocaleDateString('en-SG', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    }) : '';
+
+    const toPassDate = formattedDate;
 
     const combinedLabels = portfolios[0].data ? formatLabels(portfolios[0].data.labels) : [];
 
@@ -77,6 +83,32 @@ export default function PortfolioPage() {
         };
     });
 
+
+    const getDataByType = (type) => {
+        const datasetIndex = view === 'portfolioValue' ? 0 : 1;
+
+        const portfolio = portfolios.find(portfolio => portfolio.type === type);
+
+        return {
+            chartData: {
+                label: portfolio?.type,
+                data: portfolio?.data?.datasets[datasetIndex]?.data || [],
+                borderColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
+                backgroundColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
+                yAxisID: view === 'portfolioValue' ? 'y-axis-1' : 'y-axis-2',
+            },
+            labels: portfolio?.data?.labels ? formatLabels(portfolio.data.labels) : [],
+        };
+    };
+
+    const handlePortfolioSelection = (type) => {
+        const {chartData, labels} = getDataByType(type);
+        navigate(`/portfolio/${type.toLowerCase()}`, {
+            state: { portfolios, combinedData, chartData, labels, view, toPassDate }
+        });
+    };
+
+
     return (
         <div>
             <WhiteBoxCard>
@@ -85,9 +117,10 @@ export default function PortfolioPage() {
             </WhiteBoxCard>
 
             <CardComponent
-                title={<Heading as="h1" size="lg" color="brand.600" mb={2}>Portfolio Performance</Heading>}
+                title={<Heading as="h1" color="brand.10"  mb={2}>Portfolio Performance</Heading>}
+                subtitle={<GrayText fontSize="2xl" fontWeight="bold">{formattedDate}</GrayText>}
                 chart={<LineChart2 datasets={combinedData} view={view} labels={combinedLabels} />}
-                button={<Button color="brand.600" onClick={handleToggle}>
+                button={<Button onClick={handleToggle}>
                     Toggle View
                 </Button>}
             />
@@ -110,11 +143,15 @@ export default function PortfolioPage() {
                     {portfolioTypes.map((portfolio, index) => (
                         <HStack key={index} title={portfolio.title}  align="center" spacing={0} mb={4}>
                             <Button
-                                fontSize="xl" p={10} mr={2}
+                                fontSize="md" p={10} mr={2}
                                 onClick={() => handlePortfolioSelection(portfolio.type)}
-                            >{portfolio.title}</Button>
+                            >
+                                {portfolio.title}
+                            </Button>
                         </HStack>
                     ))}
+
+
                 </SimpleGrid>
             </Flex>
         </div>

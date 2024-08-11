@@ -25,7 +25,7 @@ public class HistoricalDataApiService {
         this.polygonWebClient = polygonWebClient;
     }
 
-    public Flux<HistoricalDataDTO> getMarketDataByTicker(String ticker) {
+    public Flux<HistoricalDataDTO> getMarketDataByTicker(String ticker, int limit) {
         String path = ENDPOINT_PATH;
         DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String toDate = LocalDate.now().format(df);
@@ -36,7 +36,7 @@ public class HistoricalDataApiService {
                         .path(path)
                         .queryParam("adjusted", "true")
                         .queryParam("sort", "desc")
-                        .queryParam("limit", 5000)
+                        .queryParam("limit", limit)
                         .build(ticker, MULTIPLIER, TIMESPAN, fromDate, toDate))
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError(), response -> {

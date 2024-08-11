@@ -31,6 +31,8 @@ const LineChart = ({ data , view }) => {
 
     const chartOptions = {
         responsive: true,
+        maintainAspectRatio: false, // Allow chart to resize with container
+        aspectRatio: data.labels.length < 5 ? 2 : 3, // Adjust aspect ratio based on data points
         scales: {
             'y-axis-1': {
                 type: 'linear',
@@ -82,7 +84,7 @@ const LineChart = ({ data , view }) => {
                     }
                 },
                 ticks: {
-                    callback: function (value, index, ticks) {
+                    /*callback: function (value, index, ticks) {
                         // Show only the first and last tick
                         if (index === 0 || index === ticks.length - 1) {
                             return this.getLabelForValue(value);
@@ -90,13 +92,28 @@ const LineChart = ({ data , view }) => {
                             return ''; // Return an empty string for all other ticks
                         }
                     },
+                     */
                 },
             },
-        }
+        },
+        elements: {
+            line: {
+                borderWidth: 1, // Make the line thinner
+            },
+            point: {
+                radius: 0.5, // Make the data point circles smaller
+                hitRadius: 5,
+                hoverRadius: 5,
+            }
+        },
 
     };
 
-    return <Line data={data} options={chartOptions} />;
+    return(
+        <div style={{ height: '80vh', width: '70vw' }}> {/* Adjust the height based on your requirement */}
+            <Line data={data} options={chartOptions} />
+        </div>
+    );
 };
 
 export default LineChart;

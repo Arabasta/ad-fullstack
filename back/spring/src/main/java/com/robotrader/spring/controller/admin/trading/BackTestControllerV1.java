@@ -35,7 +35,7 @@ public class BackTestControllerV1 {
     @GetMapping("/view")
     public ResponseEntity<ApiResponse<AlgorithmDTO>> getTradingAlgorithms() {
         AlgorithmDTO responseDTO = new AlgorithmDTO();
-        responseDTO.setAlgorithms(tradingApplicationService.getAlgorithmList());
+        responseDTO.setAlgorithms(tradingApplicationService.getAlgorithms());
         responseDTO.setPortfolioTypes(PortfolioTypeEnum.values());
         responseDTO.setTickerList(tickerService.getAllTickers());
         return ResponseEntity.ok(new ApiResponse<>("success", "Algorithm list retrieved successfully", responseDTO));
@@ -43,7 +43,9 @@ public class BackTestControllerV1 {
 
     @GetMapping("/{portfolioType}")
     public ResponseEntity<ApiResponse<ChartDataDTO>> getTradingBackTestResults(@PathVariable PortfolioTypeEnum portfolioType,
-                                                                               @RequestParam(required = false) String ticker) {
+                                                                               @RequestParam(required = false) String ticker,
+                                                                               @RequestParam int amount,
+                                                                               @RequestParam String algorithmType) {
         List<String> tickers = new ArrayList<>();
         if (ticker == null || ticker.isEmpty()){
              tickers = tickerService.getTickerByPortfolioType(portfolioType);
@@ -51,8 +53,8 @@ public class BackTestControllerV1 {
             tickers.add(ticker);
         }
 
-        BackTestResultDTO tradeResults = tradingApplicationService.runTradingAlgorithmBackTest(tickers, portfolioType);
-        ChartDataDTO responseDTO = chartService.transformBackTestDTOtoChartDataDTO(tradeResults);
+        BackTestResultDTO tradeResults = tradingApplicationService.runTradingAlgorithmBackTest(tickers, portfolioType, algorithmType);
+        ChartDataDTO responseDTO = chartService.transformBackTestDTOtoChartDataDTO(tradeResults, amount);
         return ResponseEntity.ok(new ApiResponse<>("success", "Back test results retrieved successfully", responseDTO));
     }
 

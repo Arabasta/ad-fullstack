@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 public class AlgorithmDTO {
 
     private PortfolioTypeEnum[] portfolioTypes;
-    private List<String> algorithms;
+    private Set<String> algorithms;
     private List<Ticker> tickerList;
 }

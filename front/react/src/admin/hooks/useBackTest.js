@@ -13,9 +13,9 @@ const useBackTest = () => {
             setLoading(true);
             const response = await BackTestService.getAlgorithmList();
             const data = response.data.data;
-            setAlgorithms(data.algorithms);
-            setPortfolioTypes(data.portfolioTypes);
-            setTickerList(data.tickerList);
+            setAlgorithms(data.algorithms || []);
+            setPortfolioTypes(data.portfolioTypes || []);
+            setTickerList(data.tickerList || []);
         } catch (err) {
             console.error('Error fetching algorithm list', err);
             setError(err);

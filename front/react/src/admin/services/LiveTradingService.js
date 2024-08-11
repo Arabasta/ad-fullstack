@@ -1,8 +1,14 @@
 import axiosInstance from "../../config/axios/axiosInstance";
 
+//get algo type
+const getAlgorithmTypes = async () => {
+    const url = '/v1/admin/trading/livetrading/view';
+    return await axiosInstance.get(url);
+};
+
 // Start live trading
-const startLiveTrading = async () => {
-    const url = '/v1/admin/trading/livetrading/start';
+const startLiveTrading = async (algorithmType) => {
+    const url = `/v1/admin/trading/livetrading/start?algorithmType=${algorithmType}`;
     return await axiosInstance.get(url);
 };
 
@@ -22,6 +28,7 @@ const LiveTradingService = {
     startLiveTrading,
     stopLiveTrading,
     getLiveTradingTransactions,
+    getAlgorithmTypes,
 };
 
 export default LiveTradingService;
