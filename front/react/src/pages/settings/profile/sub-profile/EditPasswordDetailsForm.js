@@ -15,24 +15,33 @@ import {
 
 import UserService from "../../../../services/UserService";
 import Heading from "../../../../components/common/text/Heading";
-import useUser from "../../../../hooks/useUser";
 import Button from "../../../../components/common/buttons/Button";
+import useUser from "../../../../hooks/useUser";
 import { Link } from "react-router-dom";
+
 
 const EditPasswordDetailsForm = () => {
     const { user, updateUser, loading } = useUser();
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
     const handleUpdatePassword = async () => {
+        if (newPassword !== confirmNewPassword) {
+            setError('New passwords do not match');
+            setSuccess('');
+            return;
+        }
+
         try {
             await UserService.updatePassword({ oldPassword, newPassword });
             setSuccess('Password updated successfully');
             setError('');
             setNewPassword('');
+            setConfirmNewPassword('');
             setOldPassword('');
             if (updateUser) {
                 updateUser({ ...user });
@@ -136,39 +145,64 @@ const EditPasswordDetailsForm = () => {
                                                 rounded="md"
                                             />
                                         </InputGroup>
+                                    </FormControl>
 
-                                        <Flex
-                                            justifyContent="space-between"
-                                            alignItems="center"
-                                            mt={4}  // Adds some space between the inputs and the buttons
+                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
                                         >
-                                            <Link to="/settings/profile">
-                                                <Button
-                                                    type="button"
-                                                    colorScheme="brand"
-                                                    _focus={{ shadow: "" }}
-                                                    fontWeight="md"
-                                                >
-                                                    Return
-                                                </Button>
-                                            </Link>
+                                            Confirm New Password
+                                        </FormLabel>
 
-                                            <Button
-                                                type="button"
-                                                onClick={handleUpdatePassword}
-                                                colorScheme="brand"
-                                                _focus={{ shadow: "" }}
-                                                fontWeight="md"
-                                            >
-                                                Update
-                                            </Button>
-                                        </Flex>
-
-                                        {error && <Text mt={3} color="red.500">{error}</Text>}
-                                        {success && <Text mt={3} color="green.500">{success}</Text>}
+                                        <InputGroup size="sm">
+                                            <Input
+                                                type="password"
+                                                placeholder="confirm new password"
+                                                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                                borderColor="brand.300"
+                                                focusBorderColor="brand.400"
+                                                rounded="md"
+                                            />
+                                        </InputGroup>
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
+
+                            <Flex
+                                px={{ base: 4, sm: 6 }}
+                                py={3}
+                                bg="gray.50"
+                                _dark={{ bg: "#121212" }}
+                                justifyContent="space-between"
+                                alignItems="center"
+                            >
+                                <Link to="/settings/profile">
+                                    <Button
+                                        type="button"
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md"
+                                    >
+                                        Return
+                                    </Button>
+                                </Link>
+
+                                <Button
+                                    type="button"
+                                    onClick={handleUpdatePassword}
+                                    colorScheme="brand"
+                                    _focus={{ shadow: "" }}
+                                    fontWeight="md"
+                                >
+                                    Update
+                                </Button>
+                            </Flex>
+
+                            {error && <Text mt={3} color="red.500" textAlign="center">{error}</Text>}
+                            {success && <Text mt={3} color="green.500" textAlign="center">{success}</Text>}
                         </chakra.form>
                     </GridItem>
                 </SimpleGrid>
