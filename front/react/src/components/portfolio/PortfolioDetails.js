@@ -1,5 +1,5 @@
 import React from 'react';
-import {Box, HStack, VStack} from "@chakra-ui/react";
+import {Box, HStack} from "@chakra-ui/react";
 import Text from "../common/text/Text";
 
 const PortfolioDetails = ({ portfolio }) => {

@@ -3,7 +3,6 @@ import useWallet from "../../hooks/useWallet";
 import {Button, HStack, VStack} from "@chakra-ui/react";
 import InputBoxWhite from "../common/inputFields/InputBoxWhite";
 import { useToast } from "@chakra-ui/react";
-import {formatCurrency} from "../../utils/formatCurrency";
 
 const PortfolioAddFunds = ({ addFunds, refreshWallet }) => {
     const [amount, setAmount] = useState('');
