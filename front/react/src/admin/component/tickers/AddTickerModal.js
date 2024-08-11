@@ -68,7 +68,7 @@ const AddTickerModal = ({ isOpen, onClose, availableTickers, activeTickers, addT
                                     <SearchIcon color="gray.300" />
                                 </InputLeftElement>
                                 <Input
-                                    placeholder="Search Tickers"
+                                    placeholder="Search Ticker Name"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
