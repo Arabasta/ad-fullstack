@@ -25,18 +25,31 @@ const ManageTickersPage = () => {
     };
 
     const handleAddTicker = (ticker) => {
-        if (selectedPortfolios[ticker.id]) {
+        const portfolioType = selectedPortfolios[ticker.id];
+
+        if (!portfolioType) {
+            alert("Please select a portfolio type before adding the ticker.");
+            return;
+        }
+
+        // Check if the ticker with the selected portfolio already exists in the active tickers
+        const tickerExists = activeTickers.some(
+            activeTicker => activeTicker.id === ticker.id && activeTicker.portfolioType === portfolioType
+        );
+
+        if (tickerExists) {
+            alert("This ticker with the selected portfolio is already in the active tickers list.");
+        } else {
             // Add portfolioType to the ticker before adding to active tickers
-            const tickerWithPortfolio = { ...ticker, portfolioType: selectedPortfolios[ticker.id] };
+            const tickerWithPortfolio = { ...ticker, portfolioType };
             addTicker(tickerWithPortfolio);
+
             // Optionally, clear the selected portfolio after adding the ticker
             setSelectedPortfolios((prevSelectedPortfolios) => {
                 const newSelectedPortfolios = { ...prevSelectedPortfolios };
                 delete newSelectedPortfolios[ticker.id];
                 return newSelectedPortfolios;
             });
-        } else {
-            alert("Please select a portfolio type before adding the ticker.");
         }
     };
 
@@ -44,13 +57,6 @@ const ManageTickersPage = () => {
         // Implement save functionality, e.g., persist changes to the server
         alert("Changes saved successfully!");
         setShowAvailableTickers(false);
-    };
-
-    const handleCancel = () => {
-        // Implement cancel functionality, e.g., discard changes
-        setShowAvailableTickers(false);
-        setSelectedPortfolios({});
-        alert("Changes have been canceled.");
     };
 
     if (loading) return <div>Loading...</div>;
@@ -130,7 +136,6 @@ const ManageTickersPage = () => {
                 </div>
             </div>
             <div style={{ marginTop: '20px' }}>
-                <button onClick={handleCancel}>Cancel</button>
                 <button onClick={handleSave}>Save</button>
             </div>
         </div>
