@@ -15,20 +15,18 @@ const BackTestResultPage = () => {
         setView(view === 'capital' ? 'percentChange' : 'capital');
     };
 
-
     function formatLabels(labels) {
         return labels.map(label => {
-
-            const date = new Date(label);
-            const options = {
+            const [year, month, day, hour, minute] = label;
+            const date = new Date(year, month - 1, day, hour, minute);
+            return date.toLocaleString('en-SG', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true,
-            };
-            return date.toLocaleString('en-SG', options);
+            });
         });
     }
 
@@ -60,7 +58,7 @@ const BackTestResultPage = () => {
         <div>
             <CardComponent
                 title={<Heading as="h1" color="brand.10" mb={2}>BackTest Performance</Heading>}
-                chart={<LineChart data={data} labels={formattedLabels} />}
+                chart={<LineChart data={data} labels={formattedLabels} view={view} />}
                 button={<Button onClick={handleToggle}>Toggle View</Button>}
             />
         </div>

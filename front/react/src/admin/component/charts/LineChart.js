@@ -39,7 +39,7 @@ const LineChart = ({ data , view }) => {
                 position: 'left',
                 display: view === 'capital',
                 title: {
-                    display: true,
+                    display: view === 'capital',
                     text: 'Capital ($)',
                     color: 'brand.600',
                     font: {
@@ -58,7 +58,7 @@ const LineChart = ({ data , view }) => {
                 position: 'left',
                 display: view === 'percentChange',
                 title: {
-                    display: true,
+                    display: view === 'percentChange',
                     text: 'Percent Change (%)',
                     color: 'brand.600', // Title color
                     font: {
