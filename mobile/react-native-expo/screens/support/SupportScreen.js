@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import ScrollView from "../../components/common/container/ScrollView";
-import faqData from "./FaqData";
+import faqData from "./faqData";
 import FaqItem from "../../components/support/FaqItem";
+import Container from "../../components/common/container/Container";
 
 const SupportScreen = () => {
     const [activeSections, setActiveSections] = useState([]);
@@ -17,17 +18,19 @@ const SupportScreen = () => {
     };
 
     return (
-        <ScrollView>
-            {faqData.map((item, index) => (
-                <FaqItem
-                    key={index}
-                    item={item}
-                    index={index}
-                    isActive={activeSections.includes(index)}
-                    toggleSection={toggleSection}
-                />
-            ))}
-        </ScrollView>
+        <Container>
+            <ScrollView>
+                {faqData.map((item, index) => (
+                    <FaqItem
+                        key={index}
+                        item={item}
+                        index={index}
+                        isActive={activeSections.includes(index)}
+                        toggleSection={toggleSection}
+                    />
+                ))}
+            </ScrollView>
+        </Container>
     );
 };
 

@@ -17,7 +17,9 @@ import { Text as NativeText } from 'react-native-paper';
  * - Body: 'bodyLarge', 'bodyMedium', 'bodySmall'
  */
 const Text = ({ variant, children, ...props }) => {
-    return <NativeText variant={variant} {...props}>{children}</NativeText>;
+    return <NativeText variant={variant} {...props}>
+        {children}
+    </NativeText>;
 };
 
 Text.defaultProps = {

@@ -1,8 +1,9 @@
-import { StyleSheet, ScrollView as NativeScrollView } from 'react-native';
+import { ScrollView as NativeScrollView } from 'react-native';
 
+// Parent component for pages needing a scrollable container
 const ScrollView = ({ children, customStyle }) => {
     return (
-        <NativeScrollView style={[styles.container, customStyle]}>
+        <NativeScrollView style={customStyle}>
             {children}
         </NativeScrollView>
     );
@@ -11,11 +12,5 @@ const ScrollView = ({ children, customStyle }) => {
 ScrollView.defaultProps = {
     customStyle: {},
 };
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-    },
-});
 
 export default ScrollView;
