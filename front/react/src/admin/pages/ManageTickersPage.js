@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Button, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, useDisclosure, Spinner, Text } from '@chakra-ui/react';
 import useTickers from '../hooks/useTickers';
-import AddTickerModal from "../component/tickers/AddTickerModal";
 import TickerTable from "../component/tickers/TickerTable";
+import AddTickerModal from "../component/tickers/AddTickerModal";
+
 
 const ManageTickersPage = () => {
     const { activeTickers, availableTickers, loading, addTicker, deleteTicker } = useTickers();
@@ -13,11 +14,14 @@ const ManageTickersPage = () => {
             <Button colorScheme="teal" onClick={onOpen} mb={4}>
                 Add Ticker
             </Button>
-            <TickerTable
-                activeTickers={activeTickers}
-                loading={loading}
-                deleteTicker={deleteTicker}
-            />
+            {loading ? (
+                <Spinner size="xl" />
+            ) : (
+                <TickerTable
+                    activeTickers={activeTickers}
+                    deleteTicker={deleteTicker}
+                />
+            )}
             <AddTickerModal
                 isOpen={isOpen}
                 onClose={onClose}

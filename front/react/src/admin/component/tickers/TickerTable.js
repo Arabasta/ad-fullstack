@@ -1,8 +1,8 @@
 import React from 'react';
-import { Table, Tbody, Th, Thead, Tr } from '@chakra-ui/react';
-import TickerRow from "./TickerRow";
+import {Table, Tbody, Th, Thead, Tr, Text, Td} from '@chakra-ui/react';
+import TickerRow from './TickerRow';
 
-const TickerTable = ({ activeTickers, loading, deleteTicker }) => {
+const TickerTable = ({ activeTickers, deleteTicker }) => {
     return (
         <Table variant="simple">
             <Thead>
@@ -15,14 +15,21 @@ const TickerTable = ({ activeTickers, loading, deleteTicker }) => {
                 </Tr>
             </Thead>
             <Tbody>
-                {!loading &&
+                {activeTickers.length > 0 ? (
                     activeTickers.map((ticker) => (
                         <TickerRow
                             key={ticker.id}
                             ticker={ticker}
                             deleteTicker={deleteTicker}
                         />
-                    ))}
+                    ))
+                ) : (
+                    <Tr>
+                        <Td colSpan="5">
+                            <Text textAlign="center">No active tickers found.</Text>
+                        </Td>
+                    </Tr>
+                )}
             </Tbody>
         </Table>
     );
