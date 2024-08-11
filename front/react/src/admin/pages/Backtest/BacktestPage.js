@@ -31,7 +31,6 @@ const BackTestPage = () => {
     const handleRunGlobalBackTest = async () => {
         if (selectedPortfolioType && selectedAlgorithmType && amount) {
             try {
-                // 在调用 API 前输出所有参数以便调试
                 console.log('Running BackTest with:', {
                     portfolioType: selectedPortfolioType,
                     amount: amount,
@@ -43,7 +42,7 @@ const BackTestPage = () => {
                     selectedPortfolioType,
                     amount,
                     selectedAlgorithmType,
-                    selectedTicker // 确保 ticker 被正确传递
+                    selectedTicker
                 );
                 navigate('/admin/backtest-result', { state: response.data.data });
             } catch (error) {

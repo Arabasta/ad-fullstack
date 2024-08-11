@@ -8,7 +8,7 @@ import SeparatorGrey from "../../../components/common/layout/separator/Separator
 
 const TransactionsPage = () => {
     const location = useLocation();
-    const { transactions, getLiveTradingTransactions } = useLiveTrading();
+    const { transactions, getLiveTradingTransactions, loading, message } = useLiveTrading();
 
     const queryParams = new URLSearchParams(location.search);
     const portfolioType = queryParams.get('portfolioType');
@@ -31,7 +31,11 @@ const TransactionsPage = () => {
 
     return (
         <div>
-            {transactions.length > 0 ? (
+            {loading ? (
+                <BlackText>Loading transactions...</BlackText>
+            ) : message ? (
+                <BlackText>{message}</BlackText>
+            ) : transactions.length > 0 ? (
                 <UnorderedList>
                     {transactions.map((transaction) => (
                         <ListItem key={transaction.transactionId}>
@@ -48,7 +52,7 @@ const TransactionsPage = () => {
                     ))}
                 </UnorderedList>
             ) : (
-                <BlackText>Loading transactions...</BlackText>
+                <BlackText>No transactions available.</BlackText>
             )}
         </div>
     );
