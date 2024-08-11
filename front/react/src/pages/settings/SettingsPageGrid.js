@@ -53,7 +53,7 @@ const SettingPageGrid = ({ customer, portfolioType = "Not available" }) => {
                             letterSpacing="wide"
                             color="brand.500"
                         >
-                            Good Morning,
+                            Welcome,
                         </chakra.h2>
                         <chakra.h2
                             mb={3}
@@ -72,7 +72,7 @@ const SettingPageGrid = ({ customer, portfolioType = "Not available" }) => {
                             color="gray.600"
                             _dark={{ color: "gray.500" }}
                         >
-                            Your recommended portfolio type:
+                            Your optimal portfolio type:
                         </chakra.p>
                         <chakra.h2
                             fontSize={{ base: "xl", md: "2xl" }}
@@ -94,13 +94,13 @@ const SettingPageGrid = ({ customer, portfolioType = "Not available" }) => {
                             gap={8}
                         >
                             <SmallCardWithTextAndButton title="Profile" directToThisPath="/settings/profile">
-                                Let us know more about you to better tailor the trading experience according to your investing persona.
+                                Customize your profile to enhance your trading experience based on your unique investing style.
                             </SmallCardWithTextAndButton>
                             <SmallCardWithTextAndButton title="Bank Details" directToThisPath="/settings/profile/bankDetails">
-                                Manage all your banking details in one place with a single integration, simplifying reporting and reconciliation.
+                                Streamline your banking details with a unified interface, making management and reconciliation effortless.
                             </SmallCardWithTextAndButton>
                             <SmallCardWithTextAndButton title="Notifications" directToThisPath="/settings/notifications">
-                                Provide a seamless customer experience across channels, like receiving updates through email.
+                                Stay informed with tailored notifications across your preferred channels, ensuring you never miss an update.
                             </SmallCardWithTextAndButton>
                         </Grid>
                     </GridItem>
