@@ -58,9 +58,9 @@ const RegisterForm = () => {
             case 3:
                 return street && city && postalCode && country;
             case 4:
-                return true; // 第4步总是通过，因为有默认值
+                return true;
             case 5:
-                return true; // 第5步总是通过，因为有默认值
+                return true;
             default:
                 return false;
         }

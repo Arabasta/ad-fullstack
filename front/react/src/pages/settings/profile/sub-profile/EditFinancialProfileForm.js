@@ -60,6 +60,8 @@ const FinancialProfileForm = () => {
         investmentExperience: ''
     });
 
+    const [message, setMessage] = useState('');
+
     useEffect(() => {
         if (financialProfile) {
             setFormData({
@@ -81,23 +83,27 @@ const FinancialProfileForm = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Submit the formData to the backend
-        updateFinancialProfile(formData);
+        try {
+            await updateFinancialProfile(formData);
+            setMessage('Profile updated successfully!');
+        } catch (err) {
+            setMessage('Error updating profile.');
+        }
     };
 
-    const renderOptions = (options, selectedValue) => {
+    const renderOptions = (options) => {
         return options.map(option => (
-            <option key={option} value={option} selected={selectedValue === option}>
-                {option.replace('_', ' ')} {/* 使显示更友好 */}
+            <option key={option} value={option}>
+                {option.replace('_', ' ')}
             </option>
         ));
     };
 
-    const renderLabeledOptions = (options, selectedValue) => {
+    const renderLabeledOptions = (options) => {
         return options.map(option => (
-            <option key={option.value} value={option.value} selected={selectedValue === option.value}>
+            <option key={option.value} value={option.value}>
                 {option.label}
             </option>
         ));
@@ -110,43 +116,45 @@ const FinancialProfileForm = () => {
         <form onSubmit={handleSubmit}>
             <div>
                 <label>Employment Status:</label>
-                <select name="employmentStatus" onChange={handleChange}>
+                <select name="employmentStatus" onChange={handleChange} value={formData.employmentStatus}>
                     {renderOptions(employmentStatusOptions, formData.employmentStatus)}
                 </select>
             </div>
             <div>
                 <label>Annual Income:</label>
-                <select name="annualIncome" onChange={handleChange}>
+                <select name="annualIncome" onChange={handleChange} value={formData.annualIncome}>
                     {renderLabeledOptions(incomeOptions, formData.annualIncome)}
                 </select>
             </div>
             <div>
                 <label>Net Worth:</label>
-                <select name="netWorth" onChange={handleChange}>
+                <select name="netWorth" onChange={handleChange} value={formData.netWorth}>
                     {renderLabeledOptions(netWorthOptions, formData.netWorth)}
                 </select>
             </div>
             <div>
                 <label>Source of Wealth:</label>
-                <select name="sourceOfWealth" onChange={handleChange}>
+                <select name="sourceOfWealth" onChange={handleChange} value={formData.sourceOfWealth}>
                     {renderOptions(sourceOfWealthOptions, formData.sourceOfWealth)}
                 </select>
             </div>
             <div>
                 <label>Investment Objective:</label>
-                <select name="investmentObjective" onChange={handleChange}>
+                <select name="investmentObjective" onChange={handleChange} value={formData.investmentObjective}>
                     {renderOptions(investmentObjectiveOptions, formData.investmentObjective)}
                 </select>
             </div>
             <div>
                 <label>Investment Experience:</label>
-                <select name="investmentExperience" onChange={handleChange}>
+                <select name="investmentExperience" onChange={handleChange} value={formData.investmentExperience}>
                     {renderOptions(investmentExperienceOptions, formData.investmentExperience)}
                 </select>
             </div>
             <button type="submit">Update Profile</button>
+            {message && <p>{message}</p>}
         </form>
     );
 };
 
 export default FinancialProfileForm;
+
