@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     SimpleGrid,
@@ -9,30 +9,39 @@ import {
     FormLabel,
     InputGroup,
     Input,
+    Flex,
+    Text,
 } from '@chakra-ui/react';
 
 import UserService from "../../../../services/UserService";
 import Heading from "../../../../components/common/text/Heading";
-import Text from "../../../../components/common/text/Text";
 import Button from "../../../../components/common/buttons/Button";
 import useUser from "../../../../hooks/useUser";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 const EditPasswordDetailsForm = () => {
     const { user, updateUser, loading } = useUser();
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
     const handleUpdatePassword = async () => {
+        if (newPassword !== confirmNewPassword) {
+            setError('New passwords do not match');
+            setSuccess('');
+            return;
+        }
+
         try {
             await UserService.updatePassword({ oldPassword, newPassword });
             setSuccess('Password updated successfully');
             setError('');
             setNewPassword('');
+            setConfirmNewPassword('');
             setOldPassword('');
             if (updateUser) {
                 updateUser({ ...user });
@@ -136,30 +145,39 @@ const EditPasswordDetailsForm = () => {
                                                 rounded="md"
                                             />
                                         </InputGroup>
-                                        <Button
-                                            type="button"
-                                            onClick={handleUpdatePassword}
-                                            colorScheme="brand"
-                                            _focus={{ shadow: "" }}
-                                            fontWeight="md"
-                                        >
-                                            Update
-                                        </Button>
-
-                                        {/* change this to toast / alert */}
-                                        {error && <p style={{ color: 'red' }}>{error}</p>}
-                                        {success && <p style={{ color: 'green' }}>{success}</p>}
                                     </FormControl>
 
+                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Confirm New Password
+                                        </FormLabel>
 
+                                        <InputGroup size="sm">
+                                            <Input
+                                                type="password"
+                                                placeholder="confirm new password"
+                                                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                                borderColor="brand.300"
+                                                focusBorderColor="brand.400"
+                                                rounded="md"
+                                            />
+                                        </InputGroup>
+                                    </FormControl>
                                 </SimpleGrid>
                             </Stack>
-                            <Box
+
+                            <Flex
                                 px={{ base: 4, sm: 6 }}
                                 py={3}
                                 bg="gray.50"
                                 _dark={{ bg: "#121212" }}
-                                textAlign="right"
+                                justifyContent="space-between"
+                                alignItems="center"
                             >
                                 <Link to="/settings/profile">
                                     <Button
@@ -171,9 +189,21 @@ const EditPasswordDetailsForm = () => {
                                         Return
                                     </Button>
                                 </Link>
-                            </Box>
-                        </chakra.form>
 
+                                <Button
+                                    type="button"
+                                    onClick={handleUpdatePassword}
+                                    colorScheme="brand"
+                                    _focus={{ shadow: "" }}
+                                    fontWeight="md"
+                                >
+                                    Update
+                                </Button>
+                            </Flex>
+
+                            {error && <Text mt={3} color="red.500" textAlign="center">{error}</Text>}
+                            {success && <Text mt={3} color="green.500" textAlign="center">{success}</Text>}
+                        </chakra.form>
                     </GridItem>
                 </SimpleGrid>
             </Box>
