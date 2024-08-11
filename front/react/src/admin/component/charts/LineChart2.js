@@ -24,16 +24,25 @@ ChartJS.register(
 const LineChart2 = ({ labels, datasets, view }) => {
     const data = {
         labels,
-        datasets: datasets.map((dataset, index) => ({
+        datasets:  datasets.length > 0 ? datasets.map((dataset, index) => ({
             ...dataset,
             yAxisID: index === 0 ? "y-axis-1" : "y-axis-2",
             borderWidth: 1.5,  // Thinner line
             pointRadius: 0.5,    // Smaller data point circles
-        })),
+        })) : [{
+        label: 'No Data Available',
+        data: [0], // Provide a default data point to prevent the chart from shrinking
+        borderWidth: 1.5,
+        pointRadius: 0.5,
+        borderColor: '#000000',
+        backgroundColor: '#000000',
+    }],
     };
 
     const options = {
         responsive: true,
+        maintainAspectRatio: false, // Maintain the chart aspect ratio
+        aspectRatio: labels.length < 5 ? 2 : 3, // Adjust aspect ratio based on data points
         scales: {
             "y-axis-1": {
                 type: "linear",
@@ -79,14 +88,16 @@ const LineChart2 = ({ labels, datasets, view }) => {
                     }
                 },
                 ticks: {
-                    callback: function (value, index, ticks) {
+                    /*callback: function (value, index, ticks) {
                         // Show only the first and last tick
-                        if (index === 0 || index === ticks.length - 2) {
+                        if (index === 0 || index === ticks.length - 5) {
                             return this.getLabelForValue(value);
                         } else {
                             return ''; // Return an empty string for all other ticks
                         }
                     },
+
+                     */
                 },
             },
 
@@ -94,7 +105,11 @@ const LineChart2 = ({ labels, datasets, view }) => {
         }
     };
 
-    return <Line data={data} options={options} />;
+    return (
+        <div style={{ height: '80vh', width: '70vw' }}> {/* Adjust the height based on your requirement */}
+            <Line data={data} options={options} />
+        </div>
+    );
 }
 
 export default LineChart2;

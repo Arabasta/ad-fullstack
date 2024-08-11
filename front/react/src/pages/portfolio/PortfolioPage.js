@@ -115,7 +115,7 @@ export default function PortfolioPage() {
             </WhiteBoxCard>
 
             <CardComponent
-                title={<Heading as="h1" size="lg" color="brand.600" mb={2}>Portfolio Performance</Heading>}
+                title={<Heading as="h1" color="brand.10"  mb={2}>Portfolio Performance</Heading>}
                 subtitle={<GrayText fontSize="2xl" fontWeight="bold">{formattedDate}</GrayText>}
                 chart={<LineChart2 datasets={combinedData} view={view} labels={combinedLabels} />}
                 button={<Button onClick={handleToggle}>
@@ -141,7 +141,7 @@ export default function PortfolioPage() {
                     {portfolioTypes.map((portfolio, index) => (
                         <HStack key={index} title={portfolio.title}  align="center" spacing={0} mb={4}>
                             <Button
-                                fontSize="xl" p={10} mr={2}
+                                fontSize="md" p={10} mr={2}
                                 onClick={() => handlePortfolioSelection(portfolio.type)}
                             >
                                 {portfolio.title}
