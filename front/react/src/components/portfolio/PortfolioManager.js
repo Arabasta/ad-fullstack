@@ -48,7 +48,7 @@ const PortfolioManager = () => {
                 data: portfolio?.data?.datasets[datasetIndex]?.data || [],
                 borderColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
                 backgroundColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
-                yAxisID: view === 'portfolioValue' ? 'y-axis-1' : 'y-axis-2',
+                yAxisID: currentView === 'portfolioValue' ? 'y-axis-1' : 'y-axis-2',
             },
             labels: portfolio?.data?.labels ? formatLabels(portfolio.data.labels) : [],
         };
@@ -63,6 +63,10 @@ const PortfolioManager = () => {
 
     const handleToggle = () => {
         setView(currentView === 'portfolioValue' ? 'performance' : 'portfolioValue');
+        const { chartData, labels } = getDataByType(portfolioType.toUpperCase());
+        navigate(`/portfolio/${portfolioType.toLowerCase()}`, {
+            state: { portfolios, combinedData, chartData, view: currentView, labels, toPassDate }
+        });
     };
 
     return (
@@ -102,7 +106,7 @@ const PortfolioManager = () => {
                         <Text color="black" pb="1.5rem" fontSize="xl" fontWeight={600}>
                             Dashboard
                         </Text>
-                        <Box width="100%" height="35rem" overflow="visible">
+                        <Box width="100%" height="40rem" overflow="visible">
                             <CardComponent
                                 title={<Heading as="h2" color="brand.10">Portfolio Performance</Heading>}
                                 subtitle={<GrayText fontSize="2xl" fontWeight="bold">{toPassDate || 'Date not available'} </GrayText>}
