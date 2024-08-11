@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 public class JwtUtil {
 
-    private final String SECRET_KEY = "team4_best_team";
+    private final String SECRET_KEY = "${JWT_SECRET_KEY}";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
