@@ -2,7 +2,7 @@ import React from 'react';
 import { Flex, Box, chakra } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
-const CardComponent = ({ title, subtitle, button, chart, scaleToFit }) => {
+const CardComponent = ({ title, subtitle, subtitle2, button, chart, scaleToFit }) => {
     return (
         <Flex
             bg="brand.400"
@@ -20,7 +20,6 @@ const CardComponent = ({ title, subtitle, button, chart, scaleToFit }) => {
                 shadow={{ base: "sm", lg: "lg" }} // Adjust shadow for mobile
                 rounded={{ base: "md", lg: "lg" }}
                 w="full"
-                p={{ base: 4, lg: 6 }} // Padding around the content
                 p={{lg: 1 }} // Padding around the content
                 flexDirection={{ base: "column", lg: "row" }} // Column layout on mobile, row on larger screens
                 flexGrow={2} // Allows the chart to grow more
