@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Box,
     SimpleGrid,
@@ -12,50 +12,31 @@ import Heading from "../../../../components/common/text/Heading";
 import Text from "../../../../components/common/text/Text";
 import Button from "../../../../components/common/buttons/Button";
 import FormSelect from "../../../../components/common/inputFields/FormSelect";
-import {Link} from "react-router-dom";
+import UpdateFinancialProfileService from "../../../../services/UpdateFinancialProfileService";
+import { AuthContext } from "../../../../config/context/AuthContext";
+import { Link } from "react-router-dom";
 
-const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
-    const [employmentStatus, setEmploymentStatus] = useState(financialProfile.employmentStatus);
+const EditFinancialProfileForm = () => {
+    const { isAuthenticated } = useContext(AuthContext);
+    const [profile, setProfile] = useState({
+        employmentStatus: 0,
+        annualIncome: 20000,
+        netWorth: 50000,
+        sourceOfWealth: 0,
+        investmentObjective: 0,
+        investmentExperience: 0,
+    });
+    const [loading, setLoading] = useState(true);
+    const [message, setMessage] = useState('');
 
-    const [annualIncome, setAnnualIncome] = useState(financialProfile.annualIncome);
-    const [netWorth, setNetWorth] = useState(financialProfile.netWorth);
-
-    const [sourceOfWealth, setSourceOfWealth] = useState(financialProfile.sourceOfWealth);
-    const [investmentObjective, setInvestmentObjective] = useState(financialProfile.investmentObjective);
-    const [investmentExperience, setInvestmentExperience] = useState(financialProfile.investmentExperience);
-
-    useEffect(() => {
-        setEmploymentStatus(financialProfile.employmentStatus);
-        setAnnualIncome(financialProfile.annualIncome);
-        setNetWorth(financialProfile.netWorth);
-        setSourceOfWealth(financialProfile.sourceOfWealth);
-        setInvestmentObjective(financialProfile.investmentObjective);
-        setInvestmentExperience(financialProfile.investmentExperience);
-    }, [financialProfile]);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit({
-            employmentStatus,
-            annualIncome,
-            netWorth,
-            sourceOfWealth,
-            investmentObjective,
-            investmentExperience,
-        });
-    };
-
-    /*
     const employmentStatusOptions = [
-        { label: 'Employed', value: 1 },
-        { label: 'Self-Employed', value: 2 },
-        { label: 'Unemployed', value: 3 },
-        { label: 'Retired', value: 4 },
-        { label: 'Student', value: 5 },
-        { label: 'Other', value: 6 }
-    ]
-
-     */
+        { label: 'Employed', value: 0 },
+        { label: 'Self-Employed', value: 1 },
+        { label: 'Unemployed', value: 2 },
+        { label: 'Retired', value: 3 },
+        { label: 'Student', value: 4 },
+        { label: 'Other', value: 5 }
+    ];
 
     const incomeOptions = [
         { label: 'Below $20,000', value: 20000 },
@@ -73,30 +54,74 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
         { label: 'Above $1,000,000', value: 1000001 },
     ];
 
-    /*
     const sourceOfWealthOptions = [
-        { label: 'Salary', value: 1 },
-        { label: 'Business', value: 2 },
-        { label: 'Investments', value: 3 },
-        { label: 'Inheritance', value: 4 },
-        { label: 'Other', value: 5 }
-    ]
-     */
-
-    const investmentExperienceOptions = [
-        { label: 'None', value: 1 },
-        { label: 'Limited', value: 2 },
-        { label: 'Moderate', value: 3 },
-        { label: 'Extensive', value: 4 }
-    ]
+        { label: 'Salary', value: 0 },
+        { label: 'Business', value: 1 },
+        { label: 'Investments', value: 2 },
+        { label: 'Inheritance', value: 3 },
+        { label: 'Other', value: 4 }
+    ];
 
     const investmentObjectiveOptions = [
-        { label: 'Growth', value: 1 },
-        { label: 'Income', value: 2 },
-        { label: 'Capital Preservation', value: 3 },
-        { label: 'Speculation', value: 4 },
-        { label: 'Other', value: 5 }
-    ]
+        { label: 'Growth', value: 0 },
+        { label: 'Income', value: 1 },
+        { label: 'Capital Preservation', value: 2 },
+        { label: 'Speculation', value: 3 },
+        { label: 'Other', value: 4 }
+    ];
+
+    const investmentExperienceOptions = [
+        { label: 'None', value: 0 },
+        { label: 'Limited', value: 1 },
+        { label: 'Moderate', value: 2 },
+        { label: 'Extensive', value: 3 }
+    ];
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            setLoading(false);
+        } else {
+            const fetchProfile = async () => {
+                try {
+                    const response = await UpdateFinancialProfileService.getFinancialProfile();
+                    setProfile(response.data.data);
+                    setLoading(false);
+                } catch (error) {
+                    setMessage('Error fetching financial profile');
+                    setLoading(false);
+                }
+            };
+
+            fetchProfile();
+        }
+    }, [isAuthenticated]);
+
+    const handleUpdate = async (event) => {
+        event.preventDefault();
+        try {
+            const response = await UpdateFinancialProfileService.updateFinancialProfile(profile);
+            setMessage('Profile updated successfully');
+            setProfile(response.data.data);
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            setMessage('Error updating profile');
+        }
+    };
+
+    const handleChange = (field, value) => {
+        setProfile({
+            ...profile,
+            [field]: value
+        });
+    };
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    if (!isAuthenticated) {
+        return <p>Please log in to view this page.</p>;
+    }
 
     return (
         <Box
@@ -125,19 +150,18 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                 color="gray.600"
                                 _dark={{ color: "gray.400" }}
                             >
-                                your details.
+                                your financial profile.
                             </Text>
                         </Box>
                     </GridItem>
 
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
-                            onsubmit={handleSubmit}
+                            onSubmit={handleUpdate}
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
                             color="brand.100"
-
                         >
                             <Stack
                                 px={4}
@@ -148,10 +172,7 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                 p={{ sm: 6 }}
                             >
                                 <SimpleGrid columns={6} spacing={6}>
-                                    <FormControl
-                                        color="brand.600"
-                                        borderColor="brand.300"
-                                        as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -163,28 +184,19 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                         <FormSelect
                                             placeholder="Select option"
                                             mt={1}
+                                            focusBorderColor="brand.400"
                                             shadow="sm"
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={employmentStatus}
-                                            onChange={(value) => setEmploymentStatus(value.toString())}
-                                            options={[
-                                                { label: 'Employed', value: 0 },
-                                                { label: 'Self-Employed', value: 1 },
-                                                { label: 'Unemployed', value: 2 },
-                                                { label: 'Retired', value: 3 },
-                                                { label: 'Student', value: 4 },
-                                                { label: 'Other', value: 5 }
-                                            ]}
+                                            value={profile.employmentStatus}
+                                            onChange={(value) => handleChange('employmentStatus', value)}
+                                            options={employmentStatusOptions}
                                             required
-
                                         />
                                     </FormControl>
 
-                                    <FormControl
-                                        color="brand.600"
-                                        as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -194,21 +206,21 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                             Annual Income
                                         </FormLabel>
                                         <FormSelect
+                                            placeholder="Select option"
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={annualIncome}
-                                            onChange={setAnnualIncome}
+                                            value={profile.annualIncome}
+                                            onChange={(value) => handleChange('annualIncome', value)}
                                             options={incomeOptions}
                                             required
                                         />
                                     </FormControl>
 
-                                    <FormControl color="brand.600"
-                                                 as={GridItem} colSpan={[6, 4]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 4]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -225,15 +237,14 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={netWorth}
-                                            onChange={setNetWorth}
+                                            value={profile.netWorth}
+                                            onChange={(value) => handleChange('netWorth', value)}
                                             options={netWorthOptions}
                                             required
                                         />
                                     </FormControl>
 
-                                    <FormControl color="brand.600"
-                                                 as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -250,21 +261,14 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={sourceOfWealth}
-                                            onChange={setSourceOfWealth}
-                                            options={[
-                                                { label: 'Salary', value: 0 },
-                                                { label: 'Business', value: 1 },
-                                                { label: 'Investments', value: 2 },
-                                                { label: 'Inheritance', value: 3 },
-                                                { label: 'Other', value: 4 }
-                                            ]}
+                                            value={profile.sourceOfWealth}
+                                            onChange={(value) => handleChange('sourceOfWealth', value)}
+                                            options={sourceOfWealthOptions}
                                             required
                                         />
                                     </FormControl>
 
-                                    <FormControl color="brand.600"
-                                                 as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -281,15 +285,14 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={investmentObjective}
-                                            onChange={setInvestmentObjective}
-                                            options={ investmentObjectiveOptions}
+                                            value={profile.investmentObjective}
+                                            onChange={(value) => handleChange('investmentObjective', value)}
+                                            options={investmentObjectiveOptions}
                                             required
                                         />
                                     </FormControl>
 
-                                    <FormControl color="brand.600"
-                                                 as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -306,19 +309,11 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                             size="sm"
                                             w="full"
                                             rounded="md"
-                                            value={investmentExperience}
-                                            onChange={setInvestmentExperience}
+                                            value={profile.investmentExperience}
+                                            onChange={(value) => handleChange('investmentExperience', value)}
                                             options={investmentExperienceOptions}
                                             required
                                         />
-                                        <Button
-                                            onClick={handleSubmit}
-                                            colorScheme="brand"
-                                            _focus={{ shadow: "" }}
-                                            fontWeight="md"
-                                        >
-                                            Update
-                                        </Button>
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
@@ -330,17 +325,28 @@ const EditFinancialProfileForm = ({ financialProfile, onSubmit }) => {
                                 _dark={{ bg: "#121212" }}
                                 textAlign="right"
                             >
+                                <Button
+                                    type="submit"
+                                    colorScheme="brand"
+                                    _focus={{ shadow: "" }}
+                                    fontWeight="md"
+                                >
+                                    Update
+                                </Button>
+
                                 <Link to="/settings/profile">
                                     <Button
                                         type="button"
                                         colorScheme="brand"
                                         _focus={{ shadow: "" }}
                                         fontWeight="md"
+                                        ml={4}
                                     >
                                         Return
                                     </Button>
                                 </Link>
 
+                                {message && <p>{message}</p>}
                             </Box>
                         </chakra.form>
                     </GridItem>
