@@ -13,9 +13,9 @@ const useBackTest = () => {
             setLoading(true);
             const response = await BackTestService.getAlgorithmList();
             const data = response.data.data;
-            setAlgorithms(data.algorithms);
-            setPortfolioTypes(data.portfolioTypes);
-            setTickerList(data.tickerList);
+            setAlgorithms(data.algorithms || []);  // 设置算法列表
+            setPortfolioTypes(data.portfolioTypes || []);  // 设置投资组合类型
+            setTickerList(data.tickerList || []);  // 设置股票代码列表
         } catch (err) {
             console.error('Error fetching algorithm list', err);
             setError(err);

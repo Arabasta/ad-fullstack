@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
 import ManageTickersPage from "../pages/ManageTickersPage";
 import BackTestPage from "../pages/Backtest/BacktestPage";
 import AdminManageLiveTradingPage from "../pages/LiveTrading/AdminManageLiveTradingPage";
-import BackTestResultPage from "../pages/BackTestResultPage";
+import BackTestResultPage from "../pages/Backtest/BackTestResultPage";
 import TransactionsPage from "../pages/LiveTrading/TransactionsPage";
 
 const adminRoutes = (
