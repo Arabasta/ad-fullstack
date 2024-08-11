@@ -1,4 +1,4 @@
-package com.robotrader.spring.trading.algorithm;
+package com.robotrader.spring.trading.algorithm.trendFollowing;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
@@ -8,11 +8,11 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class TradingAlgorithmThree extends TradingAlgorithmOne {
-    public static final String ALGORITHM_TYPE = "TREND_FOLLOWING_ATR_FOMO";
-    private static final Logger logger = LoggerFactory.getLogger(TradingAlgorithmThree.class);
+public class TradingAlgorithmTFFM extends TradingAlgorithmTFBase {
+    public static final String ALGORITHM_TYPE = "TREND_FOLLOWING_FOMO";
+    private static final Logger logger = LoggerFactory.getLogger(TradingAlgorithmTFFM.class);
 
-    public TradingAlgorithmThree(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
+    public TradingAlgorithmTFFM(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         super(ticker, portfolioType, moneyPoolService);
     }
 

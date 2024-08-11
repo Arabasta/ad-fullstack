@@ -18,6 +18,8 @@ import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.strategy.TradingContext;
 import lombok.Getter;
 import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,17 +192,25 @@ public class TradingApplicationService implements ITradingApplicationService {
     }
 
     // reference: https://www.baeldung.com/java-reflection
+    // https://www.baeldung.com/reflections-library
     private void initializeAlgorithmMap() {
         // Algorithms are stored in this package
-        Reflections reflections = new Reflections("com.robotrader.spring.trading.algorithm");
+        Reflections reflections = new Reflections(
+                new ConfigurationBuilder()
+                        .forPackages("com.robotrader.spring.trading.algorithm")
+        );
+
         Set<Class<? extends TradingAlgorithmBase>> classes = reflections.getSubTypesOf(TradingAlgorithmBase.class);
 
         for (Class<? extends TradingAlgorithmBase> clazz : classes) {
             try {
                 Field field = clazz.getField("ALGORITHM_TYPE");
                 String algorithmType = (String) field.get(null);
-                algorithmMap.put(algorithmType, clazz);
-                logger.debug("{}: {}", clazz.getName(), algorithmType);
+                if (!algorithmType.isBlank()) {
+                    algorithmMap.put(algorithmType, clazz);
+                    logger.debug("{}: {}", clazz.getName(), algorithmType);
+                }
+
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }

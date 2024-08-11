@@ -207,5 +207,4 @@ public abstract class TradingAlgorithmBase {
         }
         return false;
     }
-
 }
