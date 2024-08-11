@@ -49,15 +49,24 @@ export default function PortfolioPage() {
             const [year, month, day, hour, minute, second] = label;
             const date = new Date(year, month - 1, day, hour, minute, second);
             return date.toLocaleString('en-SG', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
+                //year: 'numeric',
+                //month: 'short',
+                //day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true,
             });
         });
     }
+
+    // Extract and format the first label as a date string for the card component
+    const firstLabel = portfolios[0].data?.labels?.[0];
+    const date = firstLabel ? new Date(firstLabel[0], firstLabel[1] - 1, firstLabel[2]) : null;
+    const formattedDate = date ? date.toLocaleDateString('en-SG', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    }) : '';
 
     const combinedLabels = portfolios[0].data ? formatLabels(portfolios[0].data.labels) : [];
 
@@ -86,7 +95,7 @@ export default function PortfolioPage() {
                 backgroundColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
                 yAxisID: view === 'portfolioValue' ? 'y-axis-1' : 'y-axis-2',
             },
-            labels: portfolio?.data?.labels || []
+            labels: portfolio?.data?.labels ? formatLabels(portfolio.data.labels) : []
         };
     };
 
@@ -107,8 +116,9 @@ export default function PortfolioPage() {
 
             <CardComponent
                 title={<Heading as="h1" size="lg" color="brand.600" mb={2}>Portfolio Performance</Heading>}
+                subtitle={<GrayText fontSize="2xl" fontWeight="bold">{formattedDate}</GrayText>}
                 chart={<LineChart2 datasets={combinedData} view={view} labels={combinedLabels} />}
-                button={<Button color="brand.600" onClick={handleToggle}>
+                button={<Button onClick={handleToggle}>
                     Toggle View
                 </Button>}
             />
