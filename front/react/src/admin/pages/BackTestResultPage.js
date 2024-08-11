@@ -62,9 +62,9 @@ const BackTestResultPage = () => {
     return (
         <div>
             <CardComponent
-                title={<Heading as="h1" size="lg" color="brand.600" mb={2}>BackTest Performance</Heading>}
+                title={<Heading as="h1" color="brand.10" mb={2}>BackTest Performance</Heading>}
                 chart={<LineChart data={data} view={view} labels={labels}/>}
-                button={<Button color="brand.600" onClick={handleToggle}>
+                button={<Button onClick={handleToggle}>
                     Toggle View
                 </Button>}
             />
