@@ -1,39 +1,60 @@
 import React, { useState } from 'react';
 import {Button, HStack, VStack} from "@chakra-ui/react";
 import InputBoxWhite from "../common/inputFields/InputBoxWhite";
+import { useToast } from "@chakra-ui/react";
 
-const PortfolioRemoveFunds = ({ withdrawFunds, currentBalance }) => {
+const PortfolioRemoveFunds = ({ withdrawFunds, currentBalance, refreshWallet }) => {
     const [amount, setAmount] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const toast = useToast();
 
     const handleAmountChange = (e) => {
         setAmount(e.target.value);
-        if (error) {
-            setError('');
-        }
-        if (success) {
-            setSuccess('');
-        }
     };
 
     const handleWithdraw = async () => {
         const amountNumber = parseFloat(amount);
         if (isNaN(amountNumber) || amountNumber <= 0) {
-            setError('Please enter a valid amount more than $0');
+            toast({
+                title: "Portfolio Fund Withdrawal Error",
+                description: "Please enter an amount more than $0.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "top",
+            });
         } else if (amountNumber > currentBalance) {
-            setError('Insufficient allocated balance');
+            toast({
+                title: "Portfolio Fund Withdrawal Error",
+                description: "Insufficient portfolio fund balance.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "top",
+            });
         } else {
             try {
-                await withdrawFunds(amountNumber);
-                setAmount('');
-                setError('');
-                setSuccess('Funds withdrawn successfully');
+                withdrawFunds(amountNumber);
+                toast({
+                    title: "Portfolio Fund Withdrawal Success",
+                    description: `Funds withdrawn to wallet: $${amountNumber}`,
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                    position: "top",
+                });
+                refreshWallet();
             } catch (error) {
-                setError('Failed to withdraw funds');
-                setSuccess('');
+                toast({
+                    title: "Portfolio Fund Withdrawal Error",
+                    description: "Server Error. Please try again later.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                    position: "top",
+                });
             }
         }
+        setAmount('');
     };
 
     return (
@@ -50,15 +71,13 @@ const PortfolioRemoveFunds = ({ withdrawFunds, currentBalance }) => {
                     width="10rem"
                 />
                 <Button onClick={handleWithdraw}
-                        bg="gray.300"
+                        shadow="sm"
                         fontSize="md"
                         height="2rem"
                         width="6rem">
-                    Remove
+                    Withdraw
                 </Button>
             </HStack>
-            {error && <p style={{color: 'red'}}>{error}</p>}
-            {success && <p style={{color: 'green'}}>{success}</p>}
         </VStack>
     );
 };

@@ -68,6 +68,11 @@ const Header = () => {
                                 <Link to="/settings">
                                     <Button variant="ghost">Settings</Button>
                                 </Link>
+                                <Link to="/support">
+                                    <Button w="full" variant="ghost">
+                                        Support
+                                    </Button>
+                                </Link>
                                 <Button onClick={logout}>Sign Out</Button>
                             </>
                         ) : (
@@ -135,6 +140,11 @@ const Header = () => {
                                     <Link to="/profile">
                                         <Button w="full" variant="ghost">
                                             Profile
+                                        </Button>
+                                    </Link>
+                                    <Link to="/support">
+                                        <Button w="full" variant="ghost">
+                                            Support
                                         </Button>
                                     </Link>
                                     <Button w="full" variant="ghost" onClick={logout}>Sign Out</Button>

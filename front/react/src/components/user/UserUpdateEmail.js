@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import UserService from '../../services/UserService';
+import Header from "../common/layout/Header";
+import Button from "../common/buttons/Button";
 
 const UpdateEmail = ({ user, updateUser }) => {
     const [email, setEmail] = useState('');
@@ -33,7 +35,7 @@ const UpdateEmail = ({ user, updateUser }) => {
 
     return (
         <div>
-            <h1>Update Email</h1>
+            <Header>Update Email</Header>
             <div>
                 <input
                     type="email"
@@ -41,7 +43,7 @@ const UpdateEmail = ({ user, updateUser }) => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
-                <button onClick={handleUpdateEmail2}>Update Email</button>
+                <Button onClick={handleUpdateEmail2}>Update Email</Button>
             </div>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {success && <p style={{ color: 'green' }}>{success}</p>}

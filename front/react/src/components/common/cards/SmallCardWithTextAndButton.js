@@ -12,7 +12,7 @@ const SmallCardWithTextAndButton = ({ title, children, directToThisPath }) => (
                     fontWeight="bold"
                     lineHeight="6"
                     _light={{
-                        color: "gray.900",
+                        color: "#eee",
                     }}
                 >
                     {title}
@@ -23,7 +23,7 @@ const SmallCardWithTextAndButton = ({ title, children, directToThisPath }) => (
                 mt={2}
                 color="gray.500"
                 _dark={{
-                    color: "gray.400",
+                    color: "#eee",
                 }}
             >
                 {children}

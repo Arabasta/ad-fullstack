@@ -4,6 +4,7 @@ import UpdateRulesByPortfolio from '../../../components/rules/UpdateRulesByPortf
 import ResetStopLossTriggerByPortfolio from '../../../components/rules/ResetStopLossTriggerByPortfolio';
 import useRule from '../../../hooks/useRule';
 
+// todo: alvin: replaced with RulesModal. To review if RulesPage is still needed. Else, delete.
 const RulesPage = () => {
     const location = useLocation();
     const { portfolioType } = location.state || { portfolioType: 'DEFAULT' };
