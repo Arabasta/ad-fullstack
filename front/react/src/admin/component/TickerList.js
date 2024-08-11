@@ -2,19 +2,24 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackTestService from '../services/BackTestService';
 
-const TickerList = ({ tickerList, selectedPortfolioType }) => {
+const TickerList = ({ tickerList, selectedPortfolioType, selectedAlgorithmType, amount }) => {
     const navigate = useNavigate();
 
     const handleRunBackTest = async (tickerName) => {
-        if (selectedPortfolioType) {
+        if (selectedPortfolioType && selectedAlgorithmType && amount) {
             try {
-                const response = await BackTestService.runBackTest(tickerName, selectedPortfolioType);
+                const response = await BackTestService.runBackTest(
+                    selectedPortfolioType,
+                    amount,
+                    selectedAlgorithmType,
+                    tickerName // 将 tickerName 作为参数传递
+                );
                 navigate('/admin/backtest-result', { state: response.data.data });
             } catch (error) {
                 console.error('Error running backtest', error);
             }
         } else {
-            alert('Please select a portfolio type');
+            alert('Please ensure that Portfolio Type, Algorithm Type, and Amount are selected');
         }
     };
 
