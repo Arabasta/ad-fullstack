@@ -68,6 +68,8 @@ export default function PortfolioPage() {
         day: 'numeric',
     }) : '';
 
+    const toPassDate = formattedDate;
+
     const combinedLabels = portfolios[0].data ? formatLabels(portfolios[0].data.labels) : [];
 
     const combinedData = portfolios.map((portfolio, index) => {
@@ -95,14 +97,14 @@ export default function PortfolioPage() {
                 backgroundColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
                 yAxisID: view === 'portfolioValue' ? 'y-axis-1' : 'y-axis-2',
             },
-            labels: portfolio?.data?.labels ? formatLabels(portfolio.data.labels) : []
+            labels: portfolio?.data?.labels ? formatLabels(portfolio.data.labels) : [],
         };
     };
 
     const handlePortfolioSelection = (type) => {
         const {chartData, labels} = getDataByType(type);
         navigate(`/portfolio/${type.toLowerCase()}`, {
-            state: { chartData, labels, view }
+            state: { chartData, labels, view, toPassDate }
         });
     };
 

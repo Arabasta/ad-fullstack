@@ -25,11 +25,11 @@ const CardComponent = ({title, subtitle, button, chart}) => {
                 flexDirection={{ base: "column", lg: "row" }} // Column layout on mobile, row on larger screens
             >
                 <Box
-                    w={{ base: "80%", lg: "60%" }} // Take full width on mobile
-                    minH="300px" // Minimum height to maintain chart integrity
+                    w={{ base: "90%", lg: "60%" }} // Take full width on mobile
+                    minH="200px" // Minimum height to maintain chart integrity
+                    maxH="60%" // Maximum height to fit within the card
                     p={{ base: 2, lg: 4 }} // Adjust padding for responsiveness
                     mb={{ base: 4, lg: 0 }} // Margin bottom on mobile
-                    flexShrink={0} // Prevent shrinking when there are few data points
                 >
                     {chart}
                 </Box>
