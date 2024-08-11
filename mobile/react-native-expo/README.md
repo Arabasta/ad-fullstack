@@ -3,7 +3,7 @@
 ### Android Studio
 
 
-Open Android Studio and run the Android emulator, ~~or open Xcode and run the iOS simulator~~.
+Open Android Studio, open Device Manager and run the Android emulator, ~~or open Xcode and run the iOS simulator~~.
 
 Using Pixel 8 API 29 Q
 
