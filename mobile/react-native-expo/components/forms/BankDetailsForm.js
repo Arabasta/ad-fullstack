@@ -4,9 +4,7 @@ import TextInputWithHelper from '../../components/common/input/TextInputWithHelp
 import ButtonPrimary from '../../components/common/button/ButtonPrimary';
 import ButtonCancel from '../../components/common/button/ButtonCancel';
 import ErrorText from "../../components/common/text/ErrorText";
-import Text from "../../components/common/text/Text";
 import useBankDetails from "../../hooks/useBankDetails";
-import SmallDisplayCard from "../common/card/SmallDisplayCard";
 import BankDetailsDisplay from "../settings/BankDetailsDisplay";
 
 const BankDetailsForm = ({ onSubmit }) => {
