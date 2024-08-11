@@ -7,15 +7,54 @@ import {
     Stack,
     FormControl,
     FormLabel,
+    Select,
     Button,
-    Flex,
     Text,
+    Flex,
 } from '@chakra-ui/react';
-import Heading from "../../../../components/common/text/Heading";
-import FormSelect from "../../../../components/common/inputFields/FormSelect";
+import { Link } from 'react-router-dom';
 import InvestorProfileService from "../../../../services/InvestorProfileService";
 import { AuthContext } from "../../../../config/context/AuthContext";
-import { Link } from "react-router-dom";
+
+const optionsForQuestion1 = [
+    { label: "Less than 3 years", value: 1 },
+    { label: "3-5 years", value: 2 },
+    { label: "6-10 years", value: 3 },
+    { label: "11 years or more", value: 4 }
+];
+
+const optionsForQuestion2 = [
+    { label: "Less than 2 years", value: 1 },
+    { label: "2-5 years", value: 2 },
+    { label: "6-10 years", value: 3 },
+    { label: "11 years or more", value: 4 }
+];
+
+const optionsForQuestion3 = [
+    { label: "None", value: 1 },
+    { label: "Limited", value: 2 },
+    { label: "Good", value: 3 },
+    { label: "Extensive", value: 4 }
+];
+
+const optionsForQuestion4 = [
+    { label: "Take less risk, expect less returns", value: 1 },
+    { label: "Take average risk, expect average returns", value: 2 },
+    { label: "Take more risks, expect more returns", value: 3 }
+];
+
+const optionsForQuestion5 = [
+    { label: "Bonds and/or bonds funds", value: 1 },
+    { label: "Stocks and/or stocks funds", value: 2 },
+    { label: "International securities and/or funds", value: 3 }
+];
+
+const optionsForQuestion6 = [
+    { label: "Sell all my shares", value: 1 },
+    { label: "Sell some of my shares", value: 2 },
+    { label: "Do nothing", value: 3 },
+    { label: "Buy more shares", value: 4 }
+];
 
 const EditInvestorProfileForm = () => {
     const { isAuthenticated } = useContext(AuthContext);
@@ -30,41 +69,6 @@ const EditInvestorProfileForm = () => {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [recommendedPortfolioType, setRecommendedPortfolioType] = useState('');
-
-    const optionsForQuestion1 = [
-        { label: "Less than 3 years", value: 1 },
-        { label: "3-5 years", value: 2 },
-        { label: "6-10 years", value: 3 },
-        { label: "11 years or more", value: 4 }
-    ];
-    const optionsForQuestion2 = [
-        { label: "Less than 2 years", value: 1 },
-        { label: "2-5 years", value: 2 },
-        { label: "6-10 years", value: 3 },
-        { label: "11 years or more", value: 4 }
-    ];
-    const optionsForQuestion3 = [
-        { label: "None", value: 1 },
-        { label: "Limited", value: 2 },
-        { label: "Good", value: 3 },
-        { label: "Extensive", value: 4 }
-    ];
-    const optionsForQuestion4 = [
-        { label: "Take less risk, expect less returns", value: 1 },
-        { label: "Take average risk, expect average returns", value: 2 },
-        { label: "Take more risks, expect more returns", value: 3 }
-    ];
-    const optionsForQuestion5 = [
-        { label: "Bonds and/or bonds funds", value: 1 },
-        { label: "Stocks and/or stocks funds", value: 2 },
-        { label: "International securities and/or funds", value: 3 }
-    ];
-    const optionsForQuestion6 = [
-        { label: "Sell all my shares", value: 1 },
-        { label: "Sell some of my shares", value: 2 },
-        { label: "Do nothing", value: 3 },
-        { label: "Buy more shares", value: 4 }
-    ];
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -90,12 +94,10 @@ const EditInvestorProfileForm = () => {
         event.preventDefault();
         try {
             const response = await InvestorProfileService.updateInvestorProfile(profile);
-            console.log("Updated profile:", profile);
             setMessage('Profile updated successfully');
             setProfile(response.data.data);
             setRecommendedPortfolioType(response.data.data.recommendedPortfolioType);
         } catch (error) {
-            console.error('Error updating profile:', error);
             setMessage('Error updating profile');
         }
     };
@@ -107,13 +109,8 @@ const EditInvestorProfileForm = () => {
         });
     };
 
-    if (loading) {
-        return <p>Loading...</p>;
-    }
-
-    if (!isAuthenticated) {
-        return <p>Please log in to view this page.</p>;
-    }
+    if (loading) return <Box>Loading...</Box>;
+    if (!isAuthenticated) return <Box>Please log in to view this page.</Box>;
 
     return (
         <Box
@@ -133,16 +130,16 @@ const EditInvestorProfileForm = () => {
                 >
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
-                            <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
-                                Update
-                            </Heading>
+                            <Text color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
+                                Update Investor Profile
+                            </Text>
                             <Text
                                 mt={1}
                                 fontSize="2xl"
                                 color="gray.600"
                                 _dark={{ color: "gray.400" }}
                             >
-                                your details.
+                                Review and update your investor details.
                             </Text>
                         </Box>
                     </GridItem>
@@ -173,8 +170,7 @@ const EditInvestorProfileForm = () => {
                                         >
                                             Investment Duration Score
                                         </FormLabel>
-                                        <FormSelect
-                                            placeholder="Select option"
+                                        <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
@@ -182,10 +178,15 @@ const EditInvestorProfileForm = () => {
                                             w="full"
                                             rounded="md"
                                             value={profile.investmentDurationScore}
-                                            onChange={(value) => handleChange('investmentDurationScore', value)}
-                                            options={optionsForQuestion1}
+                                            onChange={(e) => handleChange('investmentDurationScore', e.target.value)}
                                             required
-                                        />
+                                        >
+                                            {optionsForQuestion1.map(option => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
 
                                     <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
@@ -197,7 +198,7 @@ const EditInvestorProfileForm = () => {
                                         >
                                             Withdrawal Spending Plan Score
                                         </FormLabel>
-                                        <FormSelect
+                                        <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
@@ -205,13 +206,18 @@ const EditInvestorProfileForm = () => {
                                             w="full"
                                             rounded="md"
                                             value={profile.withdrawalSpendingPlanScore}
-                                            onChange={(value) => handleChange('withdrawalSpendingPlanScore', value)}
-                                            options={optionsForQuestion2}
+                                            onChange={(e) => handleChange('withdrawalSpendingPlanScore', e.target.value)}
                                             required
-                                        />
+                                        >
+                                            {optionsForQuestion2.map(option => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
 
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 4]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -220,8 +226,7 @@ const EditInvestorProfileForm = () => {
                                         >
                                             Investment Knowledge Score
                                         </FormLabel>
-                                        <FormSelect
-                                            placeholder="Select option"
+                                        <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
@@ -229,10 +234,15 @@ const EditInvestorProfileForm = () => {
                                             w="full"
                                             rounded="md"
                                             value={profile.investmentKnowledgeScore}
-                                            onChange={(value) => handleChange('investmentKnowledgeScore', value)}
-                                            options={optionsForQuestion3}
+                                            onChange={(e) => handleChange('investmentKnowledgeScore', e.target.value)}
                                             required
-                                        />
+                                        >
+                                            {optionsForQuestion3.map(option => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
 
                                     <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
@@ -244,8 +254,7 @@ const EditInvestorProfileForm = () => {
                                         >
                                             Risk Reward Score
                                         </FormLabel>
-                                        <FormSelect
-                                            placeholder="Select option"
+                                        <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
@@ -253,10 +262,15 @@ const EditInvestorProfileForm = () => {
                                             w="full"
                                             rounded="md"
                                             value={profile.riskRewardScore}
-                                            onChange={(value) => handleChange('riskRewardScore', value)}
-                                            options={optionsForQuestion4}
+                                            onChange={(e) => handleChange('riskRewardScore', e.target.value)}
                                             required
-                                        />
+                                        >
+                                            {optionsForQuestion4.map(option => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
 
                                     <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
@@ -268,8 +282,7 @@ const EditInvestorProfileForm = () => {
                                         >
                                             Owned Investments Score
                                         </FormLabel>
-                                        <FormSelect
-                                            placeholder="Select option"
+                                        <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
@@ -277,10 +290,15 @@ const EditInvestorProfileForm = () => {
                                             w="full"
                                             rounded="md"
                                             value={profile.ownedInvestmentsScore}
-                                            onChange={(value) => handleChange('ownedInvestmentsScore', value)}
-                                            options={optionsForQuestion5}
+                                            onChange={(e) => handleChange('ownedInvestmentsScore', e.target.value)}
                                             required
-                                        />
+                                        >
+                                            {optionsForQuestion5.map(option => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
 
                                     <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
@@ -292,8 +310,7 @@ const EditInvestorProfileForm = () => {
                                         >
                                             Investment Personality Score
                                         </FormLabel>
-                                        <FormSelect
-                                            placeholder="Select option"
+                                        <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
@@ -301,16 +318,15 @@ const EditInvestorProfileForm = () => {
                                             w="full"
                                             rounded="md"
                                             value={profile.investmentPersonalityScore}
-                                            onChange={(value) => handleChange('investmentPersonalityScore', value)}
-                                            options={optionsForQuestion6}
+                                            onChange={(e) => handleChange('investmentPersonalityScore', e.target.value)}
                                             required
-                                        />
-                                        {message && (
-                                            <>
-                                                <Text mt={3} color="black">{message}</Text>
-                                                <Text mt={1} color="black">Updated Recommend Portfolio Type: {recommendedPortfolioType}</Text>
-                                            </>
-                                        )}
+                                        >
+                                            {optionsForQuestion6.map(option => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </Select>
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
@@ -335,7 +351,7 @@ const EditInvestorProfileForm = () => {
                                 </Link>
 
                                 <Button
-                                    onClick={handleUpdate}
+                                    type="submit"
                                     colorScheme="brand"
                                     _focus={{ shadow: "" }}
                                     fontWeight="md"
@@ -343,6 +359,25 @@ const EditInvestorProfileForm = () => {
                                     Update
                                 </Button>
                             </Flex>
+
+                            <Box
+                                px={{ base: 4, sm: 6 }}
+                                py={3}
+                                bg="gray.50"
+                                _dark={{ bg: "#121212" }}
+                                textAlign="right"
+                            >
+                                {message && (
+                                    <>
+                                        <Text mt={3} color="black">{message}</Text>
+                                        {recommendedPortfolioType && (
+                                            <Text mt={3} color="black">
+                                                Updated Recommend Portfolio Type: {recommendedPortfolioType}
+                                            </Text>
+                                        )}
+                                    </>
+                                )}
+                            </Box>
                         </chakra.form>
                     </GridItem>
                 </SimpleGrid>
