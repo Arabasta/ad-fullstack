@@ -4,7 +4,6 @@ import useLiveTrading from "../../hooks/useLiveTrading";
 import { ListItem } from '@chakra-ui/react';
 import UnorderedList from "../../../components/common/layout/list/UnorderedList";
 import BlackText from "../../../components/common/text/BlackText";
-import SeparatorBlack from "../../../components/common/layout/separator/SeparatorBlack";
 import SeparatorGrey from "../../../components/common/layout/separator/SeparatorGrey";
 
 const TransactionsPage = () => {
@@ -32,12 +31,10 @@ const TransactionsPage = () => {
 
     return (
         <div>
-            <h1>Transactions for {portfolioType}</h1>
-            <SeparatorBlack />
             {transactions.length > 0 ? (
                 <UnorderedList>
                     {transactions.map((transaction) => (
-                        <ListItem key={transaction.transactionId} style={{ border: '1px solid black', margin: '10px', padding: '10px' }}>
+                        <ListItem key={transaction.transactionId}>
                             <BlackText fontWeight="bold">
                                 {transaction.action} ${transaction.transactionAmount}
                             </BlackText>

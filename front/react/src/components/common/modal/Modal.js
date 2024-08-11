@@ -64,8 +64,10 @@ const ModalContent = ({ onClose, children, ...props }) => (
 );
 
 const ModalHeader = ({ title, onClose }) => (
-    <Flex justify="space-between" align="center" mb="20px">
-        <Heading>{title}</Heading>
+    <Flex justify="space-between"  align="center" mb="20px">
+        <Heading align="center" mb="0">
+            {title}
+        </Heading>
         <ModalCloseButton onClick={onClose} />
     </Flex>
 );
