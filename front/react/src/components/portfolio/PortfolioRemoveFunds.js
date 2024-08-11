@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {Button, HStack, VStack} from "@chakra-ui/react";
 import InputBoxWhite from "../common/inputFields/InputBoxWhite";
 import { useToast } from "@chakra-ui/react";
-import useWallet from "../../hooks/useWallet";
 
 const PortfolioRemoveFunds = ({ withdrawFunds, currentBalance, refreshWallet }) => {
     const [amount, setAmount] = useState('');
