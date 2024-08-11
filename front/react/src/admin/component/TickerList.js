@@ -12,7 +12,7 @@ const TickerList = ({ tickerList, selectedPortfolioType, selectedAlgorithmType, 
                     selectedPortfolioType,
                     amount,
                     selectedAlgorithmType,
-                    tickerName // 将 tickerName 作为参数传递
+                    tickerName
                 );
                 navigate('/admin/backtest-result', { state: response.data.data });
             } catch (error) {

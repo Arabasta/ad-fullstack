@@ -7,8 +7,9 @@ const useLiveTrading = () => {
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(false);
     const [isTrading, setIsTrading] = useState(false);
+    const [algorithmTypes, setAlgorithmTypes] = useState([]);
 
-    const startLiveTrading = useCallback(async () => {
+    const startLiveTrading = useCallback(async (algorithmType) => {
         if (isTrading) {
             setMessage("Live trading is already running.");
             return;
@@ -17,7 +18,7 @@ const useLiveTrading = () => {
         setMessage(null);
         setIsTrading(true);
         try {
-            const response = await LiveTradingService.startLiveTrading();
+            const response = await LiveTradingService.startLiveTrading(algorithmType);
             setMessage(response.data.message);
         } catch (err) {
             setMessage(err.message);
@@ -35,23 +36,32 @@ const useLiveTrading = () => {
         try {
             const response = await LiveTradingService.stopLiveTrading();
             setMessage(response.data.message);
-            setIsTrading(false); // 停止交易时设置为false
+            setIsTrading(false);
         } catch (err) {
             setMessage(err.message);
         }
     }, [isTrading]);
 
+
     const getLiveTradingTransactions = useCallback(async (portfolioType) => {
         setLoading(true);
         try {
             const response = await LiveTradingService.getLiveTradingTransactions(portfolioType);
-            console.log('Fetched transactions:', response.data.data.content);
             setTransactions(response.data.data.content);
             setHasMore(response.data.data.content.length > 0);
         } catch (err) {
             setMessage(err.message);
         } finally {
             setLoading(false);
+        }
+    }, []);
+
+    const getAlgorithmTypes = useCallback(async () => {
+        try {
+            const response = await LiveTradingService.getAlgorithmTypes();
+            setAlgorithmTypes(response.data.data.algorithms);
+        } catch (err) {
+            setMessage(err.message);
         }
     }, []);
 
@@ -64,8 +74,9 @@ const useLiveTrading = () => {
         startLiveTrading,
         stopLiveTrading,
         getLiveTradingTransactions,
+        algorithmTypes,
+        getAlgorithmTypes,
     };
 };
 
 export default useLiveTrading;
-

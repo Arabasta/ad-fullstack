@@ -11,25 +11,24 @@ const BackTestResultPage = () => {
     const { labels, datasets } = location.state;
     const [view, setView] = useState('capital');
 
-    // 切换视图
     const handleToggle = () => {
         setView(view === 'capital' ? 'percentChange' : 'capital');
     };
 
-    // 格式化标签
+
     function formatLabels(labels) {
         return labels.map(label => {
-            // 如果标签是时间戳或时间数组，请根据实际情况修改
+
             const date = new Date(label);
             const options = {
                 year: 'numeric',
-                month: 'short', // 'short' 为缩写的月份名称，'long' 为全称
+                month: 'short',
                 day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
-                hour12: true, // true 为 12 小时制, false 为 24 小时制
+                hour12: true,
             };
-            return date.toLocaleString('en-SG', options); // 根据需要调整格式
+            return date.toLocaleString('en-SG', options);
         });
     }
 
