@@ -9,14 +9,16 @@ import {
     FormLabel,
     InputGroup,
     Button,
-    Select, Input
+    Select,
+    Input,
+    Flex,
+    Text
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import useUser from "../../../../hooks/useUser";
 import UserService from "../../../../services/UserService";
 import useCustomer from "../../../../hooks/useCustomer";
 import Heading from "../../../../components/common/text/Heading";
-import Text from "../../../../components/common/text/Text";
 import CountryCodes from "../../../../components/customer/auth/CountryCodes";
 
 const EditUserDetailsForm = () => {
@@ -146,15 +148,6 @@ const EditUserDetailsForm = () => {
                                                 rounded="md"
                                             />
                                         </InputGroup>
-                                        <Button
-                                            type="button"
-                                            onClick={handleUpdateEmail}
-                                            colorScheme="brand"
-                                            _focus={{ shadow: "" }}
-                                            fontWeight="md"
-                                        >
-                                            Update
-                                        </Button>
                                     </FormControl>
 
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
@@ -194,37 +187,48 @@ const EditUserDetailsForm = () => {
                                                 rounded="md"
                                             />
                                         </InputGroup>
-
-                                        <Button
-                                            type="button"
-                                            onClick={handleUpdateMobileNumber}
-                                            colorScheme="brand"
-                                            _focus={{ shadow: "" }}
-                                            fontWeight="md"
-                                        >
-                                            Update
-                                        </Button>
-
-                                        {error && <p style={{ color: 'red' }}>{error}</p>}
-                                        {success && <p style={{ color: 'green' }}>{success}</p>}
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
+                            <Flex
+                                px={{ base: 4, sm: 6 }}
+                                py={3}
+                                bg="gray.50"
+                                _dark={{ bg: "#121212" }}
+                                justifyContent="space-between"
+                                alignItems="center"
+                            >
+                                <Link to="/settings/profile">
+                                    <Button
+                                        type="button"
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md"
+                                    >
+                                        Return
+                                    </Button>
+                                </Link>
+
+                                <Button
+                                    type="button"
+                                    onClick={handleUpdateEmail}
+                                    colorScheme="brand"
+                                    _focus={{ shadow: "" }}
+                                    fontWeight="md"
+                                >
+                                    Update
+                                </Button>
+                            </Flex>
+
                             <Box
                                 px={{ base: 4, sm: 6 }}
                                 py={3}
                                 bg="gray.50"
                                 _dark={{ bg: "#121212" }}
-                                textAlign="right"
+                                textAlign="center"
                             >
-                                <Link to="/settings/profile">
-                                    <Button
-                                        colorScheme="brand"
-                                        _focus={{ shadow: "" }}
-                                        fontWeight="md">
-                                        Return
-                                    </Button>
-                                </Link>
+                                {error && <Text color="red.500">{error}</Text>}
+                                {success && <Text color="green.500">{success}</Text>}
                             </Box>
                         </chakra.form>
 
