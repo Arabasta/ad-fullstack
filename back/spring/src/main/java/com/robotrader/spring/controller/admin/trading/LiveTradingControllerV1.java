@@ -1,13 +1,9 @@
 package com.robotrader.spring.controller.admin.trading;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.robotrader.spring.aws.s3.S3TransactionLogger;
 import com.robotrader.spring.dto.backtest.AlgorithmDTO;
-import com.robotrader.spring.dto.general.ApiErrorResponse;
 import com.robotrader.spring.dto.general.ApiResponse;
 import com.robotrader.spring.dto.livetrade.TradeTransactionLogDTO;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
-import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.TickerService;
 import com.robotrader.spring.service.log.TradeTransactionLogService;
 import com.robotrader.spring.trading.service.TradingApplicationService;

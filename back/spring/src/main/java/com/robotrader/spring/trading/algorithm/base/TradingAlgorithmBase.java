@@ -33,7 +33,7 @@ public abstract class TradingAlgorithmBase {
     protected BigDecimal stopLossAmount;
     protected BigDecimal profitTarget;
     protected BigDecimal initialCapitalTest;
-    protected BigDecimal currentCapitalTest;
+    protected static BigDecimal currentCapitalTest;
     protected boolean isTest;
     protected final BigDecimal HIGH_PRICE_THRESHOLD = BigDecimal.valueOf(10000);
     protected TradeTransaction lastTradeTransaction;
@@ -133,11 +133,12 @@ public abstract class TradingAlgorithmBase {
         BigDecimal totalCost = currentPrice.multiply(position);
 
         // Check if there's enough capital for the trade
-        BigDecimal poolBalance = moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
+        BigDecimal availableCapital = isTest ? currentCapitalTest : moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
+
         logger.debug("{} - Total cost: {}", ticker, totalCost);
-        logger.debug("{} - Pool balance: {}", portfolioType, poolBalance);
-        if (isTest && totalCost.compareTo(currentCapitalTest) > 0 || !isTest && totalCost.compareTo(poolBalance) > 0) {
-            logger.info("{} - Not enough capital for the trade. Required: {}, Available: {}", ticker, totalCost, currentCapitalTest);
+        logger.debug("{} - Available capital: {}", portfolioType, availableCapital);
+        if (totalCost.compareTo(availableCapital) > 0) {
+            logger.info("{} - Not enough capital for the trade. Required: {}, Available: {}", ticker, totalCost, availableCapital);
             return false;
         }
         return true;

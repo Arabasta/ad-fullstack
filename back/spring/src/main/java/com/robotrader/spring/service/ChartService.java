@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -65,7 +64,7 @@ public class ChartService implements IChartService {
                 capitalPercentChangeData.add(cumulativePercentChange.setScale(2, RoundingMode.HALF_UP));
 
 
-                 newAmount = initialAmount.add(initialAmount.multiply(cumulativePercentChange.divide(BigDecimal.valueOf(100)))).setScale(2, RoundingMode.HALF_UP);
+                 newAmount = initialAmount.add(initialAmount.multiply(cumulativePercentChange.divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP))).setScale(2, RoundingMode.HALF_UP);
                 capitalAbsoluteData.add(newAmount);
             }
         }

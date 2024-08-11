@@ -66,8 +66,7 @@ public class TradingApplicationService implements ITradingApplicationService {
 
     @Override
     public BackTestResultDTO runTradingAlgorithmBackTest(List<String> tickers, PortfolioTypeEnum portfolioType, String algorithmType) {
-        // Use AtomicReference for mutable BigDecimal
-        AtomicReference<BigDecimal> combinedInitialCapital = new AtomicReference<>(BigDecimal.ZERO);
+        AtomicReference<BigDecimal> initialCapital = new AtomicReference<>(BigDecimal.ZERO);
         List<ObjectNode> combinedTradeResults = Collections.synchronizedList(new ArrayList<>());
 
         List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -90,7 +89,7 @@ public class TradingApplicationService implements ITradingApplicationService {
                     CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                         tradingContext.executeTradingStrategy(tradingAlgorithm).join();
                         // Update combinedInitialCapital using AtomicReference and add trade results using synchronized list as back testing is done async on multiple threads
-                        combinedInitialCapital.updateAndGet(current -> current.add(tradingAlgorithm.getInitialCapitalTest()));
+                        initialCapital.set(tradingAlgorithm.getInitialCapitalTest());
                         combinedTradeResults.addAll(tradingContext.getTradeResults());
                     });
                     futures.add(future);
@@ -115,7 +114,7 @@ public class TradingApplicationService implements ITradingApplicationService {
         );
 
         // Create the combined BackTestResultDTO after all futures are complete
-        BackTestResultDTO combinedResult = new BackTestResultDTO(combinedInitialCapital.get(), combinedTradeResults);
+        BackTestResultDTO combinedResult = new BackTestResultDTO(initialCapital.get(), combinedTradeResults);
         logger.info("Total number of trades for all tickers: {}", combinedTradeResults.size());
         return combinedResult;
     }

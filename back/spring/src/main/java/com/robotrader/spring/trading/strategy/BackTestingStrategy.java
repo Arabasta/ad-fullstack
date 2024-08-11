@@ -164,7 +164,7 @@ public class BackTestingStrategy implements TradingStrategy {
     public List<ObjectNode> getTradeResults() {
         List<ObjectNode> trades = tradePersistence.getAllTrades();
 
-        // Printing of trades
+        // Logging of trades
         ObjectNode lastTrade = null;
         BigDecimal totalProfit = BigDecimal.ZERO;
         String tickerName = "";
@@ -183,16 +183,16 @@ public class BackTestingStrategy implements TradingStrategy {
                         BigDecimal profitPerQty = sellPrice.subtract(buyPrice);
                         BigDecimal subtotalProfit = profitPerQty.multiply(quantity);
                         totalProfit = totalProfit.add(subtotalProfit);
-                        logger.info("Profit: " + subtotalProfit);
+                        logger.info("{} - Profit: {}", tickerName, subtotalProfit);
                     }
                 } else if ("BUY".equals(action)) {
                     lastTrade = trade;
                 }
             }
-            logger.info("Total Profit: {}", totalProfit);
-            logger.info("Total number of trades for {}: {}", tickerName, trades.size());
+            logger.info("{} - Total Profit: {}", tickerName, totalProfit);
+            logger.info("{} - Total number of trades: {}", tickerName, trades.size());
         } else {
-            logger.info("No trade transactions");
+            logger.info("{} - No trade transactions", tickerName);
         }
         return trades;
     }

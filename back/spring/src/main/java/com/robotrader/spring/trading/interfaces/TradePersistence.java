@@ -6,7 +6,7 @@ import com.robotrader.spring.trading.dto.TradeTransaction;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public interface TradePersistence<T> {
+public interface TradePersistence {
     DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     void saveTrade(TradeTransaction tradeTransaction);
     List<ObjectNode> getAllTrades();
