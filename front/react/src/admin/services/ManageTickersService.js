@@ -1,6 +1,5 @@
 import axiosInstance from "../../config/axios/axiosInstance";
 
-
 const getActiveTickers = async () => {
     const response = await axiosInstance.get('/v1/admin/trading/tickers');
     return response.data;

@@ -8,6 +8,7 @@ const useTickers = () => {
 
     useEffect(() => {
         fetchActiveTickers();
+        fetchAvailableTickers();
     }, []);
 
     const fetchActiveTickers = async () => {
@@ -26,21 +27,21 @@ const useTickers = () => {
 
     const addTicker = async (ticker) => {
         await ManageTickersService.addTicker(ticker);
-        fetchActiveTickers();
+        // No need to manually update activeTickers here as fetchActiveTickers will handle it
     };
 
     const deleteTicker = async (tickerId) => {
         await ManageTickersService.deleteTicker(tickerId);
-        fetchActiveTickers();
+        fetchActiveTickers();  // Refresh the list of active tickers after deleting one
     };
 
     return {
         activeTickers,
         availableTickers,
         loading,
-        fetchAvailableTickers,
         addTicker,
-        deleteTicker
+        deleteTicker,
+        fetchActiveTickers  // Expose fetchActiveTickers to trigger a manual refresh
     };
 };
 
