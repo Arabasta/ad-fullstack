@@ -6,7 +6,8 @@ import {
     chakra,
     Stack,
     FormControl,
-    FormLabel
+    FormLabel,
+    Flex
 } from '@chakra-ui/react';
 
 import Heading from "../../common/text/Heading";
@@ -205,8 +206,6 @@ const RegisterStep5Form = ({
                                         />
                                     </FormControl>
 
-
-
                                     <FormControl color="brand.600" as={GridItem} colSpan={[6, 4]}>
                                         <FormLabel
                                             fontSize="md"
@@ -253,19 +252,10 @@ const RegisterStep5Form = ({
                                             required
                                         />
                                     </FormControl>
-
-
-
                                 </SimpleGrid>
                             </Stack>
 
-                            <Box
-                                px={{ base: 4, sm: 6 }}
-                                py={3}
-                                bg="gray.50"
-                                _dark={{ bg: "#121212" }}
-                                textAlign="right"
-                            >
+                            <Flex justifyContent="space-between" bg="gray.50" _dark={{ bg: "#121212" }} px={{ base: 4, sm: 6 }} py={3}>
                                 <Button
                                     type="button"
                                     onClick={handlePrevious}
@@ -281,7 +271,7 @@ const RegisterStep5Form = ({
                                 >
                                     Register
                                 </Button>
-                            </Box>
+                            </Flex>
                         </chakra.form>
                     </GridItem>
                 </SimpleGrid>

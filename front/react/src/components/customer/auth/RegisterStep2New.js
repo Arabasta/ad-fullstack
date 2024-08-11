@@ -10,6 +10,7 @@ import {
     InputGroup,
     Input,
     Select,
+    Flex, // Import Flex for alignment
 } from '@chakra-ui/react';
 
 import Heading from "../../common/text/Heading";
@@ -187,12 +188,12 @@ const RegisterStep2Form = ({
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
-                            <Box
+                            <Flex
                                 px={{ base: 4, sm: 6 }}
                                 py={3}
                                 bg="gray.50"
                                 _dark={{ bg: "#121212" }}
-                                textAlign="right"
+                                justifyContent="space-between"
                             >
                                 <Button
                                     type="button"
@@ -211,11 +212,8 @@ const RegisterStep2Form = ({
                                 >
                                     Next
                                 </Button>
-
-                            </Box>
-
+                            </Flex>
                         </chakra.form>
-
                     </GridItem>
                 </SimpleGrid>
             </Box>
