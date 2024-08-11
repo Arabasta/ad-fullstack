@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import UpdateFinancialProfileService from '../services/UpdateFinancialProfileService';
+import FinancialProfileService from '../services/FinancialProfileService';
 
 const useFinancialProfile = () => {
     const [financialProfile, setFinancialProfile] = useState(null);
@@ -8,8 +8,8 @@ const useFinancialProfile = () => {
 
     const getFinancialProfile = async () => {
         try {
-            const response = await UpdateFinancialProfileService.getFinancialProfile();
-            setFinancialProfile(response);
+            const response = await FinancialProfileService.getFinancialProfile();
+            setFinancialProfile(response.data.data);
             setError(null);
         } catch (error) {
             console.error('Error fetching financial profile data', error);
