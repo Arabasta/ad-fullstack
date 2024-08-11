@@ -31,9 +31,6 @@ const PortfolioManager = () => {
             const [year, month, day, hour, minute, second] = label;
             const date = new Date(year, month - 1, day, hour, minute, second);
             return date.toLocaleString('en-SG', {
-                //year: 'numeric',
-                //month: 'short',
-                //day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true,
@@ -42,8 +39,7 @@ const PortfolioManager = () => {
     }
 
     const getDataByType = (type) => {
-        const datasetIndex = view === 'portfolioValue' ? 0 : 1;
-
+        const datasetIndex = currentView === 'portfolioValue' ? 0 : 1;
         const portfolio = portfolios.find(portfolio => portfolio.type === type);
 
         return {
@@ -61,7 +57,7 @@ const PortfolioManager = () => {
     const handlePortfolioSelection = (type) => {
         const {chartData, labels} = getDataByType(type);
         navigate(`/portfolio/${type.toLowerCase()}`, {
-            state: { portfolios, combinedData, chartData, labels, view, toPassDate }
+            state: { portfolios, combinedData, chartData, view, labels, toPassDate }
         });
     };
 

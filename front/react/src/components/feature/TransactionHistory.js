@@ -31,7 +31,7 @@ const TransactionHistory = ({ type, portfolioType }) => {
 
     useEffect(() => {
         loadMoreTransactions()
-    }, [transactions]);
+    }, [transactions, loadMoreTransactions]);
 
     const customiseTransactionTypeText = (transactionType) => {
         if (transactionType === "Allocate") return "Allocated"
