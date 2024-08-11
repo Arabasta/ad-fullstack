@@ -10,6 +10,7 @@ import {
     InputGroup,
     Input,
     Select,
+    Flex,
 } from '@chakra-ui/react';
 
 import useAddress from "../../../../hooks/useAddress";
@@ -221,7 +222,21 @@ const EditAddressDetailsForm = () => {
                                     </FormControl>
                                 </SimpleGrid>
 
-                                <Box textAlign="right">
+                                <Flex
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                >
+                                    <Link to="/settings/profile">
+                                        <Button
+                                            type="button"
+                                            colorScheme="brand"
+                                            _focus={{ shadow: "" }}
+                                            fontWeight="md"
+                                        >
+                                            Return
+                                        </Button>
+                                    </Link>
+
                                     <Button
                                         onClick={handleAddressUpdate}
                                         type="button"
@@ -231,30 +246,11 @@ const EditAddressDetailsForm = () => {
                                     >
                                         Update
                                     </Button>
-                                </Box>
+                                </Flex>
 
-                                {error && <p style={{ color: 'red' }}>{error}</p>}
-                                {success && <p style={{ color: 'green' }}>{success}</p>}
+                                {error && <Text mt={3} color="red.500">{error}</Text>}
+                                {success && <Text mt={3} color="green.500">{success}</Text>}
                             </Stack>
-
-                            <Box
-                                px={{ base: 4, sm: 6 }}
-                                py={3}
-                                bg="gray.50"
-                                _dark={{ bg: "#121212" }}
-                                textAlign="right"
-                            >
-                                <Link to="/settings/profile">
-                                    <Button
-                                        type="button"
-                                        colorScheme="brand"
-                                        _focus={{ shadow: "" }}
-                                        fontWeight="md"
-                                    >
-                                        Return
-                                    </Button>
-                                </Link>
-                            </Box>
                         </chakra.form>
                     </GridItem>
                 </SimpleGrid>
@@ -264,4 +260,3 @@ const EditAddressDetailsForm = () => {
 };
 
 export default EditAddressDetailsForm;
-
