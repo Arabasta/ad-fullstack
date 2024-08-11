@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import useWallet from "../../hooks/useWallet";
 import {Button, HStack, VStack} from "@chakra-ui/react";
 import InputBoxWhite from "../common/inputFields/InputBoxWhite";
+import { useToast } from "@chakra-ui/react";
 
-const PortfolioAddFunds = ({ addFunds }) => {
+const PortfolioAddFunds = ({ addFunds, refreshWallet }) => {
     const [amount, setAmount] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-
     const {wallet} = useWallet();
+    const toast = useToast();
 
     const handleAmountChange = (e) => {
         setAmount(e.target.value);
@@ -16,18 +15,48 @@ const PortfolioAddFunds = ({ addFunds }) => {
 
     const handleAddFunds = () => {
         const amountNumber = parseFloat(amount);
-        setSuccess(''); // Clear success message before checking
         if (isNaN(amountNumber) || amountNumber <= 0) {
-            setError('Please enter a valid amount more than $0');
+            toast({
+                title: "Portfolio Fund Allocation Error",
+                description: "Please enter an amount more than $0.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "top",
+            });
         } else if (amountNumber > wallet) {
-            setError('Insufficient wallet balance');
-            setSuccess('')
+            toast({
+                title: "Portfolio Fund Allocation Error",
+                description: "Insufficient wallet balance.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "top",
+            });
         } else {
-            addFunds(amountNumber);
-            setAmount('');
-            setError('');
-            setSuccess('Funds added successfully');
+            try {
+                addFunds(amountNumber);
+                toast({
+                    title: "Portfolio Fund Allocation Success",
+                    description: `Funds allocated from wallet: $${amountNumber}`,
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                    position: "top",
+                });
+                refreshWallet();
+            } catch (error) {
+                toast({
+                    title: "Portfolio Fund Allocation Error",
+                    description: "Server Error. Please try again later.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                    position: "top",
+                });
+            }
         }
+        setAmount('');
     };
 
     return (
@@ -44,15 +73,13 @@ const PortfolioAddFunds = ({ addFunds }) => {
                     width="10rem"
                 />
                 <Button onClick={handleAddFunds}
-                        bg="gray.300"
-                             fontSize="md"
-                             height="2rem"
-                             width="6rem">
-                    Add
+                        shadow="sm"
+                        fontSize="md"
+                        height="2rem"
+                        width="6rem">
+                    Allocate
                 </Button>
             </HStack>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {success && <p style={{ color: 'green' }}>{success}</p>}
         </VStack>
     );
 };

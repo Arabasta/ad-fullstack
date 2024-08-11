@@ -104,7 +104,7 @@ export default function PortfolioPage() {
     const handlePortfolioSelection = (type) => {
         const {chartData, labels} = getDataByType(type);
         navigate(`/portfolio/${type.toLowerCase()}`, {
-            state: { chartData, labels, view, toPassDate }
+            state: { portfolios, combinedData, chartData, labels, view, toPassDate }
         });
     };
 
