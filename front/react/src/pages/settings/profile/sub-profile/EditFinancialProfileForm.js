@@ -1,4 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import {
+    Box,
+    SimpleGrid,
+    GridItem,
+    chakra,
+    Stack,
+    FormControl,
+    FormLabel,
+    Select,
+    Button,
+    Text,
+    Flex,
+} from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 import useFinancialProfile from "../../../../hooks/useFinancialProfile";
 
 const employmentStatusOptions = [
@@ -109,52 +123,254 @@ const FinancialProfileForm = () => {
         ));
     };
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
+    if (loading) return <Box>Loading...</Box>;
+    if (error) return <Box>Error: {error.message}</Box>;
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
-                <label>Employment Status:</label>
-                <select name="employmentStatus" onChange={handleChange} value={formData.employmentStatus}>
-                    {renderOptions(employmentStatusOptions, formData.employmentStatus)}
-                </select>
-            </div>
-            <div>
-                <label>Annual Income:</label>
-                <select name="annualIncome" onChange={handleChange} value={formData.annualIncome}>
-                    {renderLabeledOptions(incomeOptions, formData.annualIncome)}
-                </select>
-            </div>
-            <div>
-                <label>Net Worth:</label>
-                <select name="netWorth" onChange={handleChange} value={formData.netWorth}>
-                    {renderLabeledOptions(netWorthOptions, formData.netWorth)}
-                </select>
-            </div>
-            <div>
-                <label>Source of Wealth:</label>
-                <select name="sourceOfWealth" onChange={handleChange} value={formData.sourceOfWealth}>
-                    {renderOptions(sourceOfWealthOptions, formData.sourceOfWealth)}
-                </select>
-            </div>
-            <div>
-                <label>Investment Objective:</label>
-                <select name="investmentObjective" onChange={handleChange} value={formData.investmentObjective}>
-                    {renderOptions(investmentObjectiveOptions, formData.investmentObjective)}
-                </select>
-            </div>
-            <div>
-                <label>Investment Experience:</label>
-                <select name="investmentExperience" onChange={handleChange} value={formData.investmentExperience}>
-                    {renderOptions(investmentExperienceOptions, formData.investmentExperience)}
-                </select>
-            </div>
-            <button type="submit">Update Profile</button>
-            {message && <p>{message}</p>}
-        </form>
+        <Box
+            bg="brand.400"
+            _dark={{ bg: "#111" }}
+            p={10}
+        >
+            <Box
+                bg="brand.100"
+                _dark={{ bg: "#111" }}
+                p={30}
+            >
+                <SimpleGrid
+                    display={{ base: "initial", md: "grid" }}
+                    columns={{ md: 3 }}
+                    spacing={{ md: 6 }}
+                >
+                    <GridItem colSpan={{ md: 1 }}>
+                        <Box px={[4, 0]}>
+                            <Text color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
+                                Update Financial Profile
+                            </Text>
+                            <Text
+                                mt={1}
+                                fontSize="2xl"
+                                color="gray.600"
+                                _dark={{ color: "gray.400" }}
+                            >
+                                Review and update your financial details.
+                            </Text>
+                        </Box>
+                    </GridItem>
+
+                    <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
+                        <chakra.form
+                            onSubmit={handleSubmit}
+                            shadow="base"
+                            rounded={[null, "md"]}
+                            overflow={{ lg: "hidden" }}
+                            color="brand.100"
+                        >
+                            <Stack
+                                px={4}
+                                py={8}
+                                bg="white"
+                                _dark={{ bg: "#141517" }}
+                                spacing={6}
+                                p={{ sm: 6 }}
+                            >
+                                <SimpleGrid columns={6} spacing={6}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Employment Status
+                                        </FormLabel>
+                                        <Select
+                                            name="employmentStatus"
+                                            mt={1}
+                                            focusBorderColor="brand.400"
+                                            shadow="sm"
+                                            size="sm"
+                                            w="full"
+                                            rounded="md"
+                                            value={formData.employmentStatus}
+                                            onChange={handleChange}
+                                            required
+                                        >
+                                            {renderOptions(employmentStatusOptions)}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Annual Income
+                                        </FormLabel>
+                                        <Select
+                                            name="annualIncome"
+                                            mt={1}
+                                            focusBorderColor="brand.400"
+                                            shadow="sm"
+                                            size="sm"
+                                            w="full"
+                                            rounded="md"
+                                            value={formData.annualIncome}
+                                            onChange={handleChange}
+                                            required
+                                        >
+                                            {renderLabeledOptions(incomeOptions)}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Net Worth
+                                        </FormLabel>
+                                        <Select
+                                            name="netWorth"
+                                            mt={1}
+                                            focusBorderColor="brand.400"
+                                            shadow="sm"
+                                            size="sm"
+                                            w="full"
+                                            rounded="md"
+                                            value={formData.netWorth}
+                                            onChange={handleChange}
+                                            required
+                                        >
+                                            {renderLabeledOptions(netWorthOptions)}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Source of Wealth
+                                        </FormLabel>
+                                        <Select
+                                            name="sourceOfWealth"
+                                            mt={1}
+                                            focusBorderColor="brand.400"
+                                            shadow="sm"
+                                            size="sm"
+                                            w="full"
+                                            rounded="md"
+                                            value={formData.sourceOfWealth}
+                                            onChange={handleChange}
+                                            required
+                                        >
+                                            {renderOptions(sourceOfWealthOptions)}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Investment Objective
+                                        </FormLabel>
+                                        <Select
+                                            name="investmentObjective"
+                                            mt={1}
+                                            focusBorderColor="brand.400"
+                                            shadow="sm"
+                                            size="sm"
+                                            w="full"
+                                            rounded="md"
+                                            value={formData.investmentObjective}
+                                            onChange={handleChange}
+                                            required
+                                        >
+                                            {renderOptions(investmentObjectiveOptions)}
+                                        </Select>
+                                    </FormControl>
+
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Investment Experience
+                                        </FormLabel>
+                                        <Select
+                                            name="investmentExperience"
+                                            mt={1}
+                                            focusBorderColor="brand.400"
+                                            shadow="sm"
+                                            size="sm"
+                                            w="full"
+                                            rounded="md"
+                                            value={formData.investmentExperience}
+                                            onChange={handleChange}
+                                            required
+                                        >
+                                            {renderOptions(investmentExperienceOptions)}
+                                        </Select>
+                                    </FormControl>
+                                </SimpleGrid>
+                            </Stack>
+
+                            <Flex
+                                px={{ base: 4, sm: 6 }}
+                                py={3}
+                                bg="gray.50"
+                                _dark={{ bg: "#121212" }}
+                                justifyContent="space-between"
+                                alignItems="center"
+                            >
+                                <Link to="/settings/profile">
+                                    <Button
+                                        type="button"
+                                        colorScheme="brand"
+                                        _focus={{ shadow: "" }}
+                                        fontWeight="md"
+                                    >
+                                        Return
+                                    </Button>
+                                </Link>
+
+                                <Button
+                                    type="submit"
+                                    colorScheme="brand"
+                                    _focus={{ shadow: "" }}
+                                    fontWeight="md"
+                                >
+                                    Update Profile
+                                </Button>
+                            </Flex>
+
+                            <Box
+                                px={{ base: 4, sm: 6 }}
+                                py={3}
+                                bg="gray.50"
+                                _dark={{ bg: "#121212" }}
+                                textAlign="right"
+                            >
+                                {message && <Text mt={3} color="black">{message}</Text>}
+                            </Box>
+                        </chakra.form>
+                    </GridItem>
+                </SimpleGrid>
+            </Box>
+        </Box>
     );
 };
 
 export default FinancialProfileForm;
-
