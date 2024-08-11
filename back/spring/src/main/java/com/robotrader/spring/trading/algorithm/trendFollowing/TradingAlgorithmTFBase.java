@@ -1,4 +1,4 @@
-package com.robotrader.spring.trading.algorithm;
+package com.robotrader.spring.trading.algorithm.trendFollowing;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
@@ -11,23 +11,23 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
-public class TradingAlgorithmOne extends TradingAlgorithmBase {
+public class TradingAlgorithmTFBase extends TradingAlgorithmBase {
     protected BigDecimal atr;
-    public static final String ALGORITHM_TYPE = "TREND_FOLLOWING_ATR";
-    private static final Logger logger = LoggerFactory.getLogger(TradingAlgorithmOne.class);
+    public static final String ALGORITHM_TYPE = "TREND_FOLLOWING";
+    private static final Logger logger = LoggerFactory.getLogger(TradingAlgorithmTFBase.class);
 
-    public TradingAlgorithmOne(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
+    public TradingAlgorithmTFBase(String ticker, PortfolioTypeEnum portfolioType, MoneyPoolService moneyPoolService) {
         super(ticker, portfolioType, moneyPoolService);
     }
 
     @Override
     public boolean checkForBuySignal() {
-
+        logger.debug("{} - Price predictions: {}", ticker, pricePredictions);
         if (isTradeable() && pricePredictions != null) {
             int window = 37;
             // Not enough prediction data, cannot trade
             if (pricePredictions.size() < window) {
-                logger.info("Not enough price predictions");
+                logger.info("{} - Not enough price predictions", ticker);
                 return false;
             }
 
@@ -35,19 +35,19 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
 
             // True if within the window the predicted price goes above the PT without dropping below the SL
             for (int i = 0; i < window; i++) {
-                logger.debug("Price predicted at t{}: {}", i, pricePredictions.get(i));
+                logger.debug("{} - Price predicted at t{}: {}", ticker, i, pricePredictions.get(i));
                 if (pricePredictions.get(i).compareTo(stopLossPrice) < 0) {
-                    logger.debug("Price prediction: Predicted price below stop loss");
+                    logger.debug("{} - Price prediction: Predicted price below stop loss", ticker);
                     return false;
                 }
                 if (pricePredictions.get(i).compareTo(profitTarget) > 0) {
-                    logger.debug("Price prediction: Predicted price above profit target");
+                    logger.debug("{} - Price prediction: Predicted price above profit target", ticker);
                     return true;
                 }
             }
-            logger.debug("Price prediction: Predicted price did not hit the target or stop loss within the prediction window");
+            logger.info("{} - Price prediction: Predicted price did not hit the target or stop loss within the prediction window", ticker);
         }
-        logger.info("Buy trade rules not met");
+        logger.info("{} - Buy trade rules not met", ticker);
         return false;
     }
 
@@ -59,6 +59,8 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
 
         if (isSellable()) {
             return isStopLossTriggered(currentPrice) || isProfitTargetTriggered(currentPrice);
+        } else {
+            logger.info("{} - No open trade to sell", ticker);
         }
         return false;
     }
@@ -69,7 +71,7 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
         int atrPeriod = 14;
 
         if (priceHistory.get("close").size() < atrPeriod + 1) { // Need a atrPeriod + 1 window
-            logger.info("Insufficient number of to make a trade decision, no. of data: {}", atrPeriod);
+            logger.info("{} - Insufficient number of to make a trade decision, no. of data: {}", ticker, atrPeriod);
             return BigDecimal.ZERO;
         }
         atr = getATR(priceHistory, atrPeriod);
@@ -83,6 +85,7 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
 
         // Calculate raw position size using adjusted risk
         BigDecimal rawPositionSize = availableCapital.multiply(adjustedRisk).divide(stopLossAmount, 8, RoundingMode.HALF_UP);
+        logger.debug("{} - Raw position size: {}", ticker, rawPositionSize);
         return applyPriceBasedScaling(rawPositionSize, currentPrice, HIGH_PRICE_THRESHOLD);
     }
 
@@ -92,11 +95,11 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
         return currentPrice.subtract(stopLossAmount).setScale(4, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal calculateProfitTargetPrice(BigDecimal currentPrice) {
+    protected BigDecimal calculateProfitTargetPrice(BigDecimal currentPrice) {
         return currentPrice.add(stopLossAmount.multiply(BigDecimal.valueOf(2))).setScale(4, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal getATR(Map<String, List<Object>> priceHistory, Integer atrPeriod) {
+    protected BigDecimal getATR(Map<String, List<Object>> priceHistory, Integer atrPeriod) {
         List<Object> closePrices = priceHistory.get("close");
         List<Object> highPrices = priceHistory.get("high");
         List<Object> lowPrices = priceHistory.get("low");
@@ -119,15 +122,15 @@ public class TradingAlgorithmOne extends TradingAlgorithmBase {
             sum = sum.add(dailyMax);
         }
         BigDecimal atr = sum.divide(BigDecimal.valueOf(atrPeriod), RoundingMode.HALF_UP);
-        logger.debug("ATR: {}", atr);
+        logger.debug("{} - ATR: {}", ticker, atr);
         return atr;
     }
 
-    private boolean isProfitTargetTriggered(BigDecimal currentPrice) {
+    protected boolean isProfitTargetTriggered(BigDecimal currentPrice) {
         return currentPrice.compareTo(profitTarget) > 0;
     }
 
-    private BigDecimal applyPriceBasedScaling(BigDecimal rawPositionSize, BigDecimal currentPrice, BigDecimal highPriceThreshold) {
+    protected BigDecimal applyPriceBasedScaling(BigDecimal rawPositionSize, BigDecimal currentPrice, BigDecimal highPriceThreshold) {
         if (currentPrice.compareTo(highPriceThreshold) > 0) {
             return rawPositionSize.setScale(2, RoundingMode.HALF_UP);
         } else {

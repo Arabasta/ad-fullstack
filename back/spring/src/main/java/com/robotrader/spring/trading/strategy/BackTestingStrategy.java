@@ -31,6 +31,7 @@ public class BackTestingStrategy implements TradingStrategy {
     private final PredictionService predictionService;
     private static final Logger logger = LoggerFactory.getLogger(BackTestingStrategy.class);
     private static final int MIN_INPUT_SIZE = 76;
+    private static final int LIMIT = 5000; // API call data limit
 
     public BackTestingStrategy(TradePersistence tradePersistence,
                                HistoricalMarketDataService historicalMarketDataService, PredictionService predictionService) {
@@ -41,7 +42,7 @@ public class BackTestingStrategy implements TradingStrategy {
 
     @Override
     public CompletableFuture<Void> execute(TradingAlgorithmBase tradingAlgorithmBase) {
-        return historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()))
+        return historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithmBase.getTicker()), LIMIT)
                 .flatMap(data -> {
                     // Ensure runSimulation returns a Mono<Void>
                     return runSimulation(tradingAlgorithmBase, data);
@@ -71,13 +72,10 @@ public class BackTestingStrategy implements TradingStrategy {
             // Loop through price history and execute algo, simulating progress of time
             Flux.fromIterable(marketDataHistory.get("open"))
                     .takeWhile(openPrice -> marketDataHistory.get("open").size() >= 77)
-                    .concatMap(openPrice -> {
+                    .concatMap(openPrice -> { // Ensures sequential running of getPricePredictions, so that it completes before the next one is run.
                         return getPricePredictions(marketDataHistory, tradingAlgorithmBase.getTicker())
                                 .doOnNext(predictionDTO -> {
                                     List<BigDecimal> pricePredictions = predictionDTO.getPredictions();
-                                    System.out.println("Size of market data history: " + marketDataHistory.get("open").size());
-                                    System.out.println("Size of predictions: " + pricePredictions.size());
-                                    System.out.println(predictionDTO);
                                     TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getLastTradeTransaction();
 
                                     tradingAlgorithmBase.setPricePredictions(new ArrayList<>(pricePredictions));
@@ -147,7 +145,6 @@ public class BackTestingStrategy implements TradingStrategy {
 //                .stream()
 //                .map(obj -> new BigDecimal(obj.toString()))
 //                .collect(Collectors.toList());
-//        System.out.println("Input data: " + historicalVW);
 //        predictionDTO.setPredictions(historicalVW);
 //        TickerDTO tickerDTO = new TickerDTO();
 //        tickerDTO.setTickerName(processTicker(tickerName));
@@ -167,11 +164,13 @@ public class BackTestingStrategy implements TradingStrategy {
     public List<ObjectNode> getTradeResults() {
         List<ObjectNode> trades = tradePersistence.getAllTrades();
 
-        // Printing of trades
+        // Logging of trades
         ObjectNode lastTrade = null;
         BigDecimal totalProfit = BigDecimal.ZERO;
+        String tickerName = "";
         logger.info("Trade Transactions: ");
         if (trades != null && !trades.isEmpty()) {
+            tickerName = trades.get(0).get("ticker").asText();
             for (ObjectNode trade : trades) {
                 logger.info(trade.toString());
                 String action = trade.get("action").asText();
@@ -184,16 +183,16 @@ public class BackTestingStrategy implements TradingStrategy {
                         BigDecimal profitPerQty = sellPrice.subtract(buyPrice);
                         BigDecimal subtotalProfit = profitPerQty.multiply(quantity);
                         totalProfit = totalProfit.add(subtotalProfit);
-                        logger.info("Profit: " + subtotalProfit);
+                        logger.info("{} - Profit: {}", tickerName, subtotalProfit);
                     }
                 } else if ("BUY".equals(action)) {
                     lastTrade = trade;
                 }
             }
-            logger.info("Total Profit: {}", totalProfit);
-            logger.info("TOtal number of trades: {}", trades.size());
+            logger.info("{} - Total Profit: {}", tickerName, totalProfit);
+            logger.info("{} - Total number of trades: {}", tickerName, trades.size());
         } else {
-            logger.info("No trade transactions");
+            logger.info("{} - No trade transactions", tickerName);
         }
         return trades;
     }

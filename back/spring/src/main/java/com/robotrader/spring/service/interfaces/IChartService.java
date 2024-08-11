@@ -7,7 +7,7 @@ import com.robotrader.spring.trading.dto.BackTestResultDTO;
 import java.util.List;
 
 public interface IChartService {
-    ChartDataDTO transformBackTestDTOtoChartDataDTO(BackTestResultDTO backTestResult);
+    ChartDataDTO transformBackTestDTOtoChartDataDTO(BackTestResultDTO backTestResult, int amount);
 
     ChartDataDTO transformPortfolioHistoryLogtoChartDataDTO(List<PortfolioHistoryLog> logs);
 }
