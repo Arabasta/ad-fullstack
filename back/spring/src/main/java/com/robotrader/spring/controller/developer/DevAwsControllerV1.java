@@ -11,6 +11,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for wiping the S3 transaction bucket
+ * This controller is only for development purposes
+ * It is not part of the final product, only for development team to wipe the bucket
+ *
+ */
 @RestController
 @RequestMapping("/api/v1/devAws")
 @ConditionalOnProperty(name = "s3.transaction_logging.enabled", havingValue = "true")

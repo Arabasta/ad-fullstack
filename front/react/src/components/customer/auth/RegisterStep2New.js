@@ -68,6 +68,14 @@ const RegisterStep2Form = ({
                             >
                                 Let's start.
                             </Text>
+                            <Text
+                              mt={1}
+                              fontSize="xl"
+                              color="gray.600"
+                              _dark={{ color: "gray.400" }}
+                            >
+                                Welcome to our platform! To get started, please fill out the registration form. We value your privacy and ensure that your information is kept secure.
+                            </Text>
                         </Box>
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>

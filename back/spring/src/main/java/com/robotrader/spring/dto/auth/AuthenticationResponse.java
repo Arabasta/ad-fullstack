@@ -1,5 +1,6 @@
 package com.robotrader.spring.dto.auth;
 
+import com.robotrader.spring.model.enums.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -8,4 +9,5 @@ import lombok.Getter;
 public class AuthenticationResponse {
     private final String jwtToken;
     private final String username;
+    private final RoleEnum role;
 }

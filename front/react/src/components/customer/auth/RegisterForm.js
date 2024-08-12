@@ -12,6 +12,7 @@ const RegisterForm = () => {
     const [step, setStep] = useState(1);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
     const [countryCode, setCountryCode] = useState('+65');
@@ -183,6 +184,8 @@ const RegisterForm = () => {
                     setUsername={setUsername}
                     password={password}
                     setPassword={setPassword}
+                    confirmPassword={confirmPassword}
+                    setConfirmPassword={setConfirmPassword}
                     method={handleNext}
                 />
             )}

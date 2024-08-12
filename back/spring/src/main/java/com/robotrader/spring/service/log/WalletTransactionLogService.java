@@ -9,7 +9,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -45,7 +47,12 @@ public class WalletTransactionLogService {
     }
 
     public Page<WalletTransactionLogDTO> getWalletTransactionLogs(String username, Pageable pageable) {
-        Page<WalletTransactionLog> logs = walletTransactionLogRepository.findByUser(userService.getUserByUsername(username), pageable);
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "id")
+        );
+        Page<WalletTransactionLog> logs = walletTransactionLogRepository.findByUser(userService.getUserByUsername(username), sortedPageable);
         return logs.map(log -> new WalletTransactionLogDTO(
                 log.getId(),
                 log.getTimestamp(),

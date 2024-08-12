@@ -33,7 +33,7 @@ public class MoneyPool {
 
     @NotNull(message = "Amount cannot be null")
     @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
-    @Column(nullable = false, precision = 16, scale = 4)
+    @Column(nullable = false, precision = 16, scale = 8)
     private BigDecimal unitPrice;
 
     @NotNull(message = "Unit quantity cannot be null")

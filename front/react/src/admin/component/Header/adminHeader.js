@@ -53,24 +53,33 @@ const AdminHeader = () => {
                         color="brand.100"
                         display={{ base: "none", md: "inline-flex" }}
                     >
+
                         {isAuthenticated ? (
                             <>
                                 <Link to="/admin/managelivetrading">
-                                    <Button>Live Trading</Button>
+                                    <Button variant="ghost">Live Trading</Button>
                                 </Link>
                                 <Link to="/admin/backtest">
-                                    <Button>Backtest</Button>
+                                    <Button variant="ghost">Backtest</Button>
                                 </Link>
                                 <Link to="/admin/manage-user">
-                                    <Button>Manage User</Button>
+                                    <Button variant="ghost">Manage User</Button>
                                 </Link>
                                 <Link to="/admin/manage-tickers">
-                                    <Button>Manage Tickers</Button>
+                                    <Button variant="ghost">Manage Tickers</Button>
                                 </Link>
                                 <Button onClick={logout}>Sign Out</Button>
                             </>
                         ) : (
                             <>
+                                <Link to="/news">
+                                    <Button variant="ghost">News</Button>
+                                </Link>
+                                <Link to="/support">
+                                    <Button w="full" variant="ghost">
+                                        Support
+                                    </Button>
+                                </Link>
                                 <Link to="/login">
                                     <Button variant="ghost">Sign in</Button>
                                 </Link>
@@ -81,9 +90,11 @@ const AdminHeader = () => {
                         )}
                     </HStack>
                     {!isAuthenticated && (
-                        <Button colorScheme="brand" size="sm">
-                            Get Started
-                        </Button>
+                        <Link to="/register">
+                            <Button colorScheme="brand" size="sm">
+                                Get Started
+                            </Button>
+                        </Link>
                     )}
                     <Box display={{ base: "inline-flex", md: "none" }}>
                         <IconButton
@@ -145,9 +156,11 @@ const AdminHeader = () => {
                                             Register
                                         </Button>
                                     </Link>
-                                    <Button w="full" colorScheme="brand">
-                                        Get Started
-                                    </Button>
+                                    <Link to="/register">
+                                        <Button w="full" colorScheme="brand">
+                                            Get Started
+                                        </Button>
+                                    </Link>
                                 </>
                             )}
                         </VStack>
