@@ -195,6 +195,7 @@ const EditUserDetailsForm = () => {
 
                                             <Input
                                                 type="tel"
+                                                placeholder={"Enter numeric phone number"}
                                                 value={mobileNumber}
                                                 onChange={handleMobileNumberChange}
                                                 borderColor="brand.300"
