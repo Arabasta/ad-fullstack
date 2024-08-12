@@ -12,7 +12,6 @@ import Footer from "./components/common/layout/Footer";
 import AdminRoutes from "./admin/Routes/adminRoutes";
 import settingRoutes from "./routes/SettingRoutes";
 
-import { Button, useColorMode } from "@chakra-ui/react";
 import AdminHeader from "./admin/component/Header/adminHeader";
 
 const App = () => {
@@ -26,7 +25,6 @@ const App = () => {
 };
 
 const AppContent = () => {
-    const { colorMode, toggleColorMode } = useColorMode();
     const { isCustomer } = useContext(AuthContext);
 
     return (
@@ -34,16 +32,10 @@ const AppContent = () => {
             {!isCustomer ? (
                 <>
                     <AdminHeader />
-                    <Button onClick={toggleColorMode}>
-                        Toggle {colorMode === "light" ? "Dark" : "Light"}
-                    </Button>
                 </>
             ) : (
                 <>
                     <Header />
-                    <Button onClick={toggleColorMode}>
-                        Toggle {colorMode === "light" ? "Dark" : "Light"}
-                    </Button>
                 </>
             )}
 

@@ -87,9 +87,12 @@ const Header = () => {
                         )}
                     </HStack>
                     {!isAuthenticated && (
-                        <Button colorScheme="brand" size="sm">
-                            Get Started
-                        </Button>
+                        <Link to="/register">
+                            <Button colorScheme="brand" size="sm">
+                                Get Started
+                            </Button>
+                        </Link>
+
                     )}
                     <Box display={{ base: "inline-flex", md: "none" }}>
                         <IconButton
@@ -161,9 +164,12 @@ const Header = () => {
                                             Register
                                         </Button>
                                     </Link>
-                                    <Button w="full" colorScheme="brand">
-                                        Get Started
-                                    </Button>
+                                    <Link to="/register">
+                                        <Button w="full" colorScheme="brand">
+                                            Get Started
+                                        </Button>
+                                    </Link>
+
                                 </>
                             )}
                         </VStack>
