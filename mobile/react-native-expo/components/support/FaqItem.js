@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
     question: {
         fontSize: 16,
         fontWeight: 'bold',
+        color: '#181c37'
     },
     answer: {
         paddingTop: 10,
