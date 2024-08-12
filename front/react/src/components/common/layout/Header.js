@@ -56,6 +56,11 @@ const Header = () => {
                         <Link to="/news">
                             <Button variant="ghost">News</Button>
                         </Link>
+                        <Link to="/support">
+                            <Button w="full" variant="ghost">
+                                Support
+                            </Button>
+                        </Link>
 
                         {isAuthenticated ? (
                             <>
@@ -68,11 +73,7 @@ const Header = () => {
                                 <Link to="/settings">
                                     <Button variant="ghost">Settings</Button>
                                 </Link>
-                                <Link to="/support">
-                                    <Button w="full" variant="ghost">
-                                        Support
-                                    </Button>
-                                </Link>
+
                                 <Button onClick={logout}>Sign Out</Button>
                             </>
                         ) : (

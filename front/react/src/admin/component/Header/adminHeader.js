@@ -53,9 +53,7 @@ const AdminHeader = () => {
                         color="brand.100"
                         display={{ base: "none", md: "inline-flex" }}
                     >
-                        <Link to="/news">
-                            <Button variant="ghost">News</Button>
-                        </Link>
+
                         {isAuthenticated ? (
                             <>
                                 <Link to="/admin/managelivetrading">
@@ -74,6 +72,14 @@ const AdminHeader = () => {
                             </>
                         ) : (
                             <>
+                                <Link to="/news">
+                                    <Button variant="ghost">News</Button>
+                                </Link>
+                                <Link to="/support">
+                                    <Button w="full" variant="ghost">
+                                        Support
+                                    </Button>
+                                </Link>
                                 <Link to="/login">
                                     <Button variant="ghost">Sign in</Button>
                                 </Link>

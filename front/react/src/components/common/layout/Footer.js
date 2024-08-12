@@ -6,6 +6,7 @@ import { FaFacebookF, FaLinkedinIn } from 'react-icons/fa';
 import { FiTwitter } from 'react-icons/fi';
 import { GrInstagram } from 'react-icons/gr';
 
+
 const Footer = () => {
     return (
         <Box
