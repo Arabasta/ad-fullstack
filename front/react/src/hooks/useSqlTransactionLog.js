@@ -23,8 +23,9 @@ const useSqlTransactionLog = (type, portfolioType = null) => {
                 response = await logService.getWalletTransactions(page, size);
             } else if (type === 'portfolio' && portfolioType) {
                 response = await logService.getPortfolioTransactions(portfolioType, page, size);
+            } else if (type === 'trade') {
+                response = await logService.getTradeTransactions(page, size);
             }
-
             const newTransactions = response.data.data.content;
             setTransactions((prev) => [...prev, ...newTransactions]);
 

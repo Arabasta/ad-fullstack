@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import useLiveTrading from "../hooks/useLiveTrading";
 import CallToActionSection from "./sections/CallToActionSection";
 import Button from "../../components/common/buttons/Button";
-import { FormControl, FormLabel, GridItem, HStack, Select, useToast, VStack } from "@chakra-ui/react";
+import {FormControl, FormLabel, GridItem, HStack, Select, Text, useToast, VStack} from "@chakra-ui/react";
 import TransactionsPage from "../pages/LiveTrading/TransactionsPage";
 import { Modal } from "../../components/common/modal/Modal";
 
 const LiveTrading = () => {
     const toast = useToast();
-    const { isTrading, startLiveTrading, stopLiveTrading, getLiveTradingTransactions, getAlgorithmTypes, algorithmTypes } = useLiveTrading();
-    const [portfolioType, setPortfolioType] = useState('AGGRESSIVE');
+    const { isTrading, startLiveTrading, stopLiveTrading, getAlgorithmTypes, algorithmTypes , getStatus} = useLiveTrading();
     const [algorithmType, setAlgorithmType] = useState('');
 
     useEffect(() => {
@@ -21,6 +20,10 @@ const LiveTrading = () => {
             setAlgorithmType(algorithmTypes[0]);
         }
     }, [algorithmTypes, algorithmType]);
+
+    useEffect(() => {
+        getStatus();
+    }, [getStatus]);
 
     const handleStartLiveTrading = async () => {
         if (!algorithmType) {
@@ -58,52 +61,16 @@ const LiveTrading = () => {
         });
     };
 
-
-    const handleGetTransactions = async () => {
-        await getLiveTradingTransactions(portfolioType);
-        toast({
-            title: "Transactions retrieved.",
-            description: "Live trading transactions have been retrieved.",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-            position: "top"
-        });
-    };
-
-    const portfolioOptions = [
-        { label: 'Aggressive', value: 'AGGRESSIVE' },
-        { label: 'Conservative', value: 'CONSERVATIVE' },
-        { label: 'Moderate', value: 'MODERATE' }
-    ];
-
     return (
         <div>
             <CallToActionSection title="Live Trading"
-                                 subtitle="Measure Algorithm Performance">
-                <VStack>
-                    <HStack>
-                        <FormControl as={GridItem} colSpan={[6, 3]}>
-                            <FormLabel>Portfolio Type</FormLabel>
-                            <Select
-                                value={portfolioType}
-                                onChange={(e) => setPortfolioType(e.target.value)}
-                                disabled={isTrading}
-                                bg="gray.50"
-                                borderColor="gray.300"
-                                _hover={{ borderColor: "gray.400" }}
-                                _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
-                                _disabled={{ bg: "gray.100", cursor: "not-allowed" }}
-                                width="200px"
-                            >
-                                {portfolioOptions.map(option => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
-                            </Select>
-                        </FormControl>
+                                 subtitle="Select an Algorithm and start trading">
 
+                <VStack>
+                    <Text mt={4} fontSize="lg" color="gray.600">
+                        Starting live trading will initiate the RoboTrader to begin live trading on the list of active tickers with the selected algorithm
+                    </Text>
+                    <HStack>
                         <FormControl as={GridItem} colSpan={[6, 3]}>
                             <FormLabel>Algorithm Type</FormLabel>
                             <Select
@@ -115,7 +82,7 @@ const LiveTrading = () => {
                                 _hover={{ borderColor: "gray.400" }}
                                 _focus={{ borderColor: "blue.500", boxShadow: "0 0 0 1px blue.500" }}
                                 _disabled={{ bg: "gray.100", cursor: "not-allowed" }}
-                                width="300px"
+                                width="500px"
                             >
                                 {algorithmTypes.map(option => (
                                     <option key={option} value={option}>
@@ -133,11 +100,10 @@ const LiveTrading = () => {
                         </Button>
                         <Modal
                             triggerText="Get Transactions"
-                            title={`Transactions for ${portfolioType}`}
-                            onOpen={handleGetTransactions}
+                            title={`Trade Transactions`}
                             onClose={() => {}}
                         >
-                            <TransactionsPage portfolioType={portfolioType} />
+                            <TransactionsPage type="trade"/>
                         </Modal>
                     </HStack>
                 </VStack>

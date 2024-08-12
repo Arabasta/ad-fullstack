@@ -58,11 +58,11 @@ const TransactionHistory = ({ type, portfolioType }) => {
             </UnorderedList>
             {loading && <BlackText>Loading more transactions...</BlackText>}
             {!loading && hasMore && (
-                <Flex justifyContent="center" mt={4}>
-                    <ButtonBlack onClick={loadMoreTransactions}>
-                        Load More
-                    </ButtonBlack>
-                </Flex>
+              <Flex justifyContent="center" mt={4}>
+                  <ButtonBlack onClick={loadMoreTransactions}>
+                      Load More
+                  </ButtonBlack>
+              </Flex>
             )}
             {!hasMore && <BlackText>No more transactions to show</BlackText>}
         </>
