@@ -23,11 +23,16 @@ const styles = StyleSheet.create({
     logout: {
         marginTop: 30,
         alignItems: 'center',
-        borderBottomWidth: 0,
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        backgroundColor: '#b61e04',
+        borderRadius: 10,
+        elevation: 3,
     },
     logoutText: {
-        color: 'red',
-        fontSize: 16,
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });
 
