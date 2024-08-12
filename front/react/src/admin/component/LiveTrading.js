@@ -8,7 +8,7 @@ import { Modal } from "../../components/common/modal/Modal";
 
 const LiveTrading = () => {
     const toast = useToast();
-    const { isTrading, startLiveTrading, stopLiveTrading, getLiveTradingTransactions, getAlgorithmTypes, algorithmTypes , getStatus} = useLiveTrading();
+    const { isTrading, startLiveTrading, stopLiveTrading, getAlgorithmTypes, algorithmTypes , getStatus} = useLiveTrading();
     const [algorithmType, setAlgorithmType] = useState('');
 
     useEffect(() => {
@@ -61,19 +61,6 @@ const LiveTrading = () => {
         });
     };
 
-
-    const handleGetTransactions = async () => {
-        await getLiveTradingTransactions();
-        toast({
-            title: "Transactions retrieved.",
-            description: "Live trading transactions have been retrieved.",
-            status: "success",
-            duration: 3000,
-            isClosable: true,
-            position: "top"
-        });
-    };
-
     return (
         <div>
             <CallToActionSection title="Live Trading"
@@ -114,10 +101,9 @@ const LiveTrading = () => {
                         <Modal
                             triggerText="Get Transactions"
                             title={`Trade Transactions`}
-                            onOpen={handleGetTransactions}
                             onClose={() => {}}
                         >
-                            <TransactionsPage/>
+                            <TransactionsPage type="trade"/>
                         </Modal>
                     </HStack>
                 </VStack>
