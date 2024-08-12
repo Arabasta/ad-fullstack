@@ -19,8 +19,14 @@ const stopLiveTrading = async () => {
 };
 
 // Get live trading transactions
-const getLiveTradingTransactions = async (portfolioType) => {
-    const url = `/v1/admin/trading/livetrading/transactions?portfolioType=${portfolioType}`;
+const getLiveTradingTransactions = async () => {
+    const url = `/v1/admin/trading/livetrading/transactions`;
+    return await axiosInstance.get(url);
+};
+
+// Get live trading status
+const getLiveTradingStatus = async () => {
+    const url = `/v1/admin/trading/livetrading/status`;
     return await axiosInstance.get(url);
 };
 
@@ -29,6 +35,7 @@ const LiveTradingService = {
     stopLiveTrading,
     getLiveTradingTransactions,
     getAlgorithmTypes,
+    getLiveTradingStatus
 };
 
 export default LiveTradingService;

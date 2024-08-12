@@ -43,10 +43,10 @@ const useLiveTrading = () => {
     }, [isTrading]);
 
 
-    const getLiveTradingTransactions = useCallback(async (portfolioType) => {
+    const getLiveTradingTransactions = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await LiveTradingService.getLiveTradingTransactions(portfolioType);
+            const response = await LiveTradingService.getLiveTradingTransactions();
             setTransactions(response.data.data.content);
             setHasMore(response.data.data.content.length > 0);
         } catch (err) {
@@ -65,6 +65,15 @@ const useLiveTrading = () => {
         }
     }, []);
 
+    const getStatus = useCallback(async () => {
+        try {
+            const response = await LiveTradingService.getLiveTradingStatus();
+            setIsTrading(response.data.data.status);
+        } catch (err) {
+            setMessage(err.message);
+        }
+    }, []);
+
     return {
         message,
         transactions,
@@ -76,6 +85,7 @@ const useLiveTrading = () => {
         getLiveTradingTransactions,
         algorithmTypes,
         getAlgorithmTypes,
+        getStatus
     };
 };
 
