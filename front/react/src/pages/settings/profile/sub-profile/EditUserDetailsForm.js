@@ -48,7 +48,7 @@ const EditUserDetailsForm = () => {
     };
 
     const handleMobileNumberChange = (e) => {
-        const number = e.target.value.replace(/\D/g, ''); // 仅允许输入数字
+        const number = e.target.value.replace(/\D/g, ''); // just allow input numbers
         setMobileNumber(number);
     };
 

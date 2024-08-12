@@ -29,11 +29,19 @@ const RegisterStep2Form = ({
                                handlePrevious, handleNext,
                            }) => {
     const [mobileNumberError, setMobileNumberError] = useState('');
+    const [firstNameError, setFirstNameError] = useState('');
+    const [lastNameError, setLastNameError] = useState('');
     const toast = useToast();
 
     const handleMobileNumberChange = (e) => {
-        const number = e.target.value.replace(/\D/g, ''); // 仅允许输入数字
+        const number = e.target.value.replace(/\D/g, '');
         setMobileNumber(number);
+    };
+
+    const handleCountryCodeChange = (e) => {
+        const code = e.target.value;
+        setCountryCode(code);
+        setMobileNumber(prev => prev.replace(/^\+\d+/, ''));
     };
 
     const handleMobileNumberBlur = () => {
@@ -53,38 +61,19 @@ const RegisterStep2Form = ({
         }
     };
 
-    const handleCountryCodeChange = (e) => {
-        const code = e.target.value;
-        setCountryCode(code);
-
-        setMobileNumber(prev => prev.replace(/^\+\d+/, ''));
-    };
-
-    const handleNextStep = (e) => {
-        e.preventDefault(); // 确保 preventDefault() 调用成功
-        if (mobileNumberError) {
+    const handleBlur = (value, setError, fieldName, maxLength = 50) => {
+        if (value.length > maxLength) {
+            setError(`${fieldName} cannot exceed ${maxLength} characters.`);
             toast({
-                title: "Invalid Mobile Number",
-                description: "Please correct the mobile number before proceeding.",
+                title: `Invalid ${fieldName}`,
+                description: `${fieldName} cannot exceed ${maxLength} characters.`,
                 status: "error",
                 duration: 3000,
                 isClosable: true,
                 position: "top",
             });
-            return;
-        }
-        const fullNumber = `${countryCode}${mobileNumber}`;
-        if (fullNumber.length >= 7 && fullNumber.length <= 15) {
-            handleNext();
         } else {
-            toast({
-                title: "Invalid Mobile Number",
-                description: "Mobile number length must be between 7 and 15 digits.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-                position: "top",
-            });
+            setError('');
         }
     };
 
@@ -113,7 +102,7 @@ const RegisterStep2Form = ({
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
-                            onSubmit={(e) => handleNextStep(e)} // 确保事件对象被传递
+                            onSubmit={handleNext}
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
@@ -187,11 +176,17 @@ const RegisterStep2Form = ({
                                                 value={firstName}
                                                 placeholder="required"
                                                 onChange={(e) => setFirstName(e.target.value)}
+                                                onBlur={(e) => handleBlur(e.target.value, setFirstNameError, 'First Name')}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
                                             />
                                         </InputGroup>
+                                        {firstNameError && (
+                                            <Text color="red.500" fontSize="sm" mt={2}>
+                                                {firstNameError}
+                                            </Text>
+                                        )}
                                     </FormControl>
 
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
@@ -210,11 +205,17 @@ const RegisterStep2Form = ({
                                                 value={lastName}
                                                 placeholder="required"
                                                 onChange={(e) => setLastName(e.target.value)}
+                                                onBlur={(e) => handleBlur(e.target.value, setLastNameError, 'Last Name')}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
                                             />
                                         </InputGroup>
+                                        {lastNameError && (
+                                            <Text color="red.500" fontSize="sm" mt={2}>
+                                                {lastNameError}
+                                            </Text>
+                                        )}
                                     </FormControl>
 
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
