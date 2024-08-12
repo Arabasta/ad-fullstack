@@ -35,6 +35,7 @@ axiosInstance.interceptors.response.use(
                 // JWT is invalid, redirect to login
                 localStorage.removeItem('token');
                 sessionStorage.removeItem('isAuthenticated');
+                //remove isAuthenticated then can shown different navbar
                 window.location.href = '/login'; // Redirect to login page
             }
         }

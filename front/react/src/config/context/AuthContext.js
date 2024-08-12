@@ -6,12 +6,13 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isCustomer, setIsCustomer] = useState(true); // 使用布尔值来表示用户是否是 customer
+    const [isCustomer, setIsCustomer] = useState(true);
+    //add it to know the user's role
     const navigate = useNavigate();
 
     useEffect(() => {
         const savedAuthState = sessionStorage.getItem('isAuthenticated');
-        const savedIsCustomer = sessionStorage.getItem('isCustomer') === 'true'; // 从 sessionStorage 恢复布尔值
+        const savedIsCustomer = sessionStorage.getItem('isCustomer') === 'true';
         if (savedAuthState) {
             setIsAuthenticated(JSON.parse(savedAuthState));
             setIsCustomer(savedIsCustomer);
@@ -24,7 +25,7 @@ export const AuthProvider = ({ children }) => {
         const customerRole = response.data.role === 'ROLE_CUSTOMER';
         setIsCustomer(customerRole);
         sessionStorage.setItem('isAuthenticated', true);
-        sessionStorage.setItem('isCustomer', customerRole); // 保存布尔值到 sessionStorage
+        sessionStorage.setItem('isCustomer', customerRole);
         return response;
     };
 
@@ -34,7 +35,7 @@ export const AuthProvider = ({ children }) => {
         const customerRole = response.data.role === 'ROLE_CUSTOMER';
         setIsCustomer(customerRole);
         sessionStorage.setItem('isAuthenticated', true);
-        sessionStorage.setItem('isCustomer', customerRole); // 保存布尔值到 sessionStorage
+        sessionStorage.setItem('isCustomer', customerRole);
         return response;
     };
 
