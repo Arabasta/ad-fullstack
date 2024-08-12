@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes } from 'react-router-dom';
-import { AuthProvider } from './config/context/AuthContext';
+import { AuthProvider, AuthContext } from './config/context/AuthContext';
 import ErrorBoundary from './components/common/alerts/ErrorBoundary';
 import authRoutes from './routes/AuthRoutes';
 import mainRoutes from './routes/MainRoutes';
@@ -12,7 +12,7 @@ import Footer from "./components/common/layout/Footer";
 import AdminRoutes from "./admin/Routes/adminRoutes";
 import settingRoutes from "./routes/SettingRoutes";
 
-import { Button, useColorMode} from "@chakra-ui/react";
+import { Button, useColorMode } from "@chakra-ui/react";
 import AdminHeader from "./admin/component/Header/adminHeader";
 
 const App = () => {
@@ -25,27 +25,44 @@ const App = () => {
     );
 };
 
-
 const AppContent = () => {
     const { colorMode, toggleColorMode } = useColorMode();
+    const { isCustomer } = useContext(AuthContext);
 
     return (
         <>
-            <Header />
-            <AdminHeader />
-            <Button onClick={toggleColorMode}>
-                Toggle {colorMode === "light" ? "Dark" : "Light"}
-            </Button>
+            {!isCustomer ? (
+                <>
+                    <AdminHeader />
+                    <Button onClick={toggleColorMode}>
+                        Toggle {colorMode === "light" ? "Dark" : "Light"}
+                    </Button>
+                </>
+            ) : (
+                <>
+                    <Header />
+                    <Button onClick={toggleColorMode}>
+                        Toggle {colorMode === "light" ? "Dark" : "Light"}
+                    </Button>
+                </>
+            )}
 
             <ErrorBoundary>
                 <Routes>
-                    {NavigationBarRoutes}
                     {authRoutes}
-                    {mainRoutes}
-                    {settingRoutes}
-                    {profileRoutes}
-                    {portfolioRoutes}
-                    {AdminRoutes}
+                    {!isCustomer ? (
+                        <>
+                            {AdminRoutes}
+                        </>
+                    ) : (
+                        <>
+                            {NavigationBarRoutes}
+                            {mainRoutes}
+                            {settingRoutes}
+                            {profileRoutes}
+                            {portfolioRoutes}
+                        </>
+                    )}
                 </Routes>
             </ErrorBoundary>
             <Footer />
@@ -54,3 +71,4 @@ const AppContent = () => {
 };
 
 export default App;
+
