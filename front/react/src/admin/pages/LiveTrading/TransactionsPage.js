@@ -1,18 +1,12 @@
 import React, { useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
 import useLiveTrading from "../../hooks/useLiveTrading";
 import { ListItem } from '@chakra-ui/react';
 import UnorderedList from "../../../components/common/layout/list/UnorderedList";
 import BlackText from "../../../components/common/text/BlackText";
 import SeparatorGrey from "../../../components/common/layout/separator/SeparatorGrey";
 
-const TransactionsPage = () => {
-    const location = useLocation();
+const TransactionsPage = ({portfolioType}) => {
     const { transactions, getLiveTradingTransactions, loading, message } = useLiveTrading();
-
-    const queryParams = new URLSearchParams(location.search);
-    const portfolioType = queryParams.get('portfolioType');
-
     const fetchTransactions = useCallback(() => {
         getLiveTradingTransactions(portfolioType);
     }, [portfolioType, getLiveTradingTransactions]);
@@ -23,8 +17,16 @@ const TransactionsPage = () => {
 
     const formatTimestamp = (timestampArray) => {
         if (Array.isArray(timestampArray) && timestampArray.length >= 6) {
-            const [year, month, day, hour, minute, second, millisecond] = timestampArray;
-            return new Date(year, month - 1, day, hour, minute, second, millisecond).toLocaleString();
+            const [year, month, day, hour, minute, second, ms] = timestampArray;
+            const dateString = new Date(year, month - 1, day, hour, minute, second);
+            return dateString.toLocaleDateString('en-SG', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            })+` (milliseconds: ${ms})`;
         }
         return "Invalid Date";
     };
@@ -38,6 +40,7 @@ const TransactionsPage = () => {
             ) : transactions.length > 0 ? (
                 <UnorderedList>
                     {transactions.map((transaction) => (
+                        transaction.portfolioType === portfolioType ?
                         <ListItem key={transaction.transactionId}>
                             <BlackText fontWeight="bold">
                                 {transaction.action} ${transaction.transactionAmount}
@@ -49,6 +52,7 @@ const TransactionsPage = () => {
                             <BlackText>{formatTimestamp(transaction.transactionDateTime)}</BlackText>
                             <SeparatorGrey />
                         </ListItem>
+                            : ""
                     ))}
                 </UnorderedList>
             ) : (

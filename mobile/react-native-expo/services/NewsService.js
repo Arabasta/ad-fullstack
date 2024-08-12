@@ -1,16 +1,18 @@
-import axiosInstance from '../config/axios/axiosInstance';
+import axiosInstance from "../config/axios/axiosInstance";
 
-const getInvestorProfile = async () => {
-    return await axiosInstance.get(`/v1/customer/investment-profile`);
+const getAllNews = async () => {
+    try {
+        const response = await axiosInstance.get('/v1/customer/news');
+        console.log('API Response:', response.data);
+        return response.data.data;
+    } catch (error) {
+        console.error('Error fetching news:', error);
+        throw error;
+    }
 };
 
-const updateInvestorProfile = async (profileData) => {
-    return await axiosInstance.post(`/v1/customer/investment-profile/update`, profileData);
+const newsService = {
+    getAllNews,
 };
 
-const InvestorProfileService = {
-    getInvestorProfile,
-    updateInvestorProfile
-};
-
-export default InvestorProfileService;
+export default newsService;

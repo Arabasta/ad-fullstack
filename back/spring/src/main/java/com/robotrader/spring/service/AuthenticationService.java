@@ -4,6 +4,7 @@ import com.robotrader.spring.dto.auth.AuthenticationRequest;
 import com.robotrader.spring.dto.auth.AuthenticationResponse;
 import com.robotrader.spring.dto.auth.RegistrationRequest;
 import com.robotrader.spring.dto.auth.RegistrationResponse;
+import com.robotrader.spring.model.enums.RoleEnum;
 import com.robotrader.spring.security.JwtUtil;
 import com.robotrader.spring.service.interfaces.IAuthenticationService;
 import jakarta.transaction.Transactional;
@@ -30,9 +31,10 @@ public class AuthenticationService implements IAuthenticationService {
     @Override
     @Transactional
     public RegistrationResponse registerUser(RegistrationRequest registrationRequest, boolean isCustomer) {
-        final UserDetails userDetails = userService.create(registrationRequest, !isCustomer);
+        final UserDetails userDetails = userService.create(registrationRequest, isCustomer);
         final String jwtToken = jwtUtil.generateToken(userDetails);
-        return new RegistrationResponse(jwtToken, userDetails.getUsername());
+        RoleEnum role = isCustomer ? RoleEnum.ROLE_CUSTOMER : RoleEnum.ROLE_ADMIN;
+        return new RegistrationResponse(jwtToken, userDetails.getUsername(), role);
     }
 
     @Override
@@ -45,7 +47,9 @@ public class AuthenticationService implements IAuthenticationService {
 
         final UserDetails userDetails = userService.loadUserByUsername(authenticationRequest.getUsername());
         final String jwtToken = jwtUtil.generateToken(userDetails);
-        return new AuthenticationResponse(jwtToken, userDetails.getUsername());
+        boolean isCustomer = userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(RoleEnum.ROLE_CUSTOMER.name()));
+        RoleEnum role = isCustomer ? RoleEnum.ROLE_CUSTOMER : RoleEnum.ROLE_ADMIN;
+        return new AuthenticationResponse(jwtToken, userDetails.getUsername(), role);
     }
 
 }

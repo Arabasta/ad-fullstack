@@ -15,6 +15,7 @@ import {
 import { Link } from 'react-router-dom';
 import InvestorProfileService from "../../../../services/InvestorProfileService";
 import { AuthContext } from "../../../../config/context/AuthContext";
+import Heading from "../../../../components/common/text/Heading";
 
 const optionsForQuestion1 = [
     { label: "Less than 3 years", value: 1 },
@@ -141,6 +142,39 @@ const EditInvestorProfileForm = () => {
                             >
                                 Review and update your investor details.
                             </Text>
+                            <Heading color="brand.600" fontSize="2xl" fontWeight="md" lineHeight="10" mt={5}>
+                                Find a suitable investment strategy
+                            </Heading>
+                            <Text
+                              mt={2}
+                              fontSize="xl"
+                              color="gray.600"
+                              _dark={{ color: "gray.400" }}
+                            >
+                                Your investing strategy should reflect the kind of investor you are—your personal investor profile. This quiz will help you determine your profile and then match it to an investment strategy that’s designed for investors like you.
+                            </Text>
+                            <Heading color="brand.600" fontSize="2xl" fontWeight="md" lineHeight="10" mt={5}>
+                                Your time horizon
+                            </Heading>
+                            <Text
+                              mt={2}
+                              fontSize="xl"
+                              color="gray.600"
+                              _dark={{ color: "gray.400" }}
+                            >
+                                When will you begin withdrawing money from your account and at what rate? If it’s many years away, you may be comfortable with a portfolio that has a greater potential for appreciation and a higher level of risk.
+                            </Text>
+                            <Heading color="brand.600" fontSize="2xl" fontWeight="md" lineHeight="10" mt={5}>
+                                Your risk tolerance
+                            </Heading>
+                            <Text
+                              mt={2}
+                              fontSize="xl"
+                              color="gray.600"
+                              _dark={{ color: "gray.400" }}
+                            >
+                                How do you feel about risk? Some investments fluctuate more dramatically in value than others but may have the potential for higher returns.
+                            </Text>
                         </Box>
                     </GridItem>
 
@@ -168,13 +202,13 @@ const EditInvestorProfileForm = () => {
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Investment Duration Score
+                                            I plan to begin withdrawing money from my investments in:
                                         </FormLabel>
                                         <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
-                                            size="sm"
+                                            size="md"
                                             w="full"
                                             rounded="md"
                                             value={profile.investmentDurationScore}
@@ -196,13 +230,13 @@ const EditInvestorProfileForm = () => {
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Withdrawal Spending Plan Score
+                                            Once I begin withdrawing funds from my investments, I plan to spend all of the funds in:
                                         </FormLabel>
                                         <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
-                                            size="sm"
+                                            size="md"
                                             w="full"
                                             rounded="md"
                                             value={profile.withdrawalSpendingPlanScore}
@@ -217,20 +251,20 @@ const EditInvestorProfileForm = () => {
                                         </Select>
                                     </FormControl>
 
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 4]}>
                                         <FormLabel
-                                            fontSize="md"
-                                            fontWeight="md"
-                                            color="gray.700"
-                                            _dark={{ color: "gray.50" }}
+                                          fontSize="md"
+                                          fontWeight="md"
+                                          color="gray.700"
+                                          _dark={{ color: "gray.50" }}
                                         >
-                                            Investment Knowledge Score
+                                            I would describe my knowledge of investments as:
                                         </FormLabel>
                                         <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
-                                            size="sm"
+                                            size="md"
                                             w="full"
                                             rounded="md"
                                             value={profile.investmentKnowledgeScore}
@@ -245,20 +279,20 @@ const EditInvestorProfileForm = () => {
                                         </Select>
                                     </FormControl>
 
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 4]}>
                                         <FormLabel
-                                            fontSize="md"
-                                            fontWeight="md"
-                                            color="gray.700"
-                                            _dark={{ color: "gray.50" }}
+                                          fontSize="md"
+                                          fontWeight="md"
+                                          color="gray.700"
+                                          _dark={{ color: "gray.50" }}
                                         >
-                                            Risk Reward Score
+                                            What amount of financial risk are you willing to take when you invest?
                                         </FormLabel>
                                         <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
-                                            size="sm"
+                                            size="md"
                                             w="full"
                                             rounded="md"
                                             value={profile.riskRewardScore}
@@ -273,20 +307,20 @@ const EditInvestorProfileForm = () => {
                                         </Select>
                                     </FormControl>
 
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 4]}>
                                         <FormLabel
-                                            fontSize="md"
-                                            fontWeight="md"
-                                            color="gray.700"
-                                            _dark={{ color: "gray.50" }}
+                                          fontSize="md"
+                                          fontWeight="md"
+                                          color="gray.700"
+                                          _dark={{ color: "gray.50" }}
                                         >
-                                            Owned Investments Score
+                                            Select the investments you currently own or have owned:
                                         </FormLabel>
                                         <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
-                                            size="sm"
+                                            size="md"
                                             w="full"
                                             rounded="md"
                                             value={profile.ownedInvestmentsScore}
@@ -301,20 +335,20 @@ const EditInvestorProfileForm = () => {
                                         </Select>
                                     </FormControl>
 
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 4]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Investment Personality Score
+                                            Imagine that in the past three months, the overall stock market lost 25% of its value. An individual stock investment you own also lost 25% of its value. What would you do?
                                         </FormLabel>
                                         <Select
                                             mt={1}
                                             focusBorderColor="brand.400"
                                             shadow="sm"
-                                            size="sm"
+                                            size="md"
                                             w="full"
                                             rounded="md"
                                             value={profile.investmentPersonalityScore}

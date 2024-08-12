@@ -15,14 +15,14 @@ import PortfolioActionPanel from "./PortfolioActionPanel";
 
 const PortfolioManager = () => {
     const navigate = useNavigate();
-    const { portfolioType } = useParams();
-    const { portfolio, addFunds, withdrawFunds } = usePortfolio(portfolioType.toUpperCase());
+    const {portfolioType} = useParams();
+    const {portfolio, addFunds, withdrawFunds} = usePortfolio(portfolioType.toUpperCase());
 
     const selectedPortfolioType = portfolioTypes.find(pt => pt.type.toLowerCase() === portfolioType);
     const otherPortfolioTypes = portfolioTypes.filter(allPortfolioTypes => allPortfolioTypes.type.toLowerCase() !== portfolioType.toLowerCase());
 
-    const { state } = useLocation();
-    const { portfolios, combinedData, chartData=[], labels=[], view, toPassDate } = state || {};
+    const {state} = useLocation();
+    let {portfolios, combinedData, chartData = [], labels = [], view, toPassDate} = state || {};
 
     const [currentView, setView] = useState(view || 'portfolioValue');
 
@@ -57,23 +57,23 @@ const PortfolioManager = () => {
     const handlePortfolioSelection = (type) => {
         const {chartData, labels} = getDataByType(type);
         navigate(`/portfolio/${type.toLowerCase()}`, {
-            state: { portfolios, combinedData, chartData, view, labels, toPassDate }
+            state: {portfolios, combinedData, chartData, labels, toPassDate}
         });
     };
 
     const handleToggle = () => {
         setView(currentView === 'portfolioValue' ? 'performance' : 'portfolioValue');
-        const { chartData, labels } = getDataByType(portfolioType.toUpperCase());
+        let {chartData, labels} = getDataByType(portfolioType.toUpperCase());
         navigate(`/portfolio/${portfolioType.toLowerCase()}`, {
-            state: { portfolios, combinedData, chartData, view: currentView, labels, toPassDate }
+            state: {portfolios, combinedData, chartData, view, labels, toPassDate}
         });
     };
 
     return (
         <Box>
-            <Flex direction={{ base: "column", lg: "row" }} // Column on mobile, row on larger screens
+            <Flex direction={{base: "column", lg: "row"}} // Column on mobile, row on larger screens
                   flex="1">
-                {/*Left Panel - Portfolio Header, Portfolio Dashboard, Portfolio Value*/}
+                {/*Left Panel - Portfolio Header, Portfolio Dashboard*/}
                 <VStack className="left-panel" flex="1" mr={4}
                         width="70%" // Set width to 70% of the container on larger screens
                 >
@@ -109,8 +109,10 @@ const PortfolioManager = () => {
                         <Box width="100%" height="40rem" overflow="visible">
                             <CardComponent
                                 title={<Heading as="h2" color="brand.10">Portfolio Performance</Heading>}
-                                subtitle={<GrayText fontSize="2xl" fontWeight="bold">{toPassDate || 'Date not available'} </GrayText>}
-                                chart={<LineChart2 datasets={[chartData]} labels={labels} view={currentView} scaleToFit={true} />}
+                                subtitle={<GrayText fontSize="2xl"
+                                                    fontWeight="bold">{toPassDate || 'Date not available'} </GrayText>}
+                                chart={<LineChart2 datasets={[chartData]} labels={labels} view={currentView}
+                                                   scaleToFit={true}/>}
                                 button={<Button onClick={handleToggle}>Toggle View</Button>}
                                 scaleToFit={true}
                             />

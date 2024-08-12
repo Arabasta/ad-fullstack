@@ -46,4 +46,12 @@ public class CryptoWebSocketService extends MarketDataWebSocketService {
 
         marketDataSink.tryEmitNext(cryptoData);
     }
+
+    @Override
+    public String processTicker(String ticker) {
+        if (ticker.length() <= 3) {
+            return ticker;
+        }
+        return ticker.substring(0, ticker.length() - 3) + "-" + ticker.substring(ticker.length() - 3);
+    }
 }

@@ -41,20 +41,20 @@ VALUES (3,null, null, null, null);
 -- MoneyPool
 -- For AGGRESSIVE portfolio
 INSERT INTO money_pool (portfolio_type, pool_balance, unit_price, total_unit_qty)
-VALUES ('AGGRESSIVE', 1000000.00, 1.00, 1000000);
+VALUES ('AGGRESSIVE', 1000000.00, 100.00, 10000);
 
 -- For MODERATE portfolio
 INSERT INTO money_pool (portfolio_type, pool_balance, unit_price, total_unit_qty)
-VALUES ('MODERATE', 1000000.00, 1.00, 1000000);
+VALUES ('MODERATE', 1000000.00, 100.00, 10000);
 
 -- For CONSERVATIVE portfolio
 INSERT INTO money_pool (portfolio_type, pool_balance, unit_price, total_unit_qty)
-VALUES ('CONSERVATIVE', 1000000.00, 1.00, 1000000);
+VALUES ('CONSERVATIVE', 1000000.00, 100.00, 10000);
 
 UPDATE money_pool
 SET pool_balance = 1000000.00,
-    unit_price = 1.00,
-    total_unit_qty = 1000000;
+    unit_price = 100.00,
+    total_unit_qty = 10000;
 -- Ticker
 INSERT INTO ticker (id, ticker_name, ticker_type, portfolio_type)
 VALUES (1, 'AAPL', 'STOCKS', 'AGGRESSIVE');
@@ -109,3 +109,8 @@ UPDATE portfolio
 SET allocated_balance = 100000,
     allocated_unit_qty = 100000,
     current_value = 100000;
+
+UPDATE portfolio
+SET allocated_balance = 0,
+    allocated_unit_qty = 0,
+    current_value = 0;

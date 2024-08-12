@@ -56,6 +56,11 @@ const Header = () => {
                         <Link to="/news">
                             <Button variant="ghost">News</Button>
                         </Link>
+                        <Link to="/support">
+                            <Button w="full" variant="ghost">
+                                Support
+                            </Button>
+                        </Link>
 
                         {isAuthenticated ? (
                             <>
@@ -68,11 +73,7 @@ const Header = () => {
                                 <Link to="/settings">
                                     <Button variant="ghost">Settings</Button>
                                 </Link>
-                                <Link to="/support">
-                                    <Button w="full" variant="ghost">
-                                        Support
-                                    </Button>
-                                </Link>
+
                                 <Button onClick={logout}>Sign Out</Button>
                             </>
                         ) : (
@@ -87,9 +88,12 @@ const Header = () => {
                         )}
                     </HStack>
                     {!isAuthenticated && (
-                        <Button colorScheme="brand" size="sm">
-                            Get Started
-                        </Button>
+                        <Link to="/register">
+                            <Button colorScheme="brand" size="sm">
+                                Get Started
+                            </Button>
+                        </Link>
+
                     )}
                     <Box display={{ base: "inline-flex", md: "none" }}>
                         <IconButton
@@ -161,9 +165,12 @@ const Header = () => {
                                             Register
                                         </Button>
                                     </Link>
-                                    <Button w="full" colorScheme="brand">
-                                        Get Started
-                                    </Button>
+                                    <Link to="/register">
+                                        <Button w="full" colorScheme="brand">
+                                            Get Started
+                                        </Button>
+                                    </Link>
+
                                 </>
                             )}
                         </VStack>
