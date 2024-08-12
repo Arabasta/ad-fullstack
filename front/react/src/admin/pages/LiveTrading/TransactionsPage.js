@@ -1,18 +1,12 @@
 import React, { useEffect, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
 import useLiveTrading from "../../hooks/useLiveTrading";
 import { ListItem } from '@chakra-ui/react';
 import UnorderedList from "../../../components/common/layout/list/UnorderedList";
 import BlackText from "../../../components/common/text/BlackText";
 import SeparatorGrey from "../../../components/common/layout/separator/SeparatorGrey";
 
-const TransactionsPage = () => {
-    const location = useLocation();
+const TransactionsPage = ({portfolioType}) => {
     const { transactions, getLiveTradingTransactions, loading, message } = useLiveTrading();
-
-    const queryParams = new URLSearchParams(location.search);
-    const portfolioType = queryParams.get('portfolioType');
-
     const fetchTransactions = useCallback(() => {
         getLiveTradingTransactions(portfolioType);
     }, [portfolioType, getLiveTradingTransactions]);
@@ -46,6 +40,7 @@ const TransactionsPage = () => {
             ) : transactions.length > 0 ? (
                 <UnorderedList>
                     {transactions.map((transaction) => (
+                        transaction.portfolioType === portfolioType ?
                         <ListItem key={transaction.transactionId}>
                             <BlackText fontWeight="bold">
                                 {transaction.action} ${transaction.transactionAmount}
@@ -57,6 +52,7 @@ const TransactionsPage = () => {
                             <BlackText>{formatTimestamp(transaction.transactionDateTime)}</BlackText>
                             <SeparatorGrey />
                         </ListItem>
+                            : ""
                     ))}
                 </UnorderedList>
             ) : (
