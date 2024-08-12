@@ -24,7 +24,7 @@ const WalletScreen = ({ navigation }) => {
     };
 
     return (
-        <Container>
+        <Container style={styles.container}>
             <BalanceCard balance={wallet} />
             <View style={styles.buttonContainer}>
                 <ButtonPrimary
@@ -48,9 +48,16 @@ const WalletScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+    },
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        width: '100%',
         marginBottom: 20,
     },
     button: {
@@ -58,6 +65,7 @@ const styles = StyleSheet.create({
     },
     historyButton: {
         marginTop: 20,
+        width: '100%',
     },
 });
 
