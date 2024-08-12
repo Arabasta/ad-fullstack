@@ -100,7 +100,7 @@ public class LiveTradingStrategy implements TradingStrategy {
     }
 
     // Polygon's websocket ticker subscription is X:BTC-USD but response object is BTC-USD......
-    private String processResponseTicker(String ticker) { return "X:" + ticker; }
+    private String processResponseTicker(String ticker) { return "X:" + processTicker(ticker); }
 
     private void setupAndExecuteLiveTrade(TradingAlgorithmBase tradingAlgorithm) {
         historicalMarketDataService.getHistoricalMarketData(processTicker(tradingAlgorithm.getTicker()), LIMIT)

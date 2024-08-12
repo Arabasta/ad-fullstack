@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import useSqlTransactionLog from '../../hooks/useSqlTransactionLog';
 import SeparatorBlack from '../common/layout/separator/SeparatorBlack';
 import SeparatorGrey from '../common/layout/separator/SeparatorGrey';
@@ -7,6 +7,7 @@ import ListItem from "../common/layout/list/ListItem";
 import BlackText from "../common/text/BlackText";
 import ButtonBlack from "../common/buttons/ButtonBlack";
 import {Flex} from "@chakra-ui/react";
+import {formatCurrency} from "../../utils/formatCurrency";
 
 // todo: maybe rearrgange the text or something
 // todo: better date format
@@ -29,13 +30,14 @@ const TransactionHistory = ({ type, portfolioType }) => {
         return "Invalid Date";
     };
 
-    useEffect(() => {
-        loadMoreTransactions()
-    }, [transactions, loadMoreTransactions]);
-
     const customiseTransactionTypeText = (transactionType) => {
+        // portfolio transaction types
         if (transactionType === "Allocate") return "Allocated"
         if (transactionType === "Withdraw") return "Withdrawn"
+        // wallet transaction types
+        if (transactionType === "Deposit") return "Deposit to Wallet"
+        if (transactionType === "Withdrawal") return "Withdraw from Wallet"
+        return transactionType // allocate to portfolio
     }
 
     return (
@@ -46,9 +48,9 @@ const TransactionHistory = ({ type, portfolioType }) => {
                     transaction.portfolioType === portfolioType && (
                         <ListItem key={transaction.id}>
                             <BlackText fontWeight="bold">
-                                {customiseTransactionTypeText(transaction.transactionType)}: ${transaction.transactionAmount}
+                                {customiseTransactionTypeText(transaction.transactionType)}: {formatCurrency(transaction.transactionAmount)}
                             </BlackText>
-                            <BlackText>Balance: ${transaction.totalAmount}</BlackText>
+                            <BlackText>Balance: {formatCurrency(transaction.totalAmount)}</BlackText>
                             <BlackText>{formatTimestamp(transaction.timestamp)}</BlackText>
                             <SeparatorGrey />
                         </ListItem>

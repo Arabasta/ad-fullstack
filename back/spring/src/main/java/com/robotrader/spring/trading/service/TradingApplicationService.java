@@ -8,6 +8,7 @@ import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.MoneyPoolService;
 import com.robotrader.spring.service.TickerService;
 import com.robotrader.spring.service.log.TradeTransactionLogService;
+import com.robotrader.spring.trading.buySignalEvent.BuySignalEventPublisher;
 import com.robotrader.spring.trading.persistence.DatabaseStoreTradePersistence;
 import com.robotrader.spring.trading.persistence.MemoryStoreTradePersistence;
 import com.robotrader.spring.trading.interfaces.ITradingApplicationService;
@@ -47,13 +48,14 @@ public class TradingApplicationService implements ITradingApplicationService {
     @Getter
     private List<TradingContext> tradingContexts;
     private static Map<String, Class<? extends TradingAlgorithmBase>> algorithmMap = new HashMap<>();
+    private final BuySignalEventPublisher buySignalEventPublisher;
     private static final Logger logger = LoggerFactory.getLogger(TradingApplicationService.class);
 
     @Autowired
     public TradingApplicationService(MoneyPoolService moneyPoolService,
                                      HistoricalMarketDataService historicalMarketDataService,
                                      LiveMarketDataService liveMarketDataService, TradeTransactionLogService tradeTransactionLogService,
-                                     Optional<S3TransactionLogger> s3TransactionLogger, PredictionService predictionService, TickerService tickerService) {
+                                     Optional<S3TransactionLogger> s3TransactionLogger, PredictionService predictionService, TickerService tickerService, BuySignalEventPublisher buySignalEventPublisher) {
         this.moneyPoolService = moneyPoolService;
         this.historicalMarketDataService = historicalMarketDataService;
         this.liveMarketDataService = liveMarketDataService;
@@ -61,6 +63,7 @@ public class TradingApplicationService implements ITradingApplicationService {
         this.s3TransactionLogger = s3TransactionLogger.orElse(null);
         this.predictionService = predictionService;
         this.tickerService = tickerService;
+        this.buySignalEventPublisher = buySignalEventPublisher;
         this.tradingContexts = new ArrayList<>();
 
         initializeAlgorithmMap();
@@ -125,6 +128,7 @@ public class TradingApplicationService implements ITradingApplicationService {
     public void runTradingAlgorithmLive(String algorithmType) {
         if (!LiveMarketDataService.isRunning()) {
             liveMarketDataService.subscribeToLiveMarketData();
+            buySignalEventPublisher.setLiveTradeRunning(true);
         }
         for (TickerTypeEnum tickerType : TickerTypeEnum.values()) {
             for (PortfolioTypeEnum portfolioType : PortfolioTypeEnum.values()) {
@@ -171,6 +175,7 @@ public class TradingApplicationService implements ITradingApplicationService {
 
     @Override
     public void stopTradingAlgorithmLive() {
+        buySignalEventPublisher.setLiveTradeRunning(false);
         liveMarketDataService.disconnectLiveMarketData();
         try {
             // Pause for 1 second, for data flux completion

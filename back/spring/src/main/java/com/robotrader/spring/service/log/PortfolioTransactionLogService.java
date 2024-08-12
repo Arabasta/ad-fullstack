@@ -10,7 +10,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -47,7 +49,12 @@ public class PortfolioTransactionLogService {
     }
 
     public Page<PortfolioTransactionLogDTO> getPortfolioTransactionLogs(String username, Pageable pageable) {
-        Page<PortfolioTransactionLog> logs = portfolioTransactionLogRepository.findByUser(userService.getUserByUsername(username), pageable);
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "id")
+        );
+        Page<PortfolioTransactionLog> logs = portfolioTransactionLogRepository.findByUser(userService.getUserByUsername(username), sortedPageable);
         return logs.map(log -> new PortfolioTransactionLogDTO(
                 log.getId(),
                 log.getTimestamp(),
