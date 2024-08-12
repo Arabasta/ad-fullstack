@@ -15,7 +15,7 @@ const BalanceCard = ({ balance }) => {
 
 const styles = StyleSheet.create({
     balanceCard: {
-        backgroundColor: '#262525',
+        backgroundColor: '#181c37',
         borderRadius: 12,
         padding: 20,
         marginBottom: 20,
