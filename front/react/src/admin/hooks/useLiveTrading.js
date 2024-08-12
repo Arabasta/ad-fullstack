@@ -3,9 +3,6 @@ import LiveTradingService from "../services/LiveTradingService";
 
 const useLiveTrading = () => {
     const [message, setMessage] = useState(null);
-    const [transactions, setTransactions] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [hasMore, setHasMore] = useState(false);
     const [isTrading, setIsTrading] = useState(false);
     const [algorithmTypes, setAlgorithmTypes] = useState([]);
 
@@ -42,20 +39,6 @@ const useLiveTrading = () => {
         }
     }, [isTrading]);
 
-
-    const getLiveTradingTransactions = useCallback(async (portfolioType) => {
-        setLoading(true);
-        try {
-            const response = await LiveTradingService.getLiveTradingTransactions(portfolioType);
-            setTransactions(response.data.data.content);
-            setHasMore(response.data.data.content.length > 0);
-        } catch (err) {
-            setMessage(err.message);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
     const getAlgorithmTypes = useCallback(async () => {
         try {
             const response = await LiveTradingService.getAlgorithmTypes();
@@ -65,17 +48,23 @@ const useLiveTrading = () => {
         }
     }, []);
 
+    const getStatus = useCallback(async () => {
+        try {
+            const response = await LiveTradingService.getLiveTradingStatus();
+            setIsTrading(response.data.data.status);
+        } catch (err) {
+            setMessage(err.message);
+        }
+    }, []);
+
     return {
         message,
-        transactions,
-        loading,
-        hasMore,
         isTrading,
         startLiveTrading,
         stopLiveTrading,
-        getLiveTradingTransactions,
         algorithmTypes,
         getAlgorithmTypes,
+        getStatus
     };
 };
 
