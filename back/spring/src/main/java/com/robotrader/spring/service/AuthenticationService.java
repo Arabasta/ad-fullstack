@@ -31,7 +31,7 @@ public class AuthenticationService implements IAuthenticationService {
     @Override
     @Transactional
     public RegistrationResponse registerUser(RegistrationRequest registrationRequest, boolean isCustomer) {
-        final UserDetails userDetails = userService.create(registrationRequest, !isCustomer);
+        final UserDetails userDetails = userService.create(registrationRequest, isCustomer);
         final String jwtToken = jwtUtil.generateToken(userDetails);
         RoleEnum role = isCustomer ? RoleEnum.ROLE_CUSTOMER : RoleEnum.ROLE_ADMIN;
         return new RegistrationResponse(jwtToken, userDetails.getUsername(), role);

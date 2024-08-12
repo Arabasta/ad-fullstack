@@ -5,6 +5,8 @@ import BackTestPage from "../pages/Backtest/BacktestPage";
 import AdminManageLiveTradingPage from "../pages/LiveTrading/AdminManageLiveTradingPage";
 import BackTestResultPage from "../pages/Backtest/BackTestResultPage";
 import TransactionsPage from "../pages/LiveTrading/TransactionsPage";
+import HomePage from "../../pages/HomePage";
+import React from "react";
 
 const adminRoutes = (
     <>
@@ -14,6 +16,8 @@ const adminRoutes = (
             <Route key="manageLiveTrading" path="/admin/managelivetrading" element={<AdminManageLiveTradingPage />} />
             <Route key="backTestResult" path="/admin/backtest-result" element={<BackTestResultPage />} />
             <Route key="transactions" path="/admin/transactions" element={<TransactionsPage />} />
+            <Route key="home" path="/" element={<HomePage />} />
+
     </>
 );
 
