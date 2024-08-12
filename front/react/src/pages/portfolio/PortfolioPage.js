@@ -1,5 +1,4 @@
-import React, {useMemo, useState} from "react";
-import usePortfolio from "../../hooks/usePortfolio";
+import React, {useState} from "react";
 import LineChart2 from "../../admin/component/charts/LineChart2";
 import CardComponent from "../../components/common/cards/CardWithChart";
 import Button from "../../components/common/buttons/Button";
@@ -11,28 +10,12 @@ import GrayText from "../../components/common/text/GrayText";
 import BlackText from "../../components/common/text/BlackText";
 import {formatCurrency} from "../../utils/formatCurrency";
 import {Flex, HStack, SimpleGrid} from "@chakra-ui/react";
+import useCombinedPortfolioDetails from "../../hooks/useCombinedPortfolioDetails";
 
 export default function PortfolioPage() {
     const navigate = useNavigate();
     const [view, setView] = useState('portfolioValue');
-
-    // Call usePortfolio for each portfolio type
-    const conservativePortfolio = usePortfolio('CONSERVATIVE');
-    const moderatePortfolio = usePortfolio('MODERATE');
-    const aggressivePortfolio = usePortfolio('AGGRESSIVE');
-
-    // Calculate the sum of currentValues from all portfolios
-    const totalCurrentValue = useMemo(() => {
-        const aggressiveValue = aggressivePortfolio.portfolio.currentValue || 0;
-        const moderateValue = moderatePortfolio.portfolio.currentValue || 0;
-        const conservativeValue = conservativePortfolio.portfolio.currentValue || 0;
-
-        return parseFloat(aggressiveValue) + parseFloat(moderateValue) + parseFloat(conservativeValue);
-    }, [
-        aggressivePortfolio.portfolio.currentValue,
-        moderatePortfolio.portfolio.currentValue,
-        conservativePortfolio.portfolio.currentValue
-    ]);
+    const {conservativePortfolio, moderatePortfolio, aggressivePortfolio, totalCurrentValue} = useCombinedPortfolioDetails();
 
     const portfolios = [
         { type: 'CONSERVATIVE', data: conservativePortfolio.performanceChart },
