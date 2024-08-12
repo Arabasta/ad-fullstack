@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     SimpleGrid,
@@ -10,11 +10,12 @@ import {
     InputGroup,
     Input,
     Select,
-    Flex, // Import Flex for alignment
+    Flex,
+    useToast,
+    Text
 } from '@chakra-ui/react';
 
 import Heading from "../../common/text/Heading";
-import Text from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
 import Nationalities from "./Nationalities";
 import CountryCodes from './CountryCodes';
@@ -27,9 +28,29 @@ const RegisterStep2Form = ({
                                nationality, setNationality,
                                handlePrevious, handleNext,
                            }) => {
+    const [mobileNumberError, setMobileNumberError] = useState('');
+    const toast = useToast();
+
     const handleMobileNumberChange = (e) => {
-        const number = e.target.value.replace(/\D/g, ''); // only can input numbers
+        const number = e.target.value.replace(/\D/g, ''); // 仅允许输入数字
         setMobileNumber(number);
+    };
+
+    const handleMobileNumberBlur = () => {
+        const fullNumber = `${countryCode}${mobileNumber}`;
+        if (fullNumber.length < 7 || fullNumber.length > 15) {
+            setMobileNumberError('Mobile number length must be between 7 and 15 digits.');
+            toast({
+                title: "Invalid Mobile Number",
+                description: "Mobile number length must be between 7 and 15 digits.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "top",
+            });
+        } else {
+            setMobileNumberError('');
+        }
     };
 
     const handleCountryCodeChange = (e) => {
@@ -37,6 +58,34 @@ const RegisterStep2Form = ({
         setCountryCode(code);
 
         setMobileNumber(prev => prev.replace(/^\+\d+/, ''));
+    };
+
+    const handleNextStep = (e) => {
+        e.preventDefault(); // 确保 preventDefault() 调用成功
+        if (mobileNumberError) {
+            toast({
+                title: "Invalid Mobile Number",
+                description: "Please correct the mobile number before proceeding.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "top",
+            });
+            return;
+        }
+        const fullNumber = `${countryCode}${mobileNumber}`;
+        if (fullNumber.length >= 7 && fullNumber.length <= 15) {
+            handleNext();
+        } else {
+            toast({
+                title: "Invalid Mobile Number",
+                description: "Mobile number length must be between 7 and 15 digits.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "top",
+            });
+        }
     };
 
     return (
@@ -60,27 +109,11 @@ const RegisterStep2Form = ({
                             <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
                                 Register
                             </Heading>
-                            <Text
-                                mt={1}
-                                fontSize="2xl"
-                                color="gray.600"
-                                _dark={{ color: "gray.400" }}
-                            >
-                                Let's start.
-                            </Text>
-                            <Text
-                              mt={1}
-                              fontSize="xl"
-                              color="gray.600"
-                              _dark={{ color: "gray.400" }}
-                            >
-                                Welcome to our platform! To get started, please fill out the registration form. We value your privacy and ensure that your information is kept secure.
-                            </Text>
                         </Box>
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
-                            onSubmit={handleNext}
+                            onSubmit={(e) => handleNextStep(e)} // 确保事件对象被传递
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
@@ -125,12 +158,19 @@ const RegisterStep2Form = ({
                                                 value={mobileNumber}
                                                 placeholder="Enter numeric phone number"
                                                 onChange={handleMobileNumberChange}
+                                                onBlur={handleMobileNumberBlur}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
                                             />
                                         </InputGroup>
+                                        {mobileNumberError && (
+                                            <Text color="red.500" fontSize="sm" mt={2}>
+                                                {mobileNumberError}
+                                            </Text>
+                                        )}
                                     </FormControl>
+
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
                                         <FormLabel
                                             fontSize="md"
@@ -153,6 +193,7 @@ const RegisterStep2Form = ({
                                             />
                                         </InputGroup>
                                     </FormControl>
+
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
                                         <FormLabel
                                             fontSize="md"
@@ -175,6 +216,7 @@ const RegisterStep2Form = ({
                                             />
                                         </InputGroup>
                                     </FormControl>
+
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
                                         <FormLabel fontSize="md" fontWeight="md" color="gray.700" _dark={{ color: "gray.50" }}>
                                             Nationality
@@ -214,6 +256,7 @@ const RegisterStep2Form = ({
                                 </Button>
                                 <Button
                                     type="submit"
+                                    onClick={handleNext}
                                     colorScheme="brand"
                                     _focus={{ shadow: "" }}
                                     fontWeight="md"
