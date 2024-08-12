@@ -49,4 +49,9 @@ public class StockWebSocketService extends MarketDataWebSocketService {
 
         marketDataSink.tryEmitNext(stockData);
     }
+
+    @Override
+    public String processTicker(String ticker) {
+        return null;
+    }
 }
