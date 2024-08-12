@@ -1,23 +1,18 @@
-package com.robotrader.spring.controller.customer;
+package com.robotrader.spring.controller.news;
 
 import com.robotrader.spring.dto.general.ApiResponse;
-import com.robotrader.spring.dto.portfolio.PortfolioBalanceDTO;
 import com.robotrader.spring.dto.ticker.TickerNewsDTO;
-import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.service.interfaces.INewsService;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/customer/news")
+@RequestMapping("/api/v1/news")
 public class NewsController {
     private final INewsService newsService;
 
