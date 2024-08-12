@@ -37,7 +37,7 @@ const PortfolioScreen = ({ route, navigation }) => {
                     chartData && labels ? (
                         <LineChartDisplay2 datasets={[chartData]}
                                            labels={labels}
-                                           yAxisTitle={view === 'portfolioValue' ? "Portfolio Value ($)" : "Performance (%)"}
+                                           yAxisTitle="Portfolio Value ($)"
                                            xAxisTitle={
                                                <View style={styles.xAxisTitleContainer}>
                                                    <Text style={styles.labelText}>{lastLabelFormatted}</Text>
