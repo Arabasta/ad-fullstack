@@ -10,7 +10,8 @@ import React from "react";
 const adminRoutes = (
     <>
             <Route key="account" path="/admin/manage-user" element={<AdminViewUsersPage />} />
-            <Route key="manage-tickers" path="/" element={<ManageTickersPage />} />
+            <Route key="admin-home" path="/" element={<ManageTickersPage />} />
+            <Route key="manage-tickers" path="/admin/manage-tickers" element={<ManageTickersPage />} />
             <Route key="backTest" path="/admin/backtest" element={<BackTestPage />} />
             <Route key="manageLiveTrading" path="/admin/managelivetrading" element={<AdminManageLiveTradingPage />} />
             <Route key="backTestResult" path="/admin/backtest-result" element={<BackTestResultPage />} />
