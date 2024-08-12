@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     SimpleGrid,
@@ -12,6 +12,9 @@ import {
     Input,
     Avatar,
     Icon,
+    Radio,
+    RadioGroup,
+    HStack,
 } from '@chakra-ui/react';
 import { FaUser } from 'react-icons/fa';
 import { RiLockPasswordLine } from "react-icons/ri";
@@ -19,10 +22,19 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import Heading from "../../common/text/Heading";
 import Text from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
+
 const LoginForm = ({
                        username, setUsername,
                        password, setPassword,
-                       method}) => {
+                       method
+                   }) => {
+    const [role, setRole] = useState('ROLE_CUSTOMER');  // Default role
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        method(e, role);  // Pass the selected role to the method
+    };
+
     return (
         <Box
             bg="brand.400"
@@ -56,7 +68,7 @@ const LoginForm = ({
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
-                            onSubmit={method}
+                            onSubmit={handleSubmit}
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
@@ -113,6 +125,7 @@ const LoginForm = ({
                                             />
                                         </InputGroup>
                                     </FormControl>
+
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
                                         <FormLabel
                                             fontSize="md"
@@ -155,6 +168,23 @@ const LoginForm = ({
                                                 rounded="md"
                                             />
                                         </InputGroup>
+                                    </FormControl>
+
+                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Login As
+                                        </FormLabel>
+                                        <RadioGroup onChange={setRole} value={role}>
+                                            <HStack spacing="24px">
+                                                <Radio value="ROLE_CUSTOMER">Customer</Radio>
+                                                <Radio value="ROLE_ADMIN">Admin</Radio>
+                                            </HStack>
+                                        </RadioGroup>
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>

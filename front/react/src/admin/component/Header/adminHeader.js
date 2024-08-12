@@ -56,6 +56,7 @@ const AdminHeader = () => {
                         <Link to="/news">
                             <Button variant="ghost">News</Button>
                         </Link>
+
                         {isAuthenticated ? (
                             <>
                                 <Link to="/admin/managelivetrading">
