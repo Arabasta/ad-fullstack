@@ -20,7 +20,7 @@ const LoginPage = () => {
                 title: "Login Successful",
                 description: "You have successfully logged in.",
                 status: "success",
-                duration: 5000,  // 5 seconds
+                duration: 1000,  // 1 seconds
                 isClosable: true,
                 position: "top",
                 onCloseComplete: () => navigate('/')  // Redirect after toast closes
