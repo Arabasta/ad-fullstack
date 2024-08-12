@@ -79,7 +79,7 @@ const RegisterStep5Form = ({
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
                             <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
-                                Register
+                                Investor Profile
                             </Heading>
                             <Text
                                 mt={1}
@@ -88,6 +88,39 @@ const RegisterStep5Form = ({
                                 _dark={{ color: "gray.400" }}
                             >
                                 The end is near.
+                            </Text>
+                            <Heading color="brand.600" fontSize="2xl" fontWeight="md" lineHeight="10" mt={5}>
+                                Find a suitable investment strategy
+                            </Heading>
+                            <Text
+                              mt={2}
+                              fontSize="xl"
+                              color="gray.600"
+                              _dark={{ color: "gray.400" }}
+                            >
+                                Your investing strategy should reflect the kind of investor you are—your personal investor profile. This quiz will help you determine your profile and then match it to an investment strategy that’s designed for investors like you.
+                            </Text>
+                            <Heading color="brand.600" fontSize="2xl" fontWeight="md" lineHeight="10" mt={5}>
+                                Your time horizon
+                            </Heading>
+                            <Text
+                              mt={2}
+                              fontSize="xl"
+                              color="gray.600"
+                              _dark={{ color: "gray.400" }}
+                            >
+                                When will you begin withdrawing money from your account and at what rate? If it’s many years away, you may be comfortable with a portfolio that has a greater potential for appreciation and a higher level of risk.
+                            </Text>
+                            <Heading color="brand.600" fontSize="2xl" fontWeight="md" lineHeight="10" mt={5}>
+                                Your risk tolerance
+                            </Heading>
+                            <Text
+                              mt={2}
+                              fontSize="xl"
+                              color="gray.600"
+                              _dark={{ color: "gray.400" }}
+                            >
+                                How do you feel about risk? Some investments fluctuate more dramatically in value than others but may have the potential for higher returns.
                             </Text>
                         </Box>
                     </GridItem>
@@ -117,7 +150,7 @@ const RegisterStep5Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Investment Duration Score
+                                            I plan to begin withdrawing money from my investments in:
                                         </FormLabel>
                                         <FormSelect
                                             placeholder="Select option"
@@ -141,7 +174,7 @@ const RegisterStep5Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Withdrawal Spending Plan Score
+                                            Once I begin withdrawing funds from my investments, I plan to spend all of the funds in:
                                         </FormLabel>
                                         <FormSelect
                                             placeholder="Select option"
@@ -165,7 +198,7 @@ const RegisterStep5Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Investment Knowledge Score
+                                            I would describe my knowledge of investments as:
                                         </FormLabel>
                                         <FormSelect
                                             placeholder="Select option"
@@ -189,7 +222,7 @@ const RegisterStep5Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Risk Reward Score
+                                            What amount of financial risk are you willing to take when you invest?
                                         </FormLabel>
                                         <FormSelect
                                             placeholder="Select option"
@@ -213,7 +246,7 @@ const RegisterStep5Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Owned Investments Score
+                                            Select the investments you currently own or have owned:
                                         </FormLabel>
                                         <FormSelect
                                             placeholder="Select option"
@@ -236,7 +269,7 @@ const RegisterStep5Form = ({
                                             color="gray.700"
                                             _dark={{ color: "gray.50" }}
                                         >
-                                            Investment Personality Score
+                                            Imagine that in the past three months, the overall stock market lost 25% of its value. An individual stock investment you own also lost 25% of its value. What would you do?
                                         </FormLabel>
                                         <FormSelect
                                             placeholder="Select option"
