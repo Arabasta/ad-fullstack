@@ -25,15 +25,15 @@ public class Address {
     @Column(nullable = false, length = 50)
     private String city;
 
-    @Length(min=1, max=50, message = "Postal code cannot be more than 50 characters")
-    @Column(nullable = false, length = 50)
+    @Length(min=1, max=10, message = "Postal code cannot be more than 10 characters")
+    @Column(nullable = false, length = 10)
     private String postalCode;
 
     @Length(min=1, max=50, message = "Country cannot be more than 50 characters")
     @Column(nullable = false, length = 50)
     private String country;
 
-    @Length(min=1, max=50, message = "Unit number cannot be more than 10 characters")
+    @Length(min=1, max=10, message = "Unit number cannot be more than 10 characters")
     @Column(nullable = false, length = 10)
     private String unitNo;
 }

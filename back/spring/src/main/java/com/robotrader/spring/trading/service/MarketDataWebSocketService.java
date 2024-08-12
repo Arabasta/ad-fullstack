@@ -40,6 +40,7 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler {
     public abstract String getSubscriberPrefix();
     public abstract String getWebSocketEndpoint();
     public abstract void handleMarketData(JsonNode event);
+    public abstract String processTicker(String ticker);
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -104,7 +105,11 @@ public abstract class MarketDataWebSocketService extends TextWebSocketHandler {
                 StringBuilder param = new StringBuilder("\"");
                 String prefix = getSubscriberPrefix();
                 for (String ticker : tickers) {
-                    param.append(prefix).append(ticker).append(",");
+                    if (getEventType().equals("XAS")) {
+                        param.append(prefix).append(processTicker(ticker)).append(",");
+                    } else {
+                        param.append(prefix).append(ticker).append(",");
+                    }
                 }
                 param.setLength(param.length() - 1);
                 param.append("\"");
