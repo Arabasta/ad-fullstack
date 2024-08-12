@@ -44,13 +44,13 @@ const WalletAction = ({ type, onActionComplete }) => {
                     title: "Incomplete Bank Details",
                     description: "Please complete your bank details to proceed. Redirecting...",
                     status: "error",
-                    duration: 5000,
+                    duration: 1000,
                     isClosable: true,
                 });
-                // Redirect to Bank Details Page after 5 seconds
+                // Redirect to Bank Details Page after 1 seconds
                 setTimeout(() => {
                     navigate('/settings/profile/bankDetails');
-                }, 5000);
+                }, 1000);
             }
         }
     };
