@@ -17,7 +17,6 @@ import useUser from "../../../../hooks/useUser";
 import UserService from "../../../../services/UserService";
 import useCustomer from "../../../../hooks/useCustomer";
 import Heading from "../../../../components/common/text/Heading";
-import Text from "../../../../components/common/text/Text";
 import CountryCodes from "../../../../components/customer/auth/CountryCodes";
 
 const EditUserDetailsForm = () => {
@@ -99,16 +98,8 @@ const EditUserDetailsForm = () => {
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
                             <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
-                                Update
+                                Update your details
                             </Heading>
-                            <Text
-                                mt={1}
-                                fontSize="2xl"
-                                color="gray.600"
-                                _dark={{ color: "gray.400" }}
-                            >
-                                your details.
-                            </Text>
                         </Box>
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
@@ -153,6 +144,7 @@ const EditUserDetailsForm = () => {
                                             colorScheme="brand"
                                             _focus={{ shadow: "" }}
                                             fontWeight="md"
+                                            mt={4}
                                         >
                                             Update
                                         </Button>
@@ -202,6 +194,8 @@ const EditUserDetailsForm = () => {
                                             colorScheme="brand"
                                             _focus={{ shadow: "" }}
                                             fontWeight="md"
+                                            mt={4}
+
                                         >
                                             Update
                                         </Button>
@@ -216,7 +210,7 @@ const EditUserDetailsForm = () => {
                                 py={3}
                                 bg="gray.50"
                                 _dark={{ bg: "#121212" }}
-                                textAlign="right"
+                                textAlign="left"
                             >
                                 <Link to="/settings/profile">
                                     <Button
@@ -228,7 +222,6 @@ const EditUserDetailsForm = () => {
                                 </Link>
                             </Box>
                         </chakra.form>
-
                     </GridItem>
                 </SimpleGrid>
             </Box>

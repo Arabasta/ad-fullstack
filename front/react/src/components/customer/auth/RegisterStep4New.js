@@ -92,7 +92,7 @@ const RegisterStep4Form = ({
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
                             <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
-                                Register
+                                Financial Profile
                             </Heading>
                             <Text
                                 mt={1}
@@ -101,6 +101,17 @@ const RegisterStep4Form = ({
                                 _dark={{ color: "gray.400" }}
                             >
                                 Almost there.
+                            </Text>
+                            <Heading color="brand.600" fontSize="2xl" fontWeight="md" lineHeight="10" mt={5}>
+                                Why we collect this information?
+                            </Heading>
+                            <Text
+                              mt={1}
+                              fontSize="xl"
+                              color="gray.600"
+                              _dark={{ color: "gray.400" }}
+                            >
+                                In the financial services industry, adherence to regulatory standards is paramount to maintaining the trust of our users and ensuring the integrity of our operations. FourQuant is committed to full compliance with all relevant laws and regulations governing financial services, data privacy, and consumer protection.
                             </Text>
                         </Box>
                     </GridItem>
