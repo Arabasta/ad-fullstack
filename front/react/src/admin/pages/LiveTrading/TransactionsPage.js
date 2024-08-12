@@ -11,11 +11,10 @@ const TransactionsPage = () => {
     const { transactions, getLiveTradingTransactions, loading, message } = useLiveTrading();
 
     const queryParams = new URLSearchParams(location.search);
-    const portfolioType = queryParams.get('portfolioType');
 
     const fetchTransactions = useCallback(() => {
-        getLiveTradingTransactions(portfolioType);
-    }, [portfolioType, getLiveTradingTransactions]);
+        getLiveTradingTransactions();
+    }, [getLiveTradingTransactions]);
 
     useEffect(() => {
         fetchTransactions();
