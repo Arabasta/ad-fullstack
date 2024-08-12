@@ -167,9 +167,7 @@ public class PortfolioService implements IPortfolioService {
         portfolio.setAllocatedBalance(portfolio.getAllocatedBalance().add(amount));
         portfolio.setCurrentValue(portfolio.getCurrentValue().add(amount));
 
-        BigDecimal moneyPoolUnitPrice = moneyPoolService.getUnitPriceByPortfolioType(portfolio.getPortfolioType());
-        BigDecimal newUnitsToAdd = amount.divide(moneyPoolUnitPrice, RoundingMode.HALF_UP);
-        moneyPoolService.updateTotalUnitQty(newUnitsToAdd, portfolio.getPortfolioType(), true);
+        BigDecimal newUnitsToAdd = moneyPoolService.updateFundsToMoneyPool(amount, portfolio.getPortfolioType(), true);
         portfolio.setAllocatedUnitQty(portfolio.getAllocatedUnitQty().add(newUnitsToAdd));
 
         ruleService.setStopLossInitialValue(portfolio.getRule(), portfolio.getCurrentValue());
@@ -182,9 +180,7 @@ public class PortfolioService implements IPortfolioService {
         if (portfolio.getCurrentValue().compareTo(amount) < 0)
             throw new InsufficientFundsException("Insufficient funds in portfolio");
 
-        BigDecimal moneyPoolUnitPrice = moneyPoolService.getUnitPriceByPortfolioType(portfolio.getPortfolioType());
-        BigDecimal unitsToSubtract = amount.divide(moneyPoolUnitPrice, RoundingMode.HALF_UP);
-        moneyPoolService.updateTotalUnitQty(unitsToSubtract, portfolio.getPortfolioType(), false);
+        BigDecimal unitsToSubtract = moneyPoolService.updateFundsToMoneyPool(amount, portfolio.getPortfolioType(), false);
         portfolio.setAllocatedUnitQty(portfolio.getAllocatedUnitQty().subtract(unitsToSubtract));
 
         // remove from current value and reset allocated balance
