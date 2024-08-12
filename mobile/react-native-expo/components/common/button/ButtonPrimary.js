@@ -10,7 +10,7 @@ const ButtonPrimary = ({ title, onPress, style, ...props }) => {
         <Button
             mode="contained"
             onPress={onPress}
-            style={[{ backgroundColor: '#000' }, style]}
+            style={[{ backgroundColor: '#2a2f57' }, style]}
             {...props}
         >
             {title}
