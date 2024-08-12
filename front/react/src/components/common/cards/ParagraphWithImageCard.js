@@ -34,7 +34,8 @@ const CardComponent = ({title, subtitle, description, button, imageUrl}) => {
                         fontSize={{ base: "2xl", md: "3xl"}}
                         color="gray.800"
                         fontWeight="bold">
-                        {title}{" "}
+                        {title}
+                        <Box></Box> {/*spacer*/}
                         <chakra.span color="brand.600">
                             {subtitle}
                         </chakra.span>
