@@ -2,17 +2,18 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 // Just a box for now
-const Dashboard = () => {
+const Dashboard = ({header, chart}) => {
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Dashboard</Text>
+            <Text style={styles.text}>Total Portfolio Value: ${header} </Text>
+            {chart}
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        height: 200,
+        height: 450,
         width: '100%',
         backgroundColor: '#f0f0f0',
         justifyContent: 'center',

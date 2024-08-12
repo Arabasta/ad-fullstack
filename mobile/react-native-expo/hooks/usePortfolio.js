@@ -3,6 +3,7 @@ import PortfolioService from '../services/PortfolioService';
 
 const usePortfolio = (portfolioType) => {
     const [portfolio, setPortfolio] = useState({});
+    const [performanceChart, setPerformanceChart] = useState(null);
 
     const getPortfolio = async () => {
         try {
@@ -13,8 +14,18 @@ const usePortfolio = (portfolioType) => {
         }
     };
 
+    const getPerformanceChart = async () => {
+        try {
+            const response = await PortfolioService.getPortfolioChart(portfolioType);
+            setPerformanceChart(response.data.data);
+        } catch (error) {
+            console.error('Error fetching performance chart data', error);
+        }
+    };
+
     useEffect(() => {
         getPortfolio();
+        getPerformanceChart()
     }, [portfolioType]);
 
     const addFunds = async (amount) => {
@@ -35,7 +46,7 @@ const usePortfolio = (portfolioType) => {
         }
     };
 
-    return { portfolio, addFunds, withdrawFunds, getPortfolio };
+    return { portfolio, performanceChart ,addFunds, withdrawFunds, getPortfolio };
 };
 
 export default usePortfolio;
