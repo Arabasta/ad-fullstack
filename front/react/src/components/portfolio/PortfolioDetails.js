@@ -5,7 +5,7 @@ import Text from "../common/text/Text";
 const PortfolioDetails = ({ portfolio }) => {
     const allocatedBalance = portfolio.allocatedBalance;
     const currentValue = portfolio.currentValue;
-    const percentageChange = (100 * (currentValue - allocatedBalance) / allocatedBalance).toFixed(2);
+    let percentageChange = (100 * (currentValue - allocatedBalance) / allocatedBalance).toFixed(2);
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
