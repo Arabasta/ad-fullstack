@@ -1,13 +1,13 @@
 import React from 'react';
-import { Flex, Box,chakra, Link } from '@chakra-ui/react'; // Make sure you have Chakra UI installed
+import { Flex, Box,chakra } from '@chakra-ui/react'; // Make sure you have Chakra UI installed
 import PropTypes from 'prop-types';
 
-const CardComponent = ({title, subtitle, description, buttonText, imageUrl}) => {
+const CardComponent = ({title, subtitle, description, button, imageUrl}) => {
     return (
         <Flex
-            bg="#edf3f8"
+            bg="brand.400"
             p={50}
-            w="full"
+            w="max-content"
             alignItems="center"
             justifyContent="center">
             <Box
@@ -43,18 +43,7 @@ const CardComponent = ({title, subtitle, description, buttonText, imageUrl}) => 
                         {description}
                     </chakra.p>
 
-                    <Box mt={8}>
-                        <Link
-                            bg="gray.900"
-                            color="gray.100"
-                            px={5}
-                            py={3}
-                            fontWeight="semibold"
-                            rounded="lg"
-                            _hover={{ bg: "gray.800"}}>
-                            {buttonText}
-                        </Link>
-                    </Box>
+                    {button}
                 </Box>
             </Box>
         </Flex>
