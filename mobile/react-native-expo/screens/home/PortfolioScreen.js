@@ -29,8 +29,6 @@ const PortfolioScreen = ({ route, navigation }) => {
 
     return (
         <Container>
-            <Text variant="headlineMedium">${portfolio.currentValue || 0.00}</Text>
-
             {/* Portfolio Dashboard */}
             <Dashboard
                 header={portfolio.currentValue}
@@ -39,7 +37,7 @@ const PortfolioScreen = ({ route, navigation }) => {
                     chartData && labels ? (
                         <LineChartDisplay2 datasets={[chartData]}
                                            labels={labels}
-                                           yAxisTitle="Portfolio Value ($)"
+                                           yAxisTitle={view === 'portfolioValue' ? "Portfolio Value ($)" : "Performance (%)"}
                                            xAxisTitle={
                                                <View style={styles.xAxisTitleContainer}>
                                                    <Text style={styles.labelText}>{lastLabelFormatted}</Text>
