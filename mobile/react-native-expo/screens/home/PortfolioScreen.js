@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import LineChartDisplay2 from "../../components/common/chart/LineChartDisplay2";
 
 const PortfolioScreen = ({ route, navigation }) => {
-    const { portfolio, chartData, labels, firstLabelFormatted, lastLabelFormatted } = route.params;
+    const { portfolio, chartData, labels, firstLabelFormatted, lastLabelFormatted, yAxisTitle } = route.params;
     const { getPortfolio } = usePortfolio(portfolio.portfolioType);
 
     const refreshPortfolio = async () => {
@@ -37,11 +37,10 @@ const PortfolioScreen = ({ route, navigation }) => {
                     chartData && labels ? (
                         <LineChartDisplay2 datasets={[chartData]}
                                            labels={labels}
-                                           yAxisTitle="Portfolio Value ($)"
+                                           yAxisTitle={yAxisTitle}
                                            xAxisTitle={
                                                <View style={styles.xAxisTitleContainer}>
                                                    <Text style={styles.labelText}>{lastLabelFormatted}</Text>
-
                                                    <Text style={styles.xAxisTitle}>Time</Text>
                                                    <Text style={styles.labelText}>{firstLabelFormatted}</Text>
 

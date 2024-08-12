@@ -6,7 +6,6 @@ import Container from "../../components/common/container/Container";
 import usePortfolio from '../../hooks/usePortfolio';
 import LineChartDisplay2 from "../../components/common/chart/LineChartDisplay2";
 import {Text, View, StyleSheet} from 'react-native'
-import {Button} from "react-native-paper";
 import TouchableOpacity from "../../components/common/button/TouchableOpacity";
 
 const HomeScreen = ({ navigation }) => {
@@ -160,7 +159,8 @@ const HomeScreen = ({ navigation }) => {
                             chartData,
                             labels,
                             firstLabelFormatted,
-                            lastLabelFormatted
+                            lastLabelFormatted,
+                            yAxisTitle: view === 'portfolioValue' ? "Portfolio Value ($)" : "Performance (%)", // Passing the title dynamically
                         })}
                     />
                 );
