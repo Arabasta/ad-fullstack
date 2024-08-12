@@ -12,7 +12,7 @@ const TransactionsPage = ({type}) => {
     const { transactions, loadMoreTransactions, hasMore, loading } = useSqlTransactionLog(type);
     const formatTimestamp = (timestampArray) => {
         if (Array.isArray(timestampArray) && timestampArray.length >= 6) {
-            const [year, month, day, hour, minute, second, ms] = timestampArray;
+            const [year, month, day, hour, minute, second] = timestampArray;
             const dateString = new Date(year, month - 1, day, hour, minute, second);
             return dateString.toLocaleString('en-SG', {
                 year: 'numeric',
