@@ -14,7 +14,29 @@ import {
 import Heading from "../../common/text/Heading";
 import Text from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
-const RegisterStep1Form = ({email, setEmail, username, setUsername, password, setPassword, method}) => {
+import { useToast } from "@chakra-ui/react";
+
+const RegisterStep1Form = ({ email, setEmail, username, setUsername, password, setPassword, confirmPassword, setConfirmPassword, method }) => {
+    const toast = useToast();
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (password !== confirmPassword) {
+            toast({
+                title: "Password Mismatch",
+                description: "Passwords do not match.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "top",
+            });
+            return;
+        }
+
+        method(e);
+    };
+
     return (
         <Box
             bg="brand.400"
@@ -48,7 +70,7 @@ const RegisterStep1Form = ({email, setEmail, username, setUsername, password, se
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
                         <chakra.form
-                            onSubmit={method}
+                            onSubmit={handleSubmit}
                             shadow="base"
                             rounded={[null, "md"]}
                             overflow={{ lg: "hidden" }}
@@ -71,7 +93,6 @@ const RegisterStep1Form = ({email, setEmail, username, setUsername, password, se
                                         >
                                             Email
                                         </FormLabel>
-
                                         <InputGroup size="sm">
                                             <Input
                                                 type="email"
@@ -92,7 +113,6 @@ const RegisterStep1Form = ({email, setEmail, username, setUsername, password, se
                                         >
                                             Username
                                         </FormLabel>
-
                                         <InputGroup size="sm">
                                             <Input
                                                 type="text"
@@ -113,13 +133,32 @@ const RegisterStep1Form = ({email, setEmail, username, setUsername, password, se
                                         >
                                             Password
                                         </FormLabel>
-
                                         <InputGroup size="sm">
                                             <Input
                                                 type="password"
                                                 value={password}
                                                 placeholder="Password"
                                                 onChange={(e) => setPassword(e.target.value)}
+                                                focusBorderColor="brand.400"
+                                                rounded="md"
+                                            />
+                                        </InputGroup>
+                                    </FormControl>
+                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                        <FormLabel
+                                            fontSize="md"
+                                            fontWeight="md"
+                                            color="gray.700"
+                                            _dark={{ color: "gray.50" }}
+                                        >
+                                            Confirm Password
+                                        </FormLabel>
+                                        <InputGroup size="sm">
+                                            <Input
+                                                type="password"
+                                                value={confirmPassword}
+                                                placeholder="Confirm Password"
+                                                onChange={(e) => setConfirmPassword(e.target.value)}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                             />
@@ -142,9 +181,7 @@ const RegisterStep1Form = ({email, setEmail, username, setUsername, password, se
                                     Next
                                 </Button>
                             </Box>
-
                         </chakra.form>
-
                     </GridItem>
                 </SimpleGrid>
             </Box>
