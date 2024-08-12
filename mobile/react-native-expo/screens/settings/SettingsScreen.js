@@ -43,7 +43,7 @@ const SettingsScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#262525',
+        backgroundColor: '#080819',
         padding: 20,
         borderRadius: 20,
         shadowColor: '#000',
