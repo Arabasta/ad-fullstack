@@ -76,16 +76,8 @@ const EditPasswordDetailsForm = () => {
                     <GridItem colSpan={{ md: 1 }}>
                         <Box px={[4, 0]}>
                             <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
-                                Update
+                                Update your details
                             </Heading>
-                            <Text
-                                mt={1}
-                                fontSize="2xl"
-                                color="gray.600"
-                                _dark={{ color: "gray.400" }}
-                            >
-                                your details.
-                            </Text>
                         </Box>
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>

@@ -111,7 +111,7 @@ const RegisterStep4Form = ({
                               color="gray.600"
                               _dark={{ color: "gray.400" }}
                             >
-                                In the financial services industry, adherence to regulatory standards is paramount to maintaining the trust of our users and ensuring the integrity of our operations. FourQuant.ai is committed to full compliance with all relevant laws and regulations governing financial services, data privacy, and consumer protection.
+                                In the financial services industry, adherence to regulatory standards is paramount to maintaining the trust of our users and ensuring the integrity of our operations. FourQuant is committed to full compliance with all relevant laws and regulations governing financial services, data privacy, and consumer protection.
                             </Text>
                         </Box>
                     </GridItem>

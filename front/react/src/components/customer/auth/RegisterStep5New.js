@@ -262,7 +262,7 @@ const RegisterStep5Form = ({
                                             required
                                         />
                                     </FormControl>
-                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 3]}>
+                                    <FormControl color="brand.600" as={GridItem} colSpan={[6, 4]}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
