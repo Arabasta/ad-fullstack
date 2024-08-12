@@ -8,7 +8,9 @@ import com.robotrader.spring.trading.dto.TradeTransaction;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,7 +48,12 @@ public class TradeTransactionLogService implements ITradeTransactionLogService {
 
     @Override
     public Page<TradeTransactionLogDTO> getTradeTransactionLogs(Pageable pageable) {
-        Page<TradeTransactionLog> logs = tradeTransactionLogRepository.findAll(pageable);
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Direction.DESC, "transactionDateTime")
+        );
+        Page<TradeTransactionLog> logs = tradeTransactionLogRepository.findAll(sortedPageable);
         return logs.map(log -> new TradeTransactionLogDTO(
                 log.getTransactionId(),
                 log.getTicker(),

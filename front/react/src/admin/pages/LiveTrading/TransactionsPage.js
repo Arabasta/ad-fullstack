@@ -23,8 +23,16 @@ const TransactionsPage = () => {
 
     const formatTimestamp = (timestampArray) => {
         if (Array.isArray(timestampArray) && timestampArray.length >= 6) {
-            const [year, month, day, hour, minute, second, millisecond] = timestampArray;
-            return new Date(year, month - 1, day, hour, minute, second, millisecond).toLocaleString();
+            const [year, month, day, hour, minute, second, ms] = timestampArray;
+            const dateString = new Date(year, month - 1, day, hour, minute, second);
+            return dateString.toLocaleDateString('en-SG', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            })+` (milliseconds: ${ms})`;
         }
         return "Invalid Date";
     };
