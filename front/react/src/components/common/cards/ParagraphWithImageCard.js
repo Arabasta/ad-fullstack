@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Box,chakra } from '@chakra-ui/react'; // Make sure you have Chakra UI installed
+import {Flex, Box, chakra} from '@chakra-ui/react'; // Make sure you have Chakra UI installed
 import PropTypes from 'prop-types';
 
 const CardComponent = ({title, subtitle, description, button, imageUrl}) => {
@@ -34,7 +34,8 @@ const CardComponent = ({title, subtitle, description, button, imageUrl}) => {
                         fontSize={{ base: "2xl", md: "3xl"}}
                         color="gray.800"
                         fontWeight="bold">
-                        {title}{" "}
+                        {title}
+                        <Box></Box> {/*spacer*/}
                         <chakra.span color="brand.600">
                             {subtitle}
                         </chakra.span>
@@ -42,8 +43,9 @@ const CardComponent = ({title, subtitle, description, button, imageUrl}) => {
                     <chakra.p mt={4} color="gray.600">
                         {description}
                     </chakra.p>
-
-                    {button}
+                    <Box mt="1rem">
+                        {button}
+                    </Box>
                 </Box>
             </Box>
         </Flex>
