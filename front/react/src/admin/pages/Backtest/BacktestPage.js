@@ -52,12 +52,12 @@ const BackTestPage = () => {
                                 labels: response.data.data.labels,
                                 datasets: response.data.data.datasets,
                                 tickerName: selectedTicker,
-                                tickerType: selectedTicker.type,
                                 portfolioType: selectedPortfolioType,
                                 algorithmType: selectedAlgorithmType
                             }
                     });
             } catch (error) {
+                console.log(error)
                 toast({
                     title: 'Error running backtest',
                     description: error.message,
@@ -132,7 +132,7 @@ const BackTestPage = () => {
 
                 <HStack spacing={4}>
                     <Button onClick={handleRunGlobalBackTest}>
-                        Run on all tickers
+                        Run by portfolio type
                     </Button>
 
                     <Modal
