@@ -9,16 +9,16 @@ import SuccessText from "../../../components/common/text/SuccessText";
 import useInvestorProfile from "../../../hooks/useInvestorProfile";
 import InvestorProfileService from "../../../services/InvestorProfileService";
 import InvestorProfileForm from "../../../components/forms/InvestorProfileForm";
-import {investmentDurationOptions, withdrawalSpendingPlanOptions, investmentKnowledgeOptions, riskRewardOptions,
-    ownedInvestmentsOptions, investmentPersonalityOptions} from "../../../constants/InvestorProfileOptions";
+import { investmentDurationOptions, withdrawalSpendingPlanOptions, investmentKnowledgeOptions, riskRewardOptions,
+    ownedInvestmentsOptions, investmentPersonalityOptions } from "../../../constants/InvestorProfileOptions";
 import { getLabelFromValue } from "../../../utils/getLabelFromValue";
-import {validateInvestorProfile} from "../../../utils/validation/validateInvestorProfile";
+import { validateInvestorProfile } from "../../../utils/validation/validateInvestorProfile";
 import Text from "../../../components/common/text/Text";
 
 const InvestorProfileScreen = () => {
     const { investorProfile, recommendedPortfolioType, getInvestorProfile } = useInvestorProfile();
     const [localProfile, setLocalProfile] = useState({});
-    const [error, setError] = useState('');
+    const [error, setError] = useState({});
     const [success, setSuccess] = useState('');
     const [isEditing, setIsEditing] = useState(false);
 
@@ -30,11 +30,11 @@ const InvestorProfileScreen = () => {
 
     const handleSave = async () => {
         setSuccess('');
-        setError('');
+        setError({});
 
-        const { valid, error } = validateInvestorProfile(localProfile);
+        const { valid, validationErrors } = validateInvestorProfile(localProfile);
         if (!valid) {
-            setError(error);
+            setError(validationErrors);
             return;
         }
 
@@ -45,7 +45,7 @@ const InvestorProfileScreen = () => {
             await getInvestorProfile();
         } catch (error) {
             console.error("Error saving investor profile:", error);
-            setError("Failed to save investor profile. Please try again.");
+            setError({ save: "Failed to save investor profile. Please try again." });
             setSuccess('');
         }
     };
@@ -96,11 +96,11 @@ const InvestorProfileScreen = () => {
                 ) : ( <Text>Loading...</Text> )
             ) : (
                 <>
-                    <InvestorProfileForm profile={localProfile} onChange={setLocalProfile} />
+                    <InvestorProfileForm profile={localProfile} onChange={setLocalProfile} error={error} />
 
-                    {error && (
+                    {Object.keys(error).length > 0 && (
                         <ErrorText style={styles.errorTextSpacing}>
-                            {error}
+                            {error.save || "Please fill in all required fields."}
                         </ErrorText>
                     )}
                     <View style={styles.buttonContainer}>
