@@ -46,7 +46,7 @@ const BackTestPage = () => {
                     selectedAlgorithmType,
                     selectedTicker
                 );
-                navigate('/admin/backtest-result',
+                navigate('/backtest-result',
                     { state:
                             {
                                 labels: response.data.data.labels,
