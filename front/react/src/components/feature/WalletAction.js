@@ -64,8 +64,8 @@ const WalletAction = ({ type, onActionComplete }) => {
 
     const handleNextStep = () => {
         if (step === 1) {
-            if (!amount || parseFloat(amount) <= 0) { // client side validation
-                setError('Please enter a valid amount.');
+            if (!amount || parseFloat(amount) <= 0 || parseFloat(amount) > 1000000000) { // client side validation
+                setError('Please enter amount between $0 to $1,000,000,000.');
             } else {
                 setError('');
                 setStep(step + 1);
