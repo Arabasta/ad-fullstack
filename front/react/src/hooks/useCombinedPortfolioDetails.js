@@ -22,6 +22,12 @@ const useCombinedPortfolioDetails = () => {
         conservativePortfolio.portfolio.currentValue
     ]);
 
-    return {conservativePortfolio, moderatePortfolio, aggressivePortfolio, totalCurrentValue};
+    const portfolios = [
+        { type: 'CONSERVATIVE', data: conservativePortfolio.performanceChart },
+        { type: 'MODERATE', data: moderatePortfolio.performanceChart },
+        { type: 'AGGRESSIVE', data: aggressivePortfolio.performanceChart },
+    ];
+
+    return {conservativePortfolio, moderatePortfolio, aggressivePortfolio, portfolios, totalCurrentValue};
 }
 export default useCombinedPortfolioDetails;

@@ -59,7 +59,7 @@ const AdminHeader = () => {
                                 <Link to="/admin/managelivetrading">
                                     <Button variant="ghost">Live Trading</Button>
                                 </Link>
-                                <Link to="/admin/backtest">
+                                <Link to="/backtest">
                                     <Button variant="ghost">Backtest</Button>
                                 </Link>
                                 <Link to="/admin/manage-user">

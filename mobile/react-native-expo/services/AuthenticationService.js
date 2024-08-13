@@ -4,11 +4,16 @@ import { LOGIN_URL, REGISTER_URL } from '../config/api-url/auth_url';
 
 const register = (registrationData) => {
     return axios.post(REGISTER_URL, registrationData).then(response => {
-        const token = response.data.data.jwtToken;
-        if (token) {
-            setToken(token);
+        const { jwtToken: token, role } = response.data.data;
+
+        if (role === 'ROLE_CUSTOMER') {
+            if (token) {
+                setToken(token);
+            }
+            return response.data;
+        } else {
+            throw new Error('Registration is only allowed for customers.');
         }
-        return response.data;
     });
 };
 
@@ -17,11 +22,16 @@ const login = (username, password) => {
         username,
         password,
     }).then(response => {
-        const token = response.data.data.jwtToken;
-        if (token) {
-            setToken(token);
+        const { jwtToken: token, role } = response.data.data;
+
+        if (role === 'ROLE_CUSTOMER') {
+            if (token) {
+                setToken(token);
+            }
+            return response.data;
+        } else {
+            throw new Error('Go to the website for admin login');
         }
-        return response.data;
     });
 };
 

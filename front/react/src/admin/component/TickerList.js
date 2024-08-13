@@ -19,7 +19,7 @@ const TickerList = ({ tickerList, selectedAlgorithmType, amount }) => {
                     selectedAlgorithmType,
                     tickerName
                 );
-                navigate('/admin/backtest-result',
+                navigate('/backtest-result',
                     { state:
                             {
                                 labels: response.data.data.labels,

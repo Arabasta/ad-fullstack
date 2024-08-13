@@ -57,25 +57,27 @@ public class MoneyPoolService implements IMoneyPoolService {
 
     @Override
     @Transactional
-    public BigDecimal updateTrade(TradeTransaction tradeTransaction) {
-        BigDecimal transactionAmount = tradeTransaction.getTransactionAmount();
-        MoneyPool moneyPool = findByPortfolioType(tradeTransaction.getPortfolioType());
+    public BigDecimal updateTrade(TradeTransaction currentTransaction, TradeTransaction lastTransaction) {
+        BigDecimal transactionAmount = currentTransaction.getTransactionAmount();
+        MoneyPool moneyPool = findByPortfolioType(currentTransaction.getPortfolioType());
 
         // Update pool balance
         BigDecimal poolBalance = moneyPool.getPoolBalance();
-        if (tradeTransaction.getAction().equals("BUY")) {
+        if (currentTransaction.getAction().equals("BUY")) {
             transactionAmount = transactionAmount.negate();
         }
         BigDecimal newBalance = poolBalance.add(transactionAmount);
         moneyPool.setPoolBalance(newBalance);
 
-        if (tradeTransaction.getAction().equals("SELL")) {
+        if (currentTransaction.getAction().equals("SELL")) {
             // Update unit price
-            moneyPool.setUnitPrice(newBalance.divide(moneyPool.getTotalUnitQty(), 8, RoundingMode.HALF_UP));
+            BigDecimal unitPriceToAdd = (currentTransaction.getTransactionAmount().subtract(lastTransaction.getTransactionAmount()))
+                    .divide(moneyPool.getTotalUnitQty(), 8, RoundingMode.HALF_UP);
+            moneyPool.setUnitPrice(moneyPool.getUnitPrice().add(unitPriceToAdd));
 
             // Update all portfolio balance by type
             BigDecimal newUnitPrice = moneyPool.getUnitPrice();
-            portfolioService.updateTrade(newUnitPrice, tradeTransaction.getPortfolioType());
+            portfolioService.updateTrade(newUnitPrice, currentTransaction.getPortfolioType());
         }
         save(moneyPool);
         return newBalance;

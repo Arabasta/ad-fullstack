@@ -7,6 +7,8 @@ import LandingPage from "../pages/LandingPage";
 import WalletPage from "../pages/WalletPage";
 import SupportPage from "../pages/SupportPage";
 import SettingsPage from "../pages/settings/SettingsPage";
+import BackTestPage from "../admin/pages/Backtest/BacktestPage";
+import BackTestResultPage from "../admin/pages/Backtest/BackTestResultPage";
 
 const mainRoutes = [
     <Route key="landing" path="/landing" element={<LandingPage />} />,
@@ -17,7 +19,8 @@ const mainRoutes = [
     <Route key="settings" path="/settings" element={<SettingsPage />} />,
   //  <Route key="dashboard" path="/dashboard" element={<DashboardPage />} />,
     <Route key="not-found" path="*" element={<NotFoundPage />} />,
-
+    <Route key="CustomerbackTest" path="/backtest" element={<BackTestPage />} />,
+    <Route key="CustomerbackTestResult" path="/backtest-result" element={<BackTestResultPage />} />,
 ];
 
 export default mainRoutes;

@@ -14,5 +14,5 @@ public interface IMoneyPoolService {
 
     BigDecimal updateFundsToMoneyPool(BigDecimal newUnitsToAdd, PortfolioTypeEnum portfolioType, boolean isAdd);
 
-    BigDecimal updateTrade(TradeTransaction tradeTransaction);
+    BigDecimal updateTrade(TradeTransaction currentTransaction, TradeTransaction lastTransaction);
 }
