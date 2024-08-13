@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class ChartService implements IChartService {
@@ -25,6 +27,7 @@ public class ChartService implements IChartService {
     public ChartDataDTO transformBackTestDTOtoChartDataDTO(BackTestResultDTO backTestResult, int amount) {
         List<LocalDateTime> labels = new ArrayList<>();
         List<BigDecimal> capitalAbsoluteData = new ArrayList<>();
+        List<BigDecimal> percentChangeList = new ArrayList<>();
         List<BigDecimal> capitalPercentChangeData = new ArrayList<>();
 
         BigDecimal initialCapital = backTestResult.getInitialCapitalTest();
@@ -33,15 +36,17 @@ public class ChartService implements IChartService {
         BigDecimal cumulativePercentChange = BigDecimal.ZERO;
         capitalAbsoluteData.add(initialAmount);
         capitalPercentChangeData.add(cumulativePercentChange);
+        percentChangeList.add(BigDecimal.ZERO);
 
         List<ObjectNode> tradeTransactionList = backTestResult.getTradeResults();
-
+System.out.println("trade trans size: " + tradeTransactionList.size());
         if (!tradeTransactionList.isEmpty()) {
             ObjectNode firstTransaction = tradeTransactionList.get(0);
             LocalDateTime initialTime = LocalDateTime.parse(firstTransaction.get("transactionDateTime").asText(), DATE_TIME_FORMATTER);
             labels.add(initialTime);
         }
 
+        // Calculate results of a complete transaction (buy+sell)
         for (int i = 1; i < tradeTransactionList.size(); i++) {
             if (tradeTransactionList.get(i).get("action").asText().equals("SELL")) {
                 ObjectNode buyTransaction = tradeTransactionList.get(i - 1);
@@ -57,22 +62,45 @@ public class ChartService implements IChartService {
                 BigDecimal profitLossAmount = sellPrice.subtract(buyPrice).multiply(quantity);
 
                 BigDecimal percentChange = profitLossAmount
-                        .divide(initialCapital,10, RoundingMode.HALF_UP)
+                        .divide(initialCapital,4, RoundingMode.HALF_UP)
                         .multiply(BigDecimal.valueOf(100));
-                cumulativePercentChange = cumulativePercentChange.add(percentChange);
-
-                capitalPercentChangeData.add(cumulativePercentChange.setScale(2, RoundingMode.HALF_UP));
+                percentChangeList.add(percentChange);
 
 
-                 newAmount = initialAmount.add(initialAmount.multiply(cumulativePercentChange.divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP))).setScale(2, RoundingMode.HALF_UP);
-                capitalAbsoluteData.add(newAmount);
             }
         }
+        System.out.println("percent change list size" + percentChangeList.size());
+        System.out.println("labels size" + labels.size());
+        // Need to sort the 3 lists according to timestamp as the back test results DTO are arranged by ticker type to determine complete transaction
+        List<Integer> indices = IntStream.range(0, labels.size())
+                .boxed()
+                .sorted(Comparator.comparing(labels::get))
+                .collect(Collectors.toList());
+
+        List<LocalDateTime> sortedLabels = new ArrayList<>();
+//        List<BigDecimal> sortedCapitalAbsoluteData = new ArrayList<>();
+        List<BigDecimal> sortedPercentChangeList = new ArrayList<>();
+
+        for (int index : indices) {
+            sortedLabels.add(labels.get(index));
+//            sortedCapitalAbsoluteData.add(capitalAbsoluteData.get(index));
+            sortedPercentChangeList.add(percentChangeList.get(index));
+        }
+
+        for (int i = 1; i < sortedPercentChangeList.size(); i++) {
+            cumulativePercentChange = cumulativePercentChange.add(sortedPercentChangeList.get(i));
+            capitalPercentChangeData.add(cumulativePercentChange.setScale(2, RoundingMode.HALF_UP));
+
+            newAmount = initialAmount.add(initialAmount.multiply(cumulativePercentChange.divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP))).setScale(2, RoundingMode.HALF_UP);
+            capitalAbsoluteData.add(newAmount);
+        }
+System.out.println("capital % change size: " + capitalPercentChangeData.size());
+        System.out.println("capital abs size: " + capitalAbsoluteData.size());
 
         ChartDatasetDTO capitalDataset = new ChartDatasetDTO("Capital", capitalAbsoluteData, "y-axis-1");
         ChartDatasetDTO percentChangeDataset = new ChartDatasetDTO("Percent Change", capitalPercentChangeData, "y-axis-2");
 
-        return new ChartDataDTO(labels, Arrays.asList(capitalDataset, percentChangeDataset));
+        return new ChartDataDTO(sortedLabels, Arrays.asList(capitalDataset, percentChangeDataset));
     }
 
     @Override
