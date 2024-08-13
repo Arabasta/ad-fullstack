@@ -4,18 +4,16 @@ import TextInputWithHelper from "../common/input/TextInputWithHelper";
 import ResetStopLossTriggerByPortfolio from "./ResetStopLossTriggerByPortfolio";
 import ButtonPrimary from "../common/button/ButtonPrimary";
 import Container from "../common/container/Container";
-import useRule from "../../hooks/useRule";
 import ErrorText from "../common/text/ErrorText";
 import SuccessText from "../common/text/SuccessText";
 import { View, StyleSheet } from "react-native";
 
-const UpdateRulesByPortfolio = ({ portfolioType, rule, onReset }) => {
+const UpdateRulesByPortfolio = ({ portfolioType, rule, onReset, onUpdate}) => {
     const [formData, setFormData] = useState({});
     const [invalidForSubmission, setInvalidForSubmission] = useState(false);
     const [errorText, setErrorText] = useState("");
     const [successText, setSuccessText] = useState("");
     const { wallet, getWallet } = useWallet();
-    const { updateRule } = useRule(portfolioType);
 
     useEffect(() => {
         if (rule) {
@@ -60,17 +58,12 @@ const UpdateRulesByPortfolio = ({ portfolioType, rule, onReset }) => {
         }));
     };
 
-    const handleSubmit = async () => {
-        if (invalidForSubmission) return;
-
-        try {
-            await updateRule(formData);
-            setSuccessText("Rules updated successfully.");
-            setErrorText("");
-        } catch (err) {
-            setErrorText("Failed to update rules. Please try again later.");
-            setSuccessText("");
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (invalidForSubmission) {
+            return; // Prevent form submission if invalid for submission
         }
+        onUpdate(formData);
     };
 
     return (
