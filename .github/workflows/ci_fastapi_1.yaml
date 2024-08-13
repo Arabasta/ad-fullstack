@@ -3,12 +3,12 @@ name: fastapi CI
 on:
   push:
     branches-ignore:
-      - 'release/v[0-9]+.[0-9]+'
+      - 'release/**'
     paths:
       - 'back/fastapi/**'
   pull_request:
     branches-ignore:
-      - 'release/v[0-9]+.[0-9]+'
+      - 'release/**'
     paths:
       - 'back/fastapi/**'
 
