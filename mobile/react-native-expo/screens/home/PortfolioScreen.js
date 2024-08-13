@@ -7,9 +7,10 @@ import Dashboard from "../../components/home/Dashboard";
 import usePortfolio from "../../hooks/usePortfolio";
 import { FAB } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
+import LineChartDisplay from "../../components/common/chart/LineChartDisplay";
 
 const PortfolioScreen = ({ route, navigation }) => {
-    const { portfolio } = route.params;
+    const { portfolio = {}, chartData =[], labels = [], firstLabelFormatted = '', lastLabelFormatted='', yAxisTitle='' } = route.params || {};
     const { getPortfolio } = usePortfolio(portfolio.portfolioType);
 
     const refreshPortfolio = async () => {
@@ -28,10 +29,29 @@ const PortfolioScreen = ({ route, navigation }) => {
 
     return (
         <Container>
-            <Text variant="headlineMedium">${portfolio.currentValue || 0.00}</Text>
-
             {/* Portfolio Dashboard */}
-            <Dashboard portfolio={portfolio} />
+            <Dashboard
+                header={portfolio.currentValue}
+                portfolio={portfolio}
+                chart={
+                    chartData && labels ? (
+                        <LineChartDisplay datasets={[chartData]}
+                                          labels={labels}
+                                          yAxisTitle={yAxisTitle}
+                                          xAxisTitle={
+                                               <View style={styles.xAxisTitleContainer}>
+                                                   <Text style={styles.labelText}>{lastLabelFormatted}</Text>
+                                                   <Text style={styles.xAxisTitle}>Time</Text>
+                                                   <Text style={styles.labelText}>{firstLabelFormatted}</Text>
+
+                                               </View>
+                                           }/>
+                    ) : (
+                        <Text>No data available for this chart</Text>
+                    )
+                }
+
+            />
 
             {/* Withdraw, Deposit and History Buttons */}
             <View style={styles.buttonContainer}>
@@ -83,6 +103,22 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
         backgroundColor: '#6200EE',
+    },
+    xAxisTitleContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+    },
+    xAxisTitle: {
+        fontSize: 12,
+        color: '#000',
+        marginHorizontal: 10,
+    },
+    labelText: {
+        fontSize: 10, // Adjust the font size for the first and last labels
+        color: '#000',
+        fontWeight: 'bold', // Bold the text
     },
 });
 

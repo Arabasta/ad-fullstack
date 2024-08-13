@@ -9,14 +9,20 @@ import ManageRulesScreen from "../screens/home/ManageRulesScreen";
 const Stack = createNativeStackNavigator();
 
 const PortfolioStack = ({ route }) => {
-    const { portfolio } = route.params || {};
+    const { portfolio, chartData, labels, firstLabelFormatted, lastLabelFormatted, yAxisTitle } = route.params || {};
 
     return (
         <Stack.Navigator>
             <Stack.Screen
                 name="Portfolio"
                 component={PortfolioScreen}
-                initialParams={{ portfolio }}
+                initialParams={{
+                    portfolio: portfolio || {},
+                    chartData: chartData || [],
+                    labels: labels || [],
+                    firstLabelFormatted: firstLabelFormatted || '',
+                    lastLabelFormatted: lastLabelFormatted || '',
+                    yAxisTitle: yAxisTitle || '' }}
                 options={{ headerTitle: `${portfolio?.portfolioType || ''} Portfolio` }}
             />
             <Stack.Screen
