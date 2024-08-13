@@ -16,7 +16,7 @@ const BackTestPage = () => {
     const [amount, setAmount] = useState('');
     const toast = useToast();
     const [validationError, setValidationError] = useState('');
-
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedTicker] = useState(null);
     const navigate = useNavigate();
 
@@ -40,6 +40,7 @@ const BackTestPage = () => {
 
     const handleRunGlobalBackTest = async () => {
         if (selectedPortfolioType && selectedAlgorithmType && amount) {
+            setIsLoading(true);
             try {
                 console.log('Running BackTest with:', {
                     portfolioType: selectedPortfolioType,
@@ -73,6 +74,8 @@ const BackTestPage = () => {
                     isClosable: true,
                     position: "top"
                 });
+            } finally {
+                setIsLoading(false);
             }
         } else {
             toast({
@@ -156,6 +159,11 @@ const BackTestPage = () => {
                     >
                         <TickerList tickerList={tickerList} selectedAlgorithmType={selectedAlgorithmType} amount={amount} validationError={validationError}/>
                     </Modal>
+                    {isLoading && (
+                      <Text fontSize="xl" fontWeight="bold" color="black.600" textAlign="up">
+                          Loading...
+                      </Text>
+                    )}
                 </HStack>
                 <Text mt={4} fontSize="sm" color="gray.600">
                     * Results are for illustration purposes and returns are not guaranteed<br/>
