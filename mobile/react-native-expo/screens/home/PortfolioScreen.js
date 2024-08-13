@@ -7,7 +7,7 @@ import Dashboard from "../../components/home/Dashboard";
 import usePortfolio from "../../hooks/usePortfolio";
 import { FAB } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import LineChartDisplay2 from "../../components/common/chart/LineChartDisplay2";
+import LineChartDisplay from "../../components/common/chart/LineChartDisplay";
 
 const PortfolioScreen = ({ route, navigation }) => {
     const { portfolio = {}, chartData =[], labels = [], firstLabelFormatted = '', lastLabelFormatted='', yAxisTitle='' } = route.params || {};
@@ -35,10 +35,10 @@ const PortfolioScreen = ({ route, navigation }) => {
                 portfolio={portfolio}
                 chart={
                     chartData && labels ? (
-                        <LineChartDisplay2 datasets={[chartData]}
-                                           labels={labels}
-                                           yAxisTitle={yAxisTitle}
-                                           xAxisTitle={
+                        <LineChartDisplay datasets={[chartData]}
+                                          labels={labels}
+                                          yAxisTitle={yAxisTitle}
+                                          xAxisTitle={
                                                <View style={styles.xAxisTitleContainer}>
                                                    <Text style={styles.labelText}>{lastLabelFormatted}</Text>
                                                    <Text style={styles.xAxisTitle}>Time</Text>

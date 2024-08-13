@@ -4,7 +4,7 @@ import Dashboard from '../../components/home/Dashboard';
 import PortfolioButton from '../../components/home/PortfolioButton';
 import Container from "../../components/common/container/Container";
 import usePortfolio from '../../hooks/usePortfolio';
-import LineChartDisplay2 from "../../components/common/chart/LineChartDisplay2";
+import LineChartDisplay from "../../components/common/chart/LineChartDisplay";
 import {Text, View, StyleSheet} from 'react-native'
 import TouchableOpacity from "../../components/common/button/TouchableOpacity";
 
@@ -125,7 +125,7 @@ const HomeScreen = ({ navigation }) => {
             <Dashboard
                 header={totalCurrentValue}
                 chart={filteredDatasets.length > 0 ? (
-                    <LineChartDisplay2
+                    <LineChartDisplay
                         datasets={filteredDatasets}
                         labels={combinedLabels}
                         yAxisTitle={view === 'portfolioValue' ? "Portfolio Value ($)" : "Performance (%)"}
