@@ -5,7 +5,7 @@ import useRule from "../../hooks/useRule";
 import ErrorText from "../../components/common/text/ErrorText";
 import SuccessText from "../../components/common/text/SuccessText";
 
-const ManageRulesScreen = ({ portfolioType, modalTitle }) => {
+const ManageRulesScreen = ({ portfolioType }) => {
     const { rule, error, message, updateRule, resetStopLoss } = useRule(portfolioType);
     const [hasUpdated, setHasUpdated] = useState(false);
     const [errorText, setErrorText] = useState("");
