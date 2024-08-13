@@ -105,6 +105,13 @@ const WalletAction = ({ type, onActionComplete }) => {
         }
     };
 
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(amount);
+    };
+
     return (
         <Modal
             triggerText={actionText}
@@ -162,7 +169,7 @@ const WalletAction = ({ type, onActionComplete }) => {
                     <Box textAlign="center">
                         <CheckCircleIcon boxSize={20} color="green.500" />
                         <Heading color="black" size="lg" mt={4}>
-                            Successfully {isDeposit ? 'added' : 'withdrew'} ${amount} {isDeposit ? 'into' : 'from'} your wallet!
+                            Successfully {isDeposit ? 'added' : 'withdrew'} {formatCurrency(amount)} {isDeposit ? 'into' : 'from'} your wallet!
                         </Heading>
                     </Box>
                 )}
