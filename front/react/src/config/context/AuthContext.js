@@ -42,12 +42,17 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         authenticationService.logout();
         setIsAuthenticated(false);
-        setIsCustomer(false);
+
+        // Set the role to customer before navigating
+        setIsCustomer(true);
+        navigate('/');
+
+        // After navigating, perform any other operations
         sessionStorage.removeItem('isAuthenticated');
         sessionStorage.removeItem('isCustomer');
         localStorage.removeItem('token');
-        navigate('/');
     };
+
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, isCustomer, register, login, logout }}>
