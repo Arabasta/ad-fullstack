@@ -19,7 +19,6 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -112,10 +111,10 @@ public class LiveTradingStrategy implements TradingStrategy {
                     tradingAlgorithm.setPricePredictions(predictionDTO.getPredictions());
                 })
                 .doOnNext(data -> {
-                    TradeTransaction lastTransactionBeforeExecution = tradingAlgorithm.getLastTradeTransaction();
+                    TradeTransaction lastTransactionBeforeExecution = tradingAlgorithm.getCurrentTradeTransaction();
                     boolean isTest = false;
                     tradingAlgorithm.execute(isTest);
-                    TradeTransaction newTransaction = tradingAlgorithm.getLastTradeTransaction();
+                    TradeTransaction newTransaction = tradingAlgorithm.getCurrentTradeTransaction();
 
                     // Only process the trade if a new transaction was created
                     if (newTransaction != null && !newTransaction.equals(lastTransactionBeforeExecution)) {
@@ -174,7 +173,7 @@ public class LiveTradingStrategy implements TradingStrategy {
     @Override
     public void stop() {
         if (tradingAlgorithm.stopLiveTrade()) {
-            TradeTransaction transaction = tradingAlgorithm.getLastTradeTransaction();
+            TradeTransaction transaction = tradingAlgorithm.getCurrentTradeTransaction();
             if (transaction != null) {
                 processTrade(transaction);
             }

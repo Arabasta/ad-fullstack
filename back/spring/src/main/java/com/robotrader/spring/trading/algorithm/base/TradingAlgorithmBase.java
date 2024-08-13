@@ -36,6 +36,7 @@ public abstract class TradingAlgorithmBase {
     protected BigDecimal currentCapitalTest;
     protected boolean isTest;
     protected final BigDecimal HIGH_PRICE_THRESHOLD = BigDecimal.valueOf(10000);
+    protected TradeTransaction currentTradeTransaction;
     protected TradeTransaction lastTradeTransaction;
     private boolean liveTradeBuySignalTrigger;
     private static final Logger logger = LoggerFactory.getLogger(TradingAlgorithmBase.class);
@@ -148,24 +149,26 @@ public abstract class TradingAlgorithmBase {
         LocalDateTime dt = DateTimeUtil.convertTimestampToLocalDateTime((Long) priceHistory.get("timestamp").get(0));
         BigDecimal currentPrice = (BigDecimal) priceHistory.get("close").get(0);
 
-        lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action, portfolioType);
+        currentTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action, portfolioType);
         BigDecimal transactionAmount = currentPrice.multiply(position);
         if (action.equals("BUY")) {
             transactionAmount = transactionAmount.negate();
         }
         currentCapitalTest = currentCapitalTest.add(transactionAmount);
 
-        logger.debug("Trade: {}", lastTradeTransaction);
+        logger.debug("Trade: {}", currentTradeTransaction);
         logger.debug("New Capital:{}", currentCapitalTest);
     }
 
     public void executeTradeLive(String action) {
         LocalDateTime dt = LocalDateTime.now();
-        lastTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action, portfolioType);
+        currentTradeTransaction = new TradeTransaction(ticker, dt, position, currentPrice, action, portfolioType);
         BigDecimal initialBalance = moneyPoolService.findByPortfolioType(portfolioType).getPoolBalance();
-        BigDecimal newBalance = moneyPoolService.updateTrade(lastTradeTransaction);
+        BigDecimal newBalance = moneyPoolService.updateTrade(currentTradeTransaction, lastTradeTransaction);
 
-        logger.debug("Trade: {}", lastTradeTransaction);
+        lastTradeTransaction = currentTradeTransaction;
+
+        logger.debug("Trade: {}", currentTradeTransaction);
         logger.debug("Initial Capital:{}", initialBalance);
         logger.debug("New Capital:{}", newBalance);
     }
@@ -181,7 +184,7 @@ public abstract class TradingAlgorithmBase {
 
     public boolean openTrade() {
         // Only allow 1 open trade per stock
-        return lastTradeTransaction != null && lastTradeTransaction.getAction().equals("BUY");
+        return currentTradeTransaction != null && currentTradeTransaction.getAction().equals("BUY");
     }
 
     public BigDecimal calculateAdjustedRisk(BigDecimal baseRisk, BigDecimal stopLossAmount, BigDecimal currentPrice) {
@@ -201,7 +204,7 @@ public abstract class TradingAlgorithmBase {
     }
 
     public boolean stopLiveTrade() {
-        if (lastTradeTransaction != null && lastTradeTransaction.getAction().equals("BUY")) {
+        if (currentTradeTransaction != null && currentTradeTransaction.getAction().equals("BUY")) {
             executeTradeLive("SELL");
             return true;
         }

@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,7 +75,7 @@ public class BackTestingStrategy implements TradingStrategy {
                         return getPricePredictions(marketDataHistory, tradingAlgorithmBase.getTicker())
                                 .doOnNext(predictionDTO -> {
                                     List<BigDecimal> pricePredictions = predictionDTO.getPredictions();
-                                    TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getLastTradeTransaction();
+                                    TradeTransaction lastTransactionBeforeExecution = tradingAlgorithmBase.getCurrentTradeTransaction();
 
                                     tradingAlgorithmBase.setPricePredictions(new ArrayList<>(pricePredictions));
                                     tradingAlgorithmBase.setPriceHistory(new HashMap<>(marketDataHistory));
@@ -104,7 +103,7 @@ public class BackTestingStrategy implements TradingStrategy {
                                     marketDataHistory.put("low", lowPrices);
                                     marketDataHistory.put("vw", vwPrices);
 
-                                    TradeTransaction newTransaction = tradingAlgorithmBase.getLastTradeTransaction();
+                                    TradeTransaction newTransaction = tradingAlgorithmBase.getCurrentTradeTransaction();
                                     // Only process the trade if a new transaction was created
                                     if (newTransaction != null && !newTransaction.equals(lastTransactionBeforeExecution)) {
                                         processTrade(newTransaction);
