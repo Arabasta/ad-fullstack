@@ -34,13 +34,13 @@ const AdminHeader = () => {
             const scrolledToBottom = currentScrollY + windowHeight >= pageHeight;
 
             if (scrolledToBottom) {
-                // 滚动到页面底部，显示导航栏
+
                 setShowHeader(true);
             } else if (currentScrollY > lastScrollY) {
-                // 向下滚动且未到底部时隐藏导航栏
+
                 setShowHeader(false);
             } else {
-                // 向上滚动时显示导航栏
+
                 setShowHeader(true);
             }
 
