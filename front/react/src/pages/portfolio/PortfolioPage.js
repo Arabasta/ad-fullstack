@@ -15,13 +15,7 @@ import useCombinedPortfolioDetails from "../../hooks/useCombinedPortfolioDetails
 export default function PortfolioPage() {
     const navigate = useNavigate();
     const [view, setView] = useState('portfolioValue');
-    const {conservativePortfolio, moderatePortfolio, aggressivePortfolio, totalCurrentValue} = useCombinedPortfolioDetails();
-
-    const portfolios = [
-        { type: 'CONSERVATIVE', data: conservativePortfolio.performanceChart },
-        { type: 'MODERATE', data: moderatePortfolio.performanceChart },
-        { type: 'AGGRESSIVE', data: aggressivePortfolio.performanceChart },
-    ];
+    const {portfolios, totalCurrentValue} = useCombinedPortfolioDetails();
 
     const handleToggle = () => {
         setView(view === 'portfolioValue' ? 'performance' : 'portfolioValue');
@@ -85,10 +79,7 @@ export default function PortfolioPage() {
     };
 
     const handlePortfolioSelection = (type) => {
-        const {chartData, labels} = getDataByType(type);
-        navigate(`/portfolio/${type.toLowerCase()}`, {
-            state: { portfolios, combinedData, chartData, labels, view, toPassDate }
-        });
+        navigate(`/portfolio/${type.toLowerCase()}`);
     };
 
 
