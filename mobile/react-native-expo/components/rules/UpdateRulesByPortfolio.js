@@ -1,16 +1,21 @@
-import TextInput from "../common/input/TextInput";
-import {useEffect, useState} from "react";
-import {Alert, View} from "react-native";
+import React, { useState, useEffect } from "react";
 import useWallet from "../../hooks/useWallet";
-import Text from "../common/text/Text";
+import TextInputWithHelper from "../common/input/TextInputWithHelper";
 import ResetStopLossTriggerByPortfolio from "./ResetStopLossTriggerByPortfolio";
 import ButtonPrimary from "../common/button/ButtonPrimary";
+import Container from "../common/container/Container";
+import useRule from "../../hooks/useRule";
+import ErrorText from "../common/text/ErrorText";
+import SuccessText from "../common/text/SuccessText";
+import { View, StyleSheet } from "react-native";
 
-
-const UpdateRulesByPortfolio = ({ onUpdate, rule, portfolioType, onReset }) => {
+const UpdateRulesByPortfolio = ({ portfolioType, rule, onReset }) => {
     const [formData, setFormData] = useState({});
     const [invalidForSubmission, setInvalidForSubmission] = useState(false);
+    const [errorText, setErrorText] = useState("");
+    const [successText, setSuccessText] = useState("");
     const { wallet, getWallet } = useWallet();
+    const { updateRule } = useRule(portfolioType);
 
     useEffect(() => {
         if (rule) {
@@ -25,7 +30,7 @@ const UpdateRulesByPortfolio = ({ onUpdate, rule, portfolioType, onReset }) => {
     const handleChange = (name, value) => {
         if (name === 'stopLoss') {
             if (value < 0 || value > 100) {
-                Alert.alert("Error", "Stop Loss percentage must be between 0 and 100.");
+                setErrorText("Stop Loss percentage must be between 0 and 100.");
                 setInvalidForSubmission(true);
                 return;
             }
@@ -33,7 +38,7 @@ const UpdateRulesByPortfolio = ({ onUpdate, rule, portfolioType, onReset }) => {
 
         if (name === 'recurringAllocationAmount') {
             if (value < 0 || value > wallet) {
-                Alert.alert("Error", `Recurring Allocation Amount must be positive and less than wallet balance.`);
+                setErrorText(`Recurring Allocation Amount must be positive and less than wallet balance.`);
                 setInvalidForSubmission(true);
                 return;
             }
@@ -41,51 +46,74 @@ const UpdateRulesByPortfolio = ({ onUpdate, rule, portfolioType, onReset }) => {
 
         if (name === 'recurringAllocationDay') {
             if (value < 1 || value > 28) {
-                Alert.alert("Error", "Recurring Allocation Day must be within 1 and 28.");
+                setErrorText("Recurring Allocation Day must be within 1 and 28.");
                 setInvalidForSubmission(true);
                 return;
             }
         }
 
         setInvalidForSubmission(false);
+        setErrorText("");  // Clear any previous errors
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (invalidForSubmission) return;
-        onUpdate(formData);
+
+        try {
+            await updateRule(formData);
+            setSuccessText("Rules updated successfully.");
+            setErrorText("");
+        } catch (err) {
+            setErrorText("Failed to update rules. Please try again later.");
+            setSuccessText("");
+        }
     };
 
     return (
-        <View>
-            <Text>Stop Loss (%):</Text>
-            <TextInput
-                keyboardType="numeric"
+        <Container>
+            <TextInputWithHelper
+                label="Stop Loss (%)"
                 value={formData.stopLoss?.toString() || ''}
                 onChangeText={(value) => handleChange('stopLoss', Number(value))}
-            />
-
-            <Text>Recurring Allocation Amount ($):</Text>
-            <TextInput
                 keyboardType="numeric"
+            />
+            <TextInputWithHelper
+                label="Recurring Allocation Amount ($)"
                 value={formData.recurringAllocationAmount?.toString() || ''}
                 onChangeText={(value) => handleChange('recurringAllocationAmount', Number(value))}
-            />
-
-            <Text>Recurring Allocation Day of Month:</Text>
-            <TextInput
                 keyboardType="numeric"
+            />
+            <TextInputWithHelper
+                label="Recurring Allocation Day of Month"
                 value={formData.recurringAllocationDay?.toString() || ''}
                 onChangeText={(value) => handleChange('recurringAllocationDay', Number(value))}
+                keyboardType="numeric"
             />
-
-            <ButtonPrimary title="Update Rule" onPress={handleSubmit} />
+            <View style={styles.messageContainer}>
+                {errorText ? <ErrorText>{errorText}</ErrorText> : null}
+                {successText ? <SuccessText>{successText}</SuccessText> : null}
+            </View>
+            <ButtonPrimary
+                title="Update Rule"
+                onPress={handleSubmit}
+                style={styles.button}
+            />
             <ResetStopLossTriggerByPortfolio onReset={onReset} />
-        </View>
+        </Container>
     );
 };
+
+const styles = StyleSheet.create({
+    button: {
+        marginTop: 20,
+    },
+    messageContainer: {
+        marginBottom: 10,
+    },
+});
 
 export default UpdateRulesByPortfolio;

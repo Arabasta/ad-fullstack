@@ -1,11 +1,11 @@
-import {View} from "react-native";
-import ButtonPrimary from "../common/button/ButtonPrimary";
+import Container from "../common/container/Container";
+import ButtonSecondary from "../common/button/ButtonSecondary";
 
 const ResetStopLossTriggerByPortfolio = ({ onReset }) => {
     return (
-        <View>
-            <ButtonPrimary title="Apply Stop Loss (%) on Current Portfolio Value" onPress={onReset} />
-        </View>
+        <Container>
+            <ButtonSecondary title="Apply Stop Loss (%)" onPress={onReset} />
+        </Container>
     );
 };
 
