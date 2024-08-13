@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     chakra,
     Box,
@@ -23,6 +23,37 @@ const AdminHeader = () => {
     const mobileNav = useDisclosure();
     const { isAuthenticated, logout } = useContext(AuthContext);
 
+    const [showHeader, setShowHeader] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            const pageHeight = document.documentElement.scrollHeight;
+            const windowHeight = window.innerHeight;
+            const scrolledToBottom = currentScrollY + windowHeight >= pageHeight;
+
+            if (scrolledToBottom) {
+                // 滚动到页面底部，显示导航栏
+                setShowHeader(true);
+            } else if (currentScrollY > lastScrollY) {
+                // 向下滚动且未到底部时隐藏导航栏
+                setShowHeader(false);
+            } else {
+                // 向上滚动时显示导航栏
+                setShowHeader(true);
+            }
+
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [lastScrollY]);
+
     return (
         <chakra.header
             bg={bg}
@@ -30,6 +61,11 @@ const AdminHeader = () => {
             px={{ base: 2, sm: 4 }}
             py={4}
             shadow="md"
+            position="sticky"
+            top={0}
+            zIndex={10}
+            transition="transform 0.3s ease"
+            transform={showHeader ? 'translateY(0)' : 'translateY(-100%)'}
         >
             <Flex alignItems="center" justifyContent="space-between" mx="auto">
                 <Flex>
@@ -53,7 +89,6 @@ const AdminHeader = () => {
                         color="brand.100"
                         display={{ base: "none", md: "inline-flex" }}
                     >
-
                         {isAuthenticated ? (
                             <>
                                 <Link to="/admin/managelivetrading">
@@ -130,10 +165,10 @@ const AdminHeader = () => {
 
                             {isAuthenticated ? (
                                 <>
-                                    <Link to="/admin/livetrading">
+                                    <Link to="/admin/managelivetrading">
                                         <Button w="full" variant="ghost">Live Trading</Button>
                                     </Link>
-                                    <Link to="/admin/backtest">
+                                    <Link to="/backtest">
                                         <Button w="full" variant="ghost">Backtest</Button>
                                     </Link>
                                     <Link to="/admin/manage-user">
