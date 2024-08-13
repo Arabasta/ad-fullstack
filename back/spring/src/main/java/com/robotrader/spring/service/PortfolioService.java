@@ -247,7 +247,7 @@ public class PortfolioService implements IPortfolioService {
         findPortfolioByType(portfolioTypeEnum)
                 .stream()
                 .forEach(portfolio -> {
-                    if (portfolio.getAllocatedUnitQty().compareTo(BigDecimal.ZERO) != 0) {
+                    if (portfolio.getAllocatedUnitQty().compareTo(BigDecimal.valueOf(0.0001)) > 0) {
                         portfolio.setCurrentValue(newUnitPrice.multiply(portfolio.getAllocatedUnitQty()));
                         save(portfolio);
                         portfolioHistoryLogService.log(portfolio);
