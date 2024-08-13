@@ -125,7 +125,7 @@ public abstract class TradingAlgorithmBase {
         // Calculate the position size
         position = positionSizing(baseAlgoRisk);
         logger.info("Calculated position size: {}", position);
-        if (position.equals(BigDecimal.ZERO)) {
+        if (position.compareTo(BigDecimal.ZERO) == 0) {
             logger.info("Insufficient capital");
             return false;
         }
