@@ -9,7 +9,11 @@ import {
     Title,
     Tooltip,
     Legend,
+    TimeScale
 } from "chart.js";
+
+import 'chartjs-adapter-date-fns';
+
 
 ChartJS.register(
     CategoryScale,
@@ -18,10 +22,35 @@ ChartJS.register(
     PointElement,
     Title,
     Tooltip,
-    Legend
+    Legend,
+    TimeScale
 );
 
 const LineChart2 = ({ labels, datasets, view, scaleToFit }) => {
+    // Get the first and last ticker
+    const firstLabel = new Date(labels[0]);
+    const lastLabel = new Date(labels[labels.length - 1]);
+
+    // Calculate the total time difference (in milliseconds)
+    const totalTimeDifference = lastLabel - firstLabel;
+
+    // Calculate the increment size (in milliseconds)
+    const incrementSize = totalTimeDifference / (labels.length - 1);
+
+    // Generate new set of x-tickers
+    const newXTickers = [];
+    for (let i = 0; i < labels.length; i++) {
+        //const newTickerTime = new Date(firstLabel.getTime() + i * incrementSize);
+        const newTickerMinutes = Math.ceil((i * incrementSize) / (60000));
+        newXTickers.push(newTickerMinutes);
+        //newXTickers.push(newTickerTime);
+        //newXTickers.push(newTickerTime.toISOString());
+    }
+
+    // Debugging: Log the original and new x-tickers
+    console.log("Original Labels:", labels);
+    console.log("New X-Tickers:", newXTickers);
+
     const data = {
         labels,
         datasets: datasets.length > 0 ? datasets.map((dataset, index) => ({
@@ -41,7 +70,7 @@ const LineChart2 = ({ labels, datasets, view, scaleToFit }) => {
 
     const options = {
         responsive: true,
-        maintainAspectRatio: !scaleToFit, // If scaleToFit is true, don't maintain aspect ratio
+        maintainAspectRatio: false, // If scaleToFit is true, don't maintain aspect ratio
         aspectRatio: labels.length < 5 ? 2 : 3, // Adjust aspect ratio based on data points
         scales: {
             "y-axis-1": {
@@ -85,6 +114,11 @@ const LineChart2 = ({ labels, datasets, view, scaleToFit }) => {
                         size: 14
                     }
                 },
+                ticks: {
+                    callback: function(value, index, values) {
+                        return newXTickers[index]; // Display increment values as tickers
+                    }
+                }
             },
         },
     };

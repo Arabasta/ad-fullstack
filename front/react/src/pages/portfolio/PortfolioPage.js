@@ -25,14 +25,17 @@ export default function PortfolioPage() {
         return labels.map(label => {
             const [year, month, day, hour, minute, second] = label;
             const date = new Date(year, month - 1, day, hour, minute, second);
+            //return date.toISOString(); // Return ISO 8601 string
+
             return date.toLocaleString('en-SG', {
-                //year: 'numeric',
-                //month: 'short',
-                //day: 'numeric',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true,
             });
+
         });
     }
 
@@ -46,6 +49,8 @@ export default function PortfolioPage() {
     }) : '';
 
     const combinedLabels = portfolios[0].data ? formatLabels(portfolios[0].data.labels) : [];
+
+    const combinedLabelsUnformatted = portfolios[0].data ? portfolios[0].data.labels : [];
 
     const combinedData = portfolios.map((portfolio, index) => {
         const datasetIndex = view === 'portfolioValue' ? 0 : 1;
