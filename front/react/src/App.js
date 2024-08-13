@@ -8,10 +8,11 @@ import profileRoutes from './routes/ProfileRoutes';
 import portfolioRoutes from './routes/PortfolioRoutes';
 import Header from "./components/common/layout/Header";
 import Footer from "./components/common/layout/Footer";
-import AdminRoutes from "./admin/Routes/adminRoutes";
 import settingRoutes from "./routes/SettingRoutes";
 import AdminHeader from "./admin/component/Header/adminHeader";
-import UnProtectedRoute from "./routes/unProtectedRoute";
+import customerUnProtectedRoutes from "./routes/CustomerUnProtectedRoute";
+import adminRoutes from "./admin/Routes/adminRoutes";
+import adminUnprotectedRoute from "./admin/Routes/adminUnprotectedRoute";
 
 const App = () => {
     return (
@@ -38,10 +39,14 @@ const AppContent = () => {
                 <Routes>
                     {authRoutes}
                     {!isCustomer ? (
-                        <AdminRoutes />
+                        <>
+                            {adminUnprotectedRoute}
+                            {isAuthenticated && adminRoutes}
+
+                        </>
                     ) : (
                         <>
-                            {UnProtectedRoute}
+                            {customerUnProtectedRoutes}
                             {/* only login can access the route */}
                             {isAuthenticated && settingRoutes}
                             {isAuthenticated && profileRoutes}
