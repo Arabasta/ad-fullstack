@@ -30,5 +30,3 @@ export const countryOptions = countries.map(country => ({
     label: country,
     value: country
 }));
-
-export default countryOptions;

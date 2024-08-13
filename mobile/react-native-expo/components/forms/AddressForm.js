@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import TextInputWithHelper from '../common/input/TextInputWithHelper';
-import { countryOptions } from "../../constants/Countries";
+import { countryOptions } from "../../constants/CountryOptions";
 import DropdownInput from "../common/input/DropdownInput";
 
 const AddressForm = ({ addressValues, handleInputChange, error }) => {
