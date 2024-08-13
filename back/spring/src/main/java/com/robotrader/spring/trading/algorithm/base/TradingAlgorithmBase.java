@@ -33,7 +33,7 @@ public abstract class TradingAlgorithmBase {
     protected BigDecimal stopLossAmount;
     protected BigDecimal profitTarget;
     protected BigDecimal initialCapitalTest;
-    protected static BigDecimal currentCapitalTest;
+    protected BigDecimal currentCapitalTest;
     protected boolean isTest;
     protected final BigDecimal HIGH_PRICE_THRESHOLD = BigDecimal.valueOf(10000);
     protected TradeTransaction lastTradeTransaction;
