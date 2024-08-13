@@ -5,14 +5,13 @@ import ErrorBoundary from './components/common/alerts/ErrorBoundary';
 import authRoutes from './routes/AuthRoutes';
 import mainRoutes from './routes/MainRoutes';
 import profileRoutes from './routes/ProfileRoutes';
-import NavigationBarRoutes from "./archive/navbar/NavigationBarRoutes";
 import portfolioRoutes from './routes/PortfolioRoutes';
 import Header from "./components/common/layout/Header";
 import Footer from "./components/common/layout/Footer";
 import AdminRoutes from "./admin/Routes/adminRoutes";
 import settingRoutes from "./routes/SettingRoutes";
-
 import AdminHeader from "./admin/component/Header/adminHeader";
+import UnProtectedRoute from "./routes/unProtectedRoute";
 
 const App = () => {
     return (
@@ -25,34 +24,29 @@ const App = () => {
 };
 
 const AppContent = () => {
-    const { isCustomer } = useContext(AuthContext);
+    const { isCustomer, isAuthenticated } = useContext(AuthContext);
 
     return (
         <>
             {!isCustomer ? (
-                <>
-                    <AdminHeader />
-                </>
+                <AdminHeader />
             ) : (
-                <>
-                    <Header />
-                </>
+                <Header />
             )}
 
             <ErrorBoundary>
                 <Routes>
                     {authRoutes}
                     {!isCustomer ? (
-                        <>
-                            {AdminRoutes}
-                        </>
+                        <AdminRoutes />
                     ) : (
                         <>
-                            {NavigationBarRoutes}
-                            {mainRoutes}
-                            {settingRoutes}
-                            {profileRoutes}
-                            {portfolioRoutes}
+                            {UnProtectedRoute}
+                            {/* only login can access the route */}
+                            {isAuthenticated && settingRoutes}
+                            {isAuthenticated && profileRoutes}
+                            {isAuthenticated && portfolioRoutes}
+                            {isAuthenticated && mainRoutes}
                         </>
                     )}
                 </Routes>
@@ -63,4 +57,3 @@ const AppContent = () => {
 };
 
 export default App;
-
