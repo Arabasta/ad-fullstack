@@ -39,7 +39,6 @@ public class ChartService implements IChartService {
         percentChangeList.add(BigDecimal.ZERO);
 
         List<ObjectNode> tradeTransactionList = backTestResult.getTradeResults();
-System.out.println("trade trans size: " + tradeTransactionList.size());
         if (!tradeTransactionList.isEmpty()) {
             ObjectNode firstTransaction = tradeTransactionList.get(0);
             LocalDateTime initialTime = LocalDateTime.parse(firstTransaction.get("transactionDateTime").asText(), DATE_TIME_FORMATTER);
@@ -69,8 +68,6 @@ System.out.println("trade trans size: " + tradeTransactionList.size());
 
             }
         }
-        System.out.println("percent change list size" + percentChangeList.size());
-        System.out.println("labels size" + labels.size());
         // Need to sort the 3 lists according to timestamp as the back test results DTO are arranged by ticker type to determine complete transaction
         List<Integer> indices = IntStream.range(0, labels.size())
                 .boxed()
@@ -94,8 +91,6 @@ System.out.println("trade trans size: " + tradeTransactionList.size());
             newAmount = initialAmount.add(initialAmount.multiply(cumulativePercentChange.divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP))).setScale(2, RoundingMode.HALF_UP);
             capitalAbsoluteData.add(newAmount);
         }
-System.out.println("capital % change size: " + capitalPercentChangeData.size());
-        System.out.println("capital abs size: " + capitalAbsoluteData.size());
 
         ChartDatasetDTO capitalDataset = new ChartDatasetDTO("Capital", capitalAbsoluteData, "y-axis-1");
         ChartDatasetDTO percentChangeDataset = new ChartDatasetDTO("Percent Change", capitalPercentChangeData, "y-axis-2");

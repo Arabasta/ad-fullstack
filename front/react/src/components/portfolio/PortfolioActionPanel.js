@@ -46,7 +46,7 @@ const PortfolioActionPanel = ({addFunds, withdrawFunds, portfolio, portfolioType
                             refreshWallet={getWallet}/>
                         <PortfolioRemoveFunds
                             withdrawFunds={withdrawFunds}
-                            currentBalance={portfolio.allocatedBalance}
+                            currentBalance={portfolio.currentValue}
                             refreshWallet={getWallet}/>
                         <PortfolioTransactionHistoryPage
                             portfolioType={portfolioType}/>

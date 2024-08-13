@@ -3,7 +3,7 @@ import useBackTest from '../../hooks/useBackTest';
 import TickerList from '../../component/TickerList';
 import BackTestService from '../../services/BackTestService';
 import { useNavigate } from 'react-router-dom';
-import {FormControl, FormLabel, GridItem, HStack, Input, Select, useToast, VStack} from "@chakra-ui/react";
+import {FormControl, FormLabel, GridItem, HStack, Input, Select, Text, useToast, VStack} from "@chakra-ui/react";
 import {Modal} from "../../../components/common/modal/Modal";
 import Button from "../../../components/common/buttons/Button";
 import CallToActionSection from "../../component/sections/CallToActionSection";
@@ -79,11 +79,17 @@ const BackTestPage = () => {
     };
 
     return (
-        <CallToActionSection title="Back Test" subtitle="Measure Algorithm Performance">
+        <CallToActionSection title="Back Test" subtitle="Confidence, Precision, and Profit">
             <VStack spacing={4} align="stretch">
                 {loading && <p>Loading...</p>}
                 {error && <p style={{ color: 'red' }}>{error.message}</p>}
-
+                <Text mt={4} fontSize="lg" color="gray.600">
+                    At FourQuant, we thoroughly test our strategies before implementation to provide you with the best returns.
+                    Try running our backtest on our curated list of strategies and see for yourself.
+                </Text>
+                <Text fontSize="lg" color="gray.600">
+                    Starting back testing is as simple as selecting a portfolio, algorithm and amount, and run by portfolio type or on individual tickers.
+                </Text>
                 <HStack>
                     <FormControl as={GridItem} colSpan={[6, 3]}>
                         <FormLabel>Portfolio Type</FormLabel>
@@ -144,7 +150,10 @@ const BackTestPage = () => {
                         <TickerList tickerList={tickerList} selectedAlgorithmType={selectedAlgorithmType} amount={amount} />
                     </Modal>
                 </HStack>
-
+                <Text mt={4} fontSize="sm" color="gray.600">
+                    * Results are for illustration purposes and returns are not guaranteed<br/>
+                    We may or may not trade using the listed algorithms and tickers
+                </Text>
             </VStack>
 
         </CallToActionSection>
