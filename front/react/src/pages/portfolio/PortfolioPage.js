@@ -45,8 +45,6 @@ export default function PortfolioPage() {
         day: 'numeric',
     }) : '';
 
-    const toPassDate = formattedDate;
-
     const combinedLabels = portfolios[0].data ? formatLabels(portfolios[0].data.labels) : [];
 
     const combinedData = portfolios.map((portfolio, index) => {
@@ -60,28 +58,9 @@ export default function PortfolioPage() {
         };
     });
 
-
-    const getDataByType = (type) => {
-        const datasetIndex = view === 'portfolioValue' ? 0 : 1;
-
-        const portfolio = portfolios.find(portfolio => portfolio.type === type);
-
-        return {
-            chartData: {
-                label: portfolio?.type,
-                data: portfolio?.data?.datasets[datasetIndex]?.data || [],
-                borderColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
-                backgroundColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
-                yAxisID: view === 'portfolioValue' ? 'y-axis-1' : 'y-axis-2',
-            },
-            labels: portfolio?.data?.labels ? formatLabels(portfolio.data.labels) : [],
-        };
-    };
-
     const handlePortfolioSelection = (type) => {
         navigate(`/portfolio/${type.toLowerCase()}`);
     };
-
 
     return (
         <div>
