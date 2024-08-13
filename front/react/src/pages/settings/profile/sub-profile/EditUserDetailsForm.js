@@ -10,7 +10,8 @@ import {
     InputGroup,
     Button,
     Select,
-    Input
+    Input,
+    Text
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import useUser from "../../../../hooks/useUser";
@@ -25,7 +26,6 @@ const EditUserDetailsForm = () => {
     const [email, setEmail] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
     const [countryCode, setCountryCode] = useState('');
-
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -47,23 +47,39 @@ const EditUserDetailsForm = () => {
         return '';
     };
 
+    const handleMobileNumberChange = (e) => {
+        const number = e.target.value.replace(/\D/g, ''); // just allow input numbers
+        setMobileNumber(number);
+    };
+
     const handleUpdateMobileNumber = async () => {
+        // 清除之前的消息
+        setError('');
+        setSuccess('');
+
+        const fullNumber = `${countryCode}${mobileNumber}`;
+        if (fullNumber.length < 7 || fullNumber.length > 15) {
+            setError('Mobile number length must be between 7 and 15 digits.');
+            return;
+        }
+
         try {
-            await updateMobileNumber(`${countryCode}${mobileNumber}`);
+            await updateMobileNumber(fullNumber);
             setSuccess('Mobile number updated successfully');
-            setError('');
         } catch (error) {
             console.error('Error updating mobile number', error);
             setError('Error updating mobile number');
-            setSuccess('');
         }
     };
 
     const handleUpdateEmail = async () => {
+        // 清除之前的消息
+        setError('');
+        setSuccess('');
+
         try {
             await UserService.updateEmail({ email });
             setSuccess('Email updated successfully');
-            setError('');
 
             if (updateUser) {
                 updateUser({ ...user, email });
@@ -71,7 +87,6 @@ const EditUserDetailsForm = () => {
         } catch (error) {
             console.error('Error updating email', error);
             setError('Error updating email');
-            setSuccess('');
         }
     };
 
@@ -180,8 +195,9 @@ const EditUserDetailsForm = () => {
 
                                             <Input
                                                 type="tel"
+                                                placeholder={"Enter numeric phone number"}
                                                 value={mobileNumber}
-                                                onChange={(e) => setMobileNumber(e.target.value)}
+                                                onChange={handleMobileNumberChange}
                                                 borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
@@ -200,8 +216,8 @@ const EditUserDetailsForm = () => {
                                             Update
                                         </Button>
 
-                                        {error && <p style={{ color: 'red' }}>{error}</p>}
-                                        {success && <p style={{ color: 'green' }}>{success}</p>}
+                                        {error && <Text color="red.500" mt={2}>{error}</Text>}
+                                        {success && <Text color="green.500" mt={2}>{success}</Text>}
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     SimpleGrid,
@@ -10,11 +10,12 @@ import {
     InputGroup,
     Input,
     Select,
-    Flex, // Import Flex for alignment
+    Flex,
+    useToast,
+    Text
 } from '@chakra-ui/react';
 
 import Heading from "../../common/text/Heading";
-import Text from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
 import Nationalities from "./Nationalities";
 import CountryCodes from './CountryCodes';
@@ -27,16 +28,53 @@ const RegisterStep2Form = ({
                                nationality, setNationality,
                                handlePrevious, handleNext,
                            }) => {
+    const [mobileNumberError, setMobileNumberError] = useState('');
+    const [firstNameError, setFirstNameError] = useState('');
+    const [lastNameError, setLastNameError] = useState('');
+    const toast = useToast();
+
     const handleMobileNumberChange = (e) => {
-        const number = e.target.value.replace(/\D/g, ''); // only can input numbers
+        const number = e.target.value.replace(/\D/g, '');
         setMobileNumber(number);
     };
 
     const handleCountryCodeChange = (e) => {
         const code = e.target.value;
         setCountryCode(code);
-
         setMobileNumber(prev => prev.replace(/^\+\d+/, ''));
+    };
+
+    const handleMobileNumberBlur = () => {
+        const fullNumber = `${countryCode}${mobileNumber}`;
+        if (fullNumber.length < 7 || fullNumber.length > 15) {
+            setMobileNumberError('Mobile number length must be between 7 and 15 digits.');
+            toast({
+                title: "Invalid Mobile Number",
+                description: "Mobile number length must be between 7 and 15 digits.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "top",
+            });
+        } else {
+            setMobileNumberError('');
+        }
+    };
+
+    const handleBlur = (value, setError, fieldName, maxLength = 50) => {
+        if (value.length > maxLength) {
+            setError(`${fieldName} cannot exceed ${maxLength} characters.`);
+            toast({
+                title: `Invalid ${fieldName}`,
+                description: `${fieldName} cannot exceed ${maxLength} characters.`,
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "top",
+            });
+        } else {
+            setError('');
+        }
     };
 
     return (
@@ -60,22 +98,6 @@ const RegisterStep2Form = ({
                             <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
                                 Register
                             </Heading>
-                            <Text
-                                mt={1}
-                                fontSize="2xl"
-                                color="gray.600"
-                                _dark={{ color: "gray.400" }}
-                            >
-                                Let's start.
-                            </Text>
-                            <Text
-                              mt={1}
-                              fontSize="xl"
-                              color="gray.600"
-                              _dark={{ color: "gray.400" }}
-                            >
-                                Welcome to our platform! To get started, please fill out the registration form. We value your privacy and ensure that your information is kept secure.
-                            </Text>
                         </Box>
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
@@ -125,12 +147,19 @@ const RegisterStep2Form = ({
                                                 value={mobileNumber}
                                                 placeholder="Enter numeric phone number"
                                                 onChange={handleMobileNumberChange}
+                                                onBlur={handleMobileNumberBlur}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
                                             />
                                         </InputGroup>
+                                        {mobileNumberError && (
+                                            <Text color="red.500" fontSize="sm" mt={2}>
+                                                {mobileNumberError}
+                                            </Text>
+                                        )}
                                     </FormControl>
+
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
                                         <FormLabel
                                             fontSize="md"
@@ -147,12 +176,19 @@ const RegisterStep2Form = ({
                                                 value={firstName}
                                                 placeholder="required"
                                                 onChange={(e) => setFirstName(e.target.value)}
+                                                onBlur={(e) => handleBlur(e.target.value, setFirstNameError, 'First Name')}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
                                             />
                                         </InputGroup>
+                                        {firstNameError && (
+                                            <Text color="red.500" fontSize="sm" mt={2}>
+                                                {firstNameError}
+                                            </Text>
+                                        )}
                                     </FormControl>
+
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
                                         <FormLabel
                                             fontSize="md"
@@ -169,12 +205,19 @@ const RegisterStep2Form = ({
                                                 value={lastName}
                                                 placeholder="required"
                                                 onChange={(e) => setLastName(e.target.value)}
+                                                onBlur={(e) => handleBlur(e.target.value, setLastNameError, 'Last Name')}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
                                             />
                                         </InputGroup>
+                                        {lastNameError && (
+                                            <Text color="red.500" fontSize="sm" mt={2}>
+                                                {lastNameError}
+                                            </Text>
+                                        )}
                                     </FormControl>
+
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
                                         <FormLabel fontSize="md" fontWeight="md" color="gray.700" _dark={{ color: "gray.50" }}>
                                             Nationality
@@ -214,6 +257,7 @@ const RegisterStep2Form = ({
                                 </Button>
                                 <Button
                                     type="submit"
+                                    onClick={handleNext}
                                     colorScheme="brand"
                                     _focus={{ shadow: "" }}
                                     fontWeight="md"

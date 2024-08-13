@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     SimpleGrid,
@@ -10,11 +10,13 @@ import {
     InputGroup,
     Input,
     Select,
-    Flex, // Import Flex for alignment
+    Flex,
+    useToast,
+    Text
 } from '@chakra-ui/react';
 
 import Heading from "../../common/text/Heading";
-import Text from "../../common/text/Text";
+import TextComponent from "../../common/text/Text";
 import Button from "../../common/buttons/Button";
 import Countries from "./Countries";
 
@@ -22,11 +24,30 @@ const RegisterStep3Form = ({
                                street, setStreet, city, setCity, postalCode, setPostalCode,
                                country, setCountry, unitNo, setUnitNo, handlePrevious, handleNext
                            }) => {
+    const [streetError, setStreetError] = useState('');
+    const [cityError, setCityError] = useState('');
+    const [postalCodeError, setPostalCodeError] = useState('');
+    const [unitNoError, setUnitNoError] = useState('');
+    const toast = useToast();
 
-    // Handle postal code input, allowing only numbers
+    const handleBlur = (value, setError, fieldName, maxLength) => {
+        if (value.length > maxLength) {
+            setError(`${fieldName} cannot exceed ${maxLength} characters.`);
+            toast({
+                title: `Invalid ${fieldName}`,
+                description: `${fieldName} cannot exceed ${maxLength} characters.`,
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+                position: "top",
+            });
+        } else {
+            setError('');
+        }
+    };
+
     const handlePostalCodeChange = (e) => {
         const value = e.target.value;
-        // Retain only numeric values
         const numericValue = value.replace(/\D/g, '');
         setPostalCode(numericValue);
     };
@@ -52,22 +73,22 @@ const RegisterStep3Form = ({
                             <Heading color="brand.600" fontSize="5xl" fontWeight="md" lineHeight="10">
                                 Register
                             </Heading>
-                            <Text
+                            <TextComponent
                                 mt={1}
                                 fontSize="2xl"
                                 color="gray.600"
                                 _dark={{ color: "gray.400" }}
                             >
                                 We're half way there.
-                            </Text>
-                            <Text
-                              mt={1}
-                              fontSize="xl"
-                              color="gray.600"
-                              _dark={{ color: "gray.400" }}
+                            </TextComponent>
+                            <TextComponent
+                                mt={1}
+                                fontSize="xl"
+                                color="gray.600"
+                                _dark={{ color: "gray.400" }}
                             >
                                 Welcome to our platform! To get started, please fill out the registration form. We value your privacy and ensure that your information is kept secure.
-                            </Text>
+                            </TextComponent>
                         </Box>
                     </GridItem>
                     <GridItem mt={[5, null, 0]} colSpan={{ md: 2 }}>
@@ -102,11 +123,17 @@ const RegisterStep3Form = ({
                                                 value={city}
                                                 placeholder="required"
                                                 onChange={(e) => setCity(e.target.value)}
+                                                onBlur={(e) => handleBlur(e.target.value, setCityError, 'City', 50)}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
                                             />
                                         </InputGroup>
+                                        {cityError && (
+                                            <Text color="red.500" fontSize="sm" mt={2}>
+                                                {cityError}
+                                            </Text>
+                                        )}
                                     </FormControl>
 
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
@@ -125,11 +152,17 @@ const RegisterStep3Form = ({
                                                 value={unitNo}
                                                 placeholder="required"
                                                 onChange={(e) => setUnitNo(e.target.value)}
+                                                onBlur={(e) => handleBlur(e.target.value, setUnitNoError, 'Unit Number', 10)}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
                                             />
                                         </InputGroup>
+                                        {unitNoError && (
+                                            <Text color="red.500" fontSize="sm" mt={2}>
+                                                {unitNoError}
+                                            </Text>
+                                        )}
                                     </FormControl>
 
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
@@ -148,11 +181,17 @@ const RegisterStep3Form = ({
                                                 value={street}
                                                 placeholder="required"
                                                 onChange={(e) => setStreet(e.target.value)}
+                                                onBlur={(e) => handleBlur(e.target.value, setStreetError, 'Street', 50)}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
                                             />
                                         </InputGroup>
+                                        {streetError && (
+                                            <Text color="red.500" fontSize="sm" mt={2}>
+                                                {streetError}
+                                            </Text>
+                                        )}
                                     </FormControl>
 
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
@@ -171,11 +210,17 @@ const RegisterStep3Form = ({
                                                 value={postalCode}
                                                 placeholder="Enter numeric postal code"
                                                 onChange={handlePostalCodeChange}
+                                                onBlur={(e) => handleBlur(e.target.value, setPostalCodeError, 'Postal Code', 10)}
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                                 required
                                             />
                                         </InputGroup>
+                                        {postalCodeError && (
+                                            <Text color="red.500" fontSize="sm" mt={2}>
+                                                {postalCodeError}
+                                            </Text>
+                                        )}
                                     </FormControl>
 
                                     <FormControl as={GridItem} colSpan={[3, 2]}>
