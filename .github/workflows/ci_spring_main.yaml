@@ -3,12 +3,12 @@ name: CI Spring Main App
 on:
   push:
     branches-ignore:
-      - 'release/v[0-9]+.[0-9]+'
+      - 'release/**'
     paths:
       - 'back/spring/**'
   pull_request:
     branches-ignore:
-      - 'release/v[0-9]+.[0-9]+'
+      - 'release/**'
     paths:
       - 'back/spring/**'
 
