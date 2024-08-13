@@ -7,6 +7,7 @@ import {FormControl, FormLabel, GridItem, HStack, Input, Select, Text, useToast,
 import {Modal} from "../../../components/common/modal/Modal";
 import Button from "../../../components/common/buttons/Button";
 import CallToActionSection from "../../component/sections/CallToActionSection";
+import RedText from "../../../components/common/text/RedText";
 
 const BackTestPage = () => {
     const { algorithms, portfolioTypes, tickerList, loading, error } = useBackTest();
@@ -14,7 +15,8 @@ const BackTestPage = () => {
     const [selectedAlgorithmType, setSelectedAlgorithmType] = useState('');
     const [amount, setAmount] = useState('');
     const toast = useToast();
-
+    const [validationError, setValidationError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedTicker] = useState(null);
     const navigate = useNavigate();
 
@@ -27,11 +29,18 @@ const BackTestPage = () => {
     };
 
     const handleAmountChange = (event) => {
-        setAmount(event.target.value);
+        const value = event.target.value
+        setAmount(value);
+        if (parseFloat(value) <= 0 || parseFloat(value) > 1000000000) {
+            setValidationError('Please enter a valid amount between 0 and 1000,000,000');
+        } else {
+            setValidationError('');
+        }
     };
 
     const handleRunGlobalBackTest = async () => {
         if (selectedPortfolioType && selectedAlgorithmType && amount) {
+            setIsLoading(true);
             try {
                 console.log('Running BackTest with:', {
                     portfolioType: selectedPortfolioType,
@@ -57,7 +66,6 @@ const BackTestPage = () => {
                             }
                     });
             } catch (error) {
-                console.log(error)
                 toast({
                     title: 'Error running backtest',
                     description: error.message,
@@ -66,6 +74,8 @@ const BackTestPage = () => {
                     isClosable: true,
                     position: "top"
                 });
+            } finally {
+                setIsLoading(false);
             }
         } else {
             toast({
@@ -133,11 +143,11 @@ const BackTestPage = () => {
                             placeholder="Enter amount"
                         />
                     </FormControl>
-
+                {validationError && <RedText mt={2}>{validationError}</RedText>}
 
 
                 <HStack spacing={4}>
-                    <Button onClick={handleRunGlobalBackTest}>
+                    <Button onClick={handleRunGlobalBackTest} isDisabled={!!validationError}>
                         Run by portfolio type
                     </Button>
 
@@ -147,8 +157,13 @@ const BackTestPage = () => {
                         onOpen={() => {}}
                         onClose={() => {}}
                     >
-                        <TickerList tickerList={tickerList} selectedAlgorithmType={selectedAlgorithmType} amount={amount} />
+                        <TickerList tickerList={tickerList} selectedAlgorithmType={selectedAlgorithmType} amount={amount} validationError={validationError}/>
                     </Modal>
+                    {isLoading && (
+                      <Text fontSize="xl" fontWeight="bold" color="black.600" textAlign="up">
+                          Loading...
+                      </Text>
+                    )}
                 </HStack>
                 <Text mt={4} fontSize="sm" color="gray.600">
                     * Results are for illustration purposes and returns are not guaranteed<br/>

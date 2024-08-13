@@ -6,7 +6,7 @@ import { useToast, Table, Thead, Tbody, Tr, Th, Td} from "@chakra-ui/react";
 import Text from "../../components/common/text/Text";
 
 
-const TickerList = ({ tickerList, selectedAlgorithmType, amount }) => {
+const TickerList = ({ tickerList, selectedAlgorithmType, amount, validationError }) => {
     const navigate = useNavigate();
     const toast = useToast();
 
@@ -71,7 +71,7 @@ const TickerList = ({ tickerList, selectedAlgorithmType, amount }) => {
                             <Td>{ticker.tickerName}</Td>
                             <Td>{ticker.portfolioType}</Td>
                             <Td>
-                                <Button size="sm"
+                                <Button size="sm" isDisabled={!!validationError}
                                     onClick={() => handleRunBackTest(ticker.tickerName, ticker.portfolioType)}>
                                     Run
                                 </Button>
