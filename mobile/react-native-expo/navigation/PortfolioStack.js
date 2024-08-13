@@ -16,7 +16,13 @@ const PortfolioStack = ({ route }) => {
             <Stack.Screen
                 name="Portfolio"
                 component={PortfolioScreen}
-                initialParams={{ portfolio, chartData, labels, firstLabelFormatted, lastLabelFormatted, yAxisTitle }}
+                initialParams={{
+                    portfolio: portfolio || {},
+                    chartData: chartData || [],
+                    labels: labels || [],
+                    firstLabelFormatted: firstLabelFormatted || '',
+                    lastLabelFormatted: lastLabelFormatted || '',
+                    yAxisTitle: yAxisTitle || '' }}
                 options={{ headerTitle: `${portfolio?.portfolioType || ''} Portfolio` }}
             />
             <Stack.Screen

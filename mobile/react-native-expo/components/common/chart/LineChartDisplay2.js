@@ -5,27 +5,39 @@ import { Chart, VerticalAxis, HorizontalAxis, Line, Tooltip } from 'react-native
 // Get screen dimensions for responsive sizing
 const screenWidth = Dimensions.get('window').width;
 
-
-const LineChartDisplay2 = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle, view, scaleToFit }) => {
+const LineChartDisplay2 = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle }) => {
     const [tooltipIndex, setTooltipIndex] = useState(null);
-    const [tooltipPosition, setTooltipPosition] = useState(null);
     const [tooltipValue, setTooltipValue] = useState(null);
-    //const [tooltipData, setTooltipData] = useState({ x: null, y: null });
     const [viewport, setViewport] = useState({ size: { width: 40 } }); // Initial viewport showing 10 data points
 
+    // Ensure datasets is an array of objects with valid data arrays
+    const validatedDatasets = datasets.filter(dataset =>
+        dataset && Array.isArray(dataset.data) && dataset.data.length > 0
+    );
+
+    if (validatedDatasets.length === 0) {
+        return (
+            <View style={styles.container}>
+                <Text>No valid data available for this chart</Text>
+            </View>
+        );
+    }
+
     // Prepare chart data for each dataset
-    const chartData = datasets.map(dataset => ({
-        data: dataset.data
-            .map((value, index) => value !== undefined ? { x: index, y: value } : null)
-            .filter(point => point !== null), // Filter out null points
-        smoothing: 'cubic-spline',
-        theme: {
-            stroke: {
-                color: dataset.borderColor || '#000',
-                width: 2,
+    const chartData = validatedDatasets
+        .filter(dataset => dataset && Array.isArray(dataset.data)) // Ensure dataset and data array are valid
+        .map(dataset => ({
+            data: dataset.data
+                .map((value, index) => value !== undefined ? { x: index, y: value } : null)
+                .filter(point => point !== null), // Filter out null points
+            smoothing: 'cubic-spline',
+            theme: {
+                stroke: {
+                    color: dataset.borderColor || '#000',
+                    width: 2,
+                },
             },
-        },
-    }));
+        }));
 
     // Calculate min and max for yDomain across all datasets
     const allYValues = datasets.flatMap(ds => ds.data).filter(value => value !== undefined && value !== null);
@@ -108,7 +120,6 @@ const LineChartDisplay2 = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle, vie
                             }
                             onPress={({ index: idx, value }) => {
                                 setTooltipIndex(idx);
-                                setTooltipPosition({ x: idx, y: value.y });
                                 setTooltipValue(`${labels[idx]}: ${Math.round(value.y)}`); // Rounded tooltip value                            }}
                             }}
                         />
@@ -117,7 +128,7 @@ const LineChartDisplay2 = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle, vie
                     {tooltipIndex !== null && (
                         <Tooltip
                             position={chartData[0].data[tooltipIndex]}
-                            value={tooltipData}
+                            value={tooltipValue}
                             theme={{
                                 label: { fontSize: 12, color: "#000" },
                                 box: { fill: '#FFF', strokeWidth: 1, strokeColor: '#000', width: 150, padding: 10 },
