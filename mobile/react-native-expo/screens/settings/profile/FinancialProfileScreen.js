@@ -18,7 +18,7 @@ import Text from "../../../components/common/text/Text";
 const FinancialProfileScreen = () => {
     const { financialProfile, getFinancialProfile } = useFinancialProfile();
     const [localProfile, setLocalProfile] = useState(null);
-    const [error, setError] = useState('');
+    const [errors, setErrors] = useState({});
     const [success, setSuccess] = useState('');
     const [isEditing, setIsEditing] = useState(false);
 
@@ -30,12 +30,12 @@ const FinancialProfileScreen = () => {
 
     const handleSave = async () => {
         setSuccess('');
-        setError('');
+        setErrors({});
 
-        const { valid, errorMessage } = validateFinancialProfile(localProfile);
+        const { valid, validationErrors } = validateFinancialProfile(localProfile);
 
         if (!valid) {
-            setError(errorMessage);
+            setErrors(validationErrors);
             return;
         }
 
@@ -52,7 +52,7 @@ const FinancialProfileScreen = () => {
             await getFinancialProfile();
         } catch (error) {
             console.error("Error saving financial profile:", error);
-            setError("Failed to save financial profile. Please try again.");
+            setErrors({ save: "Failed to save financial profile. Please try again." });
             setSuccess('');
         }
     };
@@ -98,9 +98,9 @@ const FinancialProfileScreen = () => {
                 ) : ( <Text>Loading...</Text> )
             ) : (
                 <>
-                    <FinancialProfileForm profile={localProfile} onChange={setLocalProfile} />
+                    <FinancialProfileForm profile={localProfile} onChange={setLocalProfile} error={errors} />
 
-                    {error && (<ErrorText>{error}</ErrorText>)}
+                    {errors.save && (<ErrorText>{errors.save}</ErrorText>)}
 
                     <View style={styles.buttonContainer}>
                         <ButtonCancel style={styles.buttonSpacing} title="Cancel" onPress={toggleEdit} />
