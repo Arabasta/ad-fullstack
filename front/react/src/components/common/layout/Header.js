@@ -91,6 +91,9 @@ const Header = () => {
                         <Link to="/news">
                             <Button variant="ghost">News</Button>
                         </Link>
+                        <Link to="/support">
+                            <Button variant="ghost">Support</Button>
+                        </Link>
 
                         {isAuthenticated ? (
                             <>
