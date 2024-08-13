@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { View, StyleSheet } from "react-native";
 import useWallet from "../../hooks/useWallet";
 import TextInputWithHelper from "../common/input/TextInputWithHelper";
 import ResetStopLossTriggerByPortfolio from "./ResetStopLossTriggerByPortfolio";
@@ -6,9 +7,9 @@ import ButtonPrimary from "../common/button/ButtonPrimary";
 import Container from "../common/container/Container";
 import ErrorText from "../common/text/ErrorText";
 import SuccessText from "../common/text/SuccessText";
-import { View, StyleSheet } from "react-native";
+import Text from "../common/text/Text";
 
-const UpdateRulesByPortfolio = ({ portfolioType, rule, onReset, onUpdate}) => {
+const UpdateRulesByPortfolio = ({ portfolioType, rule, onReset, onUpdate }) => {
     const [formData, setFormData] = useState({});
     const [invalidForSubmission, setInvalidForSubmission] = useState(false);
     const [errorText, setErrorText] = useState("");
@@ -63,11 +64,14 @@ const UpdateRulesByPortfolio = ({ portfolioType, rule, onReset, onUpdate}) => {
         if (invalidForSubmission) {
             return; // Prevent form submission if invalid for submission
         }
-        onUpdate(formData);
+        onUpdate({ ...formData, portfolioType });  // Include portfolioType in the submitted data
     };
 
     return (
         <Container>
+            <Text variant="headlineMedium" style={styles.headerText}>
+                Managing Rules for: {portfolioType}
+            </Text>
             <TextInputWithHelper
                 label="Stop Loss (%)"
                 value={formData.stopLoss?.toString() || ''}
@@ -101,6 +105,10 @@ const UpdateRulesByPortfolio = ({ portfolioType, rule, onReset, onUpdate}) => {
 };
 
 const styles = StyleSheet.create({
+    headerText: {
+        marginBottom: 20,
+        textAlign: "center",  // Center the header text
+    },
     button: {
         marginTop: 20,
     },
