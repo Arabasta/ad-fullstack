@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     chakra,
     Box,
@@ -11,7 +11,6 @@ import {
     IconButton,
     CloseButton,
 } from "@chakra-ui/react";
-
 import { AiOutlineMenu } from "react-icons/ai";
 import { Logo } from "@choc-ui/logo";
 import Button from '../buttons/Button';
@@ -23,6 +22,37 @@ const Header = () => {
     const mobileNav = useDisclosure();
     const { isAuthenticated, logout } = useContext(AuthContext);
 
+    const [showHeader, setShowHeader] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            const pageHeight = document.documentElement.scrollHeight;
+            const windowHeight = window.innerHeight;
+            const scrolledToBottom = currentScrollY + windowHeight >= pageHeight;
+
+            if (scrolledToBottom) {
+                // if scroll down(lowest position),will display navbar
+                setShowHeader(true);
+            } else if (currentScrollY > lastScrollY) {
+                // scroll down, but not the lowest position , will not display navbar
+                setShowHeader(false);
+            } else {
+                // scroll up display navbar
+                setShowHeader(true);
+            }
+
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [lastScrollY]);
+
     return (
         <chakra.header
             bg={bg}
@@ -30,6 +60,11 @@ const Header = () => {
             px={{ base: 2, sm: 4 }}
             py={4}
             shadow="md"
+            position="sticky"
+            top={0}
+            zIndex={10}
+            transition="transform 0.3s ease"
+            transform={showHeader ? 'translateY(0)' : 'translateY(-100%)'}
         >
             <Flex alignItems="center" justifyContent="space-between" mx="auto">
                 <Flex>
@@ -95,7 +130,6 @@ const Header = () => {
                                 Get Started
                             </Button>
                         </Link>
-
                     )}
                     <Box display={{ base: "inline-flex", md: "none" }}>
                         <IconButton
@@ -172,7 +206,6 @@ const Header = () => {
                                             Get Started
                                         </Button>
                                     </Link>
-
                                 </>
                             )}
                         </VStack>
