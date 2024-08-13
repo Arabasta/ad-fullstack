@@ -74,11 +74,7 @@ const Header = () => {
                                 <Link to="/settings">
                                     <Button variant="ghost">Settings</Button>
                                 </Link>
-                                <Link to="/support">
-                                    <Button w="full" variant="ghost">
-                                        Support
-                                    </Button>
-                                </Link>
+
                                 <Button onClick={logout}>Sign Out</Button>
                             </>
                         ) : (
