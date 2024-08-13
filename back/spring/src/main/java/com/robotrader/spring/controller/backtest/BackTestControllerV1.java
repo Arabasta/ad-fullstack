@@ -8,7 +8,6 @@ import com.robotrader.spring.service.ChartService;
 import com.robotrader.spring.service.TickerService;
 import com.robotrader.spring.trading.service.TradingApplicationService;
 import com.robotrader.spring.trading.dto.BackTestResultDTO;
-import com.robotrader.spring.trading.service.PredictionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
