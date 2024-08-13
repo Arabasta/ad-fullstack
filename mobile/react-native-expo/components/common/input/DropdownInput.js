@@ -3,7 +3,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import { View, StyleSheet } from 'react-native';
 import Text from "../text/Text";
 
-const DropdownInput = ({ label, value, setValue, list, ...props }) => {
+const DropdownInput = ({ label, value, setValue, list, placeholder, ...props }) => {
     return (
         <View style={styles.container}>
             {label && <Text style={styles.label}>{label}</Text>}
@@ -13,6 +13,7 @@ const DropdownInput = ({ label, value, setValue, list, ...props }) => {
                     items={list}
                     value={value}
                     style={pickerSelectStyles}
+                    placeholder={{ label: placeholder || 'Select an option', value: null }}
                     {...props}
                 />
             </View>
