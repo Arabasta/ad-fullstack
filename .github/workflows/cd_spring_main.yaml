@@ -3,7 +3,7 @@ name: CD Spring Main App
 on:
   push:
     branches:
-      - 'release/v[0-9]+.[0-9]+'
+      - 'release/spring/v[0-9]+.[0-9]+'
 jobs:
   deploy:
     runs-on: ubuntu-latest
