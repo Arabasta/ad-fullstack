@@ -185,7 +185,12 @@ public class PortfolioService implements IPortfolioService {
 
         // remove from current value and reset allocated balance
         portfolio.setCurrentValue(portfolio.getCurrentValue().subtract(amount));
-        portfolio.setAllocatedBalance(portfolio.getAllocatedBalance().subtract(amount));
+        BigDecimal portfolioAllocatedBalance = portfolio.getAllocatedBalance();
+        if (portfolioAllocatedBalance.compareTo(amount) < 0) {
+            portfolio.setAllocatedBalance(BigDecimal.ZERO);
+        } else {
+            portfolio.setAllocatedBalance(portfolio.getAllocatedBalance().subtract(amount));
+        }
         ruleService.setStopLossInitialValue(portfolio.getRule(), portfolio.getCurrentValue());
         save(portfolio);
     }
