@@ -1,4 +1,4 @@
-package com.robotrader.spring.controller.admin.trading;
+package com.robotrader.spring.controller.backtest;
 
 import com.robotrader.spring.dto.backtest.AlgorithmDTO;
 import com.robotrader.spring.dto.chart.ChartDataDTO;
@@ -17,19 +17,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/admin/trading/backtest")
+@RequestMapping("/api/v1/backtest")
 public class BackTestControllerV1 {
     private final TradingApplicationService tradingApplicationService;
     private final TickerService tickerService;
     private final ChartService chartService;
-    private final PredictionService predictionService;
 
     @Autowired
-    public BackTestControllerV1(TradingApplicationService tradingApplicationService, TickerService tickerService, ChartService chartService, PredictionService predictionService) {
+    public BackTestControllerV1(TradingApplicationService tradingApplicationService, TickerService tickerService, ChartService chartService) {
         this.tradingApplicationService = tradingApplicationService;
         this.tickerService = tickerService;
         this.chartService = chartService;
-        this.predictionService = predictionService;
     }
 
     @GetMapping("/view")
