@@ -12,19 +12,29 @@ import CardComponent from "../common/cards/CardWithChart";
 import Button from "../common/buttons/Button";
 import GrayText from "../common/text/GrayText";
 import PortfolioActionPanel from "./PortfolioActionPanel";
+import useCombinedPortfolioDetails from "../../hooks/useCombinedPortfolioDetails";
 
 const PortfolioManager = () => {
     const navigate = useNavigate();
     const {portfolioType} = useParams();
+    const otherPortfolioTypes = portfolioTypes.filter(allPortfolioTypes => allPortfolioTypes.type.toLowerCase() !== portfolioType.toLowerCase());
     const {portfolio, addFunds, withdrawFunds} = usePortfolio(portfolioType.toUpperCase());
 
-    const selectedPortfolioType = portfolioTypes.find(pt => pt.type.toLowerCase() === portfolioType);
-    const otherPortfolioTypes = portfolioTypes.filter(allPortfolioTypes => allPortfolioTypes.type.toLowerCase() !== portfolioType.toLowerCase());
+    const {portfolios} = useCombinedPortfolioDetails();
 
     const {state} = useLocation();
-    let {portfolios, combinedData, chartData = [], labels = [], view, toPassDate} = state || {};
-
+    const {view} = state || {};
     const [currentView, setView] = useState(view || 'portfolioValue');
+
+    const handlePortfolioSelection = (type) => {
+        navigate(`/portfolio/${type.toLowerCase()}`, {
+            state: {view}
+        });
+    };
+
+    const handleToggle = () => {
+        setView(currentView === 'portfolioValue' ? 'performance' : 'portfolioValue');
+    };
 
     function formatLabels(labels) {
         return labels.map(label => {
@@ -37,6 +47,15 @@ const PortfolioManager = () => {
             });
         });
     }
+
+    // Extract and format the first label as a date string for the card component
+    const firstLabel = portfolios[0].data?.labels?.[0];
+    const date = firstLabel ? new Date(firstLabel[0], firstLabel[1] - 1, firstLabel[2]) : null;
+    const formattedDate = date ? date.toLocaleDateString('en-SG', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    }) : '';
 
     const getDataByType = (type) => {
         const datasetIndex = currentView === 'portfolioValue' ? 0 : 1;
@@ -53,21 +72,8 @@ const PortfolioManager = () => {
             labels: portfolio?.data?.labels ? formatLabels(portfolio.data.labels) : [],
         };
     };
+    const {chartData, labels} = getDataByType(portfolioType.toUpperCase());
 
-    const handlePortfolioSelection = (type) => {
-        const {chartData, labels} = getDataByType(type);
-        navigate(`/portfolio/${type.toLowerCase()}`, {
-            state: {portfolios, combinedData, chartData, labels, toPassDate}
-        });
-    };
-
-    const handleToggle = () => {
-        setView(currentView === 'portfolioValue' ? 'performance' : 'portfolioValue');
-        let {chartData, labels} = getDataByType(portfolioType.toUpperCase());
-        navigate(`/portfolio/${portfolioType.toLowerCase()}`, {
-            state: {portfolios, combinedData, chartData, view, labels, toPassDate}
-        });
-    };
 
     return (
         <Box>
@@ -82,7 +88,7 @@ const PortfolioManager = () => {
                         <HStack justifyContent="space-between">
                             <Box>
                                 <Heading as="h1" color="#4B4BB3">
-                                    {selectedPortfolioType.title}
+                                    {portfolioType.title}
                                 </Heading>
                             </Box>
                             <Box>
@@ -110,7 +116,7 @@ const PortfolioManager = () => {
                             <CardComponent
                                 title={<Heading as="h2" color="brand.10">Portfolio Performance</Heading>}
                                 subtitle={<GrayText fontSize="2xl"
-                                                    fontWeight="bold">{toPassDate || 'Date not available'} </GrayText>}
+                                                    fontWeight="bold">{formattedDate || 'Date not available'} </GrayText>}
                                 chart={<LineChart2 datasets={[chartData]} labels={labels} view={currentView}
                                                    scaleToFit={true}/>}
                                 button={<Button onClick={handleToggle}>Toggle View</Button>}
@@ -126,7 +132,7 @@ const PortfolioManager = () => {
                     withdrawFunds={withdrawFunds}
                     portfolio={portfolio}
                     portfolioType={portfolioType.toUpperCase()}
-                    modalTitle={selectedPortfolioType.title}
+                    modalTitle={portfolioType.title}
                 />
             </Flex>
         </Box>

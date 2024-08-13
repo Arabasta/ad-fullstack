@@ -5,11 +5,13 @@ import LogoutButton from "../../components/settings/LogoutButton";
 import SettingsListItem from "../../components/settings/SettingsListItem";
 import {View, StyleSheet} from "react-native";
 import useInvestorProfile from "../../hooks/useInvestorProfile";
+import useCustomer from "../../hooks/useCustomer";
 
-// todo: change name to dynamic
 const SettingsScreen = ({ navigation }) => {
     const { investorProfile, recommendedPortfolioType } = useInvestorProfile();
     const [portfolioType, setPortfolioType] = useState("N/A");
+    const [customerName, setCustomerName] = useState("Guest");
+    const { customer, loading } = useCustomer();
 
     useEffect(() => {
         if (investorProfile) {
@@ -17,10 +19,16 @@ const SettingsScreen = ({ navigation }) => {
         }
     }, [recommendedPortfolioType]);
 
+    useEffect(() => {
+        if (customer && !loading) {
+            setCustomerName(customer.firstName);
+        }
+    }, [customer, loading]);
+
     return (
         <Container>
             <View style={ styles.container}>
-                <Text variant="headlineMedium" style={styles.text}>Hello, Kei</Text>
+                <Text variant="headlineMedium" style={styles.text}>Hello, {customerName}</Text>
                 <Text variant="titleMedium" style={styles.text}>
                     Your recommended portfolio type is: {portfolioType}
                 </Text>

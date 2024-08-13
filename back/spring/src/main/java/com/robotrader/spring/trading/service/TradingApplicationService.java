@@ -19,7 +19,6 @@ import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.strategy.TradingContext;
 import lombok.Getter;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +70,7 @@ public class TradingApplicationService implements ITradingApplicationService {
 
     @Override
     public BackTestResultDTO runTradingAlgorithmBackTest(List<String> tickers, PortfolioTypeEnum portfolioType, String algorithmType) {
-        AtomicReference<BigDecimal> initialCapital = new AtomicReference<>(BigDecimal.ZERO);
+        AtomicReference<BigDecimal> combinedInitialCapital = new AtomicReference<>(BigDecimal.ZERO);
         List<ObjectNode> combinedTradeResults = Collections.synchronizedList(new ArrayList<>());
 
         List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -94,7 +93,7 @@ public class TradingApplicationService implements ITradingApplicationService {
                     CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                         tradingContext.executeTradingStrategy(tradingAlgorithm).join();
                         // Update combinedInitialCapital using AtomicReference and add trade results using synchronized list as back testing is done async on multiple threads
-                        initialCapital.set(tradingAlgorithm.getInitialCapitalTest());
+                        combinedInitialCapital.updateAndGet(current -> current.add(tradingAlgorithm.getInitialCapitalTest()));
                         combinedTradeResults.addAll(tradingContext.getTradeResults());
                     });
                     futures.add(future);
@@ -119,7 +118,7 @@ public class TradingApplicationService implements ITradingApplicationService {
         );
 
         // Create the combined BackTestResultDTO after all futures are complete
-        BackTestResultDTO combinedResult = new BackTestResultDTO(initialCapital.get(), combinedTradeResults);
+        BackTestResultDTO combinedResult = new BackTestResultDTO(combinedInitialCapital.get(), combinedTradeResults);
         logger.info("Total number of trades for all tickers: {}", combinedTradeResults.size());
         return combinedResult;
     }

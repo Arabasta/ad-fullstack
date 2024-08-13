@@ -11,6 +11,7 @@ import {
     Input,
     Flex,
     Text,
+    useToast, // Import useToast for displaying toast messages
 } from '@chakra-ui/react';
 
 import UserService from "../../../../services/UserService";
@@ -26,30 +27,80 @@ const EditPasswordDetailsForm = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const [oldPasswordError, setOldPasswordError] = useState('');
+    const [newPasswordError, setNewPasswordError] = useState('');
+    const [confirmNewPasswordError, setConfirmNewPasswordError] = useState('');
+
+    const toast = useToast();
 
     const handleUpdatePassword = async () => {
-        if (newPassword !== confirmNewPassword) {
-            setError('New passwords do not match');
-            setSuccess('');
-            return;
+        let valid = true;
+
+        // Validate Old Password
+        if (!oldPassword) {
+            setOldPasswordError('Old password is required');
+            valid = false;
+        } else if (oldPassword.length < 6) {
+            setOldPasswordError('Old password must be at least 6 characters');
+            valid = false;
+        } else {
+            setOldPasswordError('');
         }
+
+        // Validate New Password
+        if (!newPassword) {
+            setNewPasswordError('New password is required');
+            valid = false;
+        } else if (newPassword.length < 6) {
+            setNewPasswordError('New password must be at least 6 characters');
+            valid = false;
+        } else {
+            setNewPasswordError('');
+        }
+
+        // Validate Confirm New Password
+        if (!confirmNewPassword) {
+            setConfirmNewPasswordError('Please confirm your new password');
+            valid = false;
+        } else if (confirmNewPassword.length < 6) {
+            setConfirmNewPasswordError('Confirm password must be at least 6 characters');
+            valid = false;
+        } else if (newPassword !== confirmNewPassword) {
+            setConfirmNewPasswordError('New passwords do not match');
+            valid = false;
+        } else {
+            setConfirmNewPasswordError('');
+        }
+
+        if (!valid) return;
 
         try {
             await UserService.updatePassword({ oldPassword, newPassword });
-            setSuccess('Password updated successfully');
-            setError('');
+            setOldPassword('');
             setNewPassword('');
             setConfirmNewPassword('');
-            setOldPassword('');
             if (updateUser) {
                 updateUser({ ...user });
             }
+            toast({
+                title: "Password Updated",
+                description: "Your password has been successfully updated.",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+            });
         } catch (error) {
             console.error('Error updating password:', error);
-            setError('Error updating password');
-            setSuccess('');
+
+            if (error.response && error.response.data) {
+                if (error.response.data.message === 'Invalid password') {
+                    setOldPasswordError('Old password is incorrect');
+                } else {
+                    setOldPasswordError(error.response.data.message || 'Error updating password');
+                }
+            } else {
+                setOldPasswordError('Error updating password');
+            }
         }
     };
 
@@ -95,7 +146,7 @@ const EditPasswordDetailsForm = () => {
                                 p={{ sm: 6 }}
                             >
                                 <SimpleGrid columns={3} spacing={6}>
-                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                    <FormControl as={GridItem} colSpan={[3, 2]} isInvalid={!!oldPasswordError}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -109,15 +160,17 @@ const EditPasswordDetailsForm = () => {
                                             <Input
                                                 type="password"
                                                 placeholder="old password"
+                                                value={oldPassword}
                                                 onChange={(e) => setOldPassword(e.target.value)}
                                                 borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                             />
                                         </InputGroup>
+                                        {oldPasswordError && <Text mt={2} color="red.500">{oldPasswordError}</Text>}
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                    <FormControl as={GridItem} colSpan={[3, 2]} isInvalid={!!newPasswordError}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -131,15 +184,17 @@ const EditPasswordDetailsForm = () => {
                                             <Input
                                                 type="password"
                                                 placeholder="new password"
+                                                value={newPassword}
                                                 onChange={(e) => setNewPassword(e.target.value)}
                                                 borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                             />
                                         </InputGroup>
+                                        {newPasswordError && <Text mt={2} color="red.500">{newPasswordError}</Text>}
                                     </FormControl>
 
-                                    <FormControl as={GridItem} colSpan={[3, 2]}>
+                                    <FormControl as={GridItem} colSpan={[3, 2]} isInvalid={!!confirmNewPasswordError}>
                                         <FormLabel
                                             fontSize="md"
                                             fontWeight="md"
@@ -153,12 +208,14 @@ const EditPasswordDetailsForm = () => {
                                             <Input
                                                 type="password"
                                                 placeholder="confirm new password"
+                                                value={confirmNewPassword}
                                                 onChange={(e) => setConfirmNewPassword(e.target.value)}
                                                 borderColor="brand.300"
                                                 focusBorderColor="brand.400"
                                                 rounded="md"
                                             />
                                         </InputGroup>
+                                        {confirmNewPasswordError && <Text mt={2} color="red.500">{confirmNewPasswordError}</Text>}
                                     </FormControl>
                                 </SimpleGrid>
                             </Stack>
@@ -192,9 +249,6 @@ const EditPasswordDetailsForm = () => {
                                     Update
                                 </Button>
                             </Flex>
-
-                            {error && <Text mt={3} color="red.500" textAlign="center">{error}</Text>}
-                            {success && <Text mt={3} color="green.500" textAlign="center">{success}</Text>}
                         </chakra.form>
                     </GridItem>
                 </SimpleGrid>

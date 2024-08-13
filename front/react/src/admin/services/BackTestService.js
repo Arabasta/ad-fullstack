@@ -1,11 +1,11 @@
 import axiosInstance from "../../config/axios/axiosInstance";
 
 const getAlgorithmList = async () => {
-    return await axiosInstance.get('/v1/admin/trading/backtest/view');
+    return await axiosInstance.get('/v1/backtest/view');
 };
 
 const runBackTest = async (portfolioType, amount, algorithmType, ticker) => {
-    let url = `/v1/admin/trading/backtest/${portfolioType}?amount=${amount}`;
+    let url = `/v1/backtest/${portfolioType}?amount=${amount}`;
 
     if (ticker) {
         url += `&ticker=${ticker}`;

@@ -2,7 +2,7 @@ import axiosInstance from "../config/axios/axiosInstance";
 
 const getAllNews = async () => {
     try {
-        const response = await axiosInstance.get('/v1/customer/news');
+        const response = await axiosInstance.get('/v1/news');
         console.log('API Response:', response.data);
         return response.data.data;
     } catch (error) {
@@ -11,8 +11,8 @@ const getAllNews = async () => {
     }
 };
 
-const newsService = {
+const NewsService = {
     getAllNews,
 };
 
-export default newsService;
+export default NewsService;

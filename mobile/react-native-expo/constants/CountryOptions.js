@@ -26,5 +26,7 @@ const countries = [
     'Yemen', 'Zambia', 'Zimbabwe'
 ];
 
-export default countries;
-
+export const countryOptions = countries.map(country => ({
+    label: country,
+    value: country
+}));

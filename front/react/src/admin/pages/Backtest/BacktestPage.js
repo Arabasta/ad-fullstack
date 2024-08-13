@@ -3,10 +3,11 @@ import useBackTest from '../../hooks/useBackTest';
 import TickerList from '../../component/TickerList';
 import BackTestService from '../../services/BackTestService';
 import { useNavigate } from 'react-router-dom';
-import {FormControl, FormLabel, GridItem, HStack, Input, Select, useToast, VStack} from "@chakra-ui/react";
+import {FormControl, FormLabel, GridItem, HStack, Input, Select, Text, useToast, VStack} from "@chakra-ui/react";
 import {Modal} from "../../../components/common/modal/Modal";
 import Button from "../../../components/common/buttons/Button";
 import CallToActionSection from "../../component/sections/CallToActionSection";
+import RedText from "../../../components/common/text/RedText";
 
 const BackTestPage = () => {
     const { algorithms, portfolioTypes, tickerList, loading, error } = useBackTest();
@@ -14,7 +15,8 @@ const BackTestPage = () => {
     const [selectedAlgorithmType, setSelectedAlgorithmType] = useState('');
     const [amount, setAmount] = useState('');
     const toast = useToast();
-
+    const [validationError, setValidationError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedTicker] = useState(null);
     const navigate = useNavigate();
 
@@ -27,11 +29,18 @@ const BackTestPage = () => {
     };
 
     const handleAmountChange = (event) => {
-        setAmount(event.target.value);
+        const value = event.target.value
+        setAmount(value);
+        if (parseFloat(value) <= 0 || parseFloat(value) > 1000000000) {
+            setValidationError('Please enter a valid amount between 0 and 1000,000,000');
+        } else {
+            setValidationError('');
+        }
     };
 
     const handleRunGlobalBackTest = async () => {
         if (selectedPortfolioType && selectedAlgorithmType && amount) {
+            setIsLoading(true);
             try {
                 console.log('Running BackTest with:', {
                     portfolioType: selectedPortfolioType,
@@ -46,13 +55,12 @@ const BackTestPage = () => {
                     selectedAlgorithmType,
                     selectedTicker
                 );
-                navigate('/admin/backtest-result',
+                navigate('/backtest-result',
                     { state:
                             {
                                 labels: response.data.data.labels,
                                 datasets: response.data.data.datasets,
                                 tickerName: selectedTicker,
-                                tickerType: selectedTicker.type,
                                 portfolioType: selectedPortfolioType,
                                 algorithmType: selectedAlgorithmType
                             }
@@ -66,6 +74,8 @@ const BackTestPage = () => {
                     isClosable: true,
                     position: "top"
                 });
+            } finally {
+                setIsLoading(false);
             }
         } else {
             toast({
@@ -79,11 +89,17 @@ const BackTestPage = () => {
     };
 
     return (
-        <CallToActionSection title="Back Test" subtitle="Measure Algorithm Performance">
+        <CallToActionSection title="Back Test" subtitle="Confidence, Precision, and Profit">
             <VStack spacing={4} align="stretch">
                 {loading && <p>Loading...</p>}
                 {error && <p style={{ color: 'red' }}>{error.message}</p>}
-
+                <Text mt={4} fontSize="lg" color="gray.600">
+                    At FourQuant, we thoroughly test our strategies before implementation to provide you with the best returns.
+                    Try running our backtest on our curated list of strategies and see for yourself.
+                </Text>
+                <Text fontSize="lg" color="gray.600">
+                    Starting back testing is as simple as selecting a portfolio, algorithm and amount, and run by portfolio type or on individual tickers.
+                </Text>
                 <HStack>
                     <FormControl as={GridItem} colSpan={[6, 3]}>
                         <FormLabel>Portfolio Type</FormLabel>
@@ -127,12 +143,12 @@ const BackTestPage = () => {
                             placeholder="Enter amount"
                         />
                     </FormControl>
-
+                {validationError && <RedText mt={2}>{validationError}</RedText>}
 
 
                 <HStack spacing={4}>
-                    <Button onClick={handleRunGlobalBackTest}>
-                        Run on all tickers
+                    <Button onClick={handleRunGlobalBackTest} isDisabled={!!validationError}>
+                        Run by portfolio type
                     </Button>
 
                     <Modal
@@ -141,10 +157,18 @@ const BackTestPage = () => {
                         onOpen={() => {}}
                         onClose={() => {}}
                     >
-                        <TickerList tickerList={tickerList} selectedAlgorithmType={selectedAlgorithmType} amount={amount} />
+                        <TickerList tickerList={tickerList} selectedAlgorithmType={selectedAlgorithmType} amount={amount} validationError={validationError}/>
                     </Modal>
+                    {isLoading && (
+                      <Text fontSize="xl" fontWeight="bold" color="black.600" textAlign="up">
+                          Loading...
+                      </Text>
+                    )}
                 </HStack>
-
+                <Text mt={4} fontSize="sm" color="gray.600">
+                    * Results are for illustration purposes and returns are not guaranteed<br/>
+                    We may or may not trade using the listed algorithms and tickers
+                </Text>
             </VStack>
 
         </CallToActionSection>

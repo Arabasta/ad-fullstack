@@ -18,17 +18,17 @@ const stopLiveTrading = async () => {
     return await axiosInstance.get(url);
 };
 
-// Get live trading transactions
-const getLiveTradingTransactions = async (portfolioType) => {
-    const url = `/v1/admin/trading/livetrading/transactions?portfolioType=${portfolioType}`;
+// Get live trading status
+const getLiveTradingStatus = async () => {
+    const url = `/v1/admin/trading/livetrading/status`;
     return await axiosInstance.get(url);
 };
 
 const LiveTradingService = {
     startLiveTrading,
     stopLiveTrading,
-    getLiveTradingTransactions,
     getAlgorithmTypes,
+    getLiveTradingStatus
 };
 
 export default LiveTradingService;

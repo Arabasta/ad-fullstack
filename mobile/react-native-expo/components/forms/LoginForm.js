@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import {Alert, StyleSheet} from 'react-native';
 import TextInput from "../../components/common/input/TextInputWithHelper";
 import ButtonPrimary from "../../components/common/button/ButtonPrimary";
 import ButtonSecondary from "../common/button/ButtonSecondary";
@@ -17,7 +17,15 @@ const LoginForm = ({ navigation }) => {
         try {
             await login(username, password);
         } catch (error) {
-            setErrorMessage('Invalid login credentials. Please try again.');
+            if (error.message.includes('admin')) {
+                Alert.alert(
+                    'Admin Access Restricted',
+                    'Please visit the website to log in as an admin.',
+                    [{ text: 'OK' }]
+                );
+            } else {
+                setErrorMessage('Invalid login credentials. Please try again.');
+            }
         }
     };
 
@@ -27,7 +35,6 @@ const LoginForm = ({ navigation }) => {
 
     return (
         <FormContainer>
-            {errorMessage ? <ErrorText style={styles.error}>{errorMessage}</ErrorText> : null}
 
             <TextInput
                 label="Username"
@@ -44,6 +51,8 @@ const LoginForm = ({ navigation }) => {
                 error={errorMessage && !password ? 'Password is required' : ''}
                 style={styles.input}
             />
+
+            {errorMessage ? <ErrorText>{errorMessage}</ErrorText> : null}
 
             <ButtonPrimary title="Login" onPress={handleLogin} style={styles.buttonLogin} />
 

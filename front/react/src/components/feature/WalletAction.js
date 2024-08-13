@@ -44,13 +44,13 @@ const WalletAction = ({ type, onActionComplete }) => {
                     title: "Incomplete Bank Details",
                     description: "Please complete your bank details to proceed. Redirecting...",
                     status: "error",
-                    duration: 5000,
+                    duration: 1000,
                     isClosable: true,
                 });
-                // Redirect to Bank Details Page after 5 seconds
+                // Redirect to Bank Details Page after 1 seconds
                 setTimeout(() => {
                     navigate('/settings/profile/bankDetails');
-                }, 5000);
+                }, 1000);
             }
         }
     };
@@ -64,8 +64,8 @@ const WalletAction = ({ type, onActionComplete }) => {
 
     const handleNextStep = () => {
         if (step === 1) {
-            if (!amount || parseFloat(amount) <= 0) { // client side validation
-                setError('Please enter a valid amount.');
+            if (!amount || parseFloat(amount) <= 0 || parseFloat(amount) > 1000000000) { // client side validation
+                setError('Please enter amount between $0 to $1,000,000,000.');
             } else {
                 setError('');
                 setStep(step + 1);
@@ -103,6 +103,13 @@ const WalletAction = ({ type, onActionComplete }) => {
                 setError('An unexpected error occurred. Please try again.'); // set the error message
             }
         }
+    };
+
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+        }).format(amount);
     };
 
     return (
@@ -162,7 +169,7 @@ const WalletAction = ({ type, onActionComplete }) => {
                     <Box textAlign="center">
                         <CheckCircleIcon boxSize={20} color="green.500" />
                         <Heading color="black" size="lg" mt={4}>
-                            Successfully {isDeposit ? 'added' : 'withdrew'} ${amount} {isDeposit ? 'into' : 'from'} your wallet!
+                            Successfully {isDeposit ? 'added' : 'withdrew'} {formatCurrency(amount)} {isDeposit ? 'into' : 'from'} your wallet!
                         </Heading>
                     </Box>
                 )}

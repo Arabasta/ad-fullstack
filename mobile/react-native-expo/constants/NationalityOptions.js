@@ -29,5 +29,7 @@ const nationalities = [
     'Vatican', 'Venezuelan', 'Vietnamese', 'Yemeni', 'Zambian', 'Zimbabwean'
 ];
 
-export default nationalities;
-
+export const nationalityOptions = nationalities.map((nationality) => ({
+    label: nationality,
+    value: nationality,
+}));

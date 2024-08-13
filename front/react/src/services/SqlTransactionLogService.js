@@ -12,9 +12,16 @@ const getPortfolioTransactions = async (portfolioType, page, size) => {
     });
 };
 
+const getTradeTransactions = async (page, size) => {
+    return await axiosInstance.get(`/v1/admin/trading/livetrading/transactions`, {
+        params: {page, size },
+    });
+};
+
 const SqlTransactionLogService = {
     getWalletTransactions,
     getPortfolioTransactions,
+    getTradeTransactions
 };
 
 export default SqlTransactionLogService;
