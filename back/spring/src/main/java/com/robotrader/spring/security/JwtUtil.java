@@ -3,6 +3,7 @@ package com.robotrader.spring.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,7 +17,10 @@ import java.util.stream.Collectors;
 @Service
 public class JwtUtil {
 
-    private final String SECRET_KEY = "${JWT_SECRET_KEY}";
+   // private final String SECRET_KEY = "${JWT_SECRET_KEY}";
+
+    @Value("${jwt.secret.key}")
+    private String SECRET_KEY;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

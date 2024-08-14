@@ -1,6 +1,6 @@
 package com.robotrader.spring.aws;
 
-import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,17 +14,39 @@ import software.amazon.awssdk.services.sns.SnsClient;
 @Configuration
 public class AwsConfig {
 
-    private final Dotenv dotenv = Dotenv.load();
+    @Value("${aws.s3.access-key-id}")
+    private String s3AccessKeyId;
 
+    @Value("${aws.s3.secret-access-key}")
+    private String s3SecretAccessKey;
+
+    @Value("${aws.s3.region}")
+    private String s3Region;
+
+    @Value("${aws.sns.access-key-id}")
+    private String snsAccessKeyId;
+
+    @Value("${aws.sns.secret-access-key}")
+    private String snsSecretAccessKey;
+
+    @Value("${aws.sns.region}")
+    private String snsRegion;
+
+    @Value("${aws.ses.access-key-id}")
+    private String sesAccessKeyId;
+
+    @Value("${aws.ses.secret-access-key}")
+    private String sesSecretAccessKey;
+
+    @Value("${aws.ses.region}")
+    private String sesRegion;
     @Bean
     @ConditionalOnProperty(name = "s3.transaction_logging.enabled", havingValue = "true")
     public S3Client s3Client() {
-        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(
-                dotenv.get("AWS_S3_ACCESS_KEY_ID", System.getenv("AWS_S3_ACCESS_KEY_ID")),
-                dotenv.get("AWS_S3_SECRET_ACCESS_KEY", System.getenv("AWS_S3_SECRET_ACCESS_KEY"))
-        );
+        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(s3AccessKeyId, s3SecretAccessKey);
+
         return S3Client.builder()
-                .region(Region.of(dotenv.get("AWS_S3_REGION")))
+                .region(Region.of(s3Region))
                 .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
                 .build();
     }
@@ -32,12 +54,10 @@ public class AwsConfig {
     @Bean
     @ConditionalOnProperty(name = "sns.notifications.enabled", havingValue = "true")
     public SnsClient snsClient() {
-        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(
-                dotenv.get("AWS_SNS_ACCESS_KEY_ID", System.getenv("AWS_SNS_ACCESS_KEY_ID")),
-                dotenv.get("AWS_SNS_SECRET_ACCESS_KEY", System.getenv("AWS_SNS_SECRET_ACCESS_KEY"))
-        );
+        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(snsAccessKeyId, snsSecretAccessKey);
+
         return SnsClient.builder()
-                .region(Region.of(dotenv.get("AWS_SNS_REGION", System.getenv("AWS_SNS_REGION"))))
+                .region(Region.of(snsRegion))
                 .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
                 .build();
     }
@@ -45,12 +65,10 @@ public class AwsConfig {
     @Bean
     @ConditionalOnProperty(name = "ses.notifications.enabled", havingValue = "true")
     public SesClient sesClient() {
-        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(
-                dotenv.get("AWS_SES_ACCESS_KEY_ID", System.getenv("AWS_SES_ACCESS_KEY_ID")),
-                dotenv.get("AWS_SES_SECRET_ACCESS_KEY", System.getenv("AWS_SES_SECRET_ACCESS_KEY"))
-        );
+        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(sesAccessKeyId, sesSecretAccessKey);
+
         return SesClient.builder()
-                .region(Region.of(dotenv.get("AWS_SES_REGION", System.getenv("AWS_SES_REGION"))))
+                .region(Region.of(sesRegion))
                 .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
                 .build();
     }

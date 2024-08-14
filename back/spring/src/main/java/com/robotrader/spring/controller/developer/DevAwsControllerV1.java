@@ -3,8 +3,8 @@ package com.robotrader.spring.controller.developer;
 import com.robotrader.spring.aws.s3.S3Wipe;
 import com.robotrader.spring.dto.general.ApiErrorResponse;
 import com.robotrader.spring.dto.general.ApiResponse;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,25 +23,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class DevAwsControllerV1 {
 
     private final S3Wipe s3Wipe;
-    private final Dotenv dotenv;
+
+    @Value("${aws.s3.transaction-bucket-name}")
+    private String transactionBucketName;
 
     @Autowired
-    public DevAwsControllerV1(@Autowired(required = false) S3Wipe s3Wipe, Dotenv dotenv) {
+    public DevAwsControllerV1(@Autowired(required = false) S3Wipe s3Wipe) {
         this.s3Wipe = s3Wipe;
-        this.dotenv = dotenv;
     }
 
     @DeleteMapping("/wipe-tx")
     public ResponseEntity<?> wipeS3TransactionBucket() {
-        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME");
-        if (bucketName == null) {
+        if (transactionBucketName == null) {
             ApiErrorResponse response = new ApiErrorResponse("error", "Bucket name is not configured.",
                     "AWS_S3_TRANSACTION_BUCKET_NAME environment variable is missing.");
             return ResponseEntity.status(400).body(response);
         }
 
         try {
-            s3Wipe.wipeBucket(bucketName);
+            s3Wipe.wipeBucket(transactionBucketName);
             ApiResponse<String> apiResponse = new ApiResponse<>("success", "S3 bucket wiped successfully",
                     null);
             return ResponseEntity.ok(apiResponse);

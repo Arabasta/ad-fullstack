@@ -6,8 +6,7 @@ import com.robotrader.spring.exception.aws.LogParsingException;
 import com.robotrader.spring.exception.aws.TransactionRetrievalException;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.trading.dto.TradeTransaction;
-import io.github.cdimascio.dotenv.Dotenv;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -20,20 +19,22 @@ import java.util.List;
 @Component
 @ConditionalOnProperty(name = "s3.transaction_logging.enabled", havingValue = "true")
 public class S3TransactionLogger {
-    private final Dotenv dotenv;
+    @Value("${aws.s3.transaction-bucket-name}")
+    private String transactionBucketName;
+
+    @Value("${aws.s3.trade-transaction-bucket-name}")
+    private String tradeTransactionBucketName;
+
     private final S3Logger s3Logger;
     private final ObjectMapper objectMapper;
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
-    @Autowired
-    public S3TransactionLogger(Dotenv dotenv, S3Logger s3Logger) {
-        this.dotenv = dotenv;
+    public S3TransactionLogger(S3Logger s3Logger) {
         this.s3Logger = s3Logger;
         this.objectMapper = new ObjectMapper();
     }
 
     public void logWalletTransaction(String username, BigDecimal transactionAmount, BigDecimal totalAmount, String transactionType) {
-        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRANSACTION_BUCKET_NAME"));
         String timestamp = LocalDateTime.now().format(DATE_TIME_FORMATTER);
         String fileName = String.format("transactions/%s/%s-%s.json", username, transactionType, timestamp);
 
@@ -43,12 +44,11 @@ public class S3TransactionLogger {
         logEntry.put("transactionAmount", transactionAmount);
         logEntry.put("totalAmount", totalAmount);
         logEntry.put("type", transactionType);
-        s3Logger.s3PutObject(bucketName, fileName, logEntry.toString());
+        s3Logger.s3PutObject(transactionBucketName, fileName, logEntry.toString());
     }
 
     public void logPortfolioTransaction(String username, PortfolioTypeEnum portfolioType, BigDecimal transactionAmount,
                                         BigDecimal totalAmount, String transactionType) {
-        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRANSACTION_BUCKET_NAME"));
         String timestamp = LocalDateTime.now().format(DATE_TIME_FORMATTER);
         String fileName = String.format("transactions/%s/%s/%s-%s.json", username, portfolioType, transactionType, timestamp);
 
@@ -59,12 +59,10 @@ public class S3TransactionLogger {
         logEntry.put("transactionAmount", transactionAmount);
         logEntry.put("totalAmount", totalAmount);
         logEntry.put("type", transactionType);
-        s3Logger.s3PutObject(bucketName, fileName, logEntry.toString());
+        s3Logger.s3PutObject(transactionBucketName, fileName, logEntry.toString());
     }
 
     public void logTradeTransaction(TradeTransaction tradeTransaction) {
-        String bucketName = dotenv.get("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME"));
-
         String transactionId = tradeTransaction.getTransactionId();
         String ticker = tradeTransaction.getTicker();
         String action = tradeTransaction.getAction();
@@ -85,31 +83,27 @@ public class S3TransactionLogger {
         logEntry.put("transactionPrice", transactionPrice);
         logEntry.put("transactionAmount", transactionAmount);
         logEntry.put("portfolioType", portfolioType.name());
-        s3Logger.s3PutObject(bucketName, fileName, logEntry.toString());
+        s3Logger.s3PutObject(tradeTransactionBucketName, fileName, logEntry.toString());
     }
 
     public List<ObjectNode> getWalletTransactions(String username, int page, int size) {
-        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRANSACTION_BUCKET_NAME"));
         String prefix = String.format("transactions/%s/", username);
-        return getTransactions(bucketName, prefix, page, size);
+        return getTransactions(tradeTransactionBucketName, prefix, page, size);
     }
 
     public List<ObjectNode> getPortfolioTransactions(String username, PortfolioTypeEnum portfolioType, int page, int size) {
-        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRANSACTION_BUCKET_NAME"));
         String prefix = String.format("transactions/%s/%s/", username, portfolioType);
-        return getTransactions(bucketName, prefix, page, size);
+        return getTransactions(tradeTransactionBucketName, prefix, page, size);
     }
 
     public List<ObjectNode> getAllTradeTransactions(int size) {
-        String bucketName = dotenv.get("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME"));
         String prefix = String.format("trades");
-        return getTransactionsWithoutPagination(bucketName, prefix, size);
+        return getTransactionsWithoutPagination(tradeTransactionBucketName, prefix, size);
     }
 
     public List<ObjectNode> getTradeTransactionsWithPagination(PortfolioTypeEnum portfolioType, int page, int size) {
-        String bucketName = dotenv.get("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME"));
         String prefix = String.format("trades");
-        return getTransactions(bucketName, prefix, page, size);
+        return getTransactions(tradeTransactionBucketName, prefix, page, size);
     }
 
     private List<ObjectNode> getTransactions(String bucketName, String prefix, int page, int size) {
