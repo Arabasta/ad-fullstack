@@ -9,8 +9,8 @@ const TransactionHistoryList = ({ type, portfolioType }) => {
 
     const renderTransaction = ({ item }) => (
         <View style={styles.transaction}>
-            <Text style={styles.transactionType}>{item.transactionType} ${item.transactionAmount}</Text>
-            <Text style={styles.transactionBalance}>Balance: ${item.totalAmount}</Text>
+            <Text style={styles.transactionType}>{item.transactionType} ${item.transactionAmount.toLocaleString('en-SG')}</Text>
+            <Text style={styles.transactionBalance}>Balance: ${item.totalAmount.toLocaleString('en-SG')}</Text>
             <Text style={styles.transactionTimestamp}>
                 {Array.isArray(item.timestamp) && item.timestamp.length >= 6
                     ? new Date(item.timestamp[0], item.timestamp[1] - 1, item.timestamp[2], item.timestamp[3], item.timestamp[4], item.timestamp[5]).toLocaleString()
