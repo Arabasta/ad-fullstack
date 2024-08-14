@@ -100,6 +100,11 @@ const BackTestPage = () => {
                 <Text fontSize="lg" color="gray.600">
                     Starting back testing is as simple as selecting a portfolio, algorithm and amount, and run by portfolio type or on individual tickers.
                 </Text>
+                <Text fontSize="lg" color="gray.600">
+                    We
+                    <Text as='span' style={{ fontWeight: 'bold' }}> limit back testing to the past 1 week </Text>
+                    to ensure that our strategies are tested against the most current market conditions, allowing for more relevant and actionable insights.
+                </Text>
                 <HStack>
                     <FormControl as={GridItem} colSpan={[6, 3]}>
                         <FormLabel>Portfolio Type</FormLabel>

@@ -2,7 +2,6 @@ package com.robotrader.spring.service;
 
 import com.robotrader.spring.dto.ticker.TickerNewsApiResponseDTO;
 import com.robotrader.spring.dto.ticker.TickerNewsDTO;
-import com.robotrader.spring.exception.notFound.TickerNotFoundException;
 import com.robotrader.spring.model.Ticker;
 import com.robotrader.spring.service.interfaces.INewsService;
 import org.slf4j.Logger;
@@ -76,6 +75,10 @@ public class NewsService implements INewsService {
                 .stream()
                 .map(Ticker::getTickerName)
                 .collect(Collectors.toList());
+
+        // By default add News for S&P500 and Nasdaq
+        tickers.add("SPY");
+        tickers.add("QQQ");
 
         return Flux.fromIterable(tickers)
                 .flatMap(this::getNewsByTicker)
