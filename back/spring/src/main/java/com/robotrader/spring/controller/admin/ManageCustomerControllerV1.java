@@ -29,7 +29,7 @@ public class ManageCustomerControllerV1 {
 
     // send email update
     // ban user etc (in another file)
-    // todo: add pagination if free
+    // todo: remove this file
     @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<CustomerDetailsDTO>>> getCustomers(Authentication authentication) {
         return ResponseEntity.ok(new ApiResponse<>("success", "Customers retrieved successfully",

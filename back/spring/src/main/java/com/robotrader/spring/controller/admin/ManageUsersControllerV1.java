@@ -13,9 +13,6 @@ import java.util.List;
 @RequestMapping("/api/v1/admin/manage-users")
 public class ManageUsersControllerV1 {
 
-    // todo : add more actions for admin
-    // todo: add dto for lock / unlock if free
-    // todo : add response dtos too if free
     private final IUserService userService;
 
     @Autowired
