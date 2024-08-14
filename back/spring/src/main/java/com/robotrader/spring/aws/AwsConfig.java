@@ -20,8 +20,8 @@ public class AwsConfig {
     @ConditionalOnProperty(name = "s3.transaction_logging.enabled", havingValue = "true")
     public S3Client s3Client() {
         AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(
-                dotenv.get("AWS_S3_ACCESS_KEY_ID"),
-                dotenv.get("AWS_S3_SECRET_ACCESS_KEY")
+                dotenv.get("AWS_S3_ACCESS_KEY_ID", System.getenv("AWS_S3_ACCESS_KEY_ID")),
+                dotenv.get("AWS_S3_SECRET_ACCESS_KEY", System.getenv("AWS_S3_SECRET_ACCESS_KEY"))
         );
         return S3Client.builder()
                 .region(Region.of(dotenv.get("AWS_S3_REGION")))
@@ -33,11 +33,11 @@ public class AwsConfig {
     @ConditionalOnProperty(name = "sns.notifications.enabled", havingValue = "true")
     public SnsClient snsClient() {
         AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(
-                dotenv.get("AWS_SNS_ACCESS_KEY_ID"),
-                dotenv.get("AWS_SNS_SECRET_ACCESS_KEY")
+                dotenv.get("AWS_SNS_ACCESS_KEY_ID", System.getenv("AWS_SNS_ACCESS_KEY_ID")),
+                dotenv.get("AWS_SNS_SECRET_ACCESS_KEY", System.getenv("AWS_SNS_SECRET_ACCESS_KEY"))
         );
         return SnsClient.builder()
-                .region(Region.of(dotenv.get("AWS_SNS_REGION")))
+                .region(Region.of(dotenv.get("AWS_SNS_REGION", System.getenv("AWS_SNS_REGION"))))
                 .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
                 .build();
     }
@@ -46,11 +46,11 @@ public class AwsConfig {
     @ConditionalOnProperty(name = "ses.notifications.enabled", havingValue = "true")
     public SesClient sesClient() {
         AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(
-                dotenv.get("AWS_SES_ACCESS_KEY_ID"),
-                dotenv.get("AWS_SES_SECRET_ACCESS_KEY")
+                dotenv.get("AWS_SES_ACCESS_KEY_ID", System.getenv("AWS_SES_ACCESS_KEY_ID")),
+                dotenv.get("AWS_SES_SECRET_ACCESS_KEY", System.getenv("AWS_SES_SECRET_ACCESS_KEY"))
         );
         return SesClient.builder()
-                .region(Region.of(dotenv.get("AWS_SES_REGION")))
+                .region(Region.of(dotenv.get("AWS_SES_REGION", System.getenv("AWS_SES_REGION"))))
                 .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
                 .build();
     }

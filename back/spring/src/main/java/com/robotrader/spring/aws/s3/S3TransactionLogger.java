@@ -33,7 +33,7 @@ public class S3TransactionLogger {
     }
 
     public void logWalletTransaction(String username, BigDecimal transactionAmount, BigDecimal totalAmount, String transactionType) {
-        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME");
+        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRANSACTION_BUCKET_NAME"));
         String timestamp = LocalDateTime.now().format(DATE_TIME_FORMATTER);
         String fileName = String.format("transactions/%s/%s-%s.json", username, transactionType, timestamp);
 
@@ -48,7 +48,7 @@ public class S3TransactionLogger {
 
     public void logPortfolioTransaction(String username, PortfolioTypeEnum portfolioType, BigDecimal transactionAmount,
                                         BigDecimal totalAmount, String transactionType) {
-        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME");
+        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRANSACTION_BUCKET_NAME"));
         String timestamp = LocalDateTime.now().format(DATE_TIME_FORMATTER);
         String fileName = String.format("transactions/%s/%s/%s-%s.json", username, portfolioType, transactionType, timestamp);
 
@@ -63,7 +63,7 @@ public class S3TransactionLogger {
     }
 
     public void logTradeTransaction(TradeTransaction tradeTransaction) {
-        String bucketName = dotenv.get("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME");
+        String bucketName = dotenv.get("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME"));
 
         String transactionId = tradeTransaction.getTransactionId();
         String ticker = tradeTransaction.getTicker();
@@ -89,25 +89,25 @@ public class S3TransactionLogger {
     }
 
     public List<ObjectNode> getWalletTransactions(String username, int page, int size) {
-        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME");
+        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRANSACTION_BUCKET_NAME"));
         String prefix = String.format("transactions/%s/", username);
         return getTransactions(bucketName, prefix, page, size);
     }
 
     public List<ObjectNode> getPortfolioTransactions(String username, PortfolioTypeEnum portfolioType, int page, int size) {
-        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME");
+        String bucketName = dotenv.get("AWS_S3_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRANSACTION_BUCKET_NAME"));
         String prefix = String.format("transactions/%s/%s/", username, portfolioType);
         return getTransactions(bucketName, prefix, page, size);
     }
 
     public List<ObjectNode> getAllTradeTransactions(int size) {
-        String bucketName = dotenv.get("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME");
+        String bucketName = dotenv.get("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME"));
         String prefix = String.format("trades");
         return getTransactionsWithoutPagination(bucketName, prefix, size);
     }
 
     public List<ObjectNode> getTradeTransactionsWithPagination(PortfolioTypeEnum portfolioType, int page, int size) {
-        String bucketName = dotenv.get("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME");
+        String bucketName = dotenv.get("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME", System.getenv("AWS_S3_TRADE_TRANSACTION_BUCKET_NAME"));
         String prefix = String.format("trades");
         return getTransactions(bucketName, prefix, page, size);
     }

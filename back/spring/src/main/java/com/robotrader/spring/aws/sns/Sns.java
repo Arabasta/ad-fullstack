@@ -20,7 +20,7 @@ public class Sns {
     }
 
     public void sendEmail(String subject, String message) {
-        String topicArn = dotenv.get("AWS_SNS_TOPIC_ARN");
+        String topicArn = dotenv.get("AWS_SNS_TOPIC_ARN", System.getenv("AWS_SNS_TOPIC_ARN"));
 
         PublishRequest request = PublishRequest.builder()
                 .subject(subject)

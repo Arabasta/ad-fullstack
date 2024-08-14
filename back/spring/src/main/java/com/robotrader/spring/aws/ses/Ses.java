@@ -19,7 +19,7 @@ public class Ses {
     }
 
     public void sendEmail(String subject, String message, String recipientEmail) {
-        String senderEmail = dotenv.get("AWS_SES_SENDER_EMAIL");
+        String senderEmail = dotenv.get("AWS_SES_SENDER_EMAIL", System.getenv("AWS_SES_SENDER_EMAIL"));
 
         Destination destination = Destination.builder().toAddresses(recipientEmail).build();
         Content subjectContent = Content.builder().data(subject).build();
