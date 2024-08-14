@@ -7,7 +7,7 @@ import ButtonBlack from "../../../components/common/buttons/ButtonBlack";
 import InputBoxWhite from "../../../components/common/inputFields/InputBoxWhite";
 import Text from "../../../components/common/text/Text";
 
-// Add validation and error messages
+// Add validation and auto-format for account number
 const EditBankDetailsForm = ({ initialDetails = null }) => {
     const { bankDetails, getBankDetails, updateBankDetails } = useBankDetails();
     const toast = useToast();
@@ -41,12 +41,29 @@ const EditBankDetailsForm = ({ initialDetails = null }) => {
         }
     }, [initialDetails, bankDetails]);
 
+    const formatAccountNumber = (value) => {
+        // Auto-format the account number with hyphens, e.g., "1234-56789" or "12-3456-7890"
+        return value
+            .replace(/\D/g, '') // Remove all non-digit characters
+            .replace(/(\d{4})(\d{1,4})(\d{1,3})?/, (match, p1, p2, p3) => {
+                return [p1, p2, p3].filter(Boolean).join('-');
+            });
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setDetails((prevDetails) => ({
-            ...prevDetails,
-            [name]: value,
-        }));
+
+        if (name === 'accountNumber') {
+            setDetails((prevDetails) => ({
+                ...prevDetails,
+                [name]: formatAccountNumber(value),
+            }));
+        } else {
+            setDetails((prevDetails) => ({
+                ...prevDetails,
+                [name]: value,
+            }));
+        }
     };
 
     const validate = () => {
@@ -60,10 +77,13 @@ const EditBankDetailsForm = ({ initialDetails = null }) => {
 
         if (!details.accountNumber) {
             errors.accountNumber = "Account number is required.";
-        } else if (!/^\d+$/.test(details.accountNumber)) {
-            errors.accountNumber = "Account number must contain only digits.";
-        } else if (details.accountNumber.length < 8 || details.accountNumber.length > 20) {
-            errors.accountNumber = "Account number must be between 8 and 20 characters.";
+        } else {
+            const accountNumberDigits = details.accountNumber.replace(/\D/g, ''); // Remove hyphens and check digits only
+            if (accountNumberDigits.length < 7 || accountNumberDigits.length > 11) {
+                errors.accountNumber = "Account number must be between 7 and 11 digits.";
+            } else if (!/^\d+$/.test(accountNumberDigits)) {
+                errors.accountNumber = "Account number must contain only digits.";
+            }
         }
 
         if (!details.accountHolderName) {
