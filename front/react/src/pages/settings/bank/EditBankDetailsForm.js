@@ -7,7 +7,7 @@ import ButtonBlack from "../../../components/common/buttons/ButtonBlack";
 import InputBoxWhite from "../../../components/common/inputFields/InputBoxWhite";
 import Text from "../../../components/common/text/Text";
 
-// todo: add validation and error message (on backend too) for empty fields
+// Add validation and error messages
 const EditBankDetailsForm = ({ initialDetails = null }) => {
     const { bankDetails, getBankDetails, updateBankDetails } = useBankDetails();
     const toast = useToast();
@@ -17,6 +17,7 @@ const EditBankDetailsForm = ({ initialDetails = null }) => {
         accountNumber: '',
         accountHolderName: '',
     });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const loadBankDetails = async () => {
@@ -48,7 +49,44 @@ const EditBankDetailsForm = ({ initialDetails = null }) => {
         }));
     };
 
+    const validate = () => {
+        let errors = {};
+
+        if (!details.bankName) {
+            errors.bankName = "Bank name is required.";
+        } else if (details.bankName.length > 20) {
+            errors.bankName = "Bank name must not exceed 20 characters.";
+        }
+
+        if (!details.accountNumber) {
+            errors.accountNumber = "Account number is required.";
+        } else if (!/^\d+$/.test(details.accountNumber)) {
+            errors.accountNumber = "Account number must contain only digits.";
+        } else if (details.accountNumber.length < 8 || details.accountNumber.length > 20) {
+            errors.accountNumber = "Account number must be between 8 and 20 characters.";
+        }
+
+        if (!details.accountHolderName) {
+            errors.accountHolderName = "Account holder name is required.";
+        } else if (details.accountHolderName.length > 50) {
+            errors.accountHolderName = "Account holder name must not exceed 50 characters.";
+        }
+
+        setErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
     const handleSave = async () => {
+        if (!validate()) {
+            toast({
+                title: "Please correct the errors before saving.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
+
         await updateBankDetails(details);
         toast({
             title: "Bank Details Saved",
@@ -91,33 +129,41 @@ const EditBankDetailsForm = ({ initialDetails = null }) => {
                 ) : (
                     <>
                         <VStack spacing={4} align="stretch">
-                                <Text>Bank Name</Text>
-                                <InputBoxWhite
-                                    name="bankName"
-                                    value={details.bankName}
-                                    onChange={handleInputChange}
-                                    placeholder="Bank Name"
-                                    p={4}
-                                    fontSize="lg"
-                                />
-                                <Text>Account Number</Text>
-                                <InputBoxWhite
-                                    name="accountNumber"
-                                    value={details.accountNumber}
-                                    onChange={handleInputChange}
-                                    placeholder="Account Number"
-                                    p={4}
-                                    fontSize="lg"
-                                />
-                                <Text>Account Holder Name</Text>
-                                <InputBoxWhite
-                                    name="accountHolderName"
-                                    value={details.accountHolderName}
-                                    onChange={handleInputChange}
-                                    placeholder="Full Name"
-                                    p={4}
-                                    fontSize="lg"
-                                />
+                            <Text>Bank Name</Text>
+                            <InputBoxWhite
+                                name="bankName"
+                                value={details.bankName}
+                                onChange={handleInputChange}
+                                placeholder="Bank Name"
+                                p={4}
+                                fontSize="lg"
+                                isInvalid={!!errors.bankName}
+                            />
+                            {errors.bankName && <Text color="red.500">{errors.bankName}</Text>}
+
+                            <Text>Account Number</Text>
+                            <InputBoxWhite
+                                name="accountNumber"
+                                value={details.accountNumber}
+                                onChange={handleInputChange}
+                                placeholder="Account Number"
+                                p={4}
+                                fontSize="lg"
+                                isInvalid={!!errors.accountNumber}
+                            />
+                            {errors.accountNumber && <Text color="red.500">{errors.accountNumber}</Text>}
+
+                            <Text>Account Holder Name</Text>
+                            <InputBoxWhite
+                                name="accountHolderName"
+                                value={details.accountHolderName}
+                                onChange={handleInputChange}
+                                placeholder="Full Name"
+                                p={4}
+                                fontSize="lg"
+                                isInvalid={!!errors.accountHolderName}
+                            />
+                            {errors.accountHolderName && <Text color="red.500">{errors.accountHolderName}</Text>}
                         </VStack>
                         <HStack justify="space-between">
                             <ButtonRed onClick={handleCancelClick} flex="1" ml={2}>Cancel</ButtonRed>
