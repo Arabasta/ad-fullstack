@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'release/spring/v[0-9]+.[0-9]+'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -25,13 +26,13 @@ jobs:
       - name: Set up Docker buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: login to docker hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.KEI_DOCKER_USERNAME }}
           password: ${{ secrets.KEI_DOCKER_PASSWORD }}
 
-      - name: build and push
+      - name: Build and Push
         uses: docker/build-push-action@v5
         with:
           context: ./back/spring
@@ -45,6 +46,22 @@ jobs:
           RDS_ENDPOINT: ${{ secrets.MAIN_RDS_ENDPOINT }}
           RDS_USERNAME: ${{ secrets.MAIN_RDS_USERNAME }}
           RDS_PASSWORD: ${{ secrets.MAIN_RDS_PASSWORD }}
+          AWS_SES_ACCESS_KEY_ID: ${{ secrets.AWS_SES_ACCESS_KEY_ID }}
+          AWS_SES_SECRET_ACCESS_KEY: ${{ secrets.AWS_SES_SECRET_ACCESS_KEY }}
+          AWS_SES_REGION: ${{ secrets.AWS_SES_REGION }}
+          AWS_SES_SENDER_EMAIL: ${{ secrets.AWS_SES_SENDER_EMAIL }}
+          POLYGON_API_KEY: ${{ secrets.POLYGON_API_KEY }}
+          BACK_FASTAPI_IP_ADDRESS: ${{ secrets.BACK_FASTAPI_IP_ADDRESS }}
+          POLYGON_API_BASE_URL: ${{ secrets.POLYGON_API_BASE_URL }}
+          AWS_S3_ACCESS_KEY_ID: ${{ secrets.AWS_S3_ACCESS_KEY_ID }}
+          AWS_S3_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SECRET_ACCESS_KEY }}
+          AWS_S3_REGION: ${{ secrets.AWS_S3_REGION }}
+          AWS_S3_TRANSACTION_BUCKET_NAME: ${{ secrets.AWS_S3_TRANSACTION_BUCKET_NAME }}
+          AWS_S3_PREDICTION_BUCKET_NAME: ${{ secrets.AWS_S3_PREDICTION_BUCKET_NAME }}
+          AWS_S3_MODEL_BUCKET_NAME: ${{ secrets.AWS_S3_MODEL_BUCKET_NAME }}
+          API_BACK_FASTAPI_PREDICT_TICKER_BACKTEST: ${{ secrets.API_BACK_FASTAPI_PREDICT_TICKER_BACKTEST }}
+          API_BACK_FASTAPI_PREDICT_TICKER_LIVE: ${{ secrets.API_BACK_FASTAPI_PREDICT_TICKER_LIVE }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
         run: |
           echo "${MAIN_EC2_SSH_KEY}" > /tmp/key.pem
           chmod 600 /tmp/key.pem
@@ -58,6 +75,22 @@ jobs:
             -e RDS_ENDPOINT=${RDS_ENDPOINT} \
             -e RDS_USERNAME=${RDS_USERNAME} \
             -e RDS_PASSWORD=${RDS_PASSWORD} \
+            -e AWS_SES_ACCESS_KEY_ID=${AWS_SES_ACCESS_KEY_ID} \
+            -e AWS_SES_SECRET_ACCESS_KEY=${AWS_SES_SECRET_ACCESS_KEY} \
+            -e AWS_SES_REGION=${AWS_SES_REGION} \
+            -e AWS_SES_SENDER_EMAIL=${AWS_SES_SENDER_EMAIL} \
+            -e POLYGON_API_KEY=${POLYGON_API_KEY} \
+            -e BACK_FASTAPI_IP_ADDRESS=${BACK_FASTAPI_IP_ADDRESS} \
+            -e POLYGON_API_BASE_URL=${POLYGON_API_BASE_URL} \
+            -e AWS_S3_ACCESS_KEY_ID=${AWS_S3_ACCESS_KEY_ID} \
+            -e AWS_S3_SECRET_ACCESS_KEY=${AWS_S3_SECRET_ACCESS_KEY} \
+            -e AWS_S3_REGION=${AWS_S3_REGION} \
+            -e AWS_S3_TRANSACTION_BUCKET_NAME=${AWS_S3_TRANSACTION_BUCKET_NAME} \
+            -e AWS_S3_PREDICTION_BUCKET_NAME=${AWS_S3_PREDICTION_BUCKET_NAME} \
+            -e AWS_S3_MODEL_BUCKET_NAME=${AWS_S3_MODEL_BUCKET_NAME} \
+            -e API_BACK_FASTAPI_PREDICT_TICKER_BACKTEST=${API_BACK_FASTAPI_PREDICT_TICKER_BACKTEST} \
+            -e API_BACK_FASTAPI_PREDICT_TICKER_LIVE=${API_BACK_FASTAPI_PREDICT_TICKER_LIVE} \
+            -e JWT_SECRET_KEY=${JWT_SECRET_KEY} \
             ${{ secrets.KEI_DOCKER_USERNAME }}/robo_main_spring:${{ github.sha }}
           docker logs robo_main_spring
           EOF
