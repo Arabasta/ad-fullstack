@@ -43,6 +43,10 @@ public class Customer {
     @JoinColumn(name = "bank_details_id")
     private BankDetails bankDetails;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "notification_preferences_id")
+    private NotificationPreferences notificationPreferences;
+
     @Length(min=7, max=15, message = "Please input a valid mobile number")
     @Column(nullable = false, length = 15)
     private String mobileNumber;
