@@ -62,7 +62,7 @@ const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle }) =>
     // Determine y-axis tick values based on the data range, rounded to the nearest whole number
     const yTicks = Array.from({ length: 6 }, (_, i) => {
         const value = Math.round(yDomain.min + (i * (yDomain.max - yDomain.min) / 5));
-        return { value, label: value.toString() };
+        return { value, label: value };
     });
 
     // Determine chart dimensions
@@ -83,6 +83,7 @@ const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle }) =>
                 >
                     <VerticalAxis
                         tickValues={yTicks.map(tick => tick.value)}
+                        tickFormat={(value) => value.toLocaleString('en-SG')}
                         theme={{
                             labels: {
                                 label: {

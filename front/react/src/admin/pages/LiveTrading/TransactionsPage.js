@@ -34,11 +34,11 @@ const TransactionsPage = ({type}) => {
               {transactions.map((transaction) => (
                 <ListItem key={transaction.transactionId}>
                     <BlackText fontWeight="bold">
-                        {transaction.action} ${transaction.transactionAmount}
+                        {transaction.action} ${transaction.transactionAmount.toLocaleString('en-SG')}
                     </BlackText>
                     <BlackText>Ticker: {transaction.ticker}</BlackText>
-                    <BlackText>Quantity: {transaction.transactionQuantity}</BlackText>
-                    <BlackText>Price: ${transaction.transactionPrice}</BlackText>
+                    <BlackText>Quantity: {transaction.transactionQuantity.toLocaleString('en-SG')}</BlackText>
+                    <BlackText>Price: ${transaction.transactionPrice.toLocaleString('en-SG')}</BlackText>
                     <BlackText>Portfolio Type: {transaction.portfolioType}</BlackText>
                     <BlackText>{formatTimestamp(transaction.transactionDateTime)}</BlackText>
                     <SeparatorGrey />

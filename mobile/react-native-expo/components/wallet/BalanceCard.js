@@ -7,7 +7,7 @@ const BalanceCard = ({ balance }) => {
         <View style={styles.balanceCard}>
             <Text variant="titleMedium" style={styles.balanceLabel}>Balance</Text>
             <Text variant="displayLarge" style={styles.balanceAmount}>
-                ${balance ? balance.toFixed(2) : 'Loading...'}
+                ${balance ? balance.toLocaleString('en-SG') : 'Loading...'}
             </Text>
         </View>
     );

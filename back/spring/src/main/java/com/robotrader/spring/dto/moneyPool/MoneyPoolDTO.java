@@ -1,7 +1,9 @@
-package com.robotrader.spring.model;
+package com.robotrader.spring.dto.moneyPool;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
@@ -16,14 +18,8 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class MoneyPool {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class MoneyPoolDTO {
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, unique = true)
     private PortfolioTypeEnum portfolioType;
 
     @NotNull(message = "Amount cannot be null")

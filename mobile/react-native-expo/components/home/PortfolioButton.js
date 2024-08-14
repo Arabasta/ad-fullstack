@@ -6,7 +6,7 @@ const PortfolioButton = ({ title, value, onPress }) => {
         <TouchableOpacity style={styles.button} onPress={onPress}>
             <View style={styles.textContainer}>
                 <Text style={styles.title}>{title}</Text>
-                <Text style={styles.value}>${value.toFixed(2)}</Text>
+                <Text style={styles.value}>${value.toLocaleString('en-SG')}</Text>
             </View>
         </TouchableOpacity>
     );
