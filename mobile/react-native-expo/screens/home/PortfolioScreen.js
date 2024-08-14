@@ -31,7 +31,7 @@ const PortfolioScreen = ({ route, navigation }) => {
         <Container>
             {/* Portfolio Dashboard */}
             <Dashboard
-                header={portfolio.currentValue}
+                header={portfolio.currentValue.toLocaleString('en-SG')}
                 portfolio={portfolio}
                 chart={
                     chartData && labels ? (
@@ -61,7 +61,7 @@ const PortfolioScreen = ({ route, navigation }) => {
                     style={styles.button}
                 />
                 <ButtonPrimary
-                    title="Deposit"
+                    title="Allocate"
                     onPress={() => handleAction('deposit')}
                     style={styles.button}
                 />
