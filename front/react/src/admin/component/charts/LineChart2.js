@@ -24,19 +24,12 @@ ChartJS.register(
 const LineChart2 = ({ labels, datasets, view, scaleToFit }) => {
     const data = {
         labels,
-        datasets: datasets.length > 0 ? datasets.map((dataset, index) => ({
+        datasets: datasets.map((dataset, index) => ({
             ...dataset,
-            yAxisID: index === 0 ? "y-axis-1" : "y-axis-2",
+            yAxisID: view === 'portfolioValue' ? `y-axis-1-${index + 1}` : `y-axis-2`,
             borderWidth: 1.5,  // Thinner line
             pointRadius: 0.5,  // Smaller data point circles
-        })) : [{
-            label: 'No Data Available',
-            data: [0], // Provide a default data point to prevent the chart from shrinking
-            borderWidth: 1.5,
-            pointRadius: 0.5,
-            borderColor: '#000000',
-            backgroundColor: '#000000',
-        }],
+        })),
     };
 
     const options = {
@@ -44,38 +37,31 @@ const LineChart2 = ({ labels, datasets, view, scaleToFit }) => {
         maintainAspectRatio: !scaleToFit, // If scaleToFit is true, don't maintain aspect ratio
         aspectRatio: labels.length < 5 ? 2 : 3, // Adjust aspect ratio based on data points
         scales: {
-            "y-axis-1": {
-                type: "linear",
-                position: "left",
-                display: view === 'portfolioValue',
-                title: {
-                    display: view === 'portfolioValue',
-                    text: 'Portfolio Value ($)',
-                    color: 'brand.600',
-                    font: {
-                        size: 14
-                    }
-                },
-                ticks: {
-                    callback: (value) => `${value}`,
-                },
-            },
-            "y-axis-2": {
-                type: "linear",
-                position: "left",
-                display: view === 'performance',
-                title: {
-                    display: view === 'performance',
-                    text: 'Performance (%)',
-                    color: 'brand.600',
-                    font: {
-                        size: 14
-                    }
-                },
-                ticks: {
-                    callback: (value) => `${value}`,
-                },
-            },
+            ...datasets.reduce((acc, dataset, index) => {
+                const yAxisID = view === 'portfolioValue' ? `y-axis-1-${index + 1}` : `y-axis-2`;
+                acc[yAxisID] = {
+                    type: "linear",
+                    position: view === 'portfolioValue' ? (index % 2 === 0 ? "left" : "right") : "left", // Only one y-axis-2 on the right
+                    display: true,
+                    title: {
+                        display: true,
+                        text: view === 'portfolioValue'
+                            ? `${dataset.label} Value ($)`
+                            : `Performance (%)`,
+                        color: view === 'portfolioValue' ? dataset.borderColor : '#000', // Use black color for shared y-axis-2 title
+                        font: {
+                            size: 14
+                        }
+                    },
+                    ticks: {
+                        callback: (value) => `${value.toLocaleString()}`, // Format tick labels
+                    },
+                    grid: {
+                        drawOnChartArea: index === 0, // Only draw grid lines for the first y-axis
+                    },
+                };
+                return acc;
+            }, {}),
             x: {
                 title: {
                     display: true,
@@ -85,6 +71,18 @@ const LineChart2 = ({ labels, datasets, view, scaleToFit }) => {
                         size: 14
                     }
                 },
+                grid: {
+                    display: true,
+                },
+            },
+        },
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false,
             },
         },
     };
@@ -94,6 +92,7 @@ const LineChart2 = ({ labels, datasets, view, scaleToFit }) => {
             <Line data={data} options={options} />
         </div>
     );
-}
+};
 
 export default LineChart2;
+
