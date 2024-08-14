@@ -7,6 +7,7 @@ import com.robotrader.spring.dto.customer.UpdateCustomerDTO;
 import com.robotrader.spring.exception.notFound.CustomerNotFoundException;
 import com.robotrader.spring.model.BankDetails;
 import com.robotrader.spring.model.Customer;
+import com.robotrader.spring.model.NotificationPreferences;
 import com.robotrader.spring.repository.CustomerRepository;
 import com.robotrader.spring.service.interfaces.*;
 import jakarta.transaction.Transactional;
@@ -62,6 +63,7 @@ public class CustomerService implements ICustomerService {
         customer.setWallet(walletService.initBaseWallet());
         customer.setPortfolios(portfolioService.initBasePortfolios());
         customer.setBankDetails(new BankDetails());
+        customer.setNotificationPreferences(new NotificationPreferences());
 
         save(customer);
         return customer;

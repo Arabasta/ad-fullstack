@@ -1,5 +1,8 @@
 package com.robotrader.spring.aws.ses;
 
+import com.robotrader.spring.model.NotificationPreferences;
+import com.robotrader.spring.service.NotificationPreferencesService;
+import com.robotrader.spring.service.interfaces.INotificationPreferencesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -10,13 +13,20 @@ import org.springframework.stereotype.Service;
 public class SesPasswordNotificationService {
 
     private final Ses ses;
+    private final INotificationPreferencesService notificationPreferencesService;
 
     @Autowired
-    public SesPasswordNotificationService(Ses ses) {
+    public SesPasswordNotificationService(Ses ses, NotificationPreferencesService notificationPreferencesService) {
         this.ses = ses;
+        this.notificationPreferencesService = notificationPreferencesService;
     }
 
     public void sendPasswordChangeNotification(String username, String recipientEmail) {
+        NotificationPreferences notificationPreferences = notificationPreferencesService.getNotificationPreferences(username);
+        if (notificationPreferences.getPasswordChangeNotification() != null && !notificationPreferences.getPasswordChangeNotification()) {
+            return;
+        }
+
         String subject = "Security Alert: Your Password Has Been Changed";
         String message = String.format(
                 """
