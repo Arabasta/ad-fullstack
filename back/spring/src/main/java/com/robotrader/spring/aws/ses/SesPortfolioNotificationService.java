@@ -1,5 +1,8 @@
 package com.robotrader.spring.aws.ses;
 
+import com.robotrader.spring.model.NotificationPreferences;
+import com.robotrader.spring.service.NotificationPreferencesService;
+import com.robotrader.spring.service.interfaces.INotificationPreferencesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -11,13 +14,20 @@ import java.math.BigDecimal;
 public class SesPortfolioNotificationService {
 
     private final Ses ses;
+    private final INotificationPreferencesService notificationPreferencesService;
 
     @Autowired
-    public SesPortfolioNotificationService(Ses ses) {
+    public SesPortfolioNotificationService(Ses ses, NotificationPreferencesService notificationPreferencesService) {
         this.ses = ses;
+        this.notificationPreferencesService = notificationPreferencesService;
     }
 
     public void sendStopLossNotification(String username, String recipientEmail, String portfolioName) {
+        NotificationPreferences notificationPreferences = notificationPreferencesService.getNotificationPreferences(username);
+        if (notificationPreferences.getStopLossNotification() != null && !notificationPreferences.getStopLossNotification()) {
+            return;
+        }
+
         String subject = "Alert: Stop-Loss Triggered";
         String message = String.format(
                 """
@@ -39,6 +49,11 @@ public class SesPortfolioNotificationService {
     }
 
     public void sendRecurringAllocationNotification(String username, String recipientEmail, String portfolioName, BigDecimal amount) {
+        NotificationPreferences notificationPreferences = notificationPreferencesService.getNotificationPreferences(username);
+        if (notificationPreferences.getRecurringDepositNotification() != null && !notificationPreferences.getRecurringDepositNotification()) {
+            return;
+        }
+
         String subject = "Notification: Recurring Allocation Executed";
         String message = String.format(
                 """
