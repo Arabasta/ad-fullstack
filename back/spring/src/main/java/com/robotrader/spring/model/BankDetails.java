@@ -1,6 +1,9 @@
 package com.robotrader.spring.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,12 +20,19 @@ public class BankDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Bank name cannot be blank")
+    @Size(max = 20, message = "Bank name must not exceed 20 characters")
     @Column(length = 20)
     private String bankName;
 
+    @NotBlank(message = "Account number cannot be blank")
+    @Size(min = 8, max = 20, message = "Account number must be between 8 and 20 characters")
+    @Pattern(regexp = "\\d+", message = "Account number must contain only digits")
     @Column(length = 20)
     private String accountNumber;
 
+    @NotBlank(message = "Account holder name cannot be blank")
+    @Size(max = 50, message = "Account holder name must not exceed 50 characters")
     @Column(length = 50)
     private String accountHolderName;
 }
