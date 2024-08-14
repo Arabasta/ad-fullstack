@@ -29,7 +29,6 @@ public class UserControllerV1 {
         return ResponseEntity.ok(new ApiResponse<>("success", "User details retrieved successfully", userDTO));
     }
 
-    // todo: return standardized response with ApiResponse
     @GetMapping("/email")
     public ResponseEntity<EmailDTO> getEmail(Authentication authentication) {
         String username = authentication.getName();

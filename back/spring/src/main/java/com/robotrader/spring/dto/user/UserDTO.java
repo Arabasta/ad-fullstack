@@ -16,8 +16,6 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 public class UserDTO {
-    // todo: get the entire customer etc all user thingies and return big json
-
 
     @NotBlank
     @Size(min = 3, max = 20)
