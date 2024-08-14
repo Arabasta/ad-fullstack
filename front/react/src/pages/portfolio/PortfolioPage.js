@@ -26,9 +26,9 @@ export default function PortfolioPage() {
             const [year, month, day, hour, minute, second] = label;
             const date = new Date(year, month - 1, day, hour, minute, second);
             return date.toLocaleString('en-SG', {
-                //year: 'numeric',
-                //month: 'short',
-                //day: 'numeric',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true,
@@ -80,7 +80,6 @@ export default function PortfolioPage() {
             <Flex
                 p={5}
                 w="auto"
-                justifyContent="center"
                 alignItems="center"
             >
                 <SimpleGrid
