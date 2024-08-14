@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import ParagraphWithImageCard from "../components/common/cards/ParagraphWithImageCard";
 import {Flex} from "@chakra-ui/react";
+import { Link } from 'react-router-dom';
 import Button from "../components/common/buttons/Button";
 import {useNavigate} from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import InvestorProfileService from "../services/InvestorProfileService";
+import InlineText from "../components/common/text/TextInline";
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -36,7 +38,7 @@ const HomePage = () => {
             return {
                 title: "Start building your",
                 subtitle: "Wealth",
-                description: `You have been recommended the ${recommendedPortfolioType} portfolio. Join your fellow trailblazers and begin your journey at FourQuant.ai.`,
+                description: "Join your fellow trailblazers and begin your journey at FourQuant.ai. Kickstart your investment journey by allocating funds to your portfolios.",
                 button: <Button onClick={() => navigate(`/portfolio/`)}>View Portfolios</Button>,
             }
         } else {
@@ -49,6 +51,8 @@ const HomePage = () => {
         }
     }
 
+    const recommendedPortfolioPath = '/portfolio/'+recommendedPortfolioType;
+
     return (
         <Flex direction={{base: "column",lg: "row"}}
               bg="brand.400"
@@ -56,6 +60,20 @@ const HomePage = () => {
               alignItems="center"
         >
             <ParagraphWithImageCard
+                recommendedPortfolio={
+                    <InlineText mt="1rem" color="black">
+                        You have been recommended the <InlineText></InlineText>
+                        <Link to={recommendedPortfolioPath}>
+                            <InlineText color="brand.400"
+                                        fontWeight="700"
+                                        fontSize="lg"
+                                        textDecorationLine="underline"
+                            > {recommendedPortfolioType}
+                            </InlineText> <InlineText></InlineText>
+                        </Link>
+                        portfolio.
+                    </InlineText>
+                }
                 title={imageCardDetails().title}
                 subtitle={imageCardDetails().subtitle}
                 description={imageCardDetails().description}
