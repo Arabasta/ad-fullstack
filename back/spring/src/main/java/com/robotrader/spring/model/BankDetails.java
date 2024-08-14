@@ -26,8 +26,8 @@ public class BankDetails {
     private String bankName;
 
     @NotBlank(message = "Account number cannot be blank")
-    @Size(min = 8, max = 20, message = "Account number must be between 8 and 20 characters")
-    @Pattern(regexp = "\\d+", message = "Account number must contain only digits")
+    @Size(min = 7, max = 11, message = "Account number must be between 7 and 11 digits")
+    @Pattern(regexp = "\\d{7,11}", message = "Account number must contain 7 to 11 digits")
     @Column(length = 20)
     private String accountNumber;
 
