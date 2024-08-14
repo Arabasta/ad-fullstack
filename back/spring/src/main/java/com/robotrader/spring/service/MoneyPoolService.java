@@ -1,5 +1,6 @@
 package com.robotrader.spring.service;
 
+import com.robotrader.spring.dto.moneyPool.MoneyPoolDTO;
 import com.robotrader.spring.service.interfaces.IMoneyPoolService;
 import com.robotrader.spring.model.MoneyPool;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
@@ -81,5 +82,31 @@ public class MoneyPoolService implements IMoneyPoolService {
         }
         save(moneyPool);
         return newBalance;
+    }
+
+    @Override
+    @Transactional
+    public MoneyPool create(MoneyPoolDTO moneyPoolDTO) {
+        MoneyPool moneyPool = new MoneyPool();
+        updateMoneyPoolFromDTO(moneyPool, moneyPoolDTO);
+        save(moneyPool);
+        return moneyPool;
+    }
+
+    @Override
+    public void updateMoneyPoolFromDTO(MoneyPool moneyPool, MoneyPoolDTO moneyPoolDTO) {
+        moneyPool.setPoolBalance(moneyPoolDTO.getPoolBalance());
+        moneyPool.setTotalUnitQty(moneyPoolDTO.getTotalUnitQty());
+        moneyPool.setUnitPrice(moneyPoolDTO.getUnitPrice());
+        moneyPool.setPortfolioType(moneyPoolDTO.getPortfolioType());
+    }
+
+    @Override
+    @Transactional
+    public MoneyPoolDTO updateMoneyPool(MoneyPoolDTO moneyPoolDTO) {
+        MoneyPool moneyPool = findByPortfolioType(moneyPoolDTO.getPortfolioType());
+        updateMoneyPoolFromDTO(moneyPool, moneyPoolDTO);
+        save(moneyPool);
+        return moneyPoolDTO;
     }
 }
