@@ -1,6 +1,5 @@
 package com.robotrader.spring.trading.service;
 
-import com.robotrader.spring.aws.AwsConfig;
 import com.robotrader.spring.aws.s3.S3Logger;
 import com.robotrader.spring.dto.ticker.TickerDTO;
 import com.robotrader.spring.dto.ticker.TickerDTOListDTO;
@@ -14,6 +13,10 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,12 +39,30 @@ public class PredictionService {
     private final WebClient fastapiWebClient;
     private static final Logger logger = LoggerFactory.getLogger(PredictionService.class);
 
-    public PredictionService(WebClient.Builder webClientBuilder) {
+    public PredictionService(
+                             WebClient.Builder webClientBuilder) {
+
         this.fastapiWebClient = webClientBuilder.baseUrl(backFastapiUrl).build();
     }
+    @Value("${aws.s3.access-key-id}")
+    private String s3AccessKeyId;
 
+    @Value("${aws.s3.secret-access-key}")
+    private String s3SecretAccessKey;
+
+    @Value("${aws.s3.region}")
+    private String s3Region;
+
+    public S3Client s3Client() {
+        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(s3AccessKeyId, s3SecretAccessKey);
+
+        return S3Client.builder()
+                .region(Region.of(s3Region))
+                .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
+                .build();
+    }
     public TickerDTOListDTO getAvailableTickers() {
-        S3Logger logger = new S3Logger(new AwsConfig().s3Client());
+        S3Logger logger = new S3Logger(s3Client());
         // Transform the list of stock names into TickerDTO and collect into TickerDTOListDTO
         List<TickerDTO> tickerDTOList = logger
                 .retrieveObjectNameList(AWS_S3_MODEL_BUCKET_NAME).stream()
