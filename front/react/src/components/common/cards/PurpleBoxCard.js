@@ -1,13 +1,13 @@
 import React from 'react';
 import { Box } from '@chakra-ui/react';
 
-const GrayBoxCard = ({ children, ...props }) => {
+const PurpleBoxCard = ({ children, ...props }) => {
     return (
         <Box
-            bg="gray.700"
+            bg="brand.400"
             p={6}
             borderRadius="lg"
-            maxW="500px"
+            maxW="700px"
             mx="auto"
             boxShadow="lg"
             {...props}
@@ -17,4 +17,4 @@ const GrayBoxCard = ({ children, ...props }) => {
     );
 };
 
-export default GrayBoxCard;
+export default PurpleBoxCard;

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { VStack, HStack, Box, useToast } from '@chakra-ui/react';
 import useBankDetails from "../../../hooks/useBankDetails";
 import ButtonRed from "../../../components/common/buttons/ButtonRed";
-import GrayBoxCard from "../../../components/common/cards/GrayBoxCard";
+import PurpleBoxCard from "../../../components/common/cards/PurpleBoxCard";
 import ButtonBlack from "../../../components/common/buttons/ButtonBlack";
 import InputBoxWhite from "../../../components/common/inputFields/InputBoxWhite";
 import Text from "../../../components/common/text/Text";
+
+import CallToActionSection from "../../../admin/component/sections/CallToActionSection";
 
 // todo: add validation and error message (on backend too) for empty fields
 const EditBankDetailsForm = ({ initialDetails = null }) => {
@@ -68,65 +70,68 @@ const EditBankDetailsForm = ({ initialDetails = null }) => {
     };
 
     return (
-        <GrayBoxCard>
-            <VStack spacing={6} align="stretch">
-                {!isEditing ? (
-                    <>
-                        <Box>
-                            <HStack p={5} justifyContent="space-between">
-                                <Text flex="1">Bank Name:</Text>
-                                <Text fontSize="lg" flex="2">{details.bankName}</Text>
-                            </HStack>
-                            <HStack p={5} justifyContent="space-between">
-                                <Text flex="1">Account Number:</Text>
-                                <Text fontSize="lg" flex="2">{details.accountNumber}</Text>
-                            </HStack>
-                            <HStack p={5} justifyContent="space-between">
-                                <Text flex="1">Full Name:</Text>
-                                <Text fontSize="lg" flex="2">{details.accountHolderName}</Text>
-                            </HStack>
-                        </Box>
-                        <ButtonBlack w="full" onClick={handleEditClick}>Edit</ButtonBlack>
-                    </>
-                ) : (
-                    <>
-                        <VStack spacing={4} align="stretch">
-                                <Text>Bank Name</Text>
-                                <InputBoxWhite
-                                    name="bankName"
-                                    value={details.bankName}
-                                    onChange={handleInputChange}
-                                    placeholder="Bank Name"
-                                    p={4}
-                                    fontSize="lg"
-                                />
-                                <Text>Account Number</Text>
-                                <InputBoxWhite
-                                    name="accountNumber"
-                                    value={details.accountNumber}
-                                    onChange={handleInputChange}
-                                    placeholder="Account Number"
-                                    p={4}
-                                    fontSize="lg"
-                                />
-                                <Text>Account Holder Name</Text>
-                                <InputBoxWhite
-                                    name="accountHolderName"
-                                    value={details.accountHolderName}
-                                    onChange={handleInputChange}
-                                    placeholder="Full Name"
-                                    p={4}
-                                    fontSize="lg"
-                                />
+            <CallToActionSection title="Bank Details" subtitle="Easy and fuss free transactions">>
+                    <PurpleBoxCard align="stretch" maxW="800px" w="100%">
+                        <VStack spacing={6} align="stretch">
+                            {!isEditing ? (
+                                <>
+                                    <Box>
+                                        <HStack p={5} justifyContent="space-between">
+                                            <Text fontSize="xl" flex="1">Bank Name:</Text>
+                                            <Text fontSize="xl" flex="2">{details.bankName}</Text>
+                                        </HStack>
+                                        <HStack p={5} justifyContent="space-between">
+                                            <Text fontSize="xl" flex="1">Account Number:</Text>
+                                            <Text fontSize="xl" flex="2">{details.accountNumber}</Text>
+                                        </HStack>
+                                        <HStack p={5} justifyContent="space-between">
+                                            <Text fontSize="xl" flex="1">Full Name:</Text>
+                                            <Text fontSize="xl" flex="2">{details.accountHolderName}</Text>
+                                        </HStack>
+                                    </Box>
+                                    <ButtonBlack w="full" onClick={handleEditClick}>Edit</ButtonBlack>
+                                </>
+                            ) : (
+                                <>
+                                    <VStack spacing={4} align="stretch">
+                                        <Text>Bank Name</Text>
+                                        <InputBoxWhite
+                                            name="bankName"
+                                            value={details.bankName}
+                                            onChange={handleInputChange}
+                                            placeholder="Bank Name"
+                                            p={4}
+                                            fontSize="lg"
+                                        />
+                                        <Text>Account Number</Text>
+                                        <InputBoxWhite
+                                            name="accountNumber"
+                                            value={details.accountNumber}
+                                            onChange={handleInputChange}
+                                            placeholder="Account Number"
+                                            p={4}
+                                            fontSize="lg"
+                                        />
+                                        <Text>Account Holder Name</Text>
+                                        <InputBoxWhite
+                                            name="accountHolderName"
+                                            value={details.accountHolderName}
+                                            onChange={handleInputChange}
+                                            placeholder="Full Name"
+                                            p={4}
+                                            fontSize="lg"
+                                        />
+                                    </VStack>
+                                    <HStack justify="space-between">
+                                        <ButtonRed onClick={handleCancelClick} flex="1" ml={2}>Cancel</ButtonRed>
+                                        <ButtonBlack onClick={handleSave} flex="1" mr={2}>Save</ButtonBlack>
+                                    </HStack>
+                                </>
+                            )}
                         </VStack>
-                        <HStack justify="space-between">
-                            <ButtonRed onClick={handleCancelClick} flex="1" ml={2}>Cancel</ButtonRed>
-                            <ButtonBlack onClick={handleSave} flex="1" mr={2}>Save</ButtonBlack>
-                        </HStack>
-                    </>
-                )}
-            </VStack>
-        </GrayBoxCard>
+                    </PurpleBoxCard>
+            </CallToActionSection>
+
     );
 };
 
