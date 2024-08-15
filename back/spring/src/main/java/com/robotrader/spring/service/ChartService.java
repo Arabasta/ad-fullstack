@@ -93,7 +93,7 @@ public class ChartService implements IChartService {
         }
 
         ChartDatasetDTO capitalDataset = new ChartDatasetDTO("Capital", capitalAbsoluteData, "y-axis-1");
-        ChartDatasetDTO percentChangeDataset = new ChartDatasetDTO("Percent Change", capitalPercentChangeData, "y-axis-2");
+        ChartDatasetDTO percentChangeDataset = new ChartDatasetDTO("Performance", capitalPercentChangeData, "y-axis-2");
 
         return new ChartDataDTO(sortedLabels, Arrays.asList(capitalDataset, percentChangeDataset));
     }
@@ -114,19 +114,22 @@ public class ChartService implements IChartService {
 
         labels.add(logs.get(0).getTimestamp());
         capitalPercentChangeData.add(BigDecimal.ZERO);
-        capitalAbsoluteData.add(logs.get(0).getCurrentValue());
+        BigDecimal initialCapital = logs.get(0).getCurrentValue();
+        capitalAbsoluteData.add(initialCapital);
 
         for (int i = 1; i < logs.size(); i++) {
             PortfolioHistoryLog log = logs.get(i);
-
+            if (!log.getLogType().equals("Trade")) {
+                initialCapital = log.getCurrentValue();
+                continue;
+            }
             labels.add(log.getTimestamp());
             capitalAbsoluteData.add(log.getCurrentValue());
 
             // Calculate percent change
-            BigDecimal previousValue = logs.get(i - 1).getCurrentValue();
             BigDecimal percentChange = log.getCurrentValue()
-                    .subtract(previousValue)
-                    .divide(previousValue, 10, RoundingMode.HALF_UP)
+                    .subtract(initialCapital)
+                    .divide(initialCapital, 4, RoundingMode.HALF_UP)
                     .multiply(BigDecimal.valueOf(100))
                     .setScale(2, RoundingMode.HALF_UP);
             capitalPercentChangeData.add(percentChange);

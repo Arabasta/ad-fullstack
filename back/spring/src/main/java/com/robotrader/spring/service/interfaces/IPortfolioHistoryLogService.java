@@ -12,7 +12,7 @@ public interface IPortfolioHistoryLogService {
     void save(PortfolioHistoryLog portfolioHistoryLog);
 
     @Transactional
-    void log(Portfolio portfolio);
+    void log(Portfolio portfolio, String logType);
 
     List<PortfolioHistoryLog> getPortfolioHistoryLog(String username, PortfolioTypeEnum portfolioType);
 }

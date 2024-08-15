@@ -36,4 +36,6 @@ public class PortfolioHistoryLog {
     @NotNull
     @Column(nullable = false)
     private LocalDateTime timestamp;
+
+    private String logType;
 }
