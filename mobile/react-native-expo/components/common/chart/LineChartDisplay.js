@@ -8,7 +8,7 @@ const screenWidth = Dimensions.get('window').width;
 const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle,view }) => {
     const [tooltipIndex, setTooltipIndex] = useState(null);
     const [tooltipValue, setTooltipValue] = useState(null);
-    const [viewport, setViewport] = useState({ size: { width: 40 } }); // Initial viewport showing 10 data points
+    const [viewport, setViewport] = useState({ size: { width: 200 } }); // Initial viewport showing 10 data points
 
     // Ensure datasets is an array of objects with valid data arrays
     const validatedDatasets = datasets.filter(dataset =>
@@ -44,11 +44,16 @@ const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle,view 
     const allYValues = datasets.flatMap(ds => ds.data).filter(value => value !== undefined && value !== null);
     const yMin = Math.min(...allYValues);
     const yMax = Math.max(...allYValues);
+    const yRange = yMax - yMin;
 
-    // Adjust yDomain to ensure all data points are visible
+    // Determine the height of the chart and scale yDomain dynamically
+    const minChartHeight = 0.4; // Minimum 40% of the chart area
+    const chartHeight = 450;
+    const requiredRange = Math.max(yRange, yMin * (minChartHeight / (1 - minChartHeight)));
+
     const yDomain = {
-        min: Math.floor(yMin * 0.9),  // Adjust to give some margin below the minimum value
-        max: Math.ceil(yMax * 1.1),   // Adjust to give some margin above the maximum value
+        min: yMin - requiredRange * 0.05,  // Add some padding below
+        max: yMax + requiredRange * 0.05,  // Add some padding above
     };
 
     // xDomain will automatically cover all labels from start to end
@@ -75,8 +80,6 @@ const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle,view 
         return { value, label: value.toString() };
     });
 
-    // Determine chart dimensions
-    const chartHeight = 450;  // Reduced height for more space
     const chartWidth = screenWidth * 0.9;  // Slightly reduced width for padding
 
     return (

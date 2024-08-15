@@ -40,9 +40,10 @@ const PortfolioScreen = ({ route, navigation }) => {
                                           yAxisTitle={yAxisTitle}
                                           xAxisTitle={
                                                <View style={styles.xAxisTitleContainer}>
-                                                   <Text style={styles.labelText}>{lastLabelFormatted}</Text>
-                                                   <Text style={styles.xAxisTitle}>Time</Text>
                                                    <Text style={styles.labelText}>{firstLabelFormatted}</Text>
+                                                   <Text style={styles.xAxisTitle}>Time</Text>
+                                                   <Text style={styles.labelText}>{lastLabelFormatted}</Text>
+
 
                                                </View>
                                            }/>

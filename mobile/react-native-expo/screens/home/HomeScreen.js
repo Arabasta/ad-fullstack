@@ -131,9 +131,9 @@ const HomeScreen = ({ navigation }) => {
                         yAxisTitle={view === 'portfolioValue' ? "Portfolio Value ($)" : "Performance (%)"}
                         xAxisTitle={
                             <View style={styles.xAxisTitleContainer}>
-                                <Text style={styles.labelText}>To {firstLabelFormatted}</Text>
+                                <Text style={styles.labelText}>From {firstLabelFormatted}</Text>
                                 <Text style={styles.xAxisTitle}>Time</Text>
-                                <Text style={styles.labelText}>From {lastLabelFormatted}</Text>
+                                <Text style={styles.labelText}>To {lastLabelFormatted}</Text>
 
                             </View>
                         }
