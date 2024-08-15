@@ -21,20 +21,22 @@ import java.util.List;
 @Service
 public class PredictionService {
 
-    private final String AWS_S3_MODEL_BUCKET_NAME;
-    private final String API_BACK_FASTAPI_PREDICT_TICKER_BACKTEST;
-    private final String API_BACK_FASTAPI_PREDICT_TICKER_LIVE;
+    @Value("${aws.s3.model-bucket}")
+    private String AWS_S3_MODEL_BUCKET_NAME;
+
+    @Value("${api.back.fastapi.predict.ticket.backtest}")
+    private String API_BACK_FASTAPI_PREDICT_TICKER_BACKTEST;
+
+    @Value("${api.back.fastapi.predict.ticket.live}")
+    private String API_BACK_FASTAPI_PREDICT_TICKER_LIVE;
+
+    @Value("${back.fastapi.url}")
+    private String backFastapiUrl;
+
     private final WebClient fastapiWebClient;
     private static final Logger logger = LoggerFactory.getLogger(PredictionService.class);
 
-    public PredictionService(@Value("${AWS_S3_MODEL_BUCKET_NAME}") String awsS3ModelBucketName,
-                             @Value("${API_BACK_FASTAPI_PREDICT_TICKER_BACKTEST}") String apiFastapiPredictTickerBacktest,
-                             @Value("${API_BACK_FASTAPI_PREDICT_TICKER_LIVE}") String apiFastapiPredictTickerLive,
-                             @Value("${BACK_FASTAPI_URL}") String backFastapiUrl,
-                             WebClient.Builder webClientBuilder) {
-        this.AWS_S3_MODEL_BUCKET_NAME = awsS3ModelBucketName;
-        this.API_BACK_FASTAPI_PREDICT_TICKER_BACKTEST = apiFastapiPredictTickerBacktest;
-        this.API_BACK_FASTAPI_PREDICT_TICKER_LIVE = apiFastapiPredictTickerLive;
+    public PredictionService(WebClient.Builder webClientBuilder) {
         this.fastapiWebClient = webClientBuilder.baseUrl(backFastapiUrl).build();
     }
 
