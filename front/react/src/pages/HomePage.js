@@ -46,7 +46,7 @@ const HomePage = () => {
                 title: "Dive into the",
                 subtitle: "Algorithms",
                 description: "Perform Backtesting with exquisitely crafted Trading Algorithms. Discover new insights and soar to greater heights.",
-                button: <Button onClick={() => navigate(`/admin/backtest/`)}>Start Backtesting</Button>,
+                button: <Button onClick={() => navigate(`/backtest/`)}>Start Backtesting</Button>,
             }
         }
     }

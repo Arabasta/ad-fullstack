@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import LandingPage from "../pages/LandingPage";
+import LandingPage from "../archive/LandingPage";
 import WalletPage from "../pages/WalletPage";
 import SettingsPage from "../pages/settings/SettingsPage";
 import BackTestPage from "../admin/pages/Backtest/BacktestPage";

@@ -127,7 +127,7 @@ const BackTestPage = () => {
                             value={selectedAlgorithmType}
                             onChange={handleAlgorithmTypeChange}
                             placeholder="Select Algorithm Type"
-                            width="300px"
+                            width="400px"
                         >
                             {algorithms.map((algo) => (
                                 <option key={algo} value={algo}>
@@ -152,11 +152,11 @@ const BackTestPage = () => {
 
 
                 <HStack spacing={4}>
-                    <Button onClick={handleRunGlobalBackTest} isDisabled={!!validationError}>
+                    <Button onClick={handleRunGlobalBackTest} isDisabled={!!validationError || isLoading}>
                         Run by portfolio type
                     </Button>
 
-                    <Modal
+                    {!isLoading && ( <Modal
                         triggerText="Run on selected ticker"
                         title="Ticker List"
                         onOpen={() => {}}
@@ -164,6 +164,7 @@ const BackTestPage = () => {
                     >
                         <TickerList tickerList={tickerList} selectedAlgorithmType={selectedAlgorithmType} amount={amount} validationError={validationError}/>
                     </Modal>
+                    )}
                     {isLoading && (
                       <Text fontSize="xl" fontWeight="bold" color="black.600" textAlign="up">
                           Loading...

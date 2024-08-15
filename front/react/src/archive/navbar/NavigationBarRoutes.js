@@ -3,7 +3,7 @@ import {Route} from "react-router-dom";
 import NewsPage from "../../pages/NewsPage";
 import SupportPage from "../../pages/SupportPage";
 import WalletPage from "../../pages/WalletPage";
-import CustomerDetailsPage from "../../pages/CustomerDetailsPage";
+import CustomerDetailsPage from "../CustomerDetailsPage";
 import SettingsPage from "../../pages/settings/SettingsPage";
 
 const mainRoutes = [
