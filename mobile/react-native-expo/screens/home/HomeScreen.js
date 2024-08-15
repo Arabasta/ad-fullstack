@@ -148,13 +148,14 @@ const HomeScreen = ({ navigation }) => {
                                 <Text style={styles.labelText}>{lastLabelFormatted}</Text>
                             </View>
                         }
+                        view={view}
                     />
                 ) : (<Text>No data available for the chart</Text>)}
             />
 
             <TouchableOpacity style={styles.toggleButton} onPress={handleToggle}>
                 <Text style={styles.toggleButtonText}>
-                    Switch to {view === 'portfolioValue' ? 'Performance' : 'Portfolio Value'}
+                    Switch to {view === 'portfolioValue' ? 'Performance' : 'portfolioValue'}
                 </Text>
             </TouchableOpacity>
 
