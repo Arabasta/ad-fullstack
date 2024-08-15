@@ -18,7 +18,6 @@ const PortfolioManager = () => {
     const navigate = useNavigate();
     const {portfolioType} = useParams();
     const currentPortfolioType = portfolioTypes.find(allPortfolioTypes => allPortfolioTypes.type.toLowerCase() === portfolioType.toLowerCase());
-    const otherPortfolioTypes = portfolioTypes.filter(allPortfolioTypes => allPortfolioTypes.type.toLowerCase() !== portfolioType.toLowerCase());
     const {portfolio, addFunds, withdrawFunds} = usePortfolio(portfolioType.toUpperCase());
 
     const {portfolios} = useCombinedPortfolioDetails();
