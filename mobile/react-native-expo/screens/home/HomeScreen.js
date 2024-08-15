@@ -103,12 +103,36 @@ const HomeScreen = ({ navigation }) => {
             borderColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
             backgroundColor: type === 'CONSERVATIVE' ? "#0000FF" : type === 'MODERATE' ? "#FFA500" : "#FF0000",
             yAxisID: view === 'portfolioValue' ? 'y-axis-1' : 'y-axis-2',
+            yTicks: calculateYTicks(portfolioData.data?.datasets[datasetIndex]?.data || [], view),
+
         };
 
         const labels = portfolioData.data?.labels?.map(label => formatLabels(label)) || [];
 
         return { chartData, labels };
     };
+
+    const calculateYTicks = (data, view) => {
+        const minValue = Math.min(...data);
+        const maxValue = Math.max(...data);
+        const yTicks = [];
+
+        for (let i = 0; i <= 5; i++) {
+            const value = minValue + (i * (maxValue - minValue) / 5);
+            const formattedValue = view === 'portfolioValue'
+                ? new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 0,
+                }).format(value)
+                : value.toFixed(2);
+
+            yTicks.push({ value, label: formattedValue });
+        }
+
+        return yTicks;
+    };
+
 
     // refresh portfolios on focus
     useFocusEffect(
