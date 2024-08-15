@@ -85,7 +85,7 @@ const Modal = ({ triggerText, title, onClose, onOpen, children }) => {
     };
     return (
         <>
-            <ButtonBlack onClick={openModal}>
+            <ButtonBlack onClick={openModal} w="100%">
                 {triggerText}
             </ButtonBlack>
             {isOpen && (
