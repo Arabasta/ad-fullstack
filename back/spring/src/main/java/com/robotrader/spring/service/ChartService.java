@@ -119,6 +119,11 @@ public class ChartService implements IChartService {
         for (int i = 1; i < logs.size(); i++) {
             PortfolioHistoryLog log = logs.get(i);
 
+            if (!log.getLogType().equals("Trade")) {
+                initialCapital = log.getCurrentValue();
+                continue;
+            }
+
             labels.add(log.getTimestamp());
             capitalAbsoluteData.add(log.getCurrentValue());
 

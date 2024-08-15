@@ -32,12 +32,13 @@ public class PortfolioHistoryLogService implements IPortfolioHistoryLogService {
 
     @Override
     @Transactional
-    public void log(Portfolio portfolio) {
+    public void log(Portfolio portfolio, String logType) {
         PortfolioHistoryLog logEntry = new PortfolioHistoryLog();
 
         logEntry.setPortfolio(portfolio);
         logEntry.setTimestamp(LocalDateTime.now());
         logEntry.setCurrentValue(portfolio.getCurrentValue());
+        logEntry.setLogType(logType);
 
         save(logEntry);
     }

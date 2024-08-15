@@ -8,11 +8,9 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 
 public interface IPortfolioHistoryLogService {
-    @Transactional
     void save(PortfolioHistoryLog portfolioHistoryLog);
 
-    @Transactional
-    void log(Portfolio portfolio);
+    void log(Portfolio portfolio, String logType);
 
     List<PortfolioHistoryLog> getPortfolioHistoryLog(String username, PortfolioTypeEnum portfolioType);
 }

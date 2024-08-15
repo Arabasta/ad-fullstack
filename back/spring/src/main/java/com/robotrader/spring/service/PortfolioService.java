@@ -132,6 +132,7 @@ public class PortfolioService implements IPortfolioService {
         } else {
             User user = userService.getUserByUsername(username);
             portfolioTransactionLogService.log(user, portfolio.getPortfolioType(), "Allocate", amount, portfolio.getCurrentValue());
+            portfolioHistoryLogService.log(portfolio, "Allocate");
             walletTransactionLogService.log(user, amount, wallet.getTotalBalance(), "Allocate to Portfolio " + portfolio.getPortfolioType());
         }
         return new PortfolioTransactionResponseDTO(portfolio.getPortfolioType(), amount,
@@ -154,6 +155,7 @@ public class PortfolioService implements IPortfolioService {
         } else {
             User user = userService.getUserByUsername(username);
             portfolioTransactionLogService.log(user, portfolio.getPortfolioType(), "Withdraw", amount, portfolio.getCurrentValue());
+            portfolioHistoryLogService.log(portfolio, "Withdraw");
             walletTransactionLogService.log(user, amount, wallet.getTotalBalance(), "Withdraw from Portfolio " + portfolio.getPortfolioType());
 
         }
@@ -250,7 +252,7 @@ public class PortfolioService implements IPortfolioService {
                     if (portfolio.getAllocatedUnitQty().compareTo(BigDecimal.valueOf(0.0001)) > 0) {
                         portfolio.setCurrentValue(newUnitPrice.multiply(portfolio.getAllocatedUnitQty()));
                         save(portfolio);
-                        portfolioHistoryLogService.log(portfolio);
+                        portfolioHistoryLogService.log(portfolio, "Trade");
                     }
                 });
     }
