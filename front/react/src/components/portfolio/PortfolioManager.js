@@ -17,6 +17,7 @@ import useCombinedPortfolioDetails from "../../hooks/useCombinedPortfolioDetails
 const PortfolioManager = () => {
     const navigate = useNavigate();
     const {portfolioType} = useParams();
+    const currentPortfolioType = portfolioTypes.find(allPortfolioTypes => allPortfolioTypes.type.toLowerCase() === portfolioType.toLowerCase());
     const otherPortfolioTypes = portfolioTypes.filter(allPortfolioTypes => allPortfolioTypes.type.toLowerCase() !== portfolioType.toLowerCase());
     const {portfolio, addFunds, withdrawFunds} = usePortfolio(portfolioType.toUpperCase());
 
@@ -107,13 +108,23 @@ const PortfolioManager = () => {
                                 <PortfolioDetails portfolio={portfolio}/>
                             </Box>
                             <Box>
-                                {otherPortfolioTypes.map((portfolio, index) => (
-                                    <Button key={index}
-                                            mr="1rem"
-                                            onClick={() => handlePortfolioSelection(portfolio.type)}
-                                    >
-                                        {portfolio.title.split(' ')[0]}
-                                    </Button>
+                                {portfolioTypes.map((portfolio, index) => (
+                                    portfolio.type === currentPortfolioType.type ?
+                                        <Button mr="1rem"
+                                                p={5}
+                                                disabled="true"
+                                                bg={chartData.borderColor}
+                                        >
+                                            {currentPortfolioType.title.split(' ')[0]}
+                                        </Button>
+                                        :
+                                        <Button key={index}
+                                                mr="1rem"
+                                                p={5}
+                                                onClick={() => handlePortfolioSelection(portfolio.type)}
+                                        >
+                                            {portfolio.title.split(' ')[0]}
+                                        </Button>
                                 ))}
                             </Box>
                         </HStack>

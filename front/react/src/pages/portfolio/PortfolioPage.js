@@ -78,14 +78,14 @@ export default function PortfolioPage() {
                     columns={{ base: 3}}
                     spacing={5}
                     px={{ base: 8, lg: 16, xl: 24 }}
-                    py={10}
+                    py={5}
                     mx="auto"
                     bg="white"
                     _dark={{ bg: "gray.800" }}
                     shadow="xl">
 
                     {portfolioTypes.map((portfolio, index) => (
-                        <HStack key={index} title={portfolio.title}  align="center" spacing={0} mb={4}>
+                        <HStack key={index} title={portfolio.title}  align="center" spacing={0} mb={1}>
                             <Button
                                 fontSize="md" p={10} mr={2}
                                 onClick={() => handlePortfolioSelection(portfolio.type)}
