@@ -136,6 +136,7 @@ const HomeScreen = ({ navigation }) => {
                                 <Text style={styles.labelText}>To {firstLabelFormatted}</Text>
                             </View>
                         }
+                        view={view}
                     />
                 ) : (<Text>No data available for the chart</Text>)}
             />

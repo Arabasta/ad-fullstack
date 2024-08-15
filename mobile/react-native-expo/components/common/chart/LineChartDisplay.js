@@ -5,7 +5,7 @@ import { Chart, VerticalAxis, HorizontalAxis, Line, Tooltip } from 'react-native
 // Get screen dimensions for responsive sizing
 const screenWidth = Dimensions.get('window').width;
 
-const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle }) => {
+const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle,view }) => {
     const [tooltipIndex, setTooltipIndex] = useState(null);
     const [tooltipValue, setTooltipValue] = useState(null);
     const [viewport, setViewport] = useState({ size: { width: 40 } }); // Initial viewport showing 10 data points
@@ -37,6 +37,7 @@ const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle }) =>
                     width: 2,
                 },
             },
+            yAxisID: dataset.yAxisID,
         }));
 
     // Calculate min and max for yDomain across all datasets
@@ -59,10 +60,19 @@ const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle }) =>
         { value: labels.length - 1, label: labels[labels.length - 1] || '' }  // Last label
     ];
 
-    // Determine y-axis tick values based on the data range, rounded to the nearest whole number
-    const yTicks = Array.from({ length: 6 }, (_, i) => {
+    const yTicksAxis1 = Array.from({ length: 6 }, (_, i) => {
         const value = Math.round(yDomain.min + (i * (yDomain.max - yDomain.min) / 5));
-        return { value, label: value };
+        const formattedValue = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 0, // No decimal places
+        }).format(value);
+        return value === 0 ? null : { value, label: formattedValue };
+    }).filter(tick => tick !== null);
+
+    const yTicksAxis2 = Array.from({ length: 6 }, (_, i) => {
+        const value = Math.round(yDomain.min + (i * (yDomain.max - yDomain.min) / 5));
+        return { value, label: value.toString() };
     });
 
     // Determine chart dimensions
@@ -81,18 +91,38 @@ const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle }) =>
                     viewport={viewport}
                     onViewportChange={setViewport} // Enable scrolling by updating viewport
                 >
-                    <VerticalAxis
-                        tickValues={yTicks.map(tick => tick.value)}
-                        tickFormat={(value) => value.toLocaleString('en-SG')}
-                        theme={{
-                            labels: {
-                                label: {
-                                    fontSize: 10,
-                                    color: '#000',
+                    {view === 'portfolioValue' && (
+                        <VerticalAxis
+                            tickValues={yTicksAxis1.map(tick => tick.value)}
+                            theme={{
+                                labels: {
+                                    label: {
+                                        fontSize: 10,
+                                        color: '#000',
+                                    },
                                 },
-                            },
-                        }}
-                    />
+                            }}
+                            tickLabelProps={(value) => ({
+                                label: yTicksAxis1.find(tick => tick.value === value)?.label || value.toString(),
+                            })}
+                        />
+                    )}
+                    {view === 'performance' && (
+                        <VerticalAxis
+                            tickValues={yTicksAxis2.map(tick => tick.value)}
+                            theme={{
+                                labels: {
+                                    label: {
+                                        fontSize: 10,
+                                        color: '#000',
+                                    },
+                                },
+                            }}
+                            tickLabelProps={(value) => ({
+                                label: yTicksAxis2.find(tick => tick.value === value)?.label || value.toString(),
+                            })}
+                        />
+                    )}
                     <HorizontalAxis
                         tickValues={xTicks.map(tick => tick.value)}
                         theme={{
