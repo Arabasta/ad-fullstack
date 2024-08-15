@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import LineChartDisplay from "../../components/common/chart/LineChartDisplay";
 
 const PortfolioScreen = ({ route, navigation }) => {
-    const { portfolio = {}, chartData =[], labels = [], firstLabelFormatted = '', lastLabelFormatted='', yAxisTitle='' } = route.params || {};
+    const { portfolio = {}, chartData =[], labels = [], firstLabelFormatted = '', yAxisTitle='' } = route.params || {};
     const { getPortfolio } = usePortfolio(portfolio.portfolioType);
 
     const refreshPortfolio = async () => {
@@ -27,11 +27,22 @@ const PortfolioScreen = ({ route, navigation }) => {
         });
     };
 
+    // Format portfolio values with commas and currency symbol
+    const formatPortfolioValue = (value) => {
+        const numericValue = parseFloat(value) || 0;
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(numericValue);
+    };
+
     return (
         <Container>
             {/* Portfolio Dashboard */}
             <Dashboard
-                header={portfolio.currentValue}
+                header={formatPortfolioValue(portfolio.currentValue)}
                 portfolio={portfolio}
                 chart={
                     chartData && labels ? (
@@ -40,9 +51,9 @@ const PortfolioScreen = ({ route, navigation }) => {
                                           yAxisTitle={yAxisTitle}
                                           xAxisTitle={
                                                <View style={styles.xAxisTitleContainer}>
-                                                   <Text style={styles.labelText}>{lastLabelFormatted}</Text>
-                                                   <Text style={styles.xAxisTitle}>Time</Text>
+
                                                    <Text style={styles.labelText}>{firstLabelFormatted}</Text>
+                                                   <Text style={styles.xAxisTitle}>Time</Text>
 
                                                </View>
                                            }/>
