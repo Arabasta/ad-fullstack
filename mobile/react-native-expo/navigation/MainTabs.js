@@ -7,6 +7,7 @@ import NewsScreen from '../screens/news/NewsScreen';
 import WalletStack from './WalletStack';
 import SupportScreen from '../screens/support/SupportScreen';
 import SettingsStack from './SettingsStack';
+import {CommonActions} from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
@@ -46,11 +47,55 @@ const MainTabs = () => {
                 tabBarInactiveTintColor: '#888',
             })}
         >
-            <Tab.Screen name="HomeStack" component={HomeStack} options={{ tabBarLabel: 'Home', headerShown: false }} />
+            <Tab.Screen
+                name="HomeStack"
+                component={HomeStack}
+                options={{ tabBarLabel: 'Home', headerShown: false }}
+                listeners={({ navigation }) => ({
+                    tabPress: e => {
+                        e.preventDefault();
+                        navigation.dispatch(
+                            CommonActions.reset({
+                                index: 0,
+                                routes: [
+                                    {
+                                        name: 'HomeStack',
+                                        params: {
+                                            screen: 'Home',
+                                        },
+                                    },
+                                ],
+                            })
+                        );
+                    },
+                })}
+            />
             <Tab.Screen name="News" component={NewsScreen} options={{ tabBarLabel: 'News' }} />
             <Tab.Screen name="WalletStack" component={WalletStack} options={{ tabBarLabel: 'Wallet', headerShown: false }} />
             <Tab.Screen name="Support" component={SupportScreen} options={{ tabBarLabel: 'Support' }} />
-            <Tab.Screen name="SettingsStack" component={SettingsStack} options={{ tabBarLabel: 'Settings', headerShown: false }} />
+            <Tab.Screen
+                name="SettingsStack"
+                component={SettingsStack}
+                options={{ tabBarLabel: 'Settings', headerShown: false }}
+                listeners={({ navigation }) => ({
+                    tabPress: e => {
+                        e.preventDefault();
+                        navigation.dispatch(
+                            CommonActions.reset({
+                                index: 0,
+                                routes: [
+                                    {
+                                        name: 'SettingsStack',
+                                        params: {
+                                            screen: 'Settings',
+                                        },
+                                    },
+                                ],
+                            })
+                        );
+                    },
+                })}
+            />
         </Tab.Navigator>
     );
 };
