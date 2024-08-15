@@ -30,15 +30,26 @@ const HomeScreen = ({ navigation }) => {
 
     // Calculate the sum of currentValues from all portfolios
     const totalCurrentValue = useMemo(() => {
-        const aggressiveValue = aggPortfolio.portfolio.currentValue || 0;
-        const moderateValue = modPortfolio.portfolio.currentValue || 0;
-        const conservativeValue = conPortfolio.portfolio.currentValue || 0;
-        return parseFloat(aggressiveValue) + parseFloat(moderateValue) + parseFloat(conservativeValue);
+        const aggressiveValue = parseFloat(aggPortfolio.portfolio.currentValue || 0);
+        const moderateValue = parseFloat(modPortfolio.portfolio.currentValue || 0);
+        const conservativeValue = parseFloat(conPortfolio.portfolio.currentValue || 0);
+        const total = aggressiveValue + moderateValue + conservativeValue;
+        return total;
     }, [
         aggPortfolio.portfolio.currentValue,
         modPortfolio.portfolio.currentValue,
         conPortfolio.portfolio.currentValue
     ]);
+
+    // Format the total current value as currency
+    const formattedTotalCurrentValue = useMemo(() => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(totalCurrentValue);
+    }, [totalCurrentValue]);
 
     const portfoliosData = [
         { type: 'CONSERVATIVE', data: conPortfolio.performanceChart },
@@ -51,8 +62,8 @@ const HomeScreen = ({ navigation }) => {
     };
 
     function formatLabels(label) {
-            const [year, month, day, hour, minute, second, milliseconds] = label;
-            const date = new Date(year, month - 1, day, hour, minute, second, milliseconds);
+            const [year, month, day, hour, minute, second] = label;
+            const date = new Date(year, month - 1, day, hour, minute, second);
             return date.toLocaleString('en-SG', {
                 day: 'numeric',
                 month: 'short',
@@ -70,6 +81,7 @@ const HomeScreen = ({ navigation }) => {
     const firstLabelFormatted = firstLabelUnformatted
         ? formatLabels(firstLabelUnformatted)
         : '';
+
     const lastLabelFormatted = lastLabelUnformatted
         ? formatLabels(lastLabelUnformatted)
         : '';
@@ -123,7 +135,7 @@ const HomeScreen = ({ navigation }) => {
     return (
         <Container>
             <Dashboard
-                header={totalCurrentValue}
+                header={formattedTotalCurrentValue}
                 chart={filteredDatasets.length > 0 ? (
                     <LineChartDisplay
                         datasets={filteredDatasets}
@@ -131,9 +143,9 @@ const HomeScreen = ({ navigation }) => {
                         yAxisTitle={view === 'portfolioValue' ? "Portfolio Value ($)" : "Performance (%)"}
                         xAxisTitle={
                             <View style={styles.xAxisTitleContainer}>
-                                <Text style={styles.labelText}>From {lastLabelFormatted}</Text>
+                                <Text style={styles.labelText}>{firstLabelFormatted}</Text>
                                 <Text style={styles.xAxisTitle}>Time</Text>
-                                <Text style={styles.labelText}>To {firstLabelFormatted}</Text>
+                                <Text style={styles.labelText}>{lastLabelFormatted}</Text>
                             </View>
                         }
                     />
