@@ -4,6 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthContext, AuthProvider } from './config/context/AuthContext';
 import AuthStack from "./navigation/AuthStack";
 import MainTabs from "./navigation/MainTabs";
+import { LogBox } from 'react-native';
+
+LogBox.ignoreAllLogs(true);
 
 const Stack = createNativeStackNavigator();
 
