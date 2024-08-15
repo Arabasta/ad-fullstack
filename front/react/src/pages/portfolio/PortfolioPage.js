@@ -69,14 +69,6 @@ export default function PortfolioPage() {
                 <BlackText fontSize="5xl" fontWeight="bold">{formatCurrency(totalCurrentValue)}</BlackText>
             </WhiteBoxCard>
 
-            <CardComponent
-                title={<Heading as="h1" color="brand.10"  mb={2}>Portfolio Performance</Heading>}
-                subtitle={<GrayText fontSize="2xl" fontWeight="bold">{formattedDate}</GrayText>}
-                chart={<LineChart2 datasets={combinedData} view={view} labels={combinedLabels} />}
-                button={<Button onClick={handleToggle}>
-                    Toggle View
-                </Button>}
-            />
             <Flex
                 p={5}
                 w="auto"
@@ -106,6 +98,15 @@ export default function PortfolioPage() {
 
                 </SimpleGrid>
             </Flex>
+
+            <CardComponent
+                title={<Heading as="h1" color="brand.10"  mb={2}>Portfolio Performance</Heading>}
+                subtitle={<GrayText fontSize="2xl" fontWeight="bold">{formattedDate}</GrayText>}
+                chart={<LineChart2 datasets={combinedData} view={view} labels={combinedLabels} />}
+                button={<Button onClick={handleToggle}>
+                    Toggle View
+                </Button>}
+            />
         </div>
     );
 }
