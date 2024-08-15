@@ -24,7 +24,7 @@ const HomePage = () => {
             }
         };
         fetchInvestorProfile();
-    }, []);
+    }, [isAuthenticated]);
 
     const imageCardDetails = () => {
         if (!isAuthenticated) {
@@ -60,7 +60,7 @@ const HomePage = () => {
               alignItems="center"
         >
             <ParagraphWithImageCard
-                recommendedPortfolio={
+                recommendedPortfolio={isAuthenticated && isCustomer ?
                     <InlineText mt="1rem" color="black">
                         You have been recommended the <InlineText></InlineText>
                         <Link to={recommendedPortfolioPath}>
@@ -73,6 +73,8 @@ const HomePage = () => {
                         </Link>
                         portfolio.
                     </InlineText>
+                    :
+                    ""
                 }
                 title={imageCardDetails().title}
                 subtitle={imageCardDetails().subtitle}
