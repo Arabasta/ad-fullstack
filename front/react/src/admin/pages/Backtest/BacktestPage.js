@@ -127,7 +127,7 @@ const BackTestPage = () => {
                             value={selectedAlgorithmType}
                             onChange={handleAlgorithmTypeChange}
                             placeholder="Select Algorithm Type"
-                            width="300px"
+                            width="400px"
                         >
                             {algorithms.map((algo) => (
                                 <option key={algo} value={algo}>
