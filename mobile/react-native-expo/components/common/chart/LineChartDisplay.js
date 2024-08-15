@@ -8,7 +8,7 @@ const screenWidth = Dimensions.get('window').width;
 const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle,view }) => {
     const [tooltipIndex, setTooltipIndex] = useState(null);
     const [tooltipValue, setTooltipValue] = useState(null);
-    const [viewport, setViewport] = useState({ size: { width: 200 } }); // Initial viewport showing 10 data points
+    const [viewport, setViewport] = useState({ size: { width: 500 } }); // Initial viewport showing 10 data points
 
     // Ensure datasets is an array of objects with valid data arrays
     const validatedDatasets = datasets.filter(dataset =>
@@ -47,14 +47,15 @@ const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle,view 
     const yRange = yMax - yMin;
 
     // Determine the height of the chart and scale yDomain dynamically
-    const minChartHeight = 0.4; // Minimum 40% of the chart area
     const chartHeight = 450;
-    const requiredRange = Math.max(yRange, yMin * (minChartHeight / (1 - minChartHeight)));
 
+    // Calculate a dynamic yDomain with minimal padding
+    const paddingFactor = 0.05; // 5% padding
     const yDomain = {
-        min: yMin - requiredRange * 0.05,  // Add some padding below
-        max: yMax + requiredRange * 0.05,  // Add some padding above
+        min: yMin - yRange * paddingFactor,
+        max: yMax + yRange * paddingFactor,
     };
+
 
     // xDomain will automatically cover all labels from start to end
     const xDomain = { min: 0, max: labels.length - 1 };
