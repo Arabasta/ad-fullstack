@@ -47,8 +47,8 @@ const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle,view 
 
     // Adjust yDomain to ensure all data points are visible
     const yDomain = {
-        min: Math.floor(yMin * 0.9),  // Adjust to give some margin below the minimum value
-        max: Math.ceil(yMax * 1.1),   // Adjust to give some margin above the maximum value
+        min: Math.floor(yMin ),  // Adjust to give some margin below the minimum value
+        max: Math.ceil(yMax),   // Adjust to give some margin above the maximum value
     };
 
     // xDomain will automatically cover all labels from start to end
