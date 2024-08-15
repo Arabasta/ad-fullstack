@@ -39,10 +39,9 @@ public class PredictionService {
     private final WebClient fastapiWebClient;
     private static final Logger logger = LoggerFactory.getLogger(PredictionService.class);
 
-    public PredictionService(
-                             WebClient.Builder webClientBuilder) {
+    public PredictionService(WebClient.Builder webClientBuilder) {
 
-        this.fastapiWebClient = webClientBuilder.baseUrl(backFastapiUrl).build();
+        this.fastapiWebClient = webClientBuilder.baseUrl("http://host.docker.internal:8000").build();
     }
     @Value("${aws.s3.access-key-id}")
     private String s3AccessKeyId;
