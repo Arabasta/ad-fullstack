@@ -41,6 +41,9 @@ const PortfolioManager = () => {
             const [year, month, day, hour, minute, second] = label;
             const date = new Date(year, month - 1, day, hour, minute, second);
             return date.toLocaleString('en-SG', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true,
@@ -52,6 +55,15 @@ const PortfolioManager = () => {
     const firstLabel = portfolios[0].data?.labels?.[0];
     const date = firstLabel ? new Date(firstLabel[0], firstLabel[1] - 1, firstLabel[2]) : null;
     const formattedDate = date ? date.toLocaleDateString('en-SG', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    }) : '';
+
+    // Extract and format the first label as a date string for the card component
+    const lastLabel = portfolios[0].data?.labels?.[-1];
+    const lastDate = lastLabel ? new Date(lastLabel[0], lastLabel[1] - 1, lastLabel[2]) : null;
+    const formattedLastDate = lastDate ? lastDate.toLocaleDateString('en-SG', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -116,7 +128,9 @@ const PortfolioManager = () => {
                             <CardComponent
                                 title={<Heading as="h2" color="brand.10">Portfolio Performance</Heading>}
                                 subtitle={<GrayText fontSize="2xl"
-                                                    fontWeight="bold">{formattedDate || 'Date not available'} </GrayText>}
+                                                    fontWeight="bold">
+                                    {formattedDate || 'Date not available'} - {formattedLastDate || 'to date'}
+                            </GrayText>}
                                 chart={<LineChart2 datasets={[chartData]} labels={labels} view={currentView}
                                                    scaleToFit={true}/>}
                                 button={<Button onClick={handleToggle}>Toggle View</Button>}
