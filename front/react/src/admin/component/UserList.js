@@ -1,26 +1,32 @@
 import React, { useState } from 'react';
-import { Box, Table, Thead, Tbody, Tr, Th, Td, Button, Input, Text } from '@chakra-ui/react';
+import {Box, Table, Thead, Tbody, Tr, Th, Td, Button, Input, useToast} from '@chakra-ui/react';
 import useUsers from '../hooks/useUsers';
 
 const UserList = () => {
     const [search, setSearch] = useState('');
     const { users, lockUser, unlockUser } = useUsers(search);
-    const [message, setMessage] = useState({});
+    const toast = useToast();
 
     const handleLock = async (username) => {
         await lockUser(username);
-        setMessage((prevState) => ({
-            ...prevState,
-            [username]: 'User locked successfully',
-        }));
+        toast({
+            title: "User has been locked",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+            position: "top",
+        });
     };
 
     const handleUnlock = async (username) => {
         await unlockUser(username);
-        setMessage((prevState) => ({
-            ...prevState,
-            [username]: 'User unlocked successfully',
-        }));
+        toast({
+            title: "User has been unlocked",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+            position: "top",
+        });
     };
 
     return (
@@ -48,7 +54,7 @@ const UserList = () => {
                             <Td>{user.email}</Td>
                             <Td>{user.role}</Td>
                             <Td>
-                                <Button
+                                {user.role !== "ROLE_LOCKED" && ( <Button
                                     colorScheme="red"
                                     size="sm"
                                     onClick={() => handleLock(user.username)}
@@ -56,17 +62,14 @@ const UserList = () => {
                                 >
                                     Lock
                                 </Button>
-                                <Button
+                                )}
+                                {user.role === "ROLE_LOCKED" && ( <Button
                                     colorScheme="green"
                                     size="sm"
                                     onClick={() => handleUnlock(user.username)}
                                 >
                                     Unlock
                                 </Button>
-                                {message[user.username] && (
-                                    <Text mt={2} color="green.500" fontSize="sm">
-                                        {message[user.username]}
-                                    </Text>
                                 )}
                             </Td>
                         </Tr>
