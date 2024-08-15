@@ -41,7 +41,6 @@ public class AwsConfig {
     @Value("${aws.ses.region}")
     private String sesRegion;
     @Bean
-    @ConditionalOnProperty(name = "s3.transaction_logging.enabled", havingValue = "true")
     public S3Client s3Client() {
         AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(s3AccessKeyId, s3SecretAccessKey);
 
