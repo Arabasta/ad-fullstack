@@ -51,8 +51,8 @@ const HomeScreen = ({ navigation }) => {
     };
 
     function formatLabels(label) {
-            const [year, month, day, hour, minute, second, milliseconds] = label;
-            const date = new Date(year, month - 1, day, hour, minute, second, milliseconds);
+            const [year, month, day, hour, minute, second] = label;
+            const date = new Date(year, month - 1, day, hour, minute, second);
             return date.toLocaleString('en-SG', {
                 day: 'numeric',
                 month: 'short',
@@ -131,9 +131,10 @@ const HomeScreen = ({ navigation }) => {
                         yAxisTitle={view === 'portfolioValue' ? "Portfolio Value ($)" : "Performance (%)"}
                         xAxisTitle={
                             <View style={styles.xAxisTitleContainer}>
-                                <Text style={styles.labelText}>From {lastLabelFormatted}</Text>
-                                <Text style={styles.xAxisTitle}>Time</Text>
                                 <Text style={styles.labelText}>To {firstLabelFormatted}</Text>
+                                <Text style={styles.xAxisTitle}>Time</Text>
+                                <Text style={styles.labelText}>From {lastLabelFormatted}</Text>
+
                             </View>
                         }
                         view={view}
