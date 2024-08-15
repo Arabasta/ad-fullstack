@@ -41,7 +41,7 @@ public class PredictionService {
 
     public PredictionService(WebClient.Builder webClientBuilder) {
 
-        this.fastapiWebClient = webClientBuilder.baseUrl("http://127.0.0.1:8000").build();
+        this.fastapiWebClient = webClientBuilder.baseUrl("http://13.212.245.76:8000").build();
     }
     @Value("${aws.s3.access-key-id}")
     private String s3AccessKeyId;
