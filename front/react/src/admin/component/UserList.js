@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import {Box, Table, Thead, Tbody, Tr, Th, Td, Button, Input, Text, useToast} from '@chakra-ui/react';
+import {Box, Table, Thead, Tbody, Tr, Th, Td, Button, Input, useToast} from '@chakra-ui/react';
 import useUsers from '../hooks/useUsers';
 
 const UserList = () => {
     const [search, setSearch] = useState('');
     const { users, lockUser, unlockUser } = useUsers(search);
-    const [message, setMessage] = useState({});
     const toast = useToast();
 
     const handleLock = async (username) => {
@@ -55,7 +54,7 @@ const UserList = () => {
                             <Td>{user.email}</Td>
                             <Td>{user.role}</Td>
                             <Td>
-                                {user.role != "ROLE_LOCKED" && ( <Button
+                                {user.role !== "ROLE_LOCKED" && ( <Button
                                     colorScheme="red"
                                     size="sm"
                                     onClick={() => handleLock(user.username)}
@@ -64,7 +63,7 @@ const UserList = () => {
                                     Lock
                                 </Button>
                                 )}
-                                {user.role == "ROLE_LOCKED" && ( <Button
+                                {user.role === "ROLE_LOCKED" && ( <Button
                                     colorScheme="green"
                                     size="sm"
                                     onClick={() => handleUnlock(user.username)}
