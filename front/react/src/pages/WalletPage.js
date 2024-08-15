@@ -1,29 +1,21 @@
 import React from "react";
-import {Box, HStack, VStack} from "@chakra-ui/react";
+import {HStack, VStack} from "@chakra-ui/react";
 import useWallet from "../hooks/useWallet";
 import { formatCurrency } from "../utils/formatCurrency";
 import { Modal } from "../components/common/modal/Modal";
 import TransactionHistory from "../components/feature/TransactionHistory";
 import WalletAction from "../components/feature/WalletAction";
 import BlackText from "../components/common/text/BlackText";
-import GrayText from "../components/common/text/GrayText";
-import WhiteBoxCard from "../components/common/cards/WhiteBoxCard";
+import CallToActionSection from "../admin/component/sections/CallToActionSection";
 
 const WalletPage = () => {
     const { wallet, getWallet } = useWallet();
 
     return (
-        <Box p={4} maxW="500px" mx="auto"  borderRadius="lg" mt={6}>
-            <VStack spacing={4} mt={8}>
-
-                {/* Balance Display */}
-                <WhiteBoxCard>
-                    <GrayText fontSize="2xl" fontWeight="bold">Balance</GrayText>
-                    <BlackText fontSize="5xl" fontWeight="bold">{formatCurrency(wallet)}</BlackText>
-                </WhiteBoxCard>
-
-                {/* Withdraw and Deposit Buttons */}
-                <HStack w="full" justify="center" mt={4} mb={30}>
+        <CallToActionSection title="Balance" subtitle="">>
+            <VStack spacing={4} align="stretch">
+                <BlackText fontSize="5xl" fontWeight="bold">{formatCurrency(wallet)}</BlackText>
+                <HStack>
                     <WalletAction type="deposit" onActionComplete={getWallet} />
                     <WalletAction type="withdraw" onActionComplete={getWallet} />
                 </HStack>
@@ -33,7 +25,7 @@ const WalletPage = () => {
                     <TransactionHistory type="wallet" />
                 </Modal>
             </VStack>
-        </Box>
+        </CallToActionSection>
     );
 };
 
