@@ -95,7 +95,10 @@ const LiveTrading = () => {
 
                     <HStack>
                         <Button onClick={isTrading ? handleStopLiveTrading : handleStartLiveTrading}
-                                style={{ width: '150px' }}>
+                                w="20rem"
+                                pl="1rem"
+                                pr="1rem"
+                        >
                             {isTrading ? 'Stop Live Trading' : 'Start Live Trading'}
                         </Button>
                         <Modal

@@ -130,10 +130,10 @@ const AdminHeader = () => {
 
                             {isAuthenticated ? (
                                 <>
-                                    <Link to="/admin/livetrading">
+                                    <Link to="/admin/managelivetrading">
                                         <Button w="full" variant="ghost">Live Trading</Button>
                                     </Link>
-                                    <Link to="/admin/backtest">
+                                    <Link to="/backtest">
                                         <Button w="full" variant="ghost">Backtest</Button>
                                     </Link>
                                     <Link to="/admin/manage-user">
