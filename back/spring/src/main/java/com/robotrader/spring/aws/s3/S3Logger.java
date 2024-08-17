@@ -59,31 +59,6 @@ public class S3Logger {
                 .collect(Collectors.toList());
     }
 
-    private String getContinuationToken(String bucketName, String prefix, int page, int size) {
-        String continuationToken = null;
-        int skipCount = page * size;
-
-        ListObjectsV2Request.Builder requestBuilder = ListObjectsV2Request.builder()
-                .bucket(bucketName)
-                .prefix(prefix)
-                .maxKeys(skipCount + 1);  // skip to the starting point of page
-
-        while (skipCount > 0) {
-            ListObjectsV2Response response = s3Client.listObjectsV2(requestBuilder.continuationToken(continuationToken).build());
-            List<S3Object> objects = response.contents();
-            if (objects.size() < skipCount) {
-                skipCount -= objects.size();
-                continuationToken = response.nextContinuationToken();
-            } else {
-                continuationToken = response.nextContinuationToken();
-                break;
-            }
-        }
-        return continuationToken;
-    }
-
-    // unused for now
-    // anyone using this method should be aware that it will return the last n objects in the bucket
     public List<String> listAndRetrieveNumObjects(String bucketName, String prefix, int num) {
         List<String> logs = new ArrayList<>();
         ListObjectsV2Request listObjectsReqManual = ListObjectsV2Request.builder()

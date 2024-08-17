@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
-// use ses
 @Service
 @ConditionalOnProperty(name = "ses.notifications.enabled", havingValue = "true")
 public class SesPasswordNotificationService {
