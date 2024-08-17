@@ -1,7 +1,6 @@
 package com.robotrader.spring.model;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
-import com.robotrader.spring.model.log.PortfolioHistoryLog;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;

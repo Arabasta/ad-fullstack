@@ -78,8 +78,7 @@ public class LiveTradingStrategy implements TradingStrategy {
                         }
                     },
                     error -> {
-                        logger.error("Error in market data stream: " + error);
-                        error.printStackTrace();
+                        logger.error("Error in market data stream: {}", error);
                     },
                     () -> logger.info("Market data stream completed")
             );
@@ -126,7 +125,6 @@ public class LiveTradingStrategy implements TradingStrategy {
                         data -> logger.info("Historical data retrieved successfully."),
                         error -> {
                             logger.error("Error during historical data retrieval: {}", error.getMessage());
-                            error.printStackTrace();
                         }
                 );
 

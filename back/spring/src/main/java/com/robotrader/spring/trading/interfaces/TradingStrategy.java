@@ -3,7 +3,6 @@ package com.robotrader.spring.trading.interfaces;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.robotrader.spring.trading.algorithm.base.TradingAlgorithmBase;
 import com.robotrader.spring.trading.dto.TradeTransaction;
-import com.robotrader.spring.trading.service.HistoricalMarketDataService;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

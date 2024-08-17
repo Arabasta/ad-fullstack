@@ -1,7 +1,6 @@
 package com.robotrader.spring.trading.service;
 
 import com.robotrader.spring.model.Ticker;
-import com.robotrader.spring.model.enums.TickerTypeEnum;
 import com.robotrader.spring.service.TickerService;
 import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 

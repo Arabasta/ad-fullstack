@@ -51,7 +51,6 @@ public class BackTestingStrategy implements TradingStrategy {
                 .thenAccept(data -> logger.info("Backtesting completed successfully."))
                 .exceptionally(error -> {
                     logger.error("Error during backtesting: {}", error.getMessage());
-                    error.printStackTrace();
                     return null;
                 });
     }
