@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 // mostly for settings menu
-// todo: style this, probably need refactor or something
 const ListItem = ({ title, subtitle, style, ...props }) => {
     return (
         <View style={[styles.listItem, style]} {...props}>

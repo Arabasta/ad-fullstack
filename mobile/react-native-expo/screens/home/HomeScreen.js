@@ -5,7 +5,7 @@ import PortfolioButton from '../../components/home/PortfolioButton';
 import Container from "../../components/common/container/Container";
 import usePortfolio from '../../hooks/usePortfolio';
 import LineChartDisplay from "../../components/common/chart/LineChartDisplay";
-import {Text, View, StyleSheet} from 'react-native'
+import {Text, View, StyleSheet, ScrollView} from 'react-native'
 import TouchableOpacity from "../../components/common/button/TouchableOpacity";
 
 const HomeScreen = ({ navigation }) => {
@@ -145,7 +145,7 @@ const HomeScreen = ({ navigation }) => {
     const filteredDatasets = combinedData.filter(dataset => Array.isArray(dataset.data) && dataset.data.length > 0);
 
     return (
-        <Container>
+        <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
             <Dashboard
                 header={totalCurrentValue}
                 chart={filteredDatasets.length > 0 ? (
@@ -191,7 +191,7 @@ const HomeScreen = ({ navigation }) => {
                     />
                 );
             })}
-        </Container>
+        </ScrollView>
     );
 };
 

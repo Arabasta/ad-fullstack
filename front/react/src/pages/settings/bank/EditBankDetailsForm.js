@@ -9,7 +9,6 @@ import Text from "../../../components/common/text/Text";
 
 import CallToActionSection from "../../../admin/component/sections/CallToActionSection";
 
-// todo: add validation and error message (on backend too) for empty fields
 const EditBankDetailsForm = ({ initialDetails = null }) => {
     const { bankDetails, getBankDetails, updateBankDetails } = useBankDetails();
     const toast = useToast();
