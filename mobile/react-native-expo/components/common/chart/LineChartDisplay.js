@@ -44,16 +44,13 @@ const LineChartDisplay = ({ labels=[], datasets=[], yAxisTitle, xAxisTitle,view 
     const allYValues = datasets.flatMap(ds => ds.data).filter(value => value !== undefined && value !== null);
     const yMin = Math.min(...allYValues);
     const yMax = Math.max(...allYValues);
-    const yRange = yMax - yMin;
 
     // Determine the height of the chart and scale yDomain dynamically
     const chartHeight = 450;
 
-    // Calculate a dynamic yDomain with minimal padding
-    const paddingFactor = 0.05; // 5% padding
     const yDomain = {
-        min: yMin - yRange * paddingFactor,
-        max: yMax + yRange * paddingFactor,
+        min: Math.floor(yMin ),  // Adjust to give some margin below the minimum value
+        max: Math.ceil(yMax),   // Adjust to give some margin above the maximum value
     };
 
 
