@@ -1,8 +1,6 @@
 package com.robotrader.spring.dto.livetrade;
 
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

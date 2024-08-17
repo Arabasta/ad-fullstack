@@ -5,7 +5,6 @@ import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import com.robotrader.spring.model.log.PortfolioHistoryLog;
 import com.robotrader.spring.repository.log.PortfolioHistoryLogRepository;
 import com.robotrader.spring.service.PortfolioService;
-import com.robotrader.spring.service.UserService;
 import com.robotrader.spring.service.interfaces.IPortfolioHistoryLogService;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;

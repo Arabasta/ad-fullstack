@@ -3,8 +3,6 @@ package com.robotrader.spring.trading.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.robotrader.spring.trading.dto.LiveMarketDataDTO;
-import lombok.Getter;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +18,6 @@ import reactor.core.publisher.Sinks;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 

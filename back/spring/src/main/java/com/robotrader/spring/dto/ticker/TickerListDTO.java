@@ -1,7 +1,6 @@
 package com.robotrader.spring.dto.ticker;
 
 import com.robotrader.spring.model.Ticker;
-import com.robotrader.spring.trading.dto.TickerDataDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
