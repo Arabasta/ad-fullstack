@@ -19,6 +19,7 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -131,43 +132,27 @@ public class LiveTradingStrategy implements TradingStrategy {
 
     }
 
-    public Mono<PredictionDTO> getPricePredictions(Map<String, List<Object>> marketDataHistory, String tickerName
-    ) {
-        List<BigDecimal> historicalPrices = marketDataHistory.get("vw").stream()
-                .map(price -> (BigDecimal) price)
-                .collect(Collectors.toList());
-
+    public Mono<PredictionDTO> getPricePredictions(Map<String, List<Object>> marketDataHistory, String tickerName) {
         PredictionDTO predictionDTO = new PredictionDTO();
-        predictionDTO.setPredictions(historicalPrices);
-
+        int dataSize = marketDataHistory.get("vw").size();
+        List<BigDecimal> historicalVW = marketDataHistory.get("vw").subList(dataSize - MIN_INPUT_SIZE, dataSize)
+                .stream()
+                .map(obj -> new BigDecimal(obj.toString()))
+                .collect(Collectors.toList());
+        predictionDTO.setPredictions(historicalVW);
         TickerDTO tickerDTO = new TickerDTO();
-        tickerDTO.setTickerName(tickerName);
+        tickerDTO.setTickerName(processTicker(tickerName));
         tickerDTO.setTickerType(TickerTypeEnum.STOCKS);
         tickerDTO.setPortfolioType(PortfolioTypeEnum.AGGRESSIVE);
         predictionDTO.setTickerDTO(tickerDTO);
-
-        return Mono.just(predictionDTO);
-// todo: replace above with below code for deployment. Above code doesn't require fast api prediction server to be set up
-//        PredictionDTO predictionDTO = new PredictionDTO();
-//        int dataSize = marketDataHistory.get("vw").size();
-//        List<BigDecimal> historicalVW = marketDataHistory.get("vw").subList(dataSize - MIN_INPUT_SIZE, dataSize)
-//                .stream()
-//                .map(obj -> new BigDecimal(obj.toString()))
-//                .collect(Collectors.toList());
-//        predictionDTO.setPredictions(historicalVW);
-//        TickerDTO tickerDTO = new TickerDTO();
-//        tickerDTO.setTickerName(processTicker(tickerName));
-//        tickerDTO.setTickerType(TickerTypeEnum.STOCKS);
-//        tickerDTO.setPortfolioType(PortfolioTypeEnum.AGGRESSIVE);
-//        predictionDTO.setTickerDTO(tickerDTO);
-//        logger.debug("Price prediction input: {}", historicalVW);
-//        Mono<PredictionDTO> predictionDTOMono;
-//        try {
-//            predictionDTOMono = predictionService.byPredictionDtoBacktest(predictionDTO);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return predictionDTOMono;
+        logger.debug("Price prediction input: {}", historicalVW);
+        Mono<PredictionDTO> predictionDTOMono;
+        try {
+            predictionDTOMono = predictionService.byPredictionDtoBacktest(predictionDTO);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return predictionDTOMono;
     }
 
     @Override

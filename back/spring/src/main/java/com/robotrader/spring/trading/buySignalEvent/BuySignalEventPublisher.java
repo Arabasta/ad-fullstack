@@ -19,8 +19,7 @@ public class BuySignalEventPublisher {
         this.eventPublisher = eventPublisher;
     }
 
-    @Scheduled(cron = "*/10 * * * * *") // Runs every 10 seconds for testing
-    //    @Scheduled(cron = "0 */10 * * * *") // todo: uncomment Runs every 10 minutes for deployment
+    @Scheduled(cron = "0 */10 * * * *")
     public void publish() {
         if (isLiveTradeRunning) {
             eventPublisher.publishEvent(new BuySignalEvent(this));
