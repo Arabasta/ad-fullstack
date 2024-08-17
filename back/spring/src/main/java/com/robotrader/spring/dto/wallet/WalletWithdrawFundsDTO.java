@@ -15,8 +15,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WalletWithdrawFundsDTO {
-
-    // todo: impl withdraw to bank account or whatever
     @NotNull(message = "Amount cannot be null")
     @DecimalMin(value = "0", message = "Amount must be greater than or equal to 0")
     @DecimalMax(value = "1000000000.00", message = "Amount must be less than or equal to 1000000000.00")

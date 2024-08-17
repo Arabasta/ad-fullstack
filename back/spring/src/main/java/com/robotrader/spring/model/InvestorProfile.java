@@ -103,5 +103,4 @@ public class InvestorProfile {
         this.calculatedRiskToleranceScore += scenarioScore;
         this.investmentPersonalityScore = scenarioScore;
     }
-
 }

@@ -7,6 +7,11 @@ import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.model.PublishRequest;
 import software.amazon.awssdk.services.sns.model.PublishResponse;
 
+/**
+ * AWS SNS currently unused
+ * Requires verification of email addresses
+ * and verification with telcos for SMS
+ */
 @Service
 @ConditionalOnProperty(name = "sns.notifications.enabled", havingValue = "true")
 public class Sns {
