@@ -61,7 +61,7 @@ const Footer = () => {
                 >
                     <Flex justify="start" direction="column">
                         <Link textTransform="uppercase">Support</Link>
-                        <Link textTransform="uppercase">Some other Thing</Link>
+                        <Link textTransform="uppercase">Resources</Link>
                     </Flex>
                     <Flex justify="start" direction="column">
                         <Link textTransform="uppercase">Services</Link>
@@ -93,7 +93,7 @@ const Footer = () => {
                     <Flex justify="start" direction="column">
                         <Link textTransform="uppercase">About Us</Link>
                         <Link textTransform="uppercase">Contact Us</Link>
-                        <Link textTransform="uppercase">Resources</Link>
+
                     </Flex>
                 </HStack>
             </Stack>

@@ -152,7 +152,9 @@ const BackTestPage = () => {
 
 
                 <HStack spacing={4}>
-                    <Button onClick={handleRunGlobalBackTest} isDisabled={!!validationError || isLoading}>
+                    <Button onClick={handleRunGlobalBackTest}
+                            w="20rem"
+                            isDisabled={!!validationError || isLoading}>
                         Run by portfolio type
                     </Button>
 

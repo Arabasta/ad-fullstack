@@ -9,8 +9,8 @@ import useCustomer from "../../hooks/useCustomer";
 
 const SettingsScreen = ({ navigation }) => {
     const { investorProfile, recommendedPortfolioType } = useInvestorProfile();
-    const [portfolioType, setPortfolioType] = useState("N/A");
-    const [customerName, setCustomerName] = useState("Guest");
+    const [portfolioType, setPortfolioType] = useState("");
+    const [customerName, setCustomerName] = useState("");
     const { customer, loading } = useCustomer();
 
     useEffect(() => {
