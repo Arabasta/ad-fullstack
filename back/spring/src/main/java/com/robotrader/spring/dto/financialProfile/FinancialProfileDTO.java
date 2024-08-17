@@ -10,12 +10,14 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class FinancialProfileDTO {
     @Enumerated(EnumType.STRING)
@@ -37,4 +39,5 @@ public class FinancialProfileDTO {
 
     @Enumerated(EnumType.STRING)
     private InvestmentExperienceEnum investmentExperience;
+
 }

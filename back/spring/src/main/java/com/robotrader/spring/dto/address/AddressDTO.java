@@ -4,10 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class AddressDTO {
     @NotBlank
@@ -29,4 +31,5 @@ public class AddressDTO {
     @NotBlank
     @Size(min = 1, max = 10, message = "Unit number cannot be more than 10 characters")
     private String unitNo;
+
 }
