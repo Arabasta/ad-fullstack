@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import ParagraphWithImageCard from "../components/common/cards/ParagraphWithImageCard";
-import {Flex} from "@chakra-ui/react";
+import {Flex, useToast} from "@chakra-ui/react";
 import { Link } from 'react-router-dom';
 import Button from "../components/common/buttons/Button";
 import {useNavigate} from "react-router-dom";
@@ -9,6 +9,7 @@ import InvestorProfileService from "../services/InvestorProfileService";
 import InlineText from "../components/common/text/TextInline";
 
 const HomePage = () => {
+    const toast = useToast();
     const navigate = useNavigate();
     const { isAuthenticated, isCustomer } = useAuth()
     const [recommendedPortfolioType, setRecommendedPortfolioType] = useState("")
@@ -20,7 +21,14 @@ const HomePage = () => {
                 const profileData = response.data.data;
                 setRecommendedPortfolioType(profileData.recommendedPortfolioType);
             } catch (error) {
-                // todo: include catch error, refer to toast or something
+                toast({
+                    title: "Fetch Investor Profile Error",
+                    description: "Unable to fetch your recommended portfolio! Please complete your investor profile.",
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                    position: "top",
+                });
             }
         };
         fetchInvestorProfile();
