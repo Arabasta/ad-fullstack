@@ -22,7 +22,9 @@ const PortfolioStack = ({ route }) => {
                     labels: labels || [],
                     firstLabelFormatted: firstLabelFormatted || '',
                     lastLabelFormatted: lastLabelFormatted || '',
-                    yAxisTitle: yAxisTitle || '' }}
+                    yAxisTitle: yAxisTitle || '' ,
+                    yTicks: chartData?.yTicks || [], // Pass yTicks to PortfolioScreen
+                    }}
                 options={{ headerTitle: `${portfolio?.portfolioType || ''} Portfolio` }}
             />
             <Stack.Screen

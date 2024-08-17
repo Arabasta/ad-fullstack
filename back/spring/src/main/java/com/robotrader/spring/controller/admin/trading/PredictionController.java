@@ -14,7 +14,7 @@ import reactor.core.scheduler.Schedulers;
 import java.io.IOException;
 
 /*
- * todo: Note: PredictionController is used for API debugging. delete before submission if not needed.
+ * PredictionController is used for API debugging.
  */
 
 @RestController
