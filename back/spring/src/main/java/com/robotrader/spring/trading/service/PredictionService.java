@@ -47,7 +47,7 @@ public class PredictionService {
                 .map(fileName -> fileName.split("\\.")[0]) // e.g., splits 'model/AAPL.pkl' and returns 'model/AAPL'
                 .map(fileName -> fileName.split("/")[1]) // e.g., splits 'model/AAPL' and returns 'AAPL'
                 .map(tickerName -> {
-                    if (tickerName.contains(":")) {  //todo: our crypto names are e.g., 'X:BTCUSD'. check if this is robust enough.
+                    if (tickerName.contains(":")) {
                         return new TickerDTO(TickerTypeEnum.CRYPTO, tickerName, null);
                     } else {
                         return new TickerDTO(TickerTypeEnum.STOCKS, tickerName, null);
