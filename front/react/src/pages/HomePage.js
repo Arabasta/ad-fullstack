@@ -32,7 +32,7 @@ const HomePage = () => {
             }
         };
         fetchInvestorProfile();
-    }, [isAuthenticated]);
+    }, [isAuthenticated, toast]);
 
     const imageCardDetails = () => {
         if (!isAuthenticated) {
