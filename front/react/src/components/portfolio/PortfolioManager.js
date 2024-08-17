@@ -86,6 +86,7 @@ const PortfolioManager = () => {
     };
     const {chartData, labels} = getDataByType(portfolioType.toUpperCase());
 
+    const dateRangeSubtitle = formattedDate && formattedLastDate ? `${formattedDate} - ${formattedLastDate}` : formattedDate || '';
 
     return (
         <Box>
@@ -139,7 +140,7 @@ const PortfolioManager = () => {
                                 title={<Heading as="h2" color="brand.10">Portfolio Performance</Heading>}
                                 subtitle={<GrayText fontSize="2xl"
                                                     fontWeight="bold">
-                                    {formattedDate || 'Date not available'} - {formattedLastDate || 'to date'}
+                                    {dateRangeSubtitle || 'Date not available'}
                             </GrayText>}
                                 chart={<LineChart2 datasets={[chartData]} labels={labels} view={currentView}
                                                    scaleToFit={true}/>}
