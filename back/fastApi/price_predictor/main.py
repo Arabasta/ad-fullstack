@@ -1,22 +1,20 @@
+import json
+import os
+from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
+from dotenv import load_dotenv
+from .service import utils as utils
 import logging
 from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import List, Type
-
-import boto3
-import os
+from pydantic import BaseModel
 import pickle
 import numpy as np
-from pydantic import BaseModel
-
-from dotenv import load_dotenv
-from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
-from polygon import RESTClient
-
 import pandas as pd
-
-from service import utils as utils
+from apscheduler.schedulers.background import BackgroundScheduler
+from polygon import RESTClient
+from .machine_learning import Price_Predictor_Notebook_Local as ml
 
 # Load
 app = FastAPI(docs_url="/documentation", redoc_url=None)
@@ -38,6 +36,9 @@ POLYGON_API_KEY = os.getenv('POLYGON_API_KEY')
 # PATH
 PARENT_DIRECTORY_PATH = str(utils.get_project_root())
 REPO_ROOT_PATH = str(utils.get_repo_root())
+CLOUD_STORAGE_SOURCE_DIRECTORY_ID = '1gCXag6LO5GCEJAyrLhuHH7DRWdoPxkvV'
+TRAINED_FILES_DIRECTORY = PARENT_DIRECTORY_PATH + '/trained_files'
+DATA_DIRECTORY = PARENT_DIRECTORY_PATH + '/data'
 
 # IN-MEMORY DATA
 FEATURE = 'vwap'
@@ -145,12 +146,24 @@ async def load_models() -> List[str]:
     load_all_pickle_files(AWS_S3_MODEL_BUCKET_NAME, LOADED_MODELS)
     return list(LOADED_MODELS)
 
+# ##########################################
+# Note:
+# These commented out functions interact with Polygon.io paid API and AWS S3 cloud storage in deployment.
+# In this submission, these functions cannot be used without the API and AWS S3 keys, so we have replaced them with
+# reading + downloading from public Google Drive + local storage.
+# ##########################################
+'''
+@app.get("/api/v1/dev/load_all_pickle_models")
+async def load_models() -> List[str]:
+    load_all_pickle_files(AWS_S3_MODEL_BUCKET_NAME, LOADED_MODELS)
+    return list(LOADED_MODELS)
+'''
 
 '''
-Helper functions
+Helper functions (API Data Source + Cloud Storage)
 '''
 
-
+'''
 # Get s3 client for AWS S3 related functions
 def get_s3_client():
     return boto3.client('s3',
@@ -167,17 +180,6 @@ def load_all_pickle_files(bucket_name, models_dict):
         if 'Contents' in response:
             # Extract the keys (filenames) and filter out non-.pkl files if needed
             keys = [str(item['Key']).split("/")[1] for item in response['Contents']]
-
-            # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
-            temp_keys = ['AAPL.pkl', 'ABBV.pkl', 'ADBE.pkl', 'AMZN.pkl', 'AVGO.pkl',
-                         'COST.pkl', 'CVX.pkl', 'GOOG.pkl', 'GOOGL.pkl', 'HD.pkl',
-                         'JNJ.pkl', 'JPM.pkl', 'LLY.pkl', 'MA.pkl', 'META.pkl',
-                         'MRK.pkl', 'MSFT.pkl', 'NVDA.pkl', 'PEP.pkl', 'PG.pkl',
-                         'TSLA.pkl', 'UNH.pkl', 'XOM.pkl', 'X:XRPUSD.pkl', 'X:SOLUSD.pkl',
-                         'X:ETHUSD.pkl', 'X:DOGEUSD.pkl', 'X:BTCUSD.pkl', 'X:ADAUSD.pkl']
-            keys = list(set(keys) & set(temp_keys))
-            # todo: temporarily hardcoded temp_keys, to remove after implementing models trained on ETFs.
-
             logger.info(f'Trained models available: {keys}')
             # Load all models
             logger.info('--Start loading models--')
@@ -208,8 +210,8 @@ def load_pickle_file(bucket_name, ticker_name, key, models_dict):
     obj = s3_client.get_object(Bucket=bucket_name, Key=f'y_scaler/{ticker_name}.pkl')
     LOADED_Y_SCALERS[ticker_name] = pickle.loads(obj['Body'].read())
     logger.info(f'Loaded {key} y_scaler')
-
-
+    
+    
 # Read and load prices jsons from polygon API
 def get_latest_ticker_api_data(ticker_name):
     # Build polygon client
@@ -233,6 +235,69 @@ def get_latest_ticker_api_data(ticker_name):
     )
     # Create DataFrame from polygon api json response for data processing.
     df_raw = pd.DataFrame(data_request)
+    df_feature_flip = df_raw[[FEATURE]].iloc[::-1]
+    df_ready = add_lagged_features(df_feature_flip, FEATURE_COUNT)
+    arr_features = df_ready.iloc[-FEATURE_COUNT:].values
+    return arr_features
+'''
+# ##########################################
+
+'''
+Helper functions (Google Drive Data Source + Local Storage)
+'''
+
+
+# todo: implement load local
+# Read and load models from Local Source to RAM
+def load_all_pickle_files(trained_files_directory, models_dict):
+    try:
+        trained_models = utils.get_files_with_paths(trained_files_directory+'/model', ".pkl")
+        print(trained_models)
+        if len(trained_models) > 0:
+            # Extract the keys (filenames) and filter out non-.pkl files if needed
+            keys = list(trained_models.keys())
+            logger.info(f'Trained models available: {keys}')
+            # Load all models
+            logger.info('--Start loading models--')
+            for key in keys:
+                ticker_name = str(key).split(".")[0]
+                load_pickle_file(trained_files_directory, ticker_name, key, models_dict)
+            logger.info('--Finish loading models--')
+
+        else:
+            print("No objects found in the bucket.")
+
+    except Exception as e:
+        print(f"Failed to retrieve objects from the source: {trained_files_directory}")
+
+
+# loads fr
+def load_pickle_file(trained_model_path, ticker_name, key, models_dict):
+    with open(f'{trained_model_path}/model/{key}', 'rb') as f:
+        models_dict[ticker_name] = pickle.load(f)
+    logger.info(f'Model: {type(models_dict[ticker_name])}')
+    logger.info(f'Loaded {key} model. Ticker name: {ticker_name}')
+
+    # Load x_scaler from s3 to in-memory dictionary
+    with open(f'{trained_model_path}/x_scaler/{key}', 'rb') as f:
+        LOADED_X_SCALERS[ticker_name] = pickle.load(f)
+    logger.info(f'Loaded {key} x_scaler')
+
+    # Load y_scaler from s3 to in-memory dictionary
+    with open(f'{trained_model_path}/y_scaler/{key}', 'rb') as f:
+        LOADED_Y_SCALERS[ticker_name] = pickle.load(f)
+    logger.info(f'Loaded {key} y_scaler')
+
+
+# Read and load prices jsons from local storage
+def get_latest_ticker_api_data(ticker_name):
+    # Create DataFrame from simulated json response file for data processing.
+    with open(f'{DATA_DIRECTORY}/{ticker_name}.json', 'r') as file:
+        data_dict = json.load(file)
+
+    df_raw = pd.DataFrame(data=data_dict['data'],
+                          columns=data_dict['columns'],
+                          index=data_dict['index'])
     df_feature_flip = df_raw[[FEATURE]].iloc[::-1]
     df_ready = add_lagged_features(df_feature_flip, FEATURE_COUNT)
     arr_features = df_ready.iloc[-FEATURE_COUNT:].values
@@ -270,4 +335,14 @@ MAIN
 
 @app.on_event("startup")
 def startup_event():
-    load_all_pickle_files(AWS_S3_MODEL_BUCKET_NAME, LOADED_MODELS)
+    # Load files
+    load_all_pickle_files(TRAINED_FILES_DIRECTORY, LOADED_MODELS)
+
+    # Scheduler to periodically download source data & execute machine learning
+    scheduler = BackgroundScheduler(logger=logger)
+    # scheduler.add_job(get_data.main(), 'interval', hours=1)
+    scheduler.add_job(ml.execute, 'interval', minutes=1)
+    try:
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        pass

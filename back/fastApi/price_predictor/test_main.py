@@ -15,4 +15,4 @@ def test_redirect_to_documentation():
     assert response.status_code == 200
     assert response.url.path.endswith("/documentation")
 
-# todo: alvin: maybe add test cases for other functionsg
+# todo: alvin: add test cases
