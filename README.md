@@ -64,33 +64,4 @@ The polygon API key is required for live stock data to run the project. Please s
 ### FastAPI
 Please refer to /back/fastapi/README.md for instructions on how to run the FastAPI server
 
-### Environment Variables
-
-POLYGON_API_KEY=Your Polygon API Key
-
-JWT_SECRET_KEY=Your JWT Secret Key
-
-AWS_S3_ACCESS_KEY_ID=Your AWS S3 Access Key
-
-AWS_S3_SECRET_ACCESS_KEY=Your AWS S3 Secret Access Key
-
-AWS_S3_REGION=Your AWS S3 Region
-
-AWS_S3_TRANSACTION_BUCKET_NAME=Your AWS S3 Transaction Bucket Name
-
-AWS_SES_ACCESS_KEY_ID=Your AWS SES Access Key
-
-AWS_SES_SECRET_ACCESS_KEY= Your AWS SES Secret Access Key
-
-AWS_SES_REGION=Your AWS SES Region
-
-AWS_SES_SENDER_EMAIL=Your AWS SES Sender Email
-
-BACK_FASTAPI_URL=http://localhost:8000
-
-API_BACK_FASTAPI_PREDICT_TICKER_BACKTEST=/api/v1/predict/ticker/backtest
-
-API_BACK_FASTAPI_PREDICT_TICKER_LIVE=/api/v1/predict/ticker/live
-
-POLYGON_API_BASE_URL=https://api.polygon.io
 
