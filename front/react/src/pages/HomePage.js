@@ -34,7 +34,7 @@ const HomePage = () => {
             }
         };
         fetchInvestorProfile();
-    }, [isAuthenticated, toast]);
+    }, [isAuthenticated, isCustomer, toast]);
 
     const imageCardDetails = () => {
         if (!isAuthenticated) {
