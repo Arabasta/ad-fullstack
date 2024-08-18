@@ -18,7 +18,7 @@ mvn -version
 ```
 
 ### 3. Add Your JWT Secret Key to the Environment Variables
-in the projects root directory create a .env file and add the following line
+In the project's root directory create a .env file and add the following line
 ```bash
 JWT_SECRET_KEY=your-secret-key
 ```
@@ -71,13 +71,12 @@ Only set to true if you want to use SES
 This project uses Spring Security with a password encoder, making it necessary to create user accounts 
 through API endpoints rather than directly in the database. 
 
-Follow the instructions below to create customer and admin accounts.
 
 ### Creating a Customer Account
-   To create a customer account, send a POST request to the /api/v1/auth/register endpoint. 
-You can use tools like curl, Postman, or the React or React native front end to send the request.
+To create a customer account, send a POST request to the /api/v1/auth/register endpoint. 
+You can use tools like curl, Postman, or the React or React Native front end to send the request.
 
 ### Creating an Admin Account
-   To create an admin account, send a POST request to the /api/v1/dev/admin/create endpoint.
+To create an admin account, send a POST request to the /api/v1/dev/admin/create endpoint.
 
 
