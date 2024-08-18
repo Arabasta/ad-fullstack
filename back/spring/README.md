@@ -64,7 +64,8 @@ Only set to true if you want to use SES
 7. Set the SES configuration in application.properties to true if you want to use SES
 8. Create an access key and secret access key for the IAM user with SES permissions
 9. Add the access key and secret access key to the environment variables
-10. 
+
+
 ## User Registration
 
 This project uses Spring Security with a password encoder, making it necessary to create user accounts 
