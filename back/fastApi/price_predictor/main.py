@@ -36,7 +36,6 @@ POLYGON_API_KEY = os.getenv('POLYGON_API_KEY')
 # PATH
 PARENT_DIRECTORY_PATH = str(utils.get_project_root())
 REPO_ROOT_PATH = str(utils.get_repo_root())
-CLOUD_STORAGE_SOURCE_DIRECTORY_ID = '1gCXag6LO5GCEJAyrLhuHH7DRWdoPxkvV'
 TRAINED_FILES_DIRECTORY = PARENT_DIRECTORY_PATH + '/trained_files'
 DATA_DIRECTORY = PARENT_DIRECTORY_PATH + '/data'
 
@@ -108,6 +107,9 @@ def by_prediction_dto_backtest(prediction_dto: PredictionDTO) -> PredictionDTO:
             raise IOError(f"tickerDTO.tickerName or predictions attributes cannot be null")
         if len(prediction_dto.predictions) < FEATURE_COUNT:
             raise IOError(f"Please input more than {FEATURE_COUNT} predictions datapoints")
+        if prediction_dto.tickerDTO.tickerName.startswith("X:"):
+            prediction_dto.tickerDTO.tickerName = prediction_dto.tickerDTO.tickerName.replace("X:", "X_")
+
         # Prediction logic
         x_values = add_lagged_features(df_x_values=pd.DataFrame(prediction_dto.predictions, columns=[FEATURE]),
                                        future_window=FEATURE_COUNT)
@@ -130,6 +132,9 @@ def by_ticker_dto_live(ticker_dto: TickerDTO) -> PredictionDTO:
             raise IOError(f"tickerName cannot be empty")
         if ticker_name not in list(LOADED_MODELS):
             raise FileNotFoundError(f"{ticker_name} not in available models: {list(LOADED_MODELS)}")
+        if ticker_name.startswith("X:"):
+            ticker_name = ticker_name.replace("X:", "X_")
+
         # Prediction logic
         logger.info('--Start prediction--')
         logger.info(f'--Predicting {ticker_name}--')
