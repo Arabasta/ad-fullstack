@@ -1,11 +1,20 @@
 # Starting Expo
 
+### Installation
+
+Install Node.js and npm from the official website.
+
+Install Expo CLI globally using npm:
+```bash
+npm install -g expo-cli
+```
+
+Follow the instructions in the [React Native](https://reactnative.dev/docs/environment-setup) 
+documentation to install the required dependencies for React Native.
+
+
 ### Android Studio
-
-
-Open Android Studio, open Device Manager and run the Android emulator, ~~or open Xcode and run the iOS simulator~~.
-
-Using Pixel 8 API 29 Q
+Open Android Studio, open Device Manager and run the Android emulator - Pixel 8 API 29 Q.
 
 ### WebStorm
 
