@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@RequestMapping("/api/v1/devAws")
+@RequestMapping("/api/v1/dev/aws")
 @ConditionalOnProperty(name = "s3.transaction_logging.enabled", havingValue = "true")
 public class DevAwsControllerV1 {
 
