@@ -2,7 +2,7 @@
 
 ## Note
 This readme is for running the project locally. The deployed version of the project has been taken down as our team is using our 
-personal AWS accounts and we do not want to incur any further costs. 
+personal AWS accounts, and we do not want to incur any further costs. 
 
 The deployed project was hosted on AWS and used the following services:
 - EC2
@@ -32,7 +32,7 @@ The polygon API key is required for live stock data to run the project. Please s
 
 ### Polygon
 1. Create an account on Polygon.io
-2. Subscribe to the Stock and Crypto APIs
+2. Subscribe to the Stock and Crypto APIs, minimum starter package is required.
 3. Add your API key to the environment variables
 
 ### AWS
@@ -44,9 +44,7 @@ The polygon API key is required for live stock data to run the project. Please s
 
 #### S3
 1. Create a bucket for transactions
-2. Create a bucket for predictions
-3. Create a bucket for models
-4. Add the bucket names to the environment variables
+2. Add the bucket names to the spring environment variables
 
 #### SES
 1. Go to the SES dashboard
@@ -79,10 +77,6 @@ AWS_S3_SECRET_ACCESS_KEY=Your AWS S3 Secret Access Key
 AWS_S3_REGION=Your AWS S3 Region
 
 AWS_S3_TRANSACTION_BUCKET_NAME=Your AWS S3 Transaction Bucket Name
-
-AWS_S3_PREDICTION_BUCKET_NAMe=Your AWS S3 Prediction Bucket Name
-
-AWS_S3_MODEL_BUCKET_NAME=Your AWS S3 Model Bucket Name
 
 AWS_SES_ACCESS_KEY_ID=Your AWS SES Access Key
 
