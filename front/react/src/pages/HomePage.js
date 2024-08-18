@@ -21,18 +21,20 @@ const HomePage = () => {
                 const profileData = response.data.data;
                 setRecommendedPortfolioType(profileData.recommendedPortfolioType);
             } catch (error) {
-                toast({
-                    title: "Fetch Investor Profile Error",
-                    description: "Unable to fetch your recommended portfolio! Please complete your investor profile.",
-                    status: "error",
-                    duration: 3000,
-                    isClosable: true,
-                    position: "top",
-                });
+                if (isAuthenticated && isCustomer) {
+                    toast({
+                        title: "Fetch Investor Profile Error",
+                        description: "Unable to fetch your recommended portfolio! Please complete your investor profile.",
+                        status: "error",
+                        duration: 3000,
+                        isClosable: true,
+                        position: "top",
+                    });
+                }
             }
         };
         fetchInvestorProfile();
-    }, [isAuthenticated, toast]);
+    }, [isAuthenticated, isCustomer, toast]);
 
     const imageCardDetails = () => {
         if (!isAuthenticated) {
