@@ -6,6 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BankDetailsTest {
     @Test
+    public void testGetId() {
+        BankDetails bankDetails = new BankDetails();
+        bankDetails.setId(1L);
+        assertEquals(1L, bankDetails.getId());
+    }
+
+    @Test
     public void testGetBankName() {
         BankDetails bankDetails = new BankDetails();
         bankDetails.setBankName("DBS");

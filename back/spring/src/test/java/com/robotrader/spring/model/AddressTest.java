@@ -6,6 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AddressTest {
     @Test
+    public void testGetId() {
+        Address address = new Address();
+        address.setId(1L);
+        assertEquals(1L, address.getId());
+    }
+
+
+    @Test
     public void testGetStreet() {
         Address address = new Address();
         address.setStreet("Orchard Road");
