@@ -61,14 +61,16 @@ public class SecurityConfig {
                             // CUSTOMER role required to access /api/health/customer
                             .requestMatchers(
                                     "/api/v1/health/customer",
-                                    "/api/v1/customer/**"
+                                    "/api/v1/customer/**",
+                                    "/api/v1/backtest/**"
                             ).hasAuthority("ROLE_CUSTOMER")
 
                             // ADMIN role required to access /api/health/admin
                             .requestMatchers(
                                     "/api/v1/health/admin",
                                     "/api/v1/admin/**",
-                                    "/api/v1/dev/**"
+                                    "/api/v1/dev/**",
+                                    "/api/v1/backtest/**"
 
                             ).hasAuthority("ROLE_ADMIN")
 
