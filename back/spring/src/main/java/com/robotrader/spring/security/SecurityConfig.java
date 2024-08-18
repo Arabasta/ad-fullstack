@@ -62,7 +62,8 @@ public class SecurityConfig {
                             .requestMatchers(
                                     "/api/v1/health/customer",
                                     "/api/v1/customer/**",
-                                    "/api/v1/backtest/**"
+                                    "/api/v1/backtest/**",
+                                    "/api/v1/user/**"
                             ).hasAuthority("ROLE_CUSTOMER")
 
                             // ADMIN role required to access /api/health/admin
@@ -70,8 +71,8 @@ public class SecurityConfig {
                                     "/api/v1/health/admin",
                                     "/api/v1/admin/**",
                                     "/api/v1/dev/**",
-                                    "/api/v1/backtest/**"
-
+                                    "/api/v1/backtest/**",
+                                    "/api/v1/user/**"
                             ).hasAuthority("ROLE_ADMIN")
 
                             .anyRequest().authenticated();
