@@ -3,6 +3,10 @@
 This Python script was used to fetch stock data for S&P 500 companies, processes it, and uploads the data to an S3 bucket. 
 The script utilizes the Polygon API for retrieving stock data and AWS SDK (Boto3) for interacting with Amazon S3.
 
+Note: Due to its requirement of API secrets, it is not refactored into this repository for running locally. As per the
+`README.md` located in `/back/fastApi/price_predictor/`, all cloud related requirements have been refactored and simulated
+into the respective repositories at `/back/fastApi/price_predictor/machine_learning` and `/back/fastApi/price_predictor/data`.
+
 ## Prerequisites
 
 Before running the script, ensure you have the following:
@@ -22,26 +26,3 @@ pip install requests pandas boto3 polygon pytickersymbols
 ### Notes
 1. Ensure that your AWS credentials have the necessary permissions to upload files to the specified S3 bucket.
 2. Modify the date range and stock tickers as needed to suit your requirements.
-
----
-
-# gdown_folder.py - Stock Data Aggregator and Uploader (Google Drive + Local Storage)
-
-To allow running of the project locally, we can only simulate the reading of Data Source from a public storage - 
-in this case, we use Google Drive.
-
-The Source Data that were previously downloaded from the Polygon.io API are stored
-in a Google Drive folder made public by us: https://drive.google.com/drive/folders/1gCXag6LO5GCEJAyrLhuHH7DRWdoPxkvV.
-
-## Prerequisites
-
-If you have not already done so, you would first need to install all the python dependencies of our FastAPI server.
-You can do so by running the following command after you have `cd` into `/back/fastApi/price_predictor`
-
-```sh
-pip install -r requirements.txt
-```
-
-## Usage
-
-You do not need to specifically run this script. It is automatically ran by `main.py` on schedule.

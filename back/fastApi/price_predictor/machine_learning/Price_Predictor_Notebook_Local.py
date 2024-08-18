@@ -7,8 +7,8 @@ Adapted from Original file located at
 import json
 import numpy as np
 import pandas as pd
-from ..service import utils as utils
 import logging
+from pathlib import Path
 
 # Download files
 import os, re, sys, time
@@ -33,12 +33,21 @@ import pickle
 # # AWS SDK
 # import boto3
 
+
+def get_project_root() -> Path:
+    return Path(__file__).parent.parent
+
+
+def get_repo_root() -> Path:
+    return Path(__file__).parent.parent.parent.parent.parent
+
+
 """## 1.2 Download Files from Cloud (Google Drive) to access JSON saved there."""
 
 """## 1.3 Constants"""
 # PATHS
-PARENT_DIRECTORY_PATH = str(utils.get_project_root())
-REPO_ROOT_PATH = str(utils.get_repo_root())
+PARENT_DIRECTORY_PATH = str(get_project_root())
+REPO_ROOT_PATH = str(get_repo_root())
 DOWNLOAD_DIRECTORY = PARENT_DIRECTORY_PATH + '/data'
 TRAINED_FILES_DIRECTORY = PARENT_DIRECTORY_PATH + '/trained_files'
 
@@ -481,3 +490,7 @@ def execute():
     logger.info('ML - 6/7 - Save Models, X_Scalers, Y_Scalers - Complete')
 
     logger.info('ML - 7/7 - Pipeline Complete. Pending next cycle of ML Pipeline according to set interval.')
+
+
+if __name__ == "__main__":
+    execute()
