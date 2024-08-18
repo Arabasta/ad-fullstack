@@ -252,7 +252,6 @@ Helper functions (Google Drive Data Source + Local Storage)
 '''
 
 
-# todo: implement load local
 # Read and load models from Local Source to RAM
 def load_all_pickle_files(trained_files_directory, models_dict):
     try:
