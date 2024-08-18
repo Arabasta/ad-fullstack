@@ -1,6 +1,5 @@
 package com.robotrader.spring.model;
 
-import com.robotrader.spring.model.enums.InvestmentExperienceEnum;
 import org.junit.jupiter.api.Test;
 import com.robotrader.spring.model.enums.PortfolioTypeEnum;
 import org.junit.jupiter.params.ParameterizedTest;
