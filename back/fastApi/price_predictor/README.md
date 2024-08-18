@@ -3,14 +3,16 @@ _ref: https://fastapi-openapi-markdown-documentation-generator-d96hc549nb58e.str
 
 ---
 This backend was originally developed to consume our trained models and scalers from our 
-AWS S3 buckets for this FastAPI backend's prediction and backtest APIs. It also required 
-Polygon.io API key for non-publicly available 10-minute interval historical ticker price data.
+AWS S3 buckets for this FastAPI backend's prediction and backtest APIs, that were trained on
+**<ins>S&P 500 stocks</ins>** and **<ins>Selected Cryptocurrency tickers</ins>**. It also required a paid Polygon.io API key
+for non-publicly available 10-minute interval historical ticker price data.
 
 However, for the purpose of submission, this FastAPI backend has been refactored to:
-1. Contain source data locally at `/data` - to simulate getting 'live 10-minute interval prices'
+1. Contain **<ins>5 sample source data locally</ins>** at `/data` - to simulate getting 'live 10-minute interval prices'
 2. Read trained models and scalers from `/trained_models` - to simulate reading them from the cloud
 
-The cloud deployment code remains in the main.py, but are commented out.
+The cloud deployment code remains in the main.py, but are commented out. To try out the full list of
+available tickers, visit http://keiapp.me/.
 
 ---
 ## Running locally
