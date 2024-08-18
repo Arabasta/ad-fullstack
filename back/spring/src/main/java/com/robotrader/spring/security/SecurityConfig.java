@@ -60,17 +60,19 @@ public class SecurityConfig {
                     authorize
                             // CUSTOMER role required to access /api/health/customer
                             .requestMatchers(
-                                    "/api/health/customer"
+                                    "/api/v1/health/customer",
+                                    "/api/v1/customer/**"
                             ).hasAuthority("ROLE_CUSTOMER")
 
                             // ADMIN role required to access /api/health/admin
                             .requestMatchers(
-                                    "/api/health/admin"
+                                    "/api/v1/health/admin",
+                                    "/api/v1/admin/**",
+                                    "/api/v1/dev/**"
+
                             ).hasAuthority("ROLE_ADMIN")
 
-                            // all other endpoints require authentication
-                            // temporarily allow all requests for development
-                            .anyRequest().permitAll();
+                            .anyRequest().authenticated();
                 })
 
                 // validate JWT token before executing UsernamePasswordAuthenticationFilter
