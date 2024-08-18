@@ -46,7 +46,7 @@ public class PortfolioTest {
         Portfolio portfolio = new Portfolio(
                 1L,
                 type,
-                new Rule(), // Assuming Rule is a valid object
+                new Rule(),
                 new BigDecimal("1000000.00"),
                 new BigDecimal("950000.00"),
                 new BigDecimal("10.00")
