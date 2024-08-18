@@ -48,8 +48,8 @@ def get_repo_root() -> Path:
 # PATHS
 PARENT_DIRECTORY_PATH = str(get_project_root())
 REPO_ROOT_PATH = str(get_repo_root())
-DOWNLOAD_DIRECTORY = PARENT_DIRECTORY_PATH + '/data'
-TRAINED_FILES_DIRECTORY = PARENT_DIRECTORY_PATH + '/trained_files'
+DOWNLOAD_DIRECTORY = PARENT_DIRECTORY_PATH + '/sample_local_data'
+TRAINED_FILES_DIRECTORY = PARENT_DIRECTORY_PATH + '/sample_local_trained_files'
 
 """# 2. Data Preprocessing"""
 

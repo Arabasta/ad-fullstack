@@ -36,8 +36,8 @@ POLYGON_API_KEY = os.getenv('POLYGON_API_KEY')
 # PATH
 PARENT_DIRECTORY_PATH = str(utils.get_project_root())
 REPO_ROOT_PATH = str(utils.get_repo_root())
-TRAINED_FILES_DIRECTORY = PARENT_DIRECTORY_PATH + '/trained_files'
-DATA_DIRECTORY = PARENT_DIRECTORY_PATH + '/data'
+TRAINED_FILES_DIRECTORY = PARENT_DIRECTORY_PATH + '/sample_local_trained_files'
+DATA_DIRECTORY = PARENT_DIRECTORY_PATH + '/sample_local_data'
 
 # IN-MEMORY DATA
 FEATURE = 'vwap'
